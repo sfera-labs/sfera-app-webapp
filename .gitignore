@@ -2,6 +2,8 @@
 /webapp/cache/
 
 .settings/
+.project
+.classpath
 
 target/
 pom.xml.tag
@@ -18,3 +20,4 @@ release.properties
 ehthumbs.db
 Thumbs.db
 *.lck
+/bin/
