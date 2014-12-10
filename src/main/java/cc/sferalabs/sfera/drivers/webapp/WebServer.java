@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 
 import cc.sferalabs.sfera.core.Configuration;
-import cc.sferalabs.sfera.core.Sfera;
 import cc.sferalabs.sfera.core.TasksManager;
 import cc.sferalabs.sfera.drivers.Driver;
 import cc.sferalabs.sfera.drivers.webapp.access.Access;
@@ -19,7 +18,6 @@ import cc.sferalabs.sfera.util.logging.SystemLogger;
 public class WebServer extends Driver {
 
 	static final Path ROOT = Paths.get("webapp/");
-	static final String HTTP_HEADER_FIELD_SERVER = "Sfera " + Sfera.VERSION;
 	static final String API_BASE_URI = "/x/";
 
 	private static boolean initialized = false;

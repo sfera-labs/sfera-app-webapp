@@ -334,7 +334,7 @@ public class ConnectionHandler extends Task {
 	public void notAuthorizedError() {
 		out.print("HTTP/1.1 401 Unauthorized\r\n");
 		out.print("Date: " + DateUtil.now() + "\r\n");
-		out.print("Server: " + WebServer.HTTP_HEADER_FIELD_SERVER + "\r\n");
+		out.print("Server: Sfera\r\n");
 		out.write("Cache-Control: max-age=0, no-cache, no-store\r\n");
 		out.print("Content-length: 0\r\n");
 		out.print("\r\n");
@@ -347,7 +347,7 @@ public class ConnectionHandler extends Task {
 	public void notImplementedError() {
 		out.print("HTTP/1.1 501 Not implemented\r\n");
 		out.print("Date: " + DateUtil.now() + "\r\n");
-		out.print("Server: " + WebServer.HTTP_HEADER_FIELD_SERVER + "\r\n");
+		out.print("Server: Sfera\r\n");
 		out.print("Content-length: 0\r\n");
 		out.print("\r\n");
 		out.flush();
@@ -360,7 +360,7 @@ public class ConnectionHandler extends Task {
 	public void notFoundError() {
 		out.print("HTTP/1.1 404 Not Found\r\n");
 		out.print("Date: " + DateUtil.now() + "\r\n");
-		out.print("Server: " + WebServer.HTTP_HEADER_FIELD_SERVER + "\r\n");
+		out.print("Server: Sfera\r\n");
 		out.write("Cache-Control: max-age=0, no-cache, no-store\r\n");
 		out.print("Content-length: 0\r\n");
 		out.print("\r\n");
@@ -375,7 +375,7 @@ public class ConnectionHandler extends Task {
 	private void ok(String body, String contentType) {
 		out.print("HTTP/1.1 200 OK\r\n");
         out.print("Date: " + DateUtil.now() + "\r\n");
-        out.print("Server: " + WebServer.HTTP_HEADER_FIELD_SERVER + "\r\n");
+        out.print("Server: Sfera\r\n");
         out.write("Cache-Control: max-age=0, no-cache, no-store\r\n");
         if (contentType != null) {
         	out.print("Content-type: " + contentType + "\r\n");
@@ -421,7 +421,7 @@ public class ConnectionHandler extends Task {
 	private void setTokenCookie(String tokenUUID) {
 		out.print("HTTP/1.1 200 OK\r\n");
 		out.print("Date: " + DateUtil.now() + "\r\n");
-		out.print("Server: " + WebServer.HTTP_HEADER_FIELD_SERVER + "\r\n");
+		out.print("Server: Sfera\r\n");
 		if (tokenUUID == null) {
 			out.print("Set-Cookie: token=removed; Path=/; Max-Age=0\r\n");
 		} else {

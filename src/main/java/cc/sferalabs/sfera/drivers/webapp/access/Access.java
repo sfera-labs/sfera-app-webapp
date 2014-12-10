@@ -1,5 +1,6 @@
 package cc.sferalabs.sfera.drivers.webapp.access;
 
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -16,39 +17,43 @@ import java.util.concurrent.ConcurrentSkipListMap;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
-import cc.sferalabs.sfera.core.Sfera;
 import cc.sferalabs.sfera.drivers.webapp.HttpRequestHeader;
 import cc.sferalabs.sfera.drivers.webapp.WebServer;
 
 public abstract class Access {
-	
-	private static final Map<String, User> users = new ConcurrentSkipListMap<String, User>(String.CASE_INSENSITIVE_ORDER);
+
+	private static final Map<String, User> users = new ConcurrentSkipListMap<String, User>(
+			String.CASE_INSENSITIVE_ORDER);
 	private static final Map<String, Token> tokens = new ConcurrentHashMap<String, Token>();
-	
-	private static final Path USERS_FILE_PATH = Paths.get("data/webserver/passwd");
-	
+
+	private static final Path USERS_FILE_PATH = Paths
+			.get("data/webserver/passwd");
+
 	/**
 	 * 
 	 * @throws Exception
 	 */
 	public static void init(WebServer webServer) throws Exception {
-		List<String> lines = Files.readAllLines(USERS_FILE_PATH, Sfera.CHARSET);
+		List<String> lines = Files.readAllLines(USERS_FILE_PATH,
+				StandardCharsets.UTF_8);
 		int lineNum = 0;
 		for (String line : lines) {
-	    	line = line.trim();
-	    	if (line.length() > 0) {
-		    	try {
-			    	String[] splitted = line.split(":");
-			    	User u = new User(splitted[0], splitted[1], splitted[2]);
-			    	users.put(u.getUsername(), u);
-		    	} catch (Exception e) {
-		    		webServer.getLogger().error("error reading file " + USERS_FILE_PATH + " on line " + lineNum);
-		    	}
-	    	}
-	    	lineNum++;
-	    }
+			line = line.trim();
+			if (line.length() > 0) {
+				try {
+					String[] splitted = line.split(":");
+					User u = new User(splitted[0], splitted[1], splitted[2]);
+					users.put(u.getUsername(), u);
+				} catch (Exception e) {
+					webServer.getLogger().error(
+							"error reading file " + USERS_FILE_PATH
+									+ " on line " + lineNum);
+				}
+			}
+			lineNum++;
+		}
 	}
-	
+
 	/**
 	 * 
 	 * @param username
@@ -56,23 +61,25 @@ public abstract class Access {
 	 * @throws UsernameAlreadyUsedException
 	 * @throws Exception
 	 */
-	public static void addUser(String username, String plainPassword) throws UsernameAlreadyUsedException, Exception {
+	public static void addUser(String username, String plainPassword)
+			throws UsernameAlreadyUsedException, Exception {
 		if (existsUser(username)) {
 			throw new UsernameAlreadyUsedException();
 		}
-		
+
 		byte[] salt = generateSalt();
-		byte[] hashedPassword = getEncryptedPassword(plainPassword, salt);	
-	
+		byte[] hashedPassword = getEncryptedPassword(plainPassword, salt);
+
 		users.put(username, new User(username, hashedPassword, salt));
-		
+
 		String userLine = username + ":";
 		userLine += Base64.getEncoder().encodeToString(hashedPassword) + ":";
 		userLine += Base64.getEncoder().encodeToString(salt) + "\n";
-		
-		Files.write(USERS_FILE_PATH, userLine.getBytes(Sfera.CHARSET), StandardOpenOption.APPEND);
+
+		Files.write(USERS_FILE_PATH, userLine.getBytes(StandardCharsets.UTF_8),
+				StandardOpenOption.APPEND);
 	}
-	
+
 	/**
 	 * 
 	 * @param username
@@ -81,7 +88,7 @@ public abstract class Access {
 	private static boolean existsUser(String username) {
 		return users.containsKey(username);
 	}
-	
+
 	/**
 	 * 
 	 * @param username
@@ -89,20 +96,21 @@ public abstract class Access {
 	 * @return
 	 * @throws Exception
 	 */
-	public static User authenticate(String username, String attemptedPassword) throws Exception {
+	public static User authenticate(String username, String attemptedPassword)
+			throws Exception {
 		User u = users.get(username);
 		if (u == null) {
 			return null;
 		}
-		
-		byte[] hashedPassword = getEncryptedPassword(attemptedPassword, u.salt); 
+
+		byte[] hashedPassword = getEncryptedPassword(attemptedPassword, u.salt);
 		if (Arrays.equals(hashedPassword, u.hashedPassword)) {
 			return u;
 		}
-		
+
 		return null;
 	}
-	
+
 	/**
 	 * 
 	 * @return
@@ -115,7 +123,7 @@ public abstract class Access {
 
 		return salt;
 	}
-	
+
 	/**
 	 * 
 	 * @param password
@@ -123,8 +131,10 @@ public abstract class Access {
 	 * @return
 	 * @throws Exception
 	 */
-	private static byte[] getEncryptedPassword(String password, byte[] salt) throws Exception {
-		KeySpec spec = new PBEKeySpec(password.toCharArray(), salt, 20000, 20 * 8);
+	private static byte[] getEncryptedPassword(String password, byte[] salt)
+			throws Exception {
+		KeySpec spec = new PBEKeySpec(password.toCharArray(), salt, 20000,
+				20 * 8);
 		SecretKeyFactory f = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
 
 		return f.generateSecret(spec).getEncoded();
@@ -133,13 +143,14 @@ public abstract class Access {
 	/**
 	 * 
 	 * @param user
-	 * @param httpRequestHeader 
+	 * @param httpRequestHeader
 	 * @return
 	 */
-	public static String assignToken(User user, HttpRequestHeader httpRequestHeader) {
+	public static String assignToken(User user,
+			HttpRequestHeader httpRequestHeader) {
 		Token token = new Token(user, httpRequestHeader);
 		tokens.put(token.getUUID(), token);
-        return token.getUUID();
+		return token.getUUID();
 	}
 
 	/**
@@ -148,7 +159,8 @@ public abstract class Access {
 	 * @param httpRequestHeader
 	 * @return
 	 */
-	public static Token getToken(String tokenUUID, HttpRequestHeader httpRequestHeader) {
+	public static Token getToken(String tokenUUID,
+			HttpRequestHeader httpRequestHeader) {
 		Token token = tokens.get(tokenUUID);
 		if (token == null) {
 			return null;
@@ -160,7 +172,7 @@ public abstract class Access {
 		if (token.match(httpRequestHeader)) {
 			return token;
 		}
-		
+
 		return null;
 	}
 

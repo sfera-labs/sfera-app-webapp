@@ -3,6 +3,7 @@ package cc.sferalabs.sfera.drivers.webapp;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
@@ -26,7 +27,6 @@ import javax.xml.stream.events.XMLEvent;
 
 import cc.sferalabs.sfera.core.Configuration;
 import cc.sferalabs.sfera.core.FilesWatcher;
-import cc.sferalabs.sfera.core.Sfera;
 import cc.sferalabs.sfera.core.Task;
 import cc.sferalabs.sfera.drivers.webapp.HttpRequestHeader.Method;
 import cc.sferalabs.sfera.drivers.webapp.access.Token;
@@ -219,7 +219,7 @@ public class InterfaceCache {
 	 */
 	private void createInterfaceCSS() throws IOException {
 		try (BufferedWriter writer = Files.newBufferedWriter(
-				interfaceTmpCacheRoot.resolve("style.css"), Sfera.CHARSET)) {
+				interfaceTmpCacheRoot.resolve("style.css"), StandardCharsets.UTF_8)) {
 
 			writeContentFrom("skins/" + skin + "/style.css", writer);
 
@@ -246,7 +246,7 @@ public class InterfaceCache {
 		try (BufferedWriter writer = Files
 				.newBufferedWriter(
 						interfaceTmpCacheRoot.resolve("login/style.css"),
-						Sfera.CHARSET)) {
+						StandardCharsets.UTF_8)) {
 
 			writeContentFrom("skins/" + skin + "/login/style.css", writer);
 		}
@@ -258,7 +258,7 @@ public class InterfaceCache {
 	 */
 	private void createInterfaceCode() throws IOException {
 		try (BufferedWriter writer = Files.newBufferedWriter(
-				interfaceTmpCacheRoot.resolve("code.js"), Sfera.CHARSET)) {
+				interfaceTmpCacheRoot.resolve("code.js"), StandardCharsets.UTF_8)) {
 
 			try {
 				writeContentFrom("code/client.min.js", writer);
@@ -300,7 +300,7 @@ public class InterfaceCache {
 	 */
 	private void createLoginCode() throws IOException {
 		try (BufferedWriter writer = Files.newBufferedWriter(
-				interfaceTmpCacheRoot.resolve("login/code.js"), Sfera.CHARSET)) {
+				interfaceTmpCacheRoot.resolve("login/code.js"), StandardCharsets.UTF_8)) {
 
 			try {
 				writeContentFrom("code/login.min.js", writer);
@@ -323,7 +323,7 @@ public class InterfaceCache {
 				.getResourceFromPluginsIfNotInLocalDirectory(WebServer.ROOT
 						.resolve(file));
 		try (BufferedReader reader = Files.newBufferedReader(filePath,
-				Sfera.CHARSET)) {
+				StandardCharsets.UTF_8)) {
 			String line = null;
 			while ((line = reader.readLine()) != null) {
 				writer.write(line);
@@ -350,7 +350,7 @@ public class InterfaceCache {
 		Set<String> imgs = new HashSet<String>();
 		List<String> lines = new ArrayList<String>();
 		try (BufferedReader reader = Files.newBufferedReader(indexPath,
-				Sfera.CHARSET)) {
+				StandardCharsets.UTF_8)) {
 			boolean manifestReplaced = false;
 			String line = null;
 			while ((line = reader.readLine()) != null) {
@@ -378,7 +378,7 @@ public class InterfaceCache {
 			}
 		}
 
-		Files.write(interfaceTmpCacheRoot.resolve(target), lines, Sfera.CHARSET);
+		Files.write(interfaceTmpCacheRoot.resolve(target), lines, StandardCharsets.UTF_8);
 
 		return imgs;
 	}
@@ -477,7 +477,7 @@ public class InterfaceCache {
 	private void createManifest(String path, Set<Path> resources)
 			throws IOException {
 		try (BufferedWriter writer = Files.newBufferedWriter(
-				interfaceTmpCacheRoot.resolve(path), Sfera.CHARSET)) {
+				interfaceTmpCacheRoot.resolve(path), StandardCharsets.UTF_8)) {
 
 			writer.write("CACHE MANIFEST\r\n\r\n# ");
 			writer.write(DateUtil.now());
@@ -512,7 +512,7 @@ public class InterfaceCache {
 			XMLStreamException {
 		XMLEventWriter eventWriter = null;
 		try (BufferedWriter out = Files.newBufferedWriter(
-				interfaceTmpCacheRoot.resolve("dictionary.xml"), Sfera.CHARSET)) {
+				interfaceTmpCacheRoot.resolve("dictionary.xml"), StandardCharsets.UTF_8)) {
 			eventWriter = OUTPUT_FACTORY.createXMLEventWriter(out);
 
 			StartDocument startDocument = EVENT_FACTORY.createStartDocument();
@@ -560,7 +560,7 @@ public class InterfaceCache {
 							.resolve("objects/" + obj + "/" + obj + ".xml"));
 
 			try (BufferedReader in = Files.newBufferedReader(objXmlPath,
-					Sfera.CHARSET)) {
+					StandardCharsets.UTF_8)) {
 				eventReader = INPUT_FACTORY.createXMLEventReader(in);
 				while (eventReader.hasNext()) {
 					XMLEvent event = eventReader.nextEvent();
@@ -622,7 +622,7 @@ public class InterfaceCache {
 
 		XMLEventReader eventReader = null;
 		try (BufferedReader in = Files.newBufferedReader(skinXmlPath,
-				Sfera.CHARSET)) {
+				StandardCharsets.UTF_8)) {
 			eventReader = INPUT_FACTORY.createXMLEventReader(in);
 			boolean nextIsIconSet = false;
 			while (eventReader.hasNext()) {
@@ -667,7 +667,7 @@ public class InterfaceCache {
 
 		XMLEventReader eventReader = null;
 		try (BufferedReader in = Files.newBufferedReader(cacheXml,
-				Sfera.CHARSET)) {
+				StandardCharsets.UTF_8)) {
 			eventReader = INPUT_FACTORY.createXMLEventReader(in);
 
 			while (eventReader.hasNext()) {
@@ -719,7 +719,7 @@ public class InterfaceCache {
 				.getResourceFromPluginsIfNotInLocalDirectory(file);
 
 		try (BufferedReader reader = Files.newBufferedReader(filePath,
-				Sfera.CHARSET)) {
+				StandardCharsets.UTF_8)) {
 			eventWriter.add(eventFactory.createStartElement("", "",
 					elementLocalName));
 
@@ -862,8 +862,7 @@ public class InterfaceCache {
 			if (lastModified <= httpRequestHeader.getIfModifiedSinceTime()) {
 				connectionHandler.write("HTTP/1.1 304 Not Modified\r\n");
 				connectionHandler.write("Date: " + DateUtil.now() + "\r\n");
-				connectionHandler.write("Server: "
-						+ WebServer.HTTP_HEADER_FIELD_SERVER + "\r\n");
+				connectionHandler.write("Server: Sfera \r\n");
 				connectionHandler.write("Last-Modified: "
 						+ DateUtil.format(lastModified) + "\r\n");
 				connectionHandler
@@ -878,8 +877,7 @@ public class InterfaceCache {
 
 				connectionHandler.write("HTTP/1.1 200 OK\r\n");
 				connectionHandler.write("Date: " + DateUtil.now() + "\r\n");
-				connectionHandler.write("Server: "
-						+ WebServer.HTTP_HEADER_FIELD_SERVER + "\r\n");
+				connectionHandler.write("Server: Sfera \r\n");
 				connectionHandler.write("Last-Modified: "
 						+ DateUtil.format(lastModified) + "\r\n");
 				connectionHandler
