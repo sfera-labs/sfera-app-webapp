@@ -67,15 +67,13 @@ public class WebServer extends Driver {
 		connectionsQ = new ArrayBlockingQueue<>(
 				ConnectionHandler.getMaxRequestThreads() + 50);
 
-		Integer http_port = configuration.getIntProperty("http_port", null);
+		Integer http_port = configuration.getIntProperty("http_port", 80);
 		Integer https_port = configuration.getIntProperty("https_port", null);
 
 		try {
 			socketListners = new ArrayList<SocketListner>();
-			if (http_port != null) {
-				socketListners.add(new HttpSocketListner(this, http_port,
-						connectionsQ));
-			}
+			socketListners.add(new HttpSocketListner(this, http_port,
+					connectionsQ));
 			if (https_port != null) {
 				String sslPassword = configuration.getProperty("ssl_password",
 						"sferapass");
@@ -106,8 +104,13 @@ public class WebServer extends Driver {
 
 	@Override
 	protected void onQuit() throws InterruptedException {
-		for (SocketListner sl : socketListners) {
-			sl.close();
+		if (socketListners != null) {
+			for (SocketListner sl : socketListners) {
+				try {
+					sl.close();
+				} catch (Exception ignore) {
+				}
+			}
 		}
 		ConnectionHandler.quit();
 	}

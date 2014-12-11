@@ -38,7 +38,7 @@ public class ResourcesUtil {
 	 */
 	public static void lookForPluginsOverwritingWebapp() throws IOException {
 		pluginsOverwritingWebapp = new TreeSet<Path>(PLUGINS_NAME_COMPARATOR);
-		for (Plugin plugin : Sfera.getPlugins()) {
+		for (Plugin plugin : Sfera.getPlugins().values()) {
 			try (FileSystem pluginFs = FileSystems.newFileSystem(plugin.getPath(), null)) {
 				Path webappDir = pluginFs.getPath("webapp");
 				if (Files.exists(webappDir) && Files.isDirectory(webappDir)) {

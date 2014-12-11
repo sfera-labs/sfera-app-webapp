@@ -2,7 +2,6 @@ package cc.sferalabs.sfera.drivers.webapp.access;
 
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.security.SecureRandom;
@@ -26,15 +25,14 @@ public abstract class Access {
 			String.CASE_INSENSITIVE_ORDER);
 	private static final Map<String, Token> tokens = new ConcurrentHashMap<String, Token>();
 
-	private static final Path USERS_FILE_PATH = Paths
-			.get("data/webserver/passwd");
+	private static final String USERS_FILE_PATH = "data/webapp/passwd";
 
 	/**
 	 * 
 	 * @throws Exception
 	 */
 	public static void init(WebServer webServer) throws Exception {
-		List<String> lines = Files.readAllLines(USERS_FILE_PATH,
+		List<String> lines = Files.readAllLines(Paths.get(USERS_FILE_PATH),
 				StandardCharsets.UTF_8);
 		int lineNum = 0;
 		for (String line : lines) {
@@ -76,7 +74,8 @@ public abstract class Access {
 		userLine += Base64.getEncoder().encodeToString(hashedPassword) + ":";
 		userLine += Base64.getEncoder().encodeToString(salt) + "\n";
 
-		Files.write(USERS_FILE_PATH, userLine.getBytes(StandardCharsets.UTF_8),
+		Files.write(Paths.get(USERS_FILE_PATH),
+				userLine.getBytes(StandardCharsets.UTF_8),
 				StandardOpenOption.APPEND);
 	}
 
