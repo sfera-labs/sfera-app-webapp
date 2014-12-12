@@ -99,7 +99,7 @@ public class InterfaceCache {
 			interfaces = new HashSet<String>();
 			try {
 				for (String interfaceName : ResourcesUtil
-						.listDirectoriesNamesInDirectory(interfacesPath, true)) {
+						.listDirectoriesNamesIn(interfacesPath, true)) {
 					try {
 						createCacheFor(webServer, interfaceName);
 						interfaces.add(interfaceName);
@@ -111,7 +111,7 @@ public class InterfaceCache {
 				}
 
 				for (String interfaceName : ResourcesUtil
-						.listDirectoriesNamesInDirectory(CACHE_ROOT, false)) {
+						.listDirectoriesNamesIn(CACHE_ROOT, false)) {
 					if (!interfaces.contains(interfaceName)) {
 						ResourcesUtil.deleteRecursive(CACHE_ROOT
 								.resolve(interfaceName + "/"));
@@ -219,7 +219,8 @@ public class InterfaceCache {
 	 */
 	private void createInterfaceCSS() throws IOException {
 		try (BufferedWriter writer = Files.newBufferedWriter(
-				interfaceTmpCacheRoot.resolve("style.css"), StandardCharsets.UTF_8)) {
+				interfaceTmpCacheRoot.resolve("style.css"),
+				StandardCharsets.UTF_8)) {
 
 			writeContentFrom("skins/" + skin + "/style.css", writer);
 
@@ -243,10 +244,9 @@ public class InterfaceCache {
 	 * @throws IOException
 	 */
 	private void createLoginCSS() throws IOException {
-		try (BufferedWriter writer = Files
-				.newBufferedWriter(
-						interfaceTmpCacheRoot.resolve("login/style.css"),
-						StandardCharsets.UTF_8)) {
+		try (BufferedWriter writer = Files.newBufferedWriter(
+				interfaceTmpCacheRoot.resolve("login/style.css"),
+				StandardCharsets.UTF_8)) {
 
 			writeContentFrom("skins/" + skin + "/login/style.css", writer);
 		}
@@ -258,7 +258,8 @@ public class InterfaceCache {
 	 */
 	private void createInterfaceCode() throws IOException {
 		try (BufferedWriter writer = Files.newBufferedWriter(
-				interfaceTmpCacheRoot.resolve("code.js"), StandardCharsets.UTF_8)) {
+				interfaceTmpCacheRoot.resolve("code.js"),
+				StandardCharsets.UTF_8)) {
 
 			try {
 				writeContentFrom("code/client.min.js", writer);
@@ -281,9 +282,8 @@ public class InterfaceCache {
 
 			String interfacePath = "interfaces/" + interfaceName + "/";
 			try {
-				Set<String> files = ResourcesUtil
-						.listRegularFilesNamesInDirectory(
-								WebServer.ROOT.resolve(interfacePath), true);
+				Set<String> files = ResourcesUtil.listRegularFilesNamesIn(
+						WebServer.ROOT.resolve(interfacePath), true);
 				for (String file : files) {
 					if (file.toLowerCase().endsWith(".js")) {
 						writeContentFrom(interfacePath + file, writer);
@@ -300,7 +300,8 @@ public class InterfaceCache {
 	 */
 	private void createLoginCode() throws IOException {
 		try (BufferedWriter writer = Files.newBufferedWriter(
-				interfaceTmpCacheRoot.resolve("login/code.js"), StandardCharsets.UTF_8)) {
+				interfaceTmpCacheRoot.resolve("login/code.js"),
+				StandardCharsets.UTF_8)) {
 
 			try {
 				writeContentFrom("code/login.min.js", writer);
@@ -319,9 +320,7 @@ public class InterfaceCache {
 	 */
 	private void writeContentFrom(String file, BufferedWriter writer)
 			throws IOException, NoSuchFileException {
-		Path filePath = ResourcesUtil
-				.getResourceFromPluginsIfNotInLocalDirectory(WebServer.ROOT
-						.resolve(file));
+		Path filePath = ResourcesUtil.getResource(WebServer.ROOT.resolve(file));
 		try (BufferedReader reader = Files.newBufferedReader(filePath,
 				StandardCharsets.UTF_8)) {
 			String line = null;
@@ -343,9 +342,8 @@ public class InterfaceCache {
 	 */
 	private Set<String> createIndex(String source, String target,
 			String manifestPath, boolean extractImages) throws IOException {
-		Path indexPath = ResourcesUtil
-				.getResourceFromPluginsIfNotInLocalDirectory(WebServer.ROOT
-						.resolve(source));
+		Path indexPath = ResourcesUtil.getResource(WebServer.ROOT
+				.resolve(source));
 
 		Set<String> imgs = new HashSet<String>();
 		List<String> lines = new ArrayList<String>();
@@ -378,7 +376,8 @@ public class InterfaceCache {
 			}
 		}
 
-		Files.write(interfaceTmpCacheRoot.resolve(target), lines, StandardCharsets.UTF_8);
+		Files.write(interfaceTmpCacheRoot.resolve(target), lines,
+				StandardCharsets.UTF_8);
 
 		return imgs;
 	}
@@ -460,9 +459,9 @@ public class InterfaceCache {
 		Files.createDirectories(interfaceTmpCacheRoot.resolve("login/icons/"));
 
 		for (String img : images) {
-			Files.copy(ResourcesUtil
-					.getResourceFromPluginsIfNotInLocalDirectory(WebServer.ROOT
-							.resolve("icons/" + iconSet + "/" + img)),
+			Files.copy(
+					ResourcesUtil.getResource(WebServer.ROOT.resolve("icons/"
+							+ iconSet + "/" + img)),
 					interfaceTmpCacheRoot.resolve("login/icons/" + img));
 		}
 
@@ -512,7 +511,8 @@ public class InterfaceCache {
 			XMLStreamException {
 		XMLEventWriter eventWriter = null;
 		try (BufferedWriter out = Files.newBufferedWriter(
-				interfaceTmpCacheRoot.resolve("dictionary.xml"), StandardCharsets.UTF_8)) {
+				interfaceTmpCacheRoot.resolve("dictionary.xml"),
+				StandardCharsets.UTF_8)) {
 			eventWriter = OUTPUT_FACTORY.createXMLEventWriter(out);
 
 			StartDocument startDocument = EVENT_FACTORY.createStartDocument();
@@ -555,9 +555,8 @@ public class InterfaceCache {
 
 		for (String obj : objects) {
 			XMLEventReader eventReader = null;
-			Path objXmlPath = ResourcesUtil
-					.getResourceFromPluginsIfNotInLocalDirectory(WebServer.ROOT
-							.resolve("objects/" + obj + "/" + obj + ".xml"));
+			Path objXmlPath = ResourcesUtil.getResource(WebServer.ROOT
+					.resolve("objects/" + obj + "/" + obj + ".xml"));
 
 			try (BufferedReader in = Files.newBufferedReader(objXmlPath,
 					StandardCharsets.UTF_8)) {
@@ -616,9 +615,8 @@ public class InterfaceCache {
 	 */
 	private void addSkinDefinitionAndExtractIconSet(XMLEventWriter eventWriter)
 			throws IOException, XMLStreamException {
-		Path skinXmlPath = ResourcesUtil
-				.getResourceFromPluginsIfNotInLocalDirectory(WebServer.ROOT
-						.resolve("skins/" + skin + "/" + "definition.xml"));
+		Path skinXmlPath = ResourcesUtil.getResource(WebServer.ROOT
+				.resolve("skins/" + skin + "/" + "definition.xml"));
 
 		XMLEventReader eventReader = null;
 		try (BufferedReader in = Files.newBufferedReader(skinXmlPath,
@@ -659,9 +657,8 @@ public class InterfaceCache {
 	 */
 	private void createInterfaceXmlAndExtractAttributes() throws IOException,
 			XMLStreamException {
-		Path indexXml = ResourcesUtil
-				.getResourceFromPluginsIfNotInLocalDirectory(WebServer.ROOT
-						.resolve("interfaces/" + interfaceName + "/index.xml"));
+		Path indexXml = ResourcesUtil.getResource(WebServer.ROOT
+				.resolve("interfaces/" + interfaceName + "/index.xml"));
 		Path cacheXml = interfaceTmpCacheRoot.resolve("index.xml");
 		Files.copy(indexXml, cacheXml);
 
@@ -715,8 +712,7 @@ public class InterfaceCache {
 			XMLEventFactory eventFactory) throws XMLStreamException,
 			IOException {
 
-		Path filePath = ResourcesUtil
-				.getResourceFromPluginsIfNotInLocalDirectory(file);
+		Path filePath = ResourcesUtil.getResource(file);
 
 		try (BufferedReader reader = Files.newBufferedReader(filePath,
 				StandardCharsets.UTF_8)) {

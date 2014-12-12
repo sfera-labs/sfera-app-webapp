@@ -42,8 +42,9 @@ public class WebServer extends Driver {
 				ConnectionHandler.init(configuration);
 				try {
 					ResourcesUtil.lookForPluginsOverwritingWebapp();
-				} catch (IOException e) {
+				} catch (Exception e) {
 					log.error("error scanning plugins directory: " + e);
+					e.printStackTrace();
 				}
 				try {
 					InterfaceCache.init(this, configuration);
