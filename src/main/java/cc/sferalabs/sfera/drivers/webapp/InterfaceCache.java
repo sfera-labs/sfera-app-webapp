@@ -25,6 +25,9 @@ import javax.xml.stream.events.StartDocument;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import cc.sferalabs.sfera.core.Configuration;
 import cc.sferalabs.sfera.core.FilesWatcher;
 import cc.sferalabs.sfera.core.Task;
@@ -52,6 +55,8 @@ public class InterfaceCache {
 	private static String defaultInterface;
 	private static boolean useApplicationCache;
 
+	private final static Logger logger = LogManager.getLogger();
+
 	private final String interfaceName;
 	private final Path interfaceCacheRoot;
 	private final Path interfaceTmpCacheRoot;
@@ -73,18 +78,19 @@ public class InterfaceCache {
 	}
 
 	/**
-	 * @param webServer
 	 * 
+	 * @param configuration
+	 * @throws Exception
 	 */
-	public synchronized static void init(WebServer webServer,
-			Configuration configuration) throws Exception {
+	public synchronized static void init(Configuration configuration)
+			throws Exception {
 		if (interfaces == null) {
 			defaultInterface = configuration.getProperty("default_interface",
 					null);
 			useApplicationCache = configuration.getBoolProperty(
 					"application_cache", true);
 
-			createCache(webServer);
+			createCache();
 		}
 	}
 
@@ -92,8 +98,7 @@ public class InterfaceCache {
 	 * 
 	 * @throws IOException
 	 */
-	private static void createCache(final WebServer webServer)
-			throws IOException {
+	private static void createCache() throws IOException {
 		Path interfacesPath = WebServer.ROOT.resolve("interfaces/");
 		try {
 			interfaces = new HashSet<String>();
@@ -101,12 +106,11 @@ public class InterfaceCache {
 				for (String interfaceName : ResourcesUtil
 						.listDirectoriesNamesIn(interfacesPath, true)) {
 					try {
-						createCacheFor(webServer, interfaceName);
+						createCacheFor(interfaceName);
 						interfaces.add(interfaceName);
 					} catch (Exception e) {
-						webServer.getLogger().error(
-								"error creating cache for interface '"
-										+ interfaceName + "': " + e);
+						logger.error("Error creating cache for interface '"
+								+ interfaceName + "'", e);
 					}
 				}
 
@@ -129,16 +133,14 @@ public class InterfaceCache {
 					@Override
 					public void execute() {
 						try {
-							createCache(webServer);
+							createCache();
 						} catch (IOException e) {
-							webServer.getLogger().error(
-									"error creating cache: " + e);
+							logger.error("Error creating cache", e);
 						}
 					}
 				});
 			} catch (Exception e) {
-				webServer.getLogger().error(
-						"error registering WebApp files watcher: " + e);
+				logger.error("Error registering WebApp files watcher", e);
 			}
 		}
 	}
@@ -149,15 +151,13 @@ public class InterfaceCache {
 	 * @throws IOException
 	 * @throws XMLStreamException
 	 */
-	private synchronized static void createCacheFor(WebServer webServer,
-			String interfaceName) throws IOException, XMLStreamException {
-		webServer.getLogger().debug(
-				"creating cache for interface: " + interfaceName);
+	private synchronized static void createCacheFor(String interfaceName)
+			throws IOException, XMLStreamException {
+		logger.debug("Creating cache for interface '{}'", interfaceName);
 		InterfaceCache icc = new InterfaceCache(interfaceName);
 		icc.create();
 		ResourcesUtil.release();
-		webServer.getLogger().debug(
-				"created cache for interface: " + interfaceName);
+		logger.debug("Created cache for interface '{}'", interfaceName);
 	}
 
 	/**
@@ -743,8 +743,8 @@ public class InterfaceCache {
 	 * @return
 	 * @throws IOException
 	 */
-	public static boolean processFileRequest(WebServer webServer, String uri,
-			Token token, HttpRequestHeader httpRequestHeader,
+	public static boolean processFileRequest(String uri, Token token,
+			HttpRequestHeader httpRequestHeader,
 			ConnectionHandler connectionHandler) throws IOException {
 
 		if (uri.charAt(0) == '/') {
@@ -753,8 +753,7 @@ public class InterfaceCache {
 		Path path = CACHE_ROOT.resolve(uri).toAbsolutePath().normalize();
 
 		if (!path.startsWith(ABSOLUTE_CACHE_ROOT_PATH)) {
-			webServer.getLogger().warning(
-					"resource out of root requested: " + path);
+			logger.warn("Resource out of root requested: {}", path);
 			return false;
 		}
 
@@ -762,8 +761,8 @@ public class InterfaceCache {
 
 		String pathStr = path.toString();
 		if (pathStr.equals("favicon.ico") || pathStr.equals("favicon.png")) {
-			serveCacheFile(webServer, httpRequestHeader.method, path,
-					connectionHandler, httpRequestHeader);
+			serveCacheFile(httpRequestHeader.method, path, connectionHandler,
+					httpRequestHeader);
 			return true;
 		}
 
@@ -775,8 +774,8 @@ public class InterfaceCache {
 		}
 
 		if (!interfaces.contains(requestedInterface)) {
-			webServer.getLogger().warning(
-					"non-existing interface requested: " + requestedInterface);
+			logger.warn("Non-existing interface requested: {}",
+					requestedInterface);
 			return false;
 		}
 
@@ -787,8 +786,8 @@ public class InterfaceCache {
 		}
 
 		if (isLoginComponent(path)) { // GET /<interface>/login/...
-			serveCacheFile(webServer, httpRequestHeader.method, path,
-					connectionHandler, httpRequestHeader);
+			serveCacheFile(httpRequestHeader.method, path, connectionHandler,
+					httpRequestHeader);
 
 		} else {
 			if (isLoginAlias(path)) { // GET /<interface>/login
@@ -798,7 +797,7 @@ public class InterfaceCache {
 					return false;
 
 				} else {
-					serveCacheFile(webServer, httpRequestHeader.method,
+					serveCacheFile(httpRequestHeader.method,
 							path.resolve("index.html"), connectionHandler,
 							httpRequestHeader);
 				}
@@ -806,12 +805,11 @@ public class InterfaceCache {
 			} else if (isInterfaceAlias(path)) { // GET /<interface>
 				if (token != null) {
 					if (token.getUser().isAuthorized(path)) {
-						serveCacheFile(webServer, httpRequestHeader.method,
+						serveCacheFile(httpRequestHeader.method,
 								path.resolve("index.html"), connectionHandler,
 								httpRequestHeader);
 					} else {
-						webServer.getLogger().warning(
-								"unauthorized interface request: " + path);
+						logger.warn("Unauthorized interface request: {}", path);
 						return false;
 					}
 
@@ -823,12 +821,11 @@ public class InterfaceCache {
 
 			} else { // GET /<interface>/<any_other_resource>
 				if (token != null && token.getUser().isAuthorized(path)) {
-					serveCacheFile(webServer, httpRequestHeader.method, path,
+					serveCacheFile(httpRequestHeader.method, path,
 							connectionHandler, httpRequestHeader);
 
 				} else {
-					webServer.getLogger().debug(
-							"unauthorized file request: " + path);
+					logger.debug("Unauthorized file request: {}", path);
 					connectionHandler.notFoundError();
 				}
 			}
@@ -841,13 +838,12 @@ public class InterfaceCache {
 	 * 
 	 * @param method
 	 * @param path
-	 * @param out
-	 * @param dataOut
+	 * @param connectionHandler
 	 * @param httpRequestHeader
 	 * @throws IOException
 	 */
-	private synchronized static void serveCacheFile(WebServer webServer,
-			Method method, Path path, ConnectionHandler connectionHandler,
+	private synchronized static void serveCacheFile(Method method, Path path,
+			ConnectionHandler connectionHandler,
 			HttpRequestHeader httpRequestHeader) throws IOException {
 
 		path = ABSOLUTE_CACHE_ROOT_PATH.resolve(path);
@@ -893,9 +889,8 @@ public class InterfaceCache {
 				}
 			}
 		} catch (NoSuchFileException e) {
-			webServer.getLogger().warning(
-					"file not found: "
-							+ ABSOLUTE_CACHE_ROOT_PATH.relativize(path));
+			logger.warn("File not found: {}",
+					ABSOLUTE_CACHE_ROOT_PATH.relativize(path));
 			connectionHandler.notFoundError();
 		}
 	}

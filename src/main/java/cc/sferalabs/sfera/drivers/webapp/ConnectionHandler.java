@@ -13,6 +13,8 @@ import java.util.Map.Entry;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONObject;
 
 import cc.sferalabs.sfera.core.Configuration;
@@ -26,30 +28,33 @@ import cc.sferalabs.sfera.drivers.webapp.util.DateUtil;
 import cc.sferalabs.sfera.events.Event;
 
 public class ConnectionHandler extends Task {
-	
+
 	private static TasksManager tasksManager;
 
 	private static int maxRequestThreads;
 	private static final Object tasksManagerLock = new Object();
 
-	private WebServer webServer;
 	private final Connection connection;
 	private PrintWriter out;
 	private BufferedOutputStream dataOut;
 	private BufferedReader in;
-	
+
+	private final Logger logger;
+
 	/**
 	 * 
 	 * @param webServer
 	 * @param connection
 	 */
 	public ConnectionHandler(WebServer webServer, Connection connection) {
-		super(webServer.getId() + ":ConnectionHandler:" + connection.getSocket().getRemoteSocketAddress());
-		this.webServer = webServer;
+		super(webServer.getId() + ":ConnectionHandler:"
+				+ connection.getSocket().getRemoteSocketAddress());
 		this.connection = connection;
 		tasksManager.execute(this);
+		this.logger = LogManager.getLogger(getClass().getName() + "."
+				+ webServer.getId());
 	}
-	
+
 	/**
 	 * 
 	 * @param configuration
@@ -57,13 +62,14 @@ public class ConnectionHandler extends Task {
 	public static void init(Configuration configuration) {
 		synchronized (tasksManagerLock) {
 			if (tasksManager == null) {
-				maxRequestThreads = configuration.getIntProperty(
-						"max_threads",  Runtime.getRuntime().availableProcessors() * 128);
-				tasksManager = new TasksManager(Executors.newFixedThreadPool(maxRequestThreads));
+				maxRequestThreads = configuration.getIntProperty("max_threads",
+						Runtime.getRuntime().availableProcessors() * 128);
+				tasksManager = new TasksManager(
+						Executors.newFixedThreadPool(maxRequestThreads));
 			}
 		}
 	}
-	
+
 	/**
 	 * 
 	 * @return
@@ -71,12 +77,12 @@ public class ConnectionHandler extends Task {
 	public static int getMaxRequestThreads() {
 		return maxRequestThreads;
 	}
-	
+
 	/**
 	 * 
 	 */
 	public static void quit() {
-		synchronized (tasksManagerLock) {			
+		synchronized (tasksManagerLock) {
 			if (tasksManager != null) {
 				tasksManager.getExecutorService().shutdownNow();
 				tasksManager = null;
@@ -88,9 +94,11 @@ public class ConnectionHandler extends Task {
 	public void execute() {
 		try {
 			out = new PrintWriter(connection.getSocket().getOutputStream());
-			dataOut = new BufferedOutputStream(connection.getSocket().getOutputStream());
-			in = new BufferedReader(new InputStreamReader(connection.getSocket().getInputStream()));
-			
+			dataOut = new BufferedOutputStream(connection.getSocket()
+					.getOutputStream());
+			in = new BufferedReader(new InputStreamReader(connection
+					.getSocket().getInputStream()));
+
 			boolean keepAlive = true;
 			while (keepAlive) {
 				HttpRequestHeader httpRequestHeader = null;
@@ -99,25 +107,25 @@ public class ConnectionHandler extends Task {
 					if (reqLine.length() == 0) {
 						if (httpRequestHeader == null) {
 							keepAlive = false;
-							
+
 						} else {
 							if (httpRequestHeader.getConnectionClose()) {
 								keepAlive = false;
-							} 
-							
+							}
+
 							try {
 								if (!processRequest(httpRequestHeader)) {
 									keepAlive = false;
 								}
 							} catch (Exception e) {
-								webServer.getLogger().debug("error processing request: " + e);
+								logger.debug("Error processing request", e);
 								keepAlive = false;
 							}
 						}
-						
+
 						break;
 					}
-					
+
 					if (httpRequestHeader == null) {
 						try {
 							httpRequestHeader = new HttpRequestHeader(reqLine);
@@ -130,22 +138,32 @@ public class ConnectionHandler extends Task {
 						httpRequestHeader.addField(reqLine);
 					}
 				}
-				
+
 				if (reqLine == null) {
 					keepAlive = false;
 				}
 			}
-			
+
 		} catch (Exception e) {
-			webServer.getLogger().debug("connection exception: " + e);
-			
+			logger.debug("Connection exception", e);
+
 		} finally {
-			try { in.close(); } catch (Exception e) {}
-			try { out.close(); } catch (Exception e) {}
-			try { dataOut.close(); } catch (Exception e) {}
+			try {
+				in.close();
+			} catch (Exception e) {
+			}
+			try {
+				out.close();
+			} catch (Exception e) {
+			}
+			try {
+				dataOut.close();
+			} catch (Exception e) {
+			}
 		}
-		
-		webServer.getLogger().debug("connection " + connection.getSocket().getRemoteSocketAddress() + " terminated");
+
+		logger.debug("connection {} terminated", connection.getSocket()
+				.getRemoteSocketAddress());
 	}
 
 	/**
@@ -154,13 +172,18 @@ public class ConnectionHandler extends Task {
 	 * @return
 	 * @throws Exception
 	 */
-	private boolean processRequest(HttpRequestHeader httpRequestHeader) throws Exception {
+	private boolean processRequest(HttpRequestHeader httpRequestHeader)
+			throws Exception {
 		String uri = httpRequestHeader.getURI();
 		Token token = getToken(httpRequestHeader);
-		webServer.getLogger().debug("processing request from: " + connection.getSocket().getRemoteSocketAddress() + " URI: " + uri + (token == null ? "" : " User: " + token.getUser().getUsername()));
-		
+
+		logger.debug("Processing request from: {} URI: {} User: {}", connection
+				.getSocket().getRemoteSocketAddress(), uri,
+				token == null ? "--" : token.getUser().getUsername());
+
 		if (uri.startsWith(WebServer.API_BASE_URI)) {
-			HashMap<String, String> query = new HashMap<String, String>();;
+			HashMap<String, String> query = new HashMap<String, String>();
+			;
 			int qmIdx = uri.indexOf('?');
 			if (qmIdx >= 0) {
 				String queryString = uri.substring(qmIdx + 1);
@@ -172,11 +195,14 @@ public class ConnectionHandler extends Task {
 				}
 				uri = uri.substring(0, qmIdx);
 			}
-			
-			return processApiRequest(uri.substring(WebServer.API_BASE_URI.length()), token, query, httpRequestHeader);
-			
+
+			return processApiRequest(
+					uri.substring(WebServer.API_BASE_URI.length()), token,
+					query, httpRequestHeader);
+
 		} else {
-			return InterfaceCache.processFileRequest(webServer, uri, token, httpRequestHeader, this);
+			return InterfaceCache.processFileRequest(uri, token,
+					httpRequestHeader, this);
 		}
 	}
 
@@ -186,7 +212,8 @@ public class ConnectionHandler extends Task {
 	 * @return
 	 */
 	private Token getToken(HttpRequestHeader httpRequestHeader) {
-		String tokenUUID = getCookieValue("token", httpRequestHeader.getCookies());
+		String tokenUUID = getCookieValue("token",
+				httpRequestHeader.getCookies());
 		if (tokenUUID == null) {
 			return null;
 		}
@@ -202,33 +229,35 @@ public class ConnectionHandler extends Task {
 	 * @return
 	 * @throws Exception
 	 */
-	private boolean processApiRequest(String request, Token token, HashMap<String, String> query, HttpRequestHeader httpRequestHeader) throws Exception {
+	private boolean processApiRequest(String request, Token token,
+			HashMap<String, String> query, HttpRequestHeader httpRequestHeader)
+			throws Exception {
 		if (request.equals("login")) {
 			login(token, query, httpRequestHeader);
 			return true;
 		}
-		
+
 		if (token == null) {
 			notAuthorizedError();
 			return true;
 		}
-		
+
 		if (request.equals("logout")) {
 			logout(token);
 			return true;
 		}
-		
+
 		if (request.equals("subscribe")) {
 			subscribe(token, query);
 			return true;
 		}
-		
+
 		if (request.startsWith("state/")) {
 			state(request.substring(6), token, query);
 			return true;
 		}
-		
-		webServer.getLogger().warning("unknown API request: " + request);
+
+		logger.warn("unknown API request: {}", request);
 		return false;
 	}
 
@@ -241,27 +270,28 @@ public class ConnectionHandler extends Task {
 		String id = query.get("id");
 		String nodes = query.get("nodes");
 		id = token.subscribe(id, nodes);
-		
+
 		ok("{\"id\":\"" + id + "\"}", "application/json");
 	}
-	
+
 	/**
 	 * 
 	 * @param id
 	 * @param token
 	 * @param query
-	 * @throws InterruptedException 
-	 * @throws IOException 
+	 * @throws InterruptedException
+	 * @throws IOException
 	 */
 	@SuppressWarnings("unchecked")
-	private void state(String id, Token token, HashMap<String, String> query) throws InterruptedException, IOException {
+	private void state(String id, Token token, HashMap<String, String> query)
+			throws InterruptedException, IOException {
 		long ts;
 		try {
 			ts = Long.parseLong(query.get("ts"));
 		} catch (NumberFormatException nfe) {
 			ts = 0;
 		}
-		
+
 		Subscription s = token.getSubscription(id);
 		if (s != null) {
 			Map<String, Event> changes = s.pollChanges(ts, 5, TimeUnit.SECONDS);
@@ -272,12 +302,12 @@ public class ConnectionHandler extends Task {
 				nodes.put(change.getKey(), change.getValue().getValue());
 			}
 			obj.put("nodes", nodes);
-			
+
 			StringWriter out = new StringWriter();
 			obj.writeJSONString(out);
-			
+
 			ok(out.toString(), "application/json");
-			
+
 		} else {
 			notFoundError();
 		}
@@ -290,17 +320,18 @@ public class ConnectionHandler extends Task {
 	 * @param httpRequestHeader
 	 * @throws Exception
 	 */
-	private void login(Token token, HashMap<String, String> query, HttpRequestHeader httpRequestHeader) throws Exception {
+	private void login(Token token, HashMap<String, String> query,
+			HttpRequestHeader httpRequestHeader) throws Exception {
 		String username = query.get("user");
 		String password = query.get("password");
-		
+
 		if (username == null || password == null) {
 			if (token != null) {
 				ok(null, null);
 			} else {
 				notAuthorizedError();
 			}
-			
+
 		} else {
 			if (token != null) {
 				Access.removeToken(token.getUUID());
@@ -309,22 +340,22 @@ public class ConnectionHandler extends Task {
 			if (user != null) {
 				String tokenUUID = Access.assignToken(user, httpRequestHeader);
 				setTokenCookie(tokenUUID);
-				webServer.getLogger().info("login: " + username);
-				
+				logger.info("login: {}", username);
+
 			} else {
-				webServer.getLogger().warning("failed login attempt - username: " + username);
+				logger.warn("failed login attempt - username: {}", username);
 				notAuthorizedError();
 			}
 		}
 	}
-	
+
 	/**
 	 * 
 	 * @param token
 	 */
 	private void logout(Token token) {
 		Access.removeToken(token.getUUID());
-		webServer.getLogger().info("logout: " + token.getUser().getUsername());
+		logger.info("logout: {}", token.getUser().getUsername());
 		setTokenCookie(null);
 	}
 
@@ -340,7 +371,7 @@ public class ConnectionHandler extends Task {
 		out.print("\r\n");
 		out.flush();
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -352,7 +383,7 @@ public class ConnectionHandler extends Task {
 		out.print("\r\n");
 		out.flush();
 	}
-	
+
 	/**
 	 * 
 	 * @param out
@@ -366,7 +397,7 @@ public class ConnectionHandler extends Task {
 		out.print("\r\n");
 		out.flush();
 	}
-	
+
 	/**
 	 * 
 	 * @param body
@@ -374,24 +405,25 @@ public class ConnectionHandler extends Task {
 	 */
 	private void ok(String body, String contentType) {
 		out.print("HTTP/1.1 200 OK\r\n");
-        out.print("Date: " + DateUtil.now() + "\r\n");
-        out.print("Server: Sfera\r\n");
-        out.write("Cache-Control: max-age=0, no-cache, no-store\r\n");
-        if (contentType != null) {
-        	out.print("Content-type: " + contentType + "\r\n");
-        }
-        if (body != null) {
-        	out.print("Content-length: " + body.getBytes(Charset.forName("UTF-8")).length + "\r\n");
-        } else {
-        	out.print("Content-length: 0\r\n");
-        }
-        out.print("\r\n");
-        if (body != null) {
-        	out.print(body);
-        }
-        out.flush();
+		out.print("Date: " + DateUtil.now() + "\r\n");
+		out.print("Server: Sfera\r\n");
+		out.write("Cache-Control: max-age=0, no-cache, no-store\r\n");
+		if (contentType != null) {
+			out.print("Content-type: " + contentType + "\r\n");
+		}
+		if (body != null) {
+			out.print("Content-length: "
+					+ body.getBytes(Charset.forName("UTF-8")).length + "\r\n");
+		} else {
+			out.print("Content-length: 0\r\n");
+		}
+		out.print("\r\n");
+		if (body != null) {
+			out.print(body);
+		}
+		out.flush();
 	}
-	
+
 	/**
 	 * 
 	 * @param page
@@ -400,7 +432,7 @@ public class ConnectionHandler extends Task {
 	public void redirectTo(String page, HttpRequestHeader httpRequestHeader) {
 		out.print("HTTP/1.1 307 Temporary Redirect\r\n");
 		out.print("Location: ");
-		if (httpRequestHeader.getHost() != null) {				
+		if (httpRequestHeader.getHost() != null) {
 			out.print(connection.getProtocol());
 			out.print("://");
 			out.print(httpRequestHeader.getHost());
@@ -413,7 +445,7 @@ public class ConnectionHandler extends Task {
 		out.print("\r\n");
 		out.flush();
 	}
-	
+
 	/**
 	 * 
 	 * @param tokenUUID
@@ -425,14 +457,15 @@ public class ConnectionHandler extends Task {
 		if (tokenUUID == null) {
 			out.print("Set-Cookie: token=removed; Path=/; Max-Age=0\r\n");
 		} else {
-			out.print("Set-Cookie: token=" + tokenUUID + "; Path=/; Max-Age=" + Token.maxAgeSeconds + "\r\n");
+			out.print("Set-Cookie: token=" + tokenUUID + "; Path=/; Max-Age="
+					+ Token.maxAgeSeconds + "\r\n");
 		}
 		out.write("Cache-Control: max-age=0, no-cache, no-store\r\n");
 		out.print("Content-length: 0\r\n");
 		out.print("\r\n");
 		out.flush();
 	}
-	
+
 	/**
 	 * 
 	 * @param key
@@ -459,7 +492,7 @@ public class ConnectionHandler extends Task {
 	public void write(String s) {
 		out.print(s);
 	}
-	
+
 	/**
 	 * 
 	 * @param b

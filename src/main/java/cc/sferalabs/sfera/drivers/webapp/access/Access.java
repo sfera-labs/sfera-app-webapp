@@ -16,8 +16,10 @@ import java.util.concurrent.ConcurrentSkipListMap;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import cc.sferalabs.sfera.drivers.webapp.HttpRequestHeader;
-import cc.sferalabs.sfera.drivers.webapp.WebServer;
 
 public abstract class Access {
 
@@ -27,11 +29,13 @@ public abstract class Access {
 
 	private static final String USERS_FILE_PATH = "data/webapp/passwd";
 
+	private static final Logger logger = LogManager.getLogger();
+
 	/**
 	 * 
 	 * @throws Exception
 	 */
-	public static void init(WebServer webServer) throws Exception {
+	public static void init() throws Exception {
 		List<String> lines = Files.readAllLines(Paths.get(USERS_FILE_PATH),
 				StandardCharsets.UTF_8);
 		int lineNum = 0;
@@ -43,9 +47,8 @@ public abstract class Access {
 					User u = new User(splitted[0], splitted[1], splitted[2]);
 					users.put(u.getUsername(), u);
 				} catch (Exception e) {
-					webServer.getLogger().error(
-							"error reading file " + USERS_FILE_PATH
-									+ " on line " + lineNum);
+					logger.error("Error reading file '" + USERS_FILE_PATH
+							+ "' on line " + lineNum, e);
 				}
 			}
 			lineNum++;

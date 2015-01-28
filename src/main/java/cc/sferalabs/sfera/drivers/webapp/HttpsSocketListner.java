@@ -18,7 +18,7 @@ public class HttpsSocketListner extends SocketListner {
 			ArrayBlockingQueue<Connection> connectionsQ, String sslPassword)
 			throws Exception {
 		super(webServer, "https", connectionsQ);
-		webServer.getLogger().debug("creating https soket on port " + port);
+		logger.debug("Creating https soket on port {}", port);
 		SSLContext context = SSLContext.getInstance("SSLv3");
 		KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
 		KeyStore ks = KeyStore.getInstance("JKS");

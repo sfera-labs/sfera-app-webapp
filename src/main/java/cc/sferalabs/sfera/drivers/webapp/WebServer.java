@@ -1,6 +1,5 @@
 package cc.sferalabs.sfera.drivers.webapp;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -13,7 +12,6 @@ import cc.sferalabs.sfera.drivers.Driver;
 import cc.sferalabs.sfera.drivers.webapp.access.Access;
 import cc.sferalabs.sfera.drivers.webapp.access.Token;
 import cc.sferalabs.sfera.drivers.webapp.util.ResourcesUtil;
-import cc.sferalabs.sfera.util.logging.SystemLogger;
 
 public class WebServer extends Driver {
 
@@ -43,18 +41,17 @@ public class WebServer extends Driver {
 				try {
 					ResourcesUtil.lookForPluginsOverwritingWebapp();
 				} catch (Exception e) {
-					log.error("error scanning plugins directory: " + e);
-					e.printStackTrace();
+					logger.error("Error scanning plugins directory", e);
 				}
 				try {
-					InterfaceCache.init(this, configuration);
+					InterfaceCache.init(configuration);
 				} catch (Exception e) {
-					log.error("error creating cache: " + e);
+					logger.error("Error creating cache", e);
 				}
 				try {
-					Access.init(this);
+					Access.init();
 				} catch (Exception e) {
-					log.error("error initializing access: " + e);
+					logger.error("Error initializing access", e);
 					return false;
 				}
 
@@ -82,7 +79,7 @@ public class WebServer extends Driver {
 						connectionsQ, sslPassword));
 			}
 		} catch (Exception e) {
-			log.error("error instantiating socket: " + e);
+			logger.error("Error instantiating socket", e);
 			return false;
 		}
 
@@ -96,8 +93,8 @@ public class WebServer extends Driver {
 	@Override
 	protected boolean loop() throws InterruptedException {
 		Connection c = connectionsQ.take();
-		log.debug("accepted connection from: "
-				+ c.getSocket().getRemoteSocketAddress());
+		logger.debug("accepted connection from {}", c.getSocket()
+				.getRemoteSocketAddress());
 		new ConnectionHandler(this, c);
 
 		return true;
@@ -114,13 +111,5 @@ public class WebServer extends Driver {
 			}
 		}
 		ConnectionHandler.quit();
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	public SystemLogger getLogger() {
-		return log;
 	}
 }

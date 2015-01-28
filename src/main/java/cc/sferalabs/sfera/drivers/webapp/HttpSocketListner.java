@@ -8,7 +8,7 @@ public class HttpSocketListner extends SocketListner {
 	public HttpSocketListner(WebServer webServer, int port,
 			ArrayBlockingQueue<Connection> connectionsQ) throws Exception {
 		super(webServer, "http", connectionsQ);
-		webServer.getLogger().debug("creating http soket on port " + port);
+		logger.debug("Creating http soket on port {}", port);
 		this.serverSocket = new ServerSocket(port);
 	}
 }
