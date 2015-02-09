@@ -183,7 +183,6 @@ public class ConnectionHandler extends Task {
 
 		if (uri.startsWith(WebServer.API_BASE_URI)) {
 			HashMap<String, String> query = new HashMap<String, String>();
-			;
 			int qmIdx = uri.indexOf('?');
 			if (qmIdx >= 0) {
 				String queryString = uri.substring(qmIdx + 1);

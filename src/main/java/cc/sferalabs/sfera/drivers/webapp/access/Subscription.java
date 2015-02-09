@@ -16,12 +16,12 @@ import cc.sferalabs.sfera.events.Event;
 import com.google.common.eventbus.Subscribe;
 
 public class Subscription implements EventListener {
-	
+
 	private final BlockingQueue<Event> changes = new LinkedBlockingQueue<Event>();
 	private Set<String> nodes;
 	private long lastAckTs;
 	private Map<String, Event> lastPolled = new HashMap<String, Event>();
-	
+
 	/**
 	 * 
 	 */
@@ -37,8 +37,10 @@ public class Subscription implements EventListener {
 		if (!nodes.equals("*")) {
 			String[] ns = nodes.split(",");
 			this.nodes = new HashSet<String>(Arrays.asList(ns));
+		} else {
+			this.nodes = null;
 		}
-		
+
 		for (Event e : Bus.getCurrentState().values()) {
 			monitorChanges(e);
 		}
@@ -52,9 +54,10 @@ public class Subscription implements EventListener {
 	 * @return
 	 * @throws InterruptedException
 	 */
-	public synchronized Map<String, Event> pollChanges(long ackTs, long timeout, TimeUnit unit) throws InterruptedException {
+	public synchronized Map<String, Event> pollChanges(long ackTs,
+			long timeout, TimeUnit unit) throws InterruptedException {
 		Map<String, Event> map;
-		if (ackTs > lastAckTs) {			
+		if (ackTs > lastAckTs) {
 			map = new HashMap<String, Event>();
 		} else {
 			map = lastPolled;
@@ -67,10 +70,10 @@ public class Subscription implements EventListener {
 			map.put(e.getId(), e);
 			e = changes.poll();
 		}
-		
+
 		lastAckTs = ackTs;
 		lastPolled = map;
-		
+
 		return map;
 	}
 
@@ -79,9 +82,9 @@ public class Subscription implements EventListener {
 	 * @param event
 	 */
 	@Subscribe
-    public void monitorChanges(Event event) {
+	public void monitorChanges(Event event) {
 		if (nodes == null || nodes.contains(event.getId())) {
 			changes.add(event);
 		}
-    }
+	}
 }

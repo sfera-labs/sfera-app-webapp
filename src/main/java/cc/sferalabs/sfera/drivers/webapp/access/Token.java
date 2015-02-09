@@ -7,9 +7,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import cc.sferalabs.sfera.drivers.webapp.HttpRequestHeader;
 
 public class Token {
-	
+
 	public static int maxAgeSeconds;
-	
+
 	private final String uuid;
 	private final User user;
 	private final String userAgent;
@@ -26,7 +26,8 @@ public class Token {
 		this.uuid = UUID.randomUUID().toString();
 		this.user = user;
 		this.userAgent = httpRequestHeader.getUserAgent();
-		this.expirationTime = System.currentTimeMillis() + (maxAgeSeconds * 1000);
+		this.expirationTime = System.currentTimeMillis()
+				+ (maxAgeSeconds * 1000);
 	}
 
 	/**
@@ -36,7 +37,7 @@ public class Token {
 	public String getUUID() {
 		return uuid;
 	}
-	
+
 	/**
 	 * 
 	 * @return
@@ -44,14 +45,15 @@ public class Token {
 	public User getUser() {
 		return user;
 	}
-	
+
 	/**
 	 * 
 	 * @param httpRequestHeader
 	 * @return
 	 */
 	public boolean match(HttpRequestHeader httpRequestHeader) {
-		return this.userAgent == null || this.userAgent.equals(httpRequestHeader.getUserAgent());
+		return this.userAgent == null
+				|| this.userAgent.equals(httpRequestHeader.getUserAgent());
 	}
 
 	/**
@@ -74,9 +76,9 @@ public class Token {
 			s = new Subscription();
 			subscriptions.put(id, s);
 		}
-		
+
 		s.setNodes(nodes);
-		
+
 		return id;
 	}
 
