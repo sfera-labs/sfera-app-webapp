@@ -14,10 +14,18 @@ public class HttpsSocketListner extends SocketListner {
 	
 	private static final String KEYSTORE_PATH = "data/webapp/sfera.keys";
 
-	public HttpsSocketListner(WebServer webServer, int port,
+	/**
+	 * 
+	 * @param webApp
+	 * @param port
+	 * @param connectionsQ
+	 * @param sslPassword
+	 * @throws Exception
+	 */
+	public HttpsSocketListner(WebApp webApp, int port,
 			ArrayBlockingQueue<Connection> connectionsQ, String sslPassword)
 			throws Exception {
-		super(webServer, "https", connectionsQ);
+		super(webApp, "https", connectionsQ);
 		logger.debug("Creating https soket on port {}", port);
 		SSLContext context = SSLContext.getInstance("SSLv3");
 		KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");

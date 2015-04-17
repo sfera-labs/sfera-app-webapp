@@ -13,7 +13,7 @@ import cc.sferalabs.sfera.drivers.webapp.access.Access;
 import cc.sferalabs.sfera.drivers.webapp.access.Token;
 import cc.sferalabs.sfera.drivers.webapp.util.ResourcesUtil;
 
-public class WebServer extends Driver {
+public class WebApp extends Driver {
 
 	static final Path ROOT = Paths.get("webapp/");
 	static final String API_BASE_URI = "/x/";
@@ -28,7 +28,7 @@ public class WebServer extends Driver {
 	/**
 	 * 
 	 */
-	public WebServer(String id) {
+	public WebApp(String id) {
 		super(id);
 	}
 

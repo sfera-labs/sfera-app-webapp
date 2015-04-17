@@ -43,16 +43,16 @@ public class ConnectionHandler extends Task {
 
 	/**
 	 * 
-	 * @param webServer
+	 * @param webApp
 	 * @param connection
 	 */
-	public ConnectionHandler(WebServer webServer, Connection connection) {
-		super(webServer.getId() + ":ConnectionHandler:"
+	public ConnectionHandler(WebApp webApp, Connection connection) {
+		super(webApp.getId() + ":ConnectionHandler:"
 				+ connection.getSocket().getRemoteSocketAddress());
 		this.connection = connection;
 		tasksManager.execute(this);
 		this.logger = LogManager.getLogger(getClass().getName() + "."
-				+ webServer.getId());
+				+ webApp.getId());
 	}
 
 	/**
@@ -181,7 +181,7 @@ public class ConnectionHandler extends Task {
 				.getSocket().getRemoteSocketAddress(), uri,
 				token == null ? "--" : token.getUser().getUsername());
 
-		if (uri.startsWith(WebServer.API_BASE_URI)) {
+		if (uri.startsWith(WebApp.API_BASE_URI)) {
 			HashMap<String, String> query = new HashMap<String, String>();
 			int qmIdx = uri.indexOf('?');
 			if (qmIdx >= 0) {
@@ -196,7 +196,7 @@ public class ConnectionHandler extends Task {
 			}
 
 			return processApiRequest(
-					uri.substring(WebServer.API_BASE_URI.length()), token,
+					uri.substring(WebApp.API_BASE_URI.length()), token,
 					query, httpRequestHeader);
 
 		} else {

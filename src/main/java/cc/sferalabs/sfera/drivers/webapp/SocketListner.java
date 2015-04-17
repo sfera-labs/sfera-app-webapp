@@ -12,21 +12,28 @@ import cc.sferalabs.sfera.core.Task;
 
 public abstract class SocketListner extends Task {
 
-	private final WebServer webServer;
+	private final WebApp webApp;
 	private final ArrayBlockingQueue<Connection> connectionsQ;
 	private final String protocolName;
 	protected ServerSocket serverSocket;
 
 	protected final Logger logger;
 
-	public SocketListner(WebServer webServer, String protocolName,
+	/**
+	 * 
+	 * @param webApp
+	 * @param protocolName
+	 * @param connectionsQ
+	 * @throws Exception
+	 */
+	public SocketListner(WebApp webApp, String protocolName,
 			ArrayBlockingQueue<Connection> connectionsQ) throws Exception {
-		super(webServer.getId() + ":SocketListner:" + protocolName);
-		this.webServer = webServer;
+		super(webApp.getId() + ":SocketListner:" + protocolName);
+		this.webApp = webApp;
 		this.protocolName = protocolName;
 		this.connectionsQ = connectionsQ;
 		this.logger = LogManager.getLogger(getClass().getName() + "."
-				+ webServer.getId());
+				+ webApp.getId());
 	}
 
 	@Override
@@ -51,10 +58,13 @@ public abstract class SocketListner extends Task {
 				}
 			}
 
-			webServer.quit();
+			webApp.quit();
 		}
 	}
 
+	/**
+	 * 
+	 */
 	public void close() {
 		try {
 			serverSocket.close();

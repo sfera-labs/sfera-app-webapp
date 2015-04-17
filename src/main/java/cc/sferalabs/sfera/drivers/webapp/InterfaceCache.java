@@ -38,7 +38,7 @@ import cc.sferalabs.sfera.drivers.webapp.util.ResourcesUtil;
 
 public class InterfaceCache {
 
-	static final Path CACHE_ROOT = WebServer.ROOT.resolve("cache/");
+	static final Path CACHE_ROOT = WebApp.ROOT.resolve("cache/");
 	static final Path ABSOLUTE_CACHE_ROOT_PATH = CACHE_ROOT.toAbsolutePath();
 
 	private static final XMLInputFactory INPUT_FACTORY = XMLInputFactory
@@ -99,7 +99,7 @@ public class InterfaceCache {
 	 * @throws IOException
 	 */
 	private static void createCache() throws IOException {
-		Path interfacesPath = WebServer.ROOT.resolve("interfaces/");
+		Path interfacesPath = WebApp.ROOT.resolve("interfaces/");
 		try {
 			interfaces = new HashSet<String>();
 			try {
@@ -283,7 +283,7 @@ public class InterfaceCache {
 			String interfacePath = "interfaces/" + interfaceName + "/";
 			try {
 				Set<String> files = ResourcesUtil.listRegularFilesNamesIn(
-						WebServer.ROOT.resolve(interfacePath), true);
+						WebApp.ROOT.resolve(interfacePath), true);
 				for (String file : files) {
 					if (file.toLowerCase().endsWith(".js")) {
 						writeContentFrom(interfacePath + file, writer);
@@ -320,7 +320,7 @@ public class InterfaceCache {
 	 */
 	private void writeContentFrom(String file, BufferedWriter writer)
 			throws IOException, NoSuchFileException {
-		Path filePath = ResourcesUtil.getResource(WebServer.ROOT.resolve(file));
+		Path filePath = ResourcesUtil.getResource(WebApp.ROOT.resolve(file));
 		try (BufferedReader reader = Files.newBufferedReader(filePath,
 				StandardCharsets.UTF_8)) {
 			String line = null;
@@ -342,7 +342,7 @@ public class InterfaceCache {
 	 */
 	private Set<String> createIndex(String source, String target,
 			String manifestPath, boolean extractImages) throws IOException {
-		Path indexPath = ResourcesUtil.getResource(WebServer.ROOT
+		Path indexPath = ResourcesUtil.getResource(WebApp.ROOT
 				.resolve(source));
 
 		Set<String> imgs = new HashSet<String>();
@@ -415,7 +415,7 @@ public class InterfaceCache {
 		Set<Path> resources = new HashSet<Path>();
 
 		resources.addAll(ResourcesUtil.copyRecursive(
-				WebServer.ROOT.resolve("interfaces/" + interfaceName
+				WebApp.ROOT.resolve("interfaces/" + interfaceName
 						+ "/assets/"),
 				interfaceTmpCacheRoot.resolve("assets/"), true));
 
@@ -423,19 +423,19 @@ public class InterfaceCache {
 				.resolve("images/objects/"));
 
 		resources.addAll(ResourcesUtil.copyRecursive(
-				WebServer.ROOT.resolve("skins/" + skin + "/images/"),
+				WebApp.ROOT.resolve("skins/" + skin + "/images/"),
 				interfaceTmpCacheRoot.resolve("images/skin/"), true));
 
 		for (String o : objects) {
 			resources.addAll(ResourcesUtil.copyRecursive(
-					WebServer.ROOT.resolve("objects/" + o + "/images/"
+					WebApp.ROOT.resolve("objects/" + o + "/images/"
 							+ iconSet + "/"),
 					interfaceTmpCacheRoot.resolve("images/objects/" + o + "/"),
 					true));
 		}
 
 		resources.addAll(ResourcesUtil.copyRecursive(
-				WebServer.ROOT.resolve("icons/" + iconSet + "/"),
+				WebApp.ROOT.resolve("icons/" + iconSet + "/"),
 				interfaceTmpCacheRoot.resolve("icons/"), true));
 
 		return resources;
@@ -453,14 +453,14 @@ public class InterfaceCache {
 		Files.createDirectories(interfaceTmpCacheRoot.resolve("login/images/"));
 
 		loginResources.addAll(ResourcesUtil.copyRecursive(
-				WebServer.ROOT.resolve("skins/" + skin + "/login/images/"),
+				WebApp.ROOT.resolve("skins/" + skin + "/login/images/"),
 				interfaceTmpCacheRoot.resolve("login/images/skin/"), true));
 
 		Files.createDirectories(interfaceTmpCacheRoot.resolve("login/icons/"));
 
 		for (String img : images) {
 			Files.copy(
-					ResourcesUtil.getResource(WebServer.ROOT.resolve("icons/"
+					ResourcesUtil.getResource(WebApp.ROOT.resolve("icons/"
 							+ iconSet + "/" + img)),
 					interfaceTmpCacheRoot.resolve("login/icons/" + img));
 		}
@@ -555,7 +555,7 @@ public class InterfaceCache {
 
 		for (String obj : objects) {
 			XMLEventReader eventReader = null;
-			Path objXmlPath = ResourcesUtil.getResource(WebServer.ROOT
+			Path objXmlPath = ResourcesUtil.getResource(WebApp.ROOT
 					.resolve("objects/" + obj + "/" + obj + ".xml"));
 
 			try (BufferedReader in = Files.newBufferedReader(objXmlPath,
@@ -569,7 +569,7 @@ public class InterfaceCache {
 							if (objEnd.getName().getLocalPart().equals("obj")) {
 								try {
 									addElementWithCDataContentFromFile(
-											WebServer.ROOT.resolve("objects/"
+											WebApp.ROOT.resolve("objects/"
 													+ obj + "/" + obj
 													+ ".shtml"), "src",
 											eventWriter, EVENT_FACTORY);
@@ -578,7 +578,7 @@ public class InterfaceCache {
 								}
 								try {
 									addElementWithCDataContentFromFile(
-											WebServer.ROOT.resolve("objects/"
+											WebApp.ROOT.resolve("objects/"
 													+ obj + "/languages/"
 													+ language + ".ini"),
 											"language", eventWriter,
@@ -615,7 +615,7 @@ public class InterfaceCache {
 	 */
 	private void addSkinDefinitionAndExtractIconSet(XMLEventWriter eventWriter)
 			throws IOException, XMLStreamException {
-		Path skinXmlPath = ResourcesUtil.getResource(WebServer.ROOT
+		Path skinXmlPath = ResourcesUtil.getResource(WebApp.ROOT
 				.resolve("skins/" + skin + "/" + "definition.xml"));
 
 		XMLEventReader eventReader = null;
@@ -657,7 +657,7 @@ public class InterfaceCache {
 	 */
 	private void createInterfaceXmlAndExtractAttributes() throws IOException,
 			XMLStreamException {
-		Path indexXml = ResourcesUtil.getResource(WebServer.ROOT
+		Path indexXml = ResourcesUtil.getResource(WebApp.ROOT
 				.resolve("interfaces/" + interfaceName + "/index.xml"));
 		Path cacheXml = interfaceTmpCacheRoot.resolve("index.xml");
 		Files.copy(indexXml, cacheXml);
