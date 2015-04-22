@@ -21,7 +21,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import cc.sferalabs.sfera.core.Plugin;
-import cc.sferalabs.sfera.core.SystemNode;
+import cc.sferalabs.sfera.core.Plugins;
 
 public class ResourcesUtil {
 
@@ -45,7 +45,7 @@ public class ResourcesUtil {
 	 */
 	public static void lookForPluginsOverwritingWebapp() throws IOException {
 		pluginsOverwritingWebapp = new TreeSet<Path>(PLUGINS_NAME_COMPARATOR);
-		for (Plugin plugin : SystemNode.getPlugins().values()) {
+		for (Plugin plugin : Plugins.getAll().values()) {
 			if (!plugin.getId().equals("webapp")) {
 				try (FileSystem pluginFs = FileSystems.newFileSystem(
 						plugin.getPath(), null)) {
@@ -57,7 +57,7 @@ public class ResourcesUtil {
 				}
 			}
 		}
-		Plugin wap = SystemNode.getPlugins().get("webapp");
+		Plugin wap = Plugins.getAll().get("webapp");
 		if (wap != null) {
 			webAppPlugin = wap.getPath();
 		}

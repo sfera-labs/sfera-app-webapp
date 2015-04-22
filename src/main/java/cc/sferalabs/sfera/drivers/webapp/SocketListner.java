@@ -37,7 +37,7 @@ public abstract class SocketListner extends Task {
 	}
 
 	@Override
-	public void execute() {
+	protected void execute() {
 		logger.info("Accepting connections on port {}",
 				serverSocket.getLocalPort());
 		Socket s = null;

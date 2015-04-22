@@ -1,17 +1,22 @@
 package cc.sferalabs.sfera.drivers.webapp;
 
+import java.nio.charset.StandardCharsets;
+
 import org.apache.http.client.utils.DateUtils;
 
-
 public class HttpRequestHeader {
-	
-	private static final String[] HTTP_DATE_FORMATS = {DateUtils.PATTERN_ASCTIME, DateUtils.PATTERN_RFC1036, DateUtils.PATTERN_RFC1123, "EEE MMM d HH:mm:ss zzz yyyy"};
-	
-	public enum Method {GET, POST, HEAD};
-	
+
+	private static final String[] HTTP_DATE_FORMATS = {
+			DateUtils.PATTERN_ASCTIME, DateUtils.PATTERN_RFC1036,
+			DateUtils.PATTERN_RFC1123, "EEE MMM d HH:mm:ss zzz yyyy" };
+
+	public enum Method {
+		GET, POST, HEAD
+	};
+
 	public final Method method;
 	public final String uri;
-	
+
 	private boolean connectionClose;
 	private String cookies;
 	private long ifModifiedSinceTime;
@@ -21,7 +26,9 @@ public class HttpRequestHeader {
 	private String contentType;
 	private int contentLength;
 
-	public HttpRequestHeader(String requestLine) throws NotImplementedRequestMethodException, MalformedRequestException {
+	public HttpRequestHeader(String requestLine)
+			throws NotImplementedRequestMethodException,
+			MalformedRequestException {
 		if (requestLine.startsWith("GET")) {
 			method = Method.GET;
 		} else if (requestLine.startsWith("HEAD")) {
@@ -29,12 +36,14 @@ public class HttpRequestHeader {
 		} else if (requestLine.startsWith("POST")) {
 			method = Method.POST;
 		} else {
-			throw new NotImplementedRequestMethodException("not implemented request method: " + requestLine);
+			throw new NotImplementedRequestMethodException(
+					"not implemented request method: " + requestLine);
 		}
-		
+
 		try {
-			String [] sa = requestLine.split("\\s+");
-			uri = sa[1];
+			String[] sa = requestLine.split("\\s+");
+			uri = java.net.URLDecoder.decode(sa[1],
+					StandardCharsets.UTF_8.name());
 			if (method == Method.POST) {
 				connectionClose = false;
 			} else {
@@ -45,40 +54,44 @@ public class HttpRequestHeader {
 				}
 			}
 		} catch (Exception e) {
-			throw new MalformedRequestException("malformed HTTP request line: " + requestLine, e);
+			throw new MalformedRequestException("malformed HTTP request line: "
+					+ requestLine, e);
 		}
 	}
 
 	public void addField(String reqLine) {
 		if (reqLine.startsWith("Cookie:")) {
 			cookies = reqLine.substring(7).trim();
-			
+
 		} else if (reqLine.startsWith("If-Modified-Since:")) {
 			try {
-				ifModifiedSinceTime = DateUtils.parseDate(reqLine.substring(18).trim(), HTTP_DATE_FORMATS).getTime();
-			} catch (Exception e) {}
-			
+				ifModifiedSinceTime = DateUtils.parseDate(
+						reqLine.substring(18).trim(), HTTP_DATE_FORMATS)
+						.getTime();
+			} catch (Exception e) {
+			}
+
 		} else if (reqLine.startsWith("Accept-Encoding:")) {
 			if (reqLine.contains("gzip")) {
 				gzip = true;
 			}
-			
+
 		} else if (reqLine.startsWith("User-Agent:")) {
 			if (userAgent == null) {
 				userAgent = reqLine.substring(11).trim();
 			}
-			
+
 		} else if (reqLine.startsWith("Host:")) {
 			host = reqLine.substring(5).trim();
-			
+
 		} else if (reqLine.startsWith("Content-Type:")) {
 			contentType = reqLine.substring(13).trim();
-			
+
 		} else if (reqLine.startsWith("Connection:")) {
 			if (reqLine.contains("close")) {
 				connectionClose = true;
 			}
-			
+
 		} else if (reqLine.startsWith("Content-Length:")) {
 			try {
 				contentLength = Integer.parseInt(reqLine.substring(15).trim());
@@ -87,7 +100,7 @@ public class HttpRequestHeader {
 			}
 		}
 	}
-	
+
 	public boolean getConnectionClose() {
 		return connectionClose;
 	}
@@ -103,11 +116,11 @@ public class HttpRequestHeader {
 	public String getHost() {
 		return host;
 	}
-	
+
 	public long getIfModifiedSinceTime() {
 		return ifModifiedSinceTime;
 	}
-	
+
 	public String getUserAgent() {
 		return userAgent;
 	}

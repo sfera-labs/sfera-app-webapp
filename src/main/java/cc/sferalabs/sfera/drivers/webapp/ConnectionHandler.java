@@ -91,7 +91,7 @@ public class ConnectionHandler extends Task {
 	}
 
 	@Override
-	public void execute() {
+	protected void execute() {
 		try {
 			out = new PrintWriter(connection.getSocket().getOutputStream());
 			dataOut = new BufferedOutputStream(connection.getSocket()
@@ -190,6 +190,8 @@ public class ConnectionHandler extends Task {
 					String[] key_val = pair.split("=");
 					if (key_val.length == 2) {
 						query.put(key_val[0], key_val[1]);
+					} else {
+						query.put(key_val[0], null);
 					}
 				}
 				uri = uri.substring(0, qmIdx);
@@ -253,6 +255,12 @@ public class ConnectionHandler extends Task {
 
 		if (request.startsWith("state/")) {
 			state(request.substring(6), token, query);
+			return true;
+		}
+		
+		if (request.equals("command")) {
+			String resp = CommandExecutor.command(token, query);
+			// TODO send response
 			return true;
 		}
 

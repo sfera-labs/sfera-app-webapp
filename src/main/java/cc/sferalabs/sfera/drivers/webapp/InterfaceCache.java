@@ -131,7 +131,7 @@ public class InterfaceCache {
 						"WebApp files watcher") {
 
 					@Override
-					public void execute() {
+					protected void execute() {
 						try {
 							createCache();
 						} catch (IOException e) {
