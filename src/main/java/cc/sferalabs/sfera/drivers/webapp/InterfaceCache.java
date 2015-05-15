@@ -153,11 +153,14 @@ public class InterfaceCache {
 	 */
 	private synchronized static void createCacheFor(String interfaceName)
 			throws IOException, XMLStreamException {
-		logger.debug("Creating cache for interface '{}'", interfaceName);
-		InterfaceCache icc = new InterfaceCache(interfaceName);
-		icc.create();
-		ResourcesUtil.release();
-		logger.debug("Created cache for interface '{}'", interfaceName);
+		try {			
+			logger.debug("Creating cache for interface '{}'", interfaceName);
+			InterfaceCache icc = new InterfaceCache(interfaceName);
+			icc.create();
+			logger.debug("Created cache for interface '{}'", interfaceName);
+		} finally {			
+			ResourcesUtil.release();
+		}
 	}
 
 	/**

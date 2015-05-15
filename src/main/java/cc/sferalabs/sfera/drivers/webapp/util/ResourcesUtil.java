@@ -12,6 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.ProviderNotFoundException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -22,8 +23,9 @@ import java.util.TreeSet;
 
 import cc.sferalabs.sfera.core.Plugin;
 import cc.sferalabs.sfera.core.Plugins;
+import cc.sferalabs.sfera.drivers.webapp.WebApp;
 
-public class ResourcesUtil {
+public abstract class ResourcesUtil {
 
 	private static final Set<Closeable> OPEN_RESOURCES = new HashSet<Closeable>();
 
@@ -36,8 +38,8 @@ public class ResourcesUtil {
 		}
 	};
 
+	private static Path webAppPluginPath;
 	private static Set<Path> pluginsOverwritingWebapp;
-	private static Path webAppPlugin; 
 
 	/**
 	 * 
@@ -45,8 +47,13 @@ public class ResourcesUtil {
 	 */
 	public static void lookForPluginsOverwritingWebapp() throws IOException {
 		pluginsOverwritingWebapp = new TreeSet<Path>(PLUGINS_NAME_COMPARATOR);
+		String webAppPluginId = WebApp.class.getName();
+		Plugin webAppPlugin = Plugins.get(webAppPluginId);
+		if (webAppPlugin != null) {
+			webAppPluginPath = webAppPlugin.getPath();
+		}
 		for (Plugin plugin : Plugins.getAll().values()) {
-			if (!plugin.getId().equals("webapp")) {
+			if (!plugin.getId().equals(webAppPluginId)) {
 				try (FileSystem pluginFs = FileSystems.newFileSystem(
 						plugin.getPath(), null)) {
 					Path webappDir = pluginFs.getPath("webapp");
@@ -56,10 +63,6 @@ public class ResourcesUtil {
 				} catch (Exception e) {
 				}
 			}
-		}
-		Plugin wap = Plugins.getAll().get("webapp");
-		if (wap != null) {
-			webAppPlugin = wap.getPath();
 		}
 	}
 
@@ -90,16 +93,21 @@ public class ResourcesUtil {
 	 * 
 	 * @param path
 	 * @return
-	 * @throws IOException 
+	 * @throws NoSuchFileException
+	 * @throws IOException
 	 */
-	private static Path getWebAppResource(Path path) throws NoSuchFileException, IOException {
-		if (webAppPlugin != null) try {
-			return getPluginResource(webAppPlugin, path);
-		} catch (NoSuchFileException nsfe) {
+	private static Path getWebAppResource(Path path)
+			throws NoSuchFileException, IOException {
+		if (webAppPluginPath != null) {
+			try {
+				return getPluginResource(webAppPluginPath, path);
+			} catch (NoSuchFileException | ProviderNotFoundException e) {
+			}
 		}
-		
+
 		try {
-			URL url = ResourcesUtil.class.getClassLoader().getResource(path.toString());
+			URL url = ResourcesUtil.class.getClassLoader().getResource(
+					path.toString());
 			if (url != null) {
 				Path resPath = Paths.get(url.toURI());
 				if (Files.exists(resPath)) {
