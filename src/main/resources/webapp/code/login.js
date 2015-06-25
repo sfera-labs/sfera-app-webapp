@@ -294,7 +294,7 @@ function doLogin() {
 }
 
 function checkLogin() {
-	req.open("/x/login",100);
+	// req.open("/x/login",100);
 }
 
 function resetCheck() {

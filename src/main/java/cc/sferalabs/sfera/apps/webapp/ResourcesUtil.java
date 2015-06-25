@@ -1,4 +1,4 @@
-package cc.sferalabs.sfera.drivers.webapp.util;
+package cc.sferalabs.sfera.apps.webapp;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -23,7 +23,6 @@ import java.util.TreeSet;
 
 import cc.sferalabs.sfera.core.Plugin;
 import cc.sferalabs.sfera.core.Plugins;
-import cc.sferalabs.sfera.drivers.webapp.WebApp;
 
 public abstract class ResourcesUtil {
 

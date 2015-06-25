@@ -1,4 +1,4 @@
-package cc.sferalabs.sfera.drivers.webapp;
+package cc.sferalabs.sfera.apps.webapp;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -7,7 +7,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -25,16 +27,12 @@ import javax.xml.stream.events.StartDocument;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
+import org.apache.http.client.utils.DateUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import cc.sferalabs.sfera.core.Configuration;
 import cc.sferalabs.sfera.core.FilesWatcher;
 import cc.sferalabs.sfera.core.Task;
-import cc.sferalabs.sfera.drivers.webapp.HttpRequestHeader.Method;
-import cc.sferalabs.sfera.drivers.webapp.access.Token;
-import cc.sferalabs.sfera.drivers.webapp.util.DateUtil;
-import cc.sferalabs.sfera.drivers.webapp.util.ResourcesUtil;
 
 public class InterfaceCache {
 
@@ -49,10 +47,11 @@ public class InterfaceCache {
 			.newInstance();
 
 	private static final XMLEvent NL = EVENT_FACTORY.createDTD("\n");
+	
+	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat(DateUtils.PATTERN_RFC1123);
 
 	private static Set<String> interfaces;
 
-	private static String defaultInterface;
 	private static boolean useApplicationCache;
 
 	private final static Logger logger = LogManager.getLogger();
@@ -79,19 +78,21 @@ public class InterfaceCache {
 
 	/**
 	 * 
-	 * @param configuration
+	 * @param useApplicationCache
 	 * @throws Exception
 	 */
-	public synchronized static void init(Configuration configuration)
+	public synchronized static void init(boolean useApplicationCache)
 			throws Exception {
-		if (interfaces == null) {
-			defaultInterface = configuration.getProperty("default_interface",
-					null);
-			useApplicationCache = configuration.getBoolProperty(
-					"application_cache", true);
+		InterfaceCache.useApplicationCache = useApplicationCache;
+		createCache();
+	}
 
-			createCache();
-		}
+	/**
+	 * 
+	 * @return
+	 */
+	static Set<String> getInterfaces() {
+		return interfaces;
 	}
 
 	/**
@@ -153,12 +154,12 @@ public class InterfaceCache {
 	 */
 	private synchronized static void createCacheFor(String interfaceName)
 			throws IOException, XMLStreamException {
-		try {			
-			logger.debug("Creating cache for interface '{}'", interfaceName);
+		try {
+			logger.debug("Creating cache for interface '{}'...", interfaceName);
 			InterfaceCache icc = new InterfaceCache(interfaceName);
 			icc.create();
 			logger.debug("Created cache for interface '{}'", interfaceName);
-		} finally {			
+		} finally {
 			ResourcesUtil.release();
 		}
 	}
@@ -345,8 +346,7 @@ public class InterfaceCache {
 	 */
 	private Set<String> createIndex(String source, String target,
 			String manifestPath, boolean extractImages) throws IOException {
-		Path indexPath = ResourcesUtil.getResource(WebApp.ROOT
-				.resolve(source));
+		Path indexPath = ResourcesUtil.getResource(WebApp.ROOT.resolve(source));
 
 		Set<String> imgs = new HashSet<String>();
 		List<String> lines = new ArrayList<String>();
@@ -417,10 +417,11 @@ public class InterfaceCache {
 	private Set<Path> copyResources() throws IOException {
 		Set<Path> resources = new HashSet<Path>();
 
-		resources.addAll(ResourcesUtil.copyRecursive(
-				WebApp.ROOT.resolve("interfaces/" + interfaceName
-						+ "/assets/"),
-				interfaceTmpCacheRoot.resolve("assets/"), true));
+		resources
+				.addAll(ResourcesUtil.copyRecursive(
+						WebApp.ROOT.resolve("interfaces/" + interfaceName
+								+ "/assets/"),
+						interfaceTmpCacheRoot.resolve("assets/"), true));
 
 		Files.createDirectories(interfaceTmpCacheRoot
 				.resolve("images/objects/"));
@@ -431,8 +432,8 @@ public class InterfaceCache {
 
 		for (String o : objects) {
 			resources.addAll(ResourcesUtil.copyRecursive(
-					WebApp.ROOT.resolve("objects/" + o + "/images/"
-							+ iconSet + "/"),
+					WebApp.ROOT.resolve("objects/" + o + "/images/" + iconSet
+							+ "/"),
 					interfaceTmpCacheRoot.resolve("images/objects/" + o + "/"),
 					true));
 		}
@@ -482,7 +483,7 @@ public class InterfaceCache {
 				interfaceTmpCacheRoot.resolve(path), StandardCharsets.UTF_8)) {
 
 			writer.write("CACHE MANIFEST\r\n\r\n# ");
-			writer.write(DateUtil.now());
+			writer.write(DATE_FORMAT.format(new Date()));
 			writer.write("\r\n\r\nCACHE:\r\n");
 
 			for (Path r : resources) {
@@ -737,207 +738,4 @@ public class InterfaceCache {
 		}
 	}
 
-	/**
-	 * 
-	 * @param uri
-	 * @param token
-	 * @param httpRequestHeader
-	 * @param connectionHandler
-	 * @return
-	 * @throws IOException
-	 */
-	public static boolean processFileRequest(String uri, Token token,
-			HttpRequestHeader httpRequestHeader,
-			ConnectionHandler connectionHandler) throws IOException {
-
-		if (uri.charAt(0) == '/') {
-			uri = uri.substring(1);
-		}
-		Path path = CACHE_ROOT.resolve(uri).toAbsolutePath().normalize();
-
-		if (!path.startsWith(ABSOLUTE_CACHE_ROOT_PATH)) {
-			logger.warn("Resource out of root requested: {}", path);
-			return false;
-		}
-
-		path = ABSOLUTE_CACHE_ROOT_PATH.relativize(path);
-
-		String pathStr = path.toString();
-		if (pathStr.equals("favicon.ico") || pathStr.equals("favicon.png")) {
-			serveCacheFile(httpRequestHeader.method, path, connectionHandler,
-					httpRequestHeader);
-			return true;
-		}
-
-		String requestedInterface = path.getName(0).toString();
-
-		if (requestedInterface.length() == 0 && defaultInterface != null) {
-			connectionHandler.redirectTo(defaultInterface, httpRequestHeader);
-			return false;
-		}
-
-		if (!interfaces.contains(requestedInterface)) {
-			logger.warn("Non-existing interface requested: {}",
-					requestedInterface);
-			return false;
-		}
-
-		if (httpRequestHeader.method != HttpRequestHeader.Method.GET
-				&& httpRequestHeader.method != HttpRequestHeader.Method.HEAD) {
-			connectionHandler.notImplementedError();
-			return false;
-		}
-
-		if (isLoginComponent(path)) { // GET /<interface>/login/...
-			serveCacheFile(httpRequestHeader.method, path, connectionHandler,
-					httpRequestHeader);
-
-		} else {
-			if (isLoginAlias(path)) { // GET /<interface>/login
-				if (token != null) { // already authenticated
-					connectionHandler.redirectTo(requestedInterface,
-							httpRequestHeader);
-					return false;
-
-				} else {
-					serveCacheFile(httpRequestHeader.method,
-							path.resolve("index.html"), connectionHandler,
-							httpRequestHeader);
-				}
-
-			} else if (isInterfaceAlias(path)) { // GET /<interface>
-				if (token != null) {
-					if (token.getUser().isAuthorized(path)) {
-						serveCacheFile(httpRequestHeader.method,
-								path.resolve("index.html"), connectionHandler,
-								httpRequestHeader);
-					} else {
-						logger.warn("Unauthorized interface request: {}", path);
-						return false;
-					}
-
-				} else {
-					connectionHandler.redirectTo(requestedInterface + "/login",
-							httpRequestHeader);
-					return false;
-				}
-
-			} else { // GET /<interface>/<any_other_resource>
-				if (token != null && token.getUser().isAuthorized(path)) {
-					serveCacheFile(httpRequestHeader.method, path,
-							connectionHandler, httpRequestHeader);
-
-				} else {
-					logger.debug("Unauthorized file request: {}", path);
-					connectionHandler.notFoundError();
-				}
-			}
-		}
-
-		return true;
-	}
-
-	/**
-	 * 
-	 * @param method
-	 * @param path
-	 * @param connectionHandler
-	 * @param httpRequestHeader
-	 * @throws IOException
-	 */
-	private synchronized static void serveCacheFile(Method method, Path path,
-			ConnectionHandler connectionHandler,
-			HttpRequestHeader httpRequestHeader) throws IOException {
-
-		path = ABSOLUTE_CACHE_ROOT_PATH.resolve(path);
-
-		try {
-			long lastModified = Files.getLastModifiedTime(path).toMillis();
-
-			if (lastModified <= httpRequestHeader.getIfModifiedSinceTime()) {
-				connectionHandler.write("HTTP/1.1 304 Not Modified\r\n");
-				connectionHandler.write("Date: " + DateUtil.now() + "\r\n");
-				connectionHandler.write("Server: Sfera \r\n");
-				connectionHandler.write("Last-Modified: "
-						+ DateUtil.format(lastModified) + "\r\n");
-				connectionHandler
-						.write("Cache-Control: max-age=0, no-cache, no-store\r\n");
-				connectionHandler.write("Content-length: 0\r\n");
-				connectionHandler.write("\r\n");
-				connectionHandler.flush();
-
-			} else {
-				byte[] fileData = Files.readAllBytes(path);
-				String contentType = getMimeContentType(path);
-
-				connectionHandler.write("HTTP/1.1 200 OK\r\n");
-				connectionHandler.write("Date: " + DateUtil.now() + "\r\n");
-				connectionHandler.write("Server: Sfera \r\n");
-				connectionHandler.write("Last-Modified: "
-						+ DateUtil.format(lastModified) + "\r\n");
-				connectionHandler
-						.write("Cache-Control: max-age=0, no-cache, no-store\r\n");
-				if (contentType != null) {
-					connectionHandler.write("Content-type: " + contentType
-							+ "\r\n");
-				}
-				connectionHandler.write("Content-length: " + fileData.length
-						+ "\r\n");
-				connectionHandler.write("\r\n");
-				connectionHandler.flush();
-
-				if (method == HttpRequestHeader.Method.GET) {
-					connectionHandler.write(fileData);
-					connectionHandler.flush();
-				}
-			}
-		} catch (NoSuchFileException e) {
-			logger.warn("File not found: {}",
-					ABSOLUTE_CACHE_ROOT_PATH.relativize(path));
-			connectionHandler.notFoundError();
-		}
-	}
-
-	/**
-	 * 
-	 * @param path
-	 * @return
-	 */
-	private static boolean isInterfaceAlias(Path path) {
-		return path.getNameCount() == 1;
-	}
-
-	/**
-	 * 
-	 * @param path
-	 * @return
-	 */
-	private static boolean isLoginAlias(Path path) {
-		return (path.getNameCount() == 2 && path.getName(1).toString()
-				.equals("login"));
-	}
-
-	/**
-	 * 
-	 * @param path
-	 * @return
-	 */
-	private static boolean isLoginComponent(Path path) {
-		return (path.getNameCount() > 2 && path.getName(1).toString()
-				.equals("login"));
-	}
-
-	/**
-	 * 
-	 * @param path
-	 * @return
-	 * @throws IOException
-	 */
-	private static String getMimeContentType(Path path) throws IOException {
-		if (path.getFileName().toString().equals("manifest")) {
-			return "text/cache-manifest";
-		}
-		// TODO test on linux, on OS X it looks like it's not working...
-		return Files.probeContentType(path);
-	}
 }

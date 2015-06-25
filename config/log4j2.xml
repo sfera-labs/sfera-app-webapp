@@ -23,7 +23,7 @@
 			<AppenderRef ref="STDOUT" />
 			<AppenderRef ref="Terminal" />
 		</Logger>
-		<Root level="info">
+		<Root level="debug">
 			<!-- <AppenderRef ref="SferaLog" /> -->
 			<AppenderRef ref="STDOUT" />
 			<AppenderRef ref="Terminal" />

@@ -1,4 +1,4 @@
-package cc.sferalabs.sfera.drivers.webapp.access;
+package cc.sferalabs.sfera.apps.webapp;
 
 import java.util.Arrays;
 import java.util.EventListener;
@@ -61,7 +61,7 @@ public class Subscription implements EventListener {
 			map = new HashMap<String, Event>();
 		} else {
 			map = lastPolled;
-			if (lastPolled.size() > 0) {
+			if (map.size() > 0) {
 				timeout = 0;
 			}
 		}
