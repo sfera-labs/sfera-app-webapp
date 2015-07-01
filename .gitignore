@@ -1,5 +1,6 @@
 /logs/
 /data/
+/config/**
 /webapp/cache/
 
 .settings/
