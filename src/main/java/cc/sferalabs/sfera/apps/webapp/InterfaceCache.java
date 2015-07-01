@@ -31,8 +31,7 @@ import org.apache.http.client.utils.DateUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import cc.sferalabs.sfera.core.FilesWatcher;
-import cc.sferalabs.sfera.core.Task;
+import cc.sferalabs.sfera.files.FilesWatcher;
 
 public class InterfaceCache {
 
@@ -47,8 +46,9 @@ public class InterfaceCache {
 			.newInstance();
 
 	private static final XMLEvent NL = EVENT_FACTORY.createDTD("\n");
-	
-	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat(DateUtils.PATTERN_RFC1123);
+
+	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat(
+			DateUtils.PATTERN_RFC1123);
 
 	private static Set<String> interfaces;
 
@@ -128,11 +128,10 @@ public class InterfaceCache {
 
 		} finally {
 			try {
-				FilesWatcher.register(interfacesPath, new Task(
-						"WebApp files watcher") {
+				FilesWatcher.register(interfacesPath, new Runnable() {
 
 					@Override
-					protected void execute() {
+					public void run() {
 						try {
 							createCache();
 						} catch (IOException e) {

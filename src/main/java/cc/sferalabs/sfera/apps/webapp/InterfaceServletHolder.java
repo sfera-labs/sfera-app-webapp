@@ -23,6 +23,9 @@ public class InterfaceServletHolder extends WebappServletHolder {
 			ServletResponse response) throws ServletException,
 			UnavailableException, IOException {
 		HttpServletRequest req = (HttpServletRequest) request;
+		HttpServletResponse resp = (HttpServletResponse) response;
+		resp.setHeader("Cache-Control",
+				"private, max-age=0, no-cache, no-store, must-revalidate");
 		String basePath = req.getServletPath();
 		String interfaceName = basePath.substring(1);
 		if (req.isUserInRole("admin")
@@ -31,7 +34,6 @@ public class InterfaceServletHolder extends WebappServletHolder {
 			return;
 		}
 
-		HttpServletResponse resp = (HttpServletResponse) response;
 		String uri = req.getRequestURI();
 		logger.warn("Unauthorized interface request: {}", uri);
 		if (uri.equals(basePath) || uri.equals(basePath + "/")) {
