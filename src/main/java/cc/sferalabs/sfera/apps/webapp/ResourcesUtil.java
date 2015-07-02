@@ -21,6 +21,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import cc.sferalabs.sfera.core.Plugin;
 import cc.sferalabs.sfera.core.Plugins;
 
@@ -37,6 +40,8 @@ public abstract class ResourcesUtil {
 		}
 	};
 
+	private static final Logger logger = LogManager.getLogger();
+
 	private static Path webAppPluginPath;
 	private static Set<Path> pluginsOverwritingWebapp;
 
@@ -46,10 +51,13 @@ public abstract class ResourcesUtil {
 	 */
 	public static void lookForPluginsOverwritingWebapp() throws IOException {
 		pluginsOverwritingWebapp = new TreeSet<Path>(PLUGINS_NAME_COMPARATOR);
-		String webAppPluginId = WebApp.class.getName();
+		String webAppPluginId = WebApp.class.getPackage().getName();
 		Plugin webAppPlugin = Plugins.get(webAppPluginId);
 		if (webAppPlugin != null) {
 			webAppPluginPath = webAppPlugin.getPath();
+		} else {
+			// When developing is OK...
+			logger.warn("WebApp plugin not found");
 		}
 		for (Plugin plugin : Plugins.getAll().values()) {
 			if (!plugin.getId().equals(webAppPluginId)) {
