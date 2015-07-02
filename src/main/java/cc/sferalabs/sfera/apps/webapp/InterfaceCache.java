@@ -31,7 +31,7 @@ import org.apache.http.client.utils.DateUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import cc.sferalabs.sfera.files.FilesWatcher;
+import cc.sferalabs.sfera.core.services.FilesWatcher;
 
 public class InterfaceCache {
 
