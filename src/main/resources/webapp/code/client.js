@@ -241,8 +241,8 @@ var urls = {
 		switch (name) {
 		case "dictionary":  return "/"+config.interf+"/dictionary.xml";
 		case "index" :      return "/"+config.interf+"/index.xml";
-		case "subscribe" :  return "/x/subscribe?"+(config.clientId?config.clientId+"&":"")+"nodes=*";
-		case "state" :      return "/x/state/"+config.clientId+"?ts="+client.stateTs;
+		case "subscribe" :  return "/api/subscribe?"+(config.clientId?config.clientId+"&":"")+"nodes=*";
+		case "state" :      return "/api/state/"+config.clientId+"?ts="+client.stateTs;
 		}
 	}
 };
@@ -1469,7 +1469,7 @@ function webLog(s) {
 		webLogStack = [];
 	}
 	console.log(s);
-	var url = "/x/weblog?" + (new Date()).getTime() + "." + encodeURIComponent(s);
+	var url = "/api/weblog?" + (new Date()).getTime() + "." + encodeURIComponent(s);
 	if (webLogReq.isReady())
 		webLogReq.open(url);
 	else
@@ -1801,7 +1801,7 @@ function Login(parent) {
 		reqMode = "";
 
 		check.retryOnErrorDelay = 100; // initial delay
-		check.open("/x/getstate?-1."+(new Date()).getTime());
+		check.open("/api/getstate?-1."+(new Date()).getTime());
 
 		document.onkeydown = onKeyDown;
 		document.onkeyup = onKeyUp;
@@ -1934,9 +1934,9 @@ function Login(parent) {
 		loginLabelE.innerHTML = textD.loginwait;
 		reqMode = mode;
 		if (mode == "puk") {
-			req.open("/x/auth?*" + pin + "*" + puk + "*." + (new Date()).getTime());
+			req.open("/api/auth?*" + pin + "*" + puk + "*." + (new Date()).getTime());
 		} else {
-			req.open("/x/auth?*" + pin + "*." + (new Date()).getTime());
+			req.open("/api/auth?*" + pin + "*." + (new Date()).getTime());
 		}
 	} // confirm
 
@@ -1975,7 +1975,7 @@ function Login(parent) {
 	function onCheckRetry() {
 		var d = check.retries*100;
 		check.retryOnErrorDelay = d<2000?d:2000; // max 2 sec
-		check.url = "/x/getstate?-1."+(new Date()).getTime(); // refresh url, new timestamp
+		check.url = "/api/getstate?-1."+(new Date()).getTime(); // refresh url, new timestamp
 	}
 
 	/* no press/release if we need to hide it from others

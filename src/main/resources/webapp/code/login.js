@@ -290,11 +290,11 @@ function doLogin() {
 	resetCheck();
 	var user = document.getElementById("user").value;
 	var password = document.getElementById("password").value;
-	req.open("/x/login?user="+user+"&password="+password,100);
+	req.open("/api/login?user="+user+"&password="+password,100);
 }
 
 function checkLogin() {
-	// req.open("/x/login",100);
+	// req.open("/api/login",100);
 }
 
 function resetCheck() {
