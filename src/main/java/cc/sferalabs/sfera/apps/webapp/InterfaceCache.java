@@ -37,6 +37,7 @@ public class InterfaceCache {
 
 	static final Path CACHE_ROOT = WebApp.ROOT.resolve("cache/");
 	static final Path ABSOLUTE_CACHE_ROOT_PATH = CACHE_ROOT.toAbsolutePath();
+	private static final String CACHE_MANIFEST_NAME = "sfera.appcache";
 
 	private static final XMLInputFactory INPUT_FACTORY = XMLInputFactory
 			.newInstance();
@@ -186,13 +187,13 @@ public class InterfaceCache {
 		createInterfaceXmlAndExtractAttributes();
 		createDictionaryAndExtractSkinIconSet();
 		Set<Path> resources = copyResources();
-		createIndex("skins/index.html", "index.html", "/manifest", false);
+		createIndex("skins/index.html", "index.html", "/" + CACHE_MANIFEST_NAME, false);
 		createInterfaceCode();
 		createInterfaceCSS();
 		if (useApplicationCache) {
 			resources.add(interfaceTmpCacheRoot.resolve("style.css"));
 			resources.add(interfaceTmpCacheRoot.resolve("code.js"));
-			createManifest("manifest", resources);
+			createManifest(CACHE_MANIFEST_NAME, resources);
 		}
 	}
 
@@ -204,7 +205,7 @@ public class InterfaceCache {
 		Files.createDirectories(interfaceTmpCacheRoot.resolve("login"));
 
 		Set<String> imgs = createIndex("skins/login.html", "login/index.html",
-				"/login/manifest", true);
+				"/login/" + CACHE_MANIFEST_NAME, true);
 		Set<Path> loginResources = copyLoginResources(imgs);
 		createLoginCode();
 		createLoginCSS();
@@ -212,7 +213,7 @@ public class InterfaceCache {
 			loginResources
 					.add(interfaceTmpCacheRoot.resolve("login/style.css"));
 			loginResources.add(interfaceTmpCacheRoot.resolve("login/code.js"));
-			createManifest("login/manifest", loginResources);
+			createManifest("login/" + CACHE_MANIFEST_NAME, loginResources);
 		}
 	}
 
@@ -338,9 +339,9 @@ public class InterfaceCache {
 	 * 
 	 * @param source
 	 * @param target
-	 * @param addManifest
 	 * @param manifestPath
 	 * @param extractImages
+	 * @return
 	 * @throws IOException
 	 */
 	private Set<String> createIndex(String source, String target,
