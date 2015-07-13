@@ -19,17 +19,14 @@ public class InterfaceServletHolder extends WebappServletHolder {
 	private final static Logger logger = LogManager.getLogger();
 
 	@Override
-	public void handle(Request baseRequest, ServletRequest request,
-			ServletResponse response) throws ServletException,
-			UnavailableException, IOException {
+	public void handle(Request baseRequest, ServletRequest request, ServletResponse response)
+			throws ServletException, UnavailableException, IOException {
 		HttpServletRequest req = (HttpServletRequest) request;
 		HttpServletResponse resp = (HttpServletResponse) response;
-		resp.setHeader("Cache-Control",
-				"private, max-age=0, no-cache, no-store, must-revalidate");
+		resp.setHeader("Cache-Control", "private, max-age=0, no-cache, no-store, must-revalidate");
 		String basePath = req.getServletPath();
 		String interfaceName = basePath.substring(1);
-		if (req.isUserInRole("admin")
-				|| req.isUserInRole("webapp." + interfaceName)) {
+		if (req.isUserInRole("admin") || req.isUserInRole("webapp." + interfaceName)) {
 			super.handle(baseRequest, request, response);
 			return;
 		}

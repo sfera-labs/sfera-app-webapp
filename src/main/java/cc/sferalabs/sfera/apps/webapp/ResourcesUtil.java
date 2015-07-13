@@ -35,8 +35,7 @@ public abstract class ResourcesUtil {
 
 		@Override
 		public int compare(Path o1, Path o2) {
-			return o1.getFileName().toString()
-					.compareTo(o2.getFileName().toString());
+			return o1.getFileName().toString().compareTo(o2.getFileName().toString());
 		}
 	};
 
@@ -61,8 +60,7 @@ public abstract class ResourcesUtil {
 		}
 		for (Plugin plugin : Plugins.getAll().values()) {
 			if (!plugin.getId().equals(webAppPluginId)) {
-				try (FileSystem pluginFs = FileSystems.newFileSystem(
-						plugin.getPath(), null)) {
+				try (FileSystem pluginFs = FileSystems.newFileSystem(plugin.getPath(), null)) {
 					Path webappDir = pluginFs.getPath("webapp");
 					if (Files.exists(webappDir) && Files.isDirectory(webappDir)) {
 						pluginsOverwritingWebapp.add(plugin.getPath());
@@ -80,8 +78,7 @@ public abstract class ResourcesUtil {
 	 * @throws NoSuchFileException
 	 * @throws IOException
 	 */
-	public static Path getResource(Path path) throws NoSuchFileException,
-			IOException {
+	public static Path getResource(Path path) throws NoSuchFileException, IOException {
 		if (Files.exists(path)) {
 			return path;
 		}
@@ -103,8 +100,7 @@ public abstract class ResourcesUtil {
 	 * @throws NoSuchFileException
 	 * @throws IOException
 	 */
-	private static Path getWebAppResource(Path path)
-			throws NoSuchFileException, IOException {
+	private static Path getWebAppResource(Path path) throws NoSuchFileException, IOException {
 		if (webAppPluginPath != null) {
 			try {
 				return getPluginResource(webAppPluginPath, path);
@@ -113,8 +109,7 @@ public abstract class ResourcesUtil {
 		}
 
 		try {
-			URL url = ResourcesUtil.class.getClassLoader().getResource(
-					path.toString());
+			URL url = ResourcesUtil.class.getClassLoader().getResource(path.toString());
 			if (url != null) {
 				Path resPath = Paths.get(url.toURI());
 				if (Files.exists(resPath)) {
@@ -186,23 +181,20 @@ public abstract class ResourcesUtil {
 	 * @throws NoSuchFileException
 	 * @throws IOException
 	 */
-	public static Set<String> listDirectoriesNamesIn(Path dir,
-			boolean includeJarResources) throws NoSuchFileException,
-			IOException {
+	public static Set<String> listDirectoriesNamesIn(Path dir, boolean includeJarResources)
+			throws NoSuchFileException, IOException {
 
 		List<Path> paths = getResources(dir, includeJarResources);
 
 		Set<String> list = new HashSet<String>();
 		for (Path path : paths) {
 			if (Files.isDirectory(path)) {
-				try (DirectoryStream<Path> stream = Files
-						.newDirectoryStream(path)) {
+				try (DirectoryStream<Path> stream = Files.newDirectoryStream(path)) {
 					for (Path file : stream) {
 						if (Files.isDirectory(file) && !Files.isHidden(file)) {
 							String dirName = file.getFileName().toString();
 							if (dirName.endsWith("/")) {
-								dirName = dirName.substring(0,
-										dirName.length() - 1);
+								dirName = dirName.substring(0, dirName.length() - 1);
 							}
 
 							list.add(dirName);
@@ -227,17 +219,15 @@ public abstract class ResourcesUtil {
 	 * @throws NoSuchFileException
 	 * @throws IOException
 	 */
-	public static Set<String> listRegularFilesNamesIn(Path dir,
-			boolean includeJarResources) throws NoSuchFileException,
-			IOException {
+	public static Set<String> listRegularFilesNamesIn(Path dir, boolean includeJarResources)
+			throws NoSuchFileException, IOException {
 
 		List<Path> paths = getResources(dir, includeJarResources);
 
 		Set<String> list = new HashSet<String>();
 		for (Path path : paths) {
 			if (Files.isDirectory(path)) {
-				try (DirectoryStream<Path> stream = Files
-						.newDirectoryStream(path)) {
+				try (DirectoryStream<Path> stream = Files.newDirectoryStream(path)) {
 					for (Path file : stream) {
 						if (Files.isRegularFile(file) && !Files.isHidden(file)) {
 							list.add(file.getFileName().toString());
@@ -262,8 +252,8 @@ public abstract class ResourcesUtil {
 	 * @return
 	 * @throws IOException
 	 */
-	public static Set<Path> copyRecursive(Path source, Path target,
-			boolean includeResources) throws IOException {
+	public static Set<Path> copyRecursive(Path source, Path target, boolean includeResources)
+			throws IOException {
 		Set<Path> list = copyRecursive(source, target);
 
 		if (includeResources) {
@@ -290,8 +280,7 @@ public abstract class ResourcesUtil {
 	 * @param target
 	 * @throws IOException
 	 */
-	private static Set<Path> copyRecursive(Path source, Path target)
-			throws IOException {
+	private static Set<Path> copyRecursive(Path source, Path target) throws IOException {
 		Set<Path> list = new HashSet<Path>();
 		if (Files.exists(source) && !Files.isHidden(source)) {
 			try {
@@ -300,11 +289,10 @@ public abstract class ResourcesUtil {
 			} catch (FileAlreadyExistsException e) {
 			}
 			if (Files.isDirectory(source)) {
-				try (DirectoryStream<Path> stream = Files
-						.newDirectoryStream(source)) {
+				try (DirectoryStream<Path> stream = Files.newDirectoryStream(source)) {
 					for (Path file : stream) {
-						list.addAll(copyRecursive(file,
-								target.resolve(file.getFileName().toString())));
+						list.addAll(
+								copyRecursive(file, target.resolve(file.getFileName().toString())));
 					}
 				}
 			}
@@ -321,8 +309,7 @@ public abstract class ResourcesUtil {
 	public static void deleteRecursive(Path dir) throws IOException {
 		if (Files.exists(dir)) {
 			if (Files.isDirectory(dir)) {
-				try (DirectoryStream<Path> stream = Files
-						.newDirectoryStream(dir)) {
+				try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir)) {
 					for (Path file : stream) {
 						deleteRecursive(file);
 					}
@@ -337,8 +324,7 @@ public abstract class ResourcesUtil {
 	 */
 	public static void release() {
 		synchronized (OPEN_RESOURCES) {
-			for (Iterator<Closeable> it = OPEN_RESOURCES.iterator(); it
-					.hasNext();) {
+			for (Iterator<Closeable> it = OPEN_RESOURCES.iterator(); it.hasNext();) {
 				try {
 					it.next().close();
 				} catch (Exception e) {

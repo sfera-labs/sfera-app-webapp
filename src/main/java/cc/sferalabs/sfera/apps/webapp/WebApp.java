@@ -22,8 +22,7 @@ public class WebApp extends Application {
 		}
 
 		try {
-			boolean useApplicationCache = configuration.getBoolProperty(
-					"application_cache", true);
+			boolean useApplicationCache = configuration.getBoolProperty("application_cache", true);
 			InterfaceCache.init(useApplicationCache);
 		} catch (Exception e) {
 			logger.error("Error creating cache", e);
@@ -31,13 +30,11 @@ public class WebApp extends Application {
 
 		for (String interfaceName : InterfaceCache.getInterfaces()) {
 			try {
-				HttpServer.addServlet(InterfaceServletHolder.INSTANCE, "/"
-						+ interfaceName + "/*");
-				HttpServer.addServlet(WebappServletHolder.INSTANCE, "/"
-						+ interfaceName + "/login/*");
+				HttpServer.addServlet(InterfaceServletHolder.INSTANCE, "/" + interfaceName + "/*");
+				HttpServer.addServlet(WebappServletHolder.INSTANCE,
+						"/" + interfaceName + "/login/*");
 			} catch (Exception e) {
-				logger.error("Error registering servlet for interface "
-						+ interfaceName, e);
+				logger.error("Error registering servlet for interface " + interfaceName, e);
 			}
 		}
 	}
