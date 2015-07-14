@@ -7,7 +7,6 @@
  *
 *************************************************************/
 
-
 //--------------------------------------------------------------------------------------------------------------------------
 // Common Code -------------------------------------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------------------------------------------------
@@ -258,7 +257,7 @@ function Client() {
 	var url = window.location.href;
 	var a = url.split("://");
 	a[0] = a[0].replace("http","ws");
-	var wsUrl = a[0] + "://" + a[1];
+	var wsUrl = a[0] + "://" + a[1] + "/api/websocket";
 	
 	
     var webSocket;
@@ -283,6 +282,8 @@ function Client() {
                 return;
 
             writeResponse(event.data);
+            
+            send();
         };
 
         webSocket.onmessage = function(event) {
@@ -310,10 +311,9 @@ function Client() {
 		var e = document.getElementById("output");
 		e.innerHTML += "webSocket response:<br><textarea style='width:500px; height:200px'>"+text+"</textarea><br><br>";
     }
-	
+    
     
     openSocket();
-    send();
 	///////////////////////////////////////////////////////////////////
 	
 	
