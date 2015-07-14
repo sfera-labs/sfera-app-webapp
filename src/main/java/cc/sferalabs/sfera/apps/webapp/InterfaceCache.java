@@ -100,7 +100,7 @@ public class InterfaceCache {
 
 				FilesWatcher.register(INTERFACES_PATH, cacheCreator, false);
 				// For development
-				FilesWatcher.register(Paths.get("src/main/resources/webapp/"), cacheCreator);
+				FilesWatcher.register(Paths.get("src/main/resources/webapp/"), cacheCreator, false);
 			} catch (Exception e) {
 				logger.error("Error registering WebApp files watcher", e);
 			}
