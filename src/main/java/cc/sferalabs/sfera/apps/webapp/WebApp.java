@@ -11,7 +11,6 @@ import cc.sferalabs.sfera.http.HttpServerException;
 public class WebApp extends Application {
 
 	static final Path ROOT = Paths.get("webapp/");
-	static final String API_BASE_URI = "/x/";
 
 	@Override
 	public void onEnable(Configuration configuration) {

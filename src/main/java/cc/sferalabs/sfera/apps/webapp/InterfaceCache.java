@@ -7,6 +7,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -36,7 +37,7 @@ import cc.sferalabs.sfera.core.services.FilesWatcher;
 public class InterfaceCache {
 
 	static final Path CACHE_ROOT = WebApp.ROOT.resolve("cache/");
-	static final Path ABSOLUTE_CACHE_ROOT_PATH = CACHE_ROOT.toAbsolutePath();
+	static final Path INTERFACES_PATH = WebApp.ROOT.resolve("interfaces/");
 	private static final String CACHE_MANIFEST_NAME = "sfera.appcache";
 
 	private static final XMLInputFactory INPUT_FACTORY = XMLInputFactory.newInstance();
@@ -81,7 +82,29 @@ public class InterfaceCache {
 	 */
 	public synchronized static void init(boolean useApplicationCache) throws Exception {
 		InterfaceCache.useApplicationCache = useApplicationCache;
-		createCache();
+		try {
+			createCache();
+		} finally {
+			try {
+				Runnable cacheCreator = new Runnable() {
+
+					@Override
+					public void run() {
+						try {
+							createCache();
+						} catch (IOException e) {
+							logger.error("Error creating cache", e);
+						}
+					}
+				};
+
+				FilesWatcher.register(INTERFACES_PATH, cacheCreator, false);
+				// For development
+				FilesWatcher.register(Paths.get("src/main/resources/webapp/"), cacheCreator);
+			} catch (Exception e) {
+				logger.error("Error registering WebApp files watcher", e);
+			}
+		}
 	}
 
 	/**
@@ -97,47 +120,25 @@ public class InterfaceCache {
 	 * @throws IOException
 	 */
 	private static void createCache() throws IOException {
-		Path interfacesPath = WebApp.ROOT.resolve("interfaces/");
+		interfaces = new HashSet<String>();
 		try {
-			interfaces = new HashSet<String>();
-			try {
-				for (String interfaceName : ResourcesUtil.listDirectoriesNamesIn(interfacesPath,
-						true)) {
-					try {
-						createCacheFor(interfaceName);
-						interfaces.add(interfaceName);
-					} catch (Exception e) {
-						logger.error("Error creating cache for interface '" + interfaceName + "'",
-								e);
-					}
+			for (String interfaceName : ResourcesUtil.listDirectoriesNamesIn(INTERFACES_PATH,
+					true)) {
+				try {
+					createCacheFor(interfaceName);
+					interfaces.add(interfaceName);
+				} catch (Exception e) {
+					logger.error("Error creating cache for interface '" + interfaceName + "'", e);
 				}
-
-				for (String interfaceName : ResourcesUtil.listDirectoriesNamesIn(CACHE_ROOT,
-						false)) {
-					if (!interfaces.contains(interfaceName)) {
-						ResourcesUtil.deleteRecursive(CACHE_ROOT.resolve(interfaceName + "/"));
-					}
-				}
-			} catch (NoSuchFileException nsfe) {
-				ResourcesUtil.deleteRecursive(CACHE_ROOT);
 			}
 
-		} finally {
-			try {
-				FilesWatcher.register(interfacesPath, new Runnable() {
-
-					@Override
-					public void run() {
-						try {
-							createCache();
-						} catch (IOException e) {
-							logger.error("Error creating cache", e);
-						}
-					}
-				});
-			} catch (Exception e) {
-				logger.error("Error registering WebApp files watcher", e);
+			for (String interfaceName : ResourcesUtil.listDirectoriesNamesIn(CACHE_ROOT, false)) {
+				if (!interfaces.contains(interfaceName)) {
+					ResourcesUtil.deleteRecursive(CACHE_ROOT.resolve(interfaceName + "/"));
+				}
 			}
+		} catch (NoSuchFileException nsfe) {
+			ResourcesUtil.deleteRecursive(CACHE_ROOT);
 		}
 	}
 
