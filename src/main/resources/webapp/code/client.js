@@ -13,7 +13,7 @@
 //--------------------------------------------------------------------------------------------------------------------------
 
 String.prototype.trim = function () {
-    //return this.replace(/^\s*/, "").replace(/\s*$/, "");
+	//return this.replace(/^\s*/, "").replace(/\s*$/, "");
 	var	str = this.replace(/^\s\s*/, ''),
 		ws = /\s/,
 		i = str.length;
@@ -249,9 +249,73 @@ var urls = {
 
 function Client() {
 	// general purpose request
-	var req = new XMLReq("GET");
+	var req = new HTTPReq("GET");
 	req.onLoaded = onReqLoaded;
 	req.onError = onReqError;
+	
+	
+	// websockets
+	var url = window.location.href;
+	var a = url.split("://");
+	a[0] = a[0].replace("http","ws");
+	var wsUrl = a[0] + "://" + a[1];
+	
+	
+    var webSocket;
+    var messages = document.getElementById("messages");
+
+    function openSocket() {
+    	console.log("opening socket");
+        // Ensures only one connection is open at a time
+        if (webSocket !== undefined && webSocket.readyState !== WebSocket.CLOSED) {
+            writeResponse("WebSocket is already opened.");
+            return;
+        }
+        // Create a new instance of the websocket
+
+        webSocket = new WebSocket(wsUrl);
+
+        webSocket.onopen = function(event) {
+            // For reasons I can't determine, onopen gets called twice
+            // and the first time event.data is undefined.
+            // Leave a comment if you know the answer.
+            if (event.data === undefined)
+                return;
+
+            writeResponse(event.data);
+        };
+
+        webSocket.onmessage = function(event) {
+            writeResponse(event.data);
+        };
+
+        webSocket.onclose = function(event) {
+            writeResponse("Connection closed");
+        };
+    }
+
+    /**
+     * Sends the value of the text input to the server
+     */
+    function send() {
+        webSocket.send("hello");
+    }
+
+    function closeSocket() {
+        webSocket.close();
+    }
+
+    function writeResponse(text) {
+    	console.log("websocket: "+text);
+		var e = document.getElementById("output");
+		e.innerHTML += "webSocket response:<br><textarea style='width:500px; height:200px'>"+text+"</textarea><br><br>";
+    }
+	
+    
+    openSocket();
+    send();
+	///////////////////////////////////////////////////////////////////
+	
 	
 	var started = false; // connected: ongoing state requests 
 	
@@ -1463,7 +1527,7 @@ function webLog(s) {
 	}
 
 	if (!webLogReq) {
-		webLogReq = new XMLReq();
+		webLogReq = new HTTPReq();
 		webLogReq.onLoaded = onLoaded;
 		webLogReq.onError = onLoaded;
 		webLogStack = [];
@@ -1478,9 +1542,9 @@ function webLog(s) {
 
 
 //--------------------------------------------------------------------------------------------------------------------------
-// XMLReq ------------------------------------------------------------------------------------------------------------------
+// HTTPReq ------------------------------------------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------------------------------------------------
-function XMLReq() {
+function HTTPReq() {
 	var req = null; // request
 
 	var status; // -1: aborted, 0: ready, 1:loading, 2:loaded
@@ -1734,7 +1798,7 @@ function XMLReq() {
 	this.isReady = function () {
 		return status != 1;
 	}
-} // XMLReq Class
+} // HTTPReq Class
 
 
 //--------------------------------------------------------------------------------------------------------------------------
@@ -1745,8 +1809,8 @@ function XMLReq() {
 function Login(parent) {
 	this.onLogin = null; // on login successful event
 
-	var req = new XMLReq();
-	var check = new XMLReq(); // "already logged in" check
+	var req = new HTTPReq();
+	var check = new HTTPReq(); // "already logged in" check
 
 	var reqMode = ""; // ,pin,puk
 
