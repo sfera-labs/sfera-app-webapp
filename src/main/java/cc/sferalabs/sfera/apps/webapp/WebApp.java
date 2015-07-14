@@ -14,14 +14,8 @@ public class WebApp extends Application {
 
 	@Override
 	public void onEnable(Configuration configuration) {
+		boolean useApplicationCache = configuration.getBoolProperty("application_cache", true);
 		try {
-			ResourcesUtil.lookForPluginsOverwritingWebapp();
-		} catch (Exception e) {
-			logger.error("Error scanning plugins directory", e);
-		}
-
-		try {
-			boolean useApplicationCache = configuration.getBoolProperty("application_cache", true);
 			InterfaceCache.init(useApplicationCache);
 		} catch (Exception e) {
 			logger.error("Error creating cache", e);

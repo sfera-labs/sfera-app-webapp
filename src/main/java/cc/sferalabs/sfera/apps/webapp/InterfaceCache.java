@@ -82,6 +82,7 @@ public class InterfaceCache {
 	 */
 	public synchronized static void init(boolean useApplicationCache) throws Exception {
 		InterfaceCache.useApplicationCache = useApplicationCache;
+		ResourcesUtil.lookForPluginsOverwritingWebapp();
 		try {
 			createCache();
 		} finally {

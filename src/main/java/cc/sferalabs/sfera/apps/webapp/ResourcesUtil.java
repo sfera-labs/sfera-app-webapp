@@ -46,9 +46,8 @@ public abstract class ResourcesUtil {
 
 	/**
 	 * 
-	 * @throws IOException
 	 */
-	public static void lookForPluginsOverwritingWebapp() throws IOException {
+	public static void lookForPluginsOverwritingWebapp() {
 		pluginsOverwritingWebapp = new TreeSet<Path>(PLUGINS_NAME_COMPARATOR);
 		String webAppPluginId = WebApp.class.getPackage().getName();
 		Plugin webAppPlugin = Plugins.get(webAppPluginId);
@@ -66,6 +65,7 @@ public abstract class ResourcesUtil {
 						pluginsOverwritingWebapp.add(plugin.getPath());
 					}
 				} catch (Exception e) {
+					logger.warn("Error scanning plugin '" + plugin.getId() + "'", e);
 				}
 			}
 		}
