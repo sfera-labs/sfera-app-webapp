@@ -257,14 +257,14 @@ function Client() {
 	var url = window.location.href;
 	var a = url.split("://");
 	a[0] = a[0].replace("http","ws");
-	var wsUrl = a[0] + "://" + a[1] + "/api/websocket";
+	var wsUrl = a[0] + "://" + a[1].split("/")[0] + "/api/websocket";
 	
 	
     var webSocket;
     var messages = document.getElementById("messages");
 
     function openSocket() {
-    	console.log("opening socket");
+    	console.log("opening socket on "+wsUrl);
         // Ensures only one connection is open at a time
         if (webSocket !== undefined && webSocket.readyState !== WebSocket.CLOSED) {
             writeResponse("WebSocket is already opened.");
