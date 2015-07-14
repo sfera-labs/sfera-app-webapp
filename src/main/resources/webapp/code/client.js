@@ -262,6 +262,8 @@ function Client() {
 	
     var webSocket;
     var messages = document.getElementById("messages");
+    
+    var self = this;
 
     function openSocket() {
     	console.log("opening socket on "+wsUrl);
@@ -283,7 +285,7 @@ function Client() {
 
             writeResponse(event.data);
             
-            send();
+            self.wsSend("hello");
         };
 
         webSocket.onmessage = function(event) {
@@ -298,8 +300,14 @@ function Client() {
     /**
      * Sends the value of the text input to the server
      */
-    function send() {
-        webSocket.send("hello");
+    this.wsOpen = function () {
+    	openSocket();
+    }
+    this.wsSend = function (txt) {
+        webSocket.send(txt);
+    }
+    this.wsClose = function () {
+    	closeSocket();
     }
 
     function closeSocket() {
