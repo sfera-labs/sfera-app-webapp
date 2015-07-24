@@ -1,0 +1,5 @@
+<obj name="image">
+	<attributes>
+		<attr name="src" type="string" default="" />
+	</attributes>
+</obj>
