@@ -4,12 +4,14 @@ Objects.image = function () {
 
 	this.src = ""; // image src
 
-
 	var foo = this;
+	
+	var imageE = null;
 
 	var _init = this.init;
 	this.init = function (e, obj) {
 		_init.call(this, e, obj);
+		imageE = this.e.getElementsByTagName("img")[0];
 	}
 
 	// events. not to be assigned externally
@@ -28,7 +30,13 @@ Objects.image = function () {
 		var v;
 		switch (name) {
 		case "src":
-			this.e.getElementsByTagName("img")[0].src = value;
+			imageE.src = value;
+			break;
+		case "width":
+			imageE.style.width = parseInt(value)+"px";
+			break;
+		case "height":
+			imageE.style.height = parseInt(value)+"px";
 			break;
 		default:
 			return _setAttribute.call(this, name, value);
