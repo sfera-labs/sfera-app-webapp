@@ -10,8 +10,8 @@ Objects.image = function () {
 
 	var _init = this.init;
 	this.init = function (e, obj) {
+		imageE = e.getElementsByTagName("img")[0];
 		_init.call(this, e, obj);
-		imageE = this.e.getElementsByTagName("img")[0];
 	}
 
 	// events. not to be assigned externally
