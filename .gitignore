@@ -14,6 +14,8 @@ pom.xml.versionsBackup
 pom.xml.next
 release.properties
 
+.metadata
+
 .DS_Store
 .DS_Store?
 ._*
