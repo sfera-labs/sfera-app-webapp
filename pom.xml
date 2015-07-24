@@ -64,5 +64,10 @@
 			<artifactId>httpclient</artifactId>
 			<version>4.3.6</version>
 		</dependency>
+		<dependency>
+			<groupId>cc.sferalabs.sfera.drivers.cameras</groupId>
+			<artifactId>http-proxy</artifactId>
+			<version>1.0.0</version>
+		</dependency>
 	</dependencies>
 </project>
