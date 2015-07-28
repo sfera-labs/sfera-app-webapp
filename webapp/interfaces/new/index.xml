@@ -3,7 +3,7 @@
 	<page id="page:homepage" title="" orientation="landscape" gestures="">
 		<text id="text1" x="500" y="320" width="160" height="18" text="this is some text" color="green" size="20"/>
 		<link id="link1" x="200" y="260" width="120" height="120" label="this is some text"/>
-		<image id="img1" x="200" y="10" width="300" height="240" src="/camera/cam/video.cgi?compression=80&amp;fps=7"/>
+		<image id="img1" x="400" y="10" width="300" height="240" src="/camera/cam?compression=80&amp;fps=7"/>
 	</page>
 
 </interface>
