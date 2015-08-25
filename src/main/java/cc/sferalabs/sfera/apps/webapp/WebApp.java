@@ -16,8 +16,8 @@ public class WebApp extends Application {
 	static final Path ROOT = Paths.get("webapp/");
 
 	@Override
-	public void onEnable(Configuration configuration) {
-		boolean useApplicationCache = configuration.getBoolProperty("application_cache", true);
+	public void onEnable(Configuration config) {
+		boolean useApplicationCache = config.get("application_cache", true);
 		try {
 			InterfaceCache.init(useApplicationCache);
 		} catch (Exception e) {
@@ -44,10 +44,10 @@ public class WebApp extends Application {
 			logger.error("Error removing servlet", e);
 		}
 	}
-	
+
 	@Subscribe
 	public void handleHttpEvent(HttpEvent e) {
-		// TODO maybe handle GUI events here
+		// TODO handle user events here
 		try {
 			e.reply("ciao " + e.getUser().getUsername() + " - " + e.getValue());
 		} catch (Exception e1) {
