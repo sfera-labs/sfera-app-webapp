@@ -21,7 +21,7 @@ public class WebApp extends Application {
 		try {
 			InterfaceCache.init(useApplicationCache);
 		} catch (Exception e) {
-			logger.error("Error creating cache", e);
+			log.error("Error creating cache", e);
 		}
 
 		for (String interfaceName : InterfaceCache.getInterfaces()) {
@@ -30,7 +30,7 @@ public class WebApp extends Application {
 				HttpServer.addServlet(WebappServletHolder.INSTANCE,
 						"/" + interfaceName + "/login/*");
 			} catch (Exception e) {
-				logger.error("Error registering servlet for interface " + interfaceName, e);
+				log.error("Error registering servlet for interface " + interfaceName, e);
 			}
 		}
 	}
@@ -41,7 +41,7 @@ public class WebApp extends Application {
 			HttpServer.removeServlet(InterfaceServletHolder.INSTANCE);
 			HttpServer.removeServlet(WebappServletHolder.INSTANCE);
 		} catch (HttpServerException e) {
-			logger.error("Error removing servlet", e);
+			log.error("Error removing servlet", e);
 		}
 	}
 
