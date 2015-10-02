@@ -1,5 +1,0 @@
-<obj name="cam">
-	<attributes>
-		<attr name="src" type="string" default="" />
-	</attributes>
-</obj>

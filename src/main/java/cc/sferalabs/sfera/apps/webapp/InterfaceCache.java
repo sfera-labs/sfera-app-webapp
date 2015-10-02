@@ -23,7 +23,6 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.Attribute;
-import javax.xml.stream.events.EndElement;
 import javax.xml.stream.events.StartDocument;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
@@ -59,7 +58,7 @@ public class InterfaceCache {
 	private final Path interfaceCacheRoot;
 	private final Path interfaceTmpCacheRoot;
 
-	private Set<String> objects = new HashSet<String>();
+	private Set<String> conponents = new HashSet<String>();
 	private String skin = null;
 	private String language = null;
 	private String iconSet = null;
@@ -218,11 +217,11 @@ public class InterfaceCache {
 	private void createInterfaceCSS() throws IOException {
 		try (BufferedWriter writer = Files.newBufferedWriter(
 				interfaceTmpCacheRoot.resolve("style.css"), StandardCharsets.UTF_8)) {
-			writeContentFrom("skins/" + skin + "/style.css", writer);
+			writeContentFrom("skins/" + skin + "/" + skin + ".css", writer);
 
-			for (String o : objects) {
+			for (String comp : conponents) {
 				try {
-					writeContentFrom("objects/" + o + "/" + o + ".css", writer);
+					writeContentFrom("components/" + comp + "/" + comp + ".css", writer);
 				} catch (NoSuchFileException e) {
 				}
 			}
@@ -258,14 +257,17 @@ public class InterfaceCache {
 				writeContentFrom("code/client.js", writer);
 			}
 
-			for (String o : objects) {
+			try {
+				writeContentFrom("skins/" + skin + "/" + skin + ".min.js", writer);
+			} catch (NoSuchFileException e) {
+				writeContentFrom("skins/" + skin + "/" + skin + ".js", writer);
+			}
+
+			for (String comp : conponents) {
 				try {
-					writeContentFrom("objects/" + o + "/" + o + ".min.js", writer);
+					writeContentFrom("components/" + comp + "/" + comp + ".min.js", writer);
 				} catch (NoSuchFileException e) {
-					try {
-						writeContentFrom("objects/" + o + "/" + o + ".js", writer);
-					} catch (NoSuchFileException e1) {
-					}
+					writeContentFrom("components/" + comp + "/" + comp + ".js", writer);
 				}
 			}
 
@@ -278,7 +280,7 @@ public class InterfaceCache {
 						writeContentFrom(interfacePath + file, writer);
 					}
 				}
-			} catch (NoSuchFileException nsfe) {
+			} catch (NoSuchFileException e) {
 			}
 		}
 	}
@@ -398,16 +400,16 @@ public class InterfaceCache {
 				WebApp.ROOT.resolve("interfaces/" + interfaceName + "/assets/"),
 				interfaceTmpCacheRoot.resolve("assets/"), true));
 
-		Files.createDirectories(interfaceTmpCacheRoot.resolve("images/objects/"));
+		Files.createDirectories(interfaceTmpCacheRoot.resolve("images/components/"));
 
 		resources.addAll(
 				ResourcesUtil.copyRecursive(WebApp.ROOT.resolve("skins/" + skin + "/images/"),
 						interfaceTmpCacheRoot.resolve("images/skin/"), true));
 
-		for (String o : objects) {
+		for (String o : conponents) {
 			resources.addAll(ResourcesUtil.copyRecursive(
-					WebApp.ROOT.resolve("objects/" + o + "/images/" + iconSet + "/"),
-					interfaceTmpCacheRoot.resolve("images/objects/" + o + "/"), true));
+					WebApp.ROOT.resolve("components/" + o + "/images/" + iconSet + "/"),
+					interfaceTmpCacheRoot.resolve("images/components/" + o + "/"), true));
 		}
 
 		resources.addAll(ResourcesUtil.copyRecursive(WebApp.ROOT.resolve("icons/" + iconSet + "/"),
@@ -490,8 +492,7 @@ public class InterfaceCache {
 			eventWriter.add(NL);
 
 			addSkinDefinitionAndExtractIconSet(eventWriter);
-
-			addObjects(eventWriter);
+			addComponents(eventWriter);
 
 			eventWriter.add(EVENT_FACTORY.createEndElement("", "", "dictionary"));
 			eventWriter.add(NL);
@@ -512,57 +513,28 @@ public class InterfaceCache {
 	 * @throws XMLStreamException
 	 * @throws IOException
 	 */
-	private void addObjects(XMLEventWriter eventWriter) throws XMLStreamException, IOException {
-		eventWriter.add(EVENT_FACTORY.createStartElement("", "", "objects"));
+	private void addComponents(XMLEventWriter eventWriter) throws XMLStreamException, IOException {
+		eventWriter.add(EVENT_FACTORY.createStartElement("", "", "components"));
 		eventWriter.add(NL);
 
-		for (String obj : objects) {
-			XMLEventReader eventReader = null;
-			Path objXmlPath = ResourcesUtil
-					.getResource(WebApp.ROOT.resolve("objects/" + obj + "/" + obj + ".xml"));
-
-			try (BufferedReader in = Files.newBufferedReader(objXmlPath, StandardCharsets.UTF_8)) {
-				eventReader = INPUT_FACTORY.createXMLEventReader(in);
-				while (eventReader.hasNext()) {
-					XMLEvent event = eventReader.nextEvent();
-					if (!event.isStartDocument() && !event.isEndDocument()) {
-						if (event.isEndElement()) {
-							EndElement objEnd = event.asEndElement();
-							if (objEnd.getName().getLocalPart().equals("obj")) {
-								try {
-									addElementWithCDataContentFromFile(
-											WebApp.ROOT.resolve(
-													"objects/" + obj + "/" + obj + ".shtml"),
-											"src", eventWriter, EVENT_FACTORY);
-								} catch (NoSuchFileException e) {
-									// this object has no src, and that's fine
-								}
-								try {
-									addElementWithCDataContentFromFile(
-											WebApp.ROOT.resolve("objects/" + obj + "/languages/"
-													+ language + ".ini"),
-											"language", eventWriter, EVENT_FACTORY);
-								} catch (NoSuchFileException e) {
-									// this object has no languages, and that's
-									// fine
-								}
-							}
-						}
-
-						eventWriter.add(event);
-					}
-				}
-				eventWriter.add(NL);
-
-			} finally {
-				try {
-					eventReader.close();
-				} catch (Exception e) {
-				}
+		for (String comp : conponents) {
+			eventWriter.add(EVENT_FACTORY.createStartElement("", "", comp));
+			addElementWithCDataContentFromFile(
+					WebApp.ROOT.resolve("components/" + comp + "/" + comp + ".html"), "src",
+					eventWriter, EVENT_FACTORY);
+			try {
+				addElementWithCDataContentFromFile(
+						WebApp.ROOT
+								.resolve("components/" + comp + "/languages/" + language + ".ini"),
+						"language", eventWriter, EVENT_FACTORY);
+			} catch (NoSuchFileException e) {
+				// this component has no languages, and that's fine
 			}
+			eventWriter.add(EVENT_FACTORY.createEndElement("", "", comp));
+			eventWriter.add(NL);
 		}
 
-		eventWriter.add(EVENT_FACTORY.createEndElement("", "", "objects"));
+		eventWriter.add(EVENT_FACTORY.createEndElement("", "", "components"));
 		eventWriter.add(NL);
 	}
 
@@ -574,11 +546,11 @@ public class InterfaceCache {
 	 */
 	private void addSkinDefinitionAndExtractIconSet(XMLEventWriter eventWriter)
 			throws IOException, XMLStreamException {
-		Path skinXmlPath = ResourcesUtil
+		Path skinDefXmlPath = ResourcesUtil
 				.getResource(WebApp.ROOT.resolve("skins/" + skin + "/" + "definition.xml"));
 
 		XMLEventReader eventReader = null;
-		try (BufferedReader in = Files.newBufferedReader(skinXmlPath, StandardCharsets.UTF_8)) {
+		try (BufferedReader in = Files.newBufferedReader(skinDefXmlPath, StandardCharsets.UTF_8)) {
 			eventReader = INPUT_FACTORY.createXMLEventReader(in);
 			boolean nextIsIconSet = false;
 			while (eventReader.hasNext()) {
@@ -607,7 +579,7 @@ public class InterfaceCache {
 	}
 
 	/**
-	 * Extracts skin, language and objects used in the interface
+	 * Extracts skin, language and components used in the interface
 	 * 
 	 * @throws IOException
 	 * @throws XMLStreamException
@@ -626,10 +598,10 @@ public class InterfaceCache {
 				XMLEvent event = eventReader.nextEvent();
 				if (event.isStartElement()) {
 					StartElement startElement = event.asStartElement();
-					String obj = startElement.getName().getLocalPart();
-					objects.add(obj);
+					String comp = startElement.getName().getLocalPart();
+					conponents.add(comp);
 
-					if (obj.equals("interface")) {
+					if (comp.equals("interface")) {
 						Iterator<?> attributes = startElement.getAttributes();
 						while (attributes.hasNext()) {
 							Attribute attribute = (Attribute) attributes.next();

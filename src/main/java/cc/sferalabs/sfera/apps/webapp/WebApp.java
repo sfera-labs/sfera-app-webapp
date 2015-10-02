@@ -9,7 +9,7 @@ import cc.sferalabs.sfera.apps.Application;
 import cc.sferalabs.sfera.core.Configuration;
 import cc.sferalabs.sfera.http.HttpServer;
 import cc.sferalabs.sfera.http.HttpServerException;
-import cc.sferalabs.sfera.http.api.HttpEvent;
+import cc.sferalabs.sfera.http.api.RemoteEvent;
 
 public class WebApp extends Application {
 
@@ -46,7 +46,7 @@ public class WebApp extends Application {
 	}
 
 	@Subscribe
-	public void handleHttpEvent(HttpEvent e) {
+	public void handleHttpEvent(RemoteEvent e) {
 		// TODO handle user events here
 		try {
 			e.reply("ciao " + e.getUser().getUsername() + " - " + e.getValue());
