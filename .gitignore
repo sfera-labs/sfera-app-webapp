@@ -25,3 +25,5 @@ ehthumbs.db
 Thumbs.db
 *.lck
 /bin/
+
+webapp/interfaces/new/index.out.xml

@@ -1,7 +1,10 @@
 <interface id="new" skin="default" language="it_IT" title="My New Project" width="700" height="500">
 	<page id="page:homepage" title="" orientation="landscape" gestures="">
+<<<<<<< Updated upstream
 		<label id="text_zero" x="20" y="20" width="160" height="18" text="this is label ZERO" color="blue" font-size="20"/>
 		<!--
+=======
+>>>>>>> Stashed changes
 		<image id="img1" x="520" y="10" width="200" height="140" src="/camera/cam-openspace?compression=80&amp;fps=7"/>
 		<image id="img1" x="520" y="160" width="200" height="140" src="/camera/cam-entrance?fps=7"/>
 		<label id="text1" x="520" y="320" width="160" height="18" text="this is some text" color="green" size="20"/>
