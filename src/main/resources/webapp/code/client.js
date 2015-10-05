@@ -1,4 +1,6 @@
-/*! sfera-webapp - v0.0.2 - 2015-10-02 */
+/*! sfera-webapp - v0.0.2 - 2015-10-05 */
+
+/*! sfera-webapp - v0.0.2 - 2015-10-05 */
 
 (function(){
 
@@ -57,13 +59,13 @@ Sfera.Compiler = function(client) {
     }
 
 
-// first time compiling an element.
-// if it finds <!-- sml, replace it with elements
-// add on each element main div data-controller="Link" (added automatically when compiling any component?)
-// set composed = true
-// SAVE new source and composed
-//
-// when assigning the controller, if composed, browse the html to assign controllers
+    // first time compiling an element.
+    // if it finds <!-- sml, replace it with elements
+    // add on each element main div data-controller="Link" (added automatically when compiling any component?)
+    // set composed = true
+    // SAVE new source and composed
+    //
+    // when assigning the controller, if composed, browse the html to assign controllers
 
     /**
      * Create component instance.
@@ -71,7 +73,7 @@ Sfera.Compiler = function(client) {
      * @param  {[type]} properties [description]
      * @return {[type]}            [description]
      */
-    this.createComponent = function (name, properties) {
+    this.createComponent = function(name, properties) {
         /*
         if (src.indexOf("<!--sml") != -1) {
             var comments = getComments(newDiv);
@@ -85,11 +87,11 @@ Sfera.Compiler = function(client) {
         return component;
     }
 
-    this.compileXMLNode = function (xmlNode) {
+    this.compileXMLNode = function(xmlNode) {
         if (xmlNode.nodeType == 1) { // 1 = element
-            var i,a;
+            var i, a;
             var attrs = {};
-            for (i=0; i<xmlNode.attributes.length; i++) {
+            for (i = 0; i < xmlNode.attributes.length; i++) {
                 a = xmlNode.attributes[i];
                 attrs[a.name] = a.value;
             }
@@ -102,7 +104,7 @@ Sfera.Compiler = function(client) {
             var child;
             var c = xmlNode.childNodes;
 
-            for (i=0; i<c.length; i++) {
+            for (i = 0; i < c.length; i++) {
                 child = this.compileXMLNode(c[i]);
                 if (child)
                     component.addChild(child);
@@ -116,7 +118,7 @@ Sfera.Compiler = function(client) {
     /**
      *
      */
-    this.compileXML = function (xmlDoc) {
+    this.compileXML = function(xmlDoc) {
         return this.compileXMLNode(xmlDoc.documentElement);
     };
 
@@ -127,14 +129,34 @@ Sfera.Compiler = function(client) {
         this.compileXML(xmlDoc);
     };
 
-    this.compileDictionary = function (xmlDoc) {
+    this.compileDictionary = function(xmlDoc) {
         var xmlNode = xmlDoc.documentElement;
         if (xmlNode && xmlNode.nodeType == 1) { // 1 = element
-            var c = xmlNode.childNodes;
-            var n,i;
-            for (i=0; i<c.length; i++) {
-                if (c[i].nodeType == 1) {
-                    Sfera.Components.setSource(c[i].tagName, Sfera.Utils.getCDATA(c[i]));
+            var c = xmlNode.childNodes,
+                c2, c3, n, i, t, k;
+            for (i = 0; i < c.length; i++) {
+                if (c[i].nodeType == 1) switch (c[i].tagName) {
+                    case "skin":
+                        break;
+                    case "components":
+                        c2 = c[i].childNodes;
+                        for (t = 0; t < c2.length; t++) {
+                            if (c2[t].nodeType == 1) {
+                                // component has source and lan
+                                c3 = c2[t].childNodes;
+                                for (k = 0; k < c3.length; k++) {
+                                    switch (c3[k].tagName) {
+                                        case "src":
+                                            Sfera.Components.setSource(c2[t].tagName, Sfera.Utils.getCDATA(c3[k]));
+                                            break;
+                                        case "_lan":
+                                            Sfera.Components.setLanguage(c2[t].tagName, Sfera.Utils.getCDATA(c3[k]));
+                                            break;
+                                    }
+                                }
+                            }
+                        }
+                        break;
                 }
             }
         }
@@ -3247,4 +3269,5 @@ if (typeof exports !== 'undefined') {
 * ""
 */
 
-//# sourceMappingURL=sfera-webapp.js.map
+//
+//# sourceMappingURL=client.js.map
