@@ -70,7 +70,7 @@ public class InterfaceCache {
 	 */
 	private InterfaceCache(String interfaceName) throws IOException {
 		this.interfaceName = interfaceName;
-		this.interfaceTmpCacheRoot = Files.createTempDirectory("webappTmp");
+		this.interfaceTmpCacheRoot = Files.createTempDirectory(getClass().getName());
 		this.interfaceCacheRoot = CACHE_ROOT.resolve(interfaceName + "/");
 	}
 
@@ -166,11 +166,18 @@ public class InterfaceCache {
 	 * @throws IOException
 	 */
 	private void create() throws XMLStreamException, IOException {
-		createIntefaceCache();
-		createLoginCache();
-		ResourcesUtil.deleteRecursive(interfaceCacheRoot);
-		Files.createDirectories(CACHE_ROOT);
-		Files.move(interfaceTmpCacheRoot, interfaceCacheRoot);
+		try {
+			createIntefaceCache();
+			createLoginCache();
+			ResourcesUtil.deleteRecursive(interfaceCacheRoot);
+			Files.createDirectories(CACHE_ROOT);
+			Files.move(interfaceTmpCacheRoot, interfaceCacheRoot);
+		} finally {
+			try {
+				ResourcesUtil.deleteRecursive(interfaceTmpCacheRoot);
+			} catch (Exception e) {
+			}
+		}
 	}
 
 	/**
