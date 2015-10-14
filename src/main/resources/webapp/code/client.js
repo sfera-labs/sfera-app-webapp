@@ -24,16 +24,17 @@ var Sfera = Sfera || {
     * @constant
     * @type {array}
     */
-    CLIENT: null,
+    client: null,
 
 
-    URLS: {
+    urls: {
     	get:function (name) {
     		switch (name) {
-    		case "dictionary":  return Sfera.CLIENT.name+"/dictionary.xml";
-    		case "index" :      return Sfera.CLIENT.name+"/index.xml";
-    		case "subscribe" :  return "subscribe?"+(Sfera.CLIENT.id?Sfera.CLIENT.id+"&":"")+"nodes=*";
-    		case "state" :      return "state/"+Sfera.CLIENT.id+"?ts="+Sfera.CLIENT.stateTs;
+    		case "dictionary":  return Sfera.client.name+"/dictionary.xml";
+    		case "index" :      return Sfera.client.name+"/index.xml";
+    		case "subscribe" :  return "subscribe?id="+(Sfera.client.net.subscribeId?Sfera.client.net.subscribeId+"&":"")+"nodes=*";
+    		case "state" :      return "state/"+Sfera.client.net.subscribeId+"?ts="+Sfera.client.stateTs;
+            case "command":     return  "command";
     		}
     	}
     }
@@ -111,15 +112,17 @@ Sfera.Compiler = function(client) {
             var component = this.createComponent(xmlNode.nodeName, attrs);
 
             // add to the index
-            client.indexComponent(component);
+            if (component) {
+                client.indexComponent(component);
 
-            var child;
-            var c = xmlNode.childNodes;
+                var child;
+                var c = xmlNode.childNodes;
 
-            for (i = 0; i < c.length; i++) {
-                child = this.compileXMLNode(c[i]);
-                if (child)
-                    component.addChild(child);
+                for (i = 0; i < c.length; i++) {
+                    child = this.compileXMLNode(c[i]);
+                    if (child)
+                        component.addChild(child);
+                }
             }
 
             return component;
@@ -481,7 +484,7 @@ Sfera.Client = function(config) {
             return;
         }
 
-        Sfera.CLIENT = this;
+        Sfera.client = this;
 
         this.device = Sfera.Device;
 
@@ -615,6 +618,23 @@ Sfera.Client = function(config) {
         }
     };
 
+    this.commandQueue = [];
+    this.sendCommand = function (command, sender) {
+        var id = (new Date()).getTime();
+        commandQueue.push({
+            command: command,
+            id: id,
+            sender: sender
+        });
+
+        this.net.sendCommand(id, command);
+
+        return id;
+    };
+
+    this.onCommand = function (command) {
+
+    }
 };
 
 
@@ -1285,10 +1305,13 @@ Sfera.Net = function (client) {
     req.onError = onReqError;
 
     var webSocket;
+    var wsConnected = false;
 
     var self = this;
     var wsBaseUrl = "ws://localhost:8080/api/websocket";
     var httpBaseUrl = "/";
+
+    this.subscribeId = (new Date()).getTime();
 
     function openSocket() {
     	console.log("opening socket on "+wsBaseUrl);
@@ -1313,15 +1336,20 @@ Sfera.Net = function (client) {
             writeResponse(event.data);
 
             //self.wsSend("hello");
-            self.wsSend(Sfera.URLS.get("subscribe"));
+            self.wsSend(Sfera.urls.get("subscribe"));
         };
 
         webSocket.onmessage = function(event) {
+            if (!wsConnected) {
+                wsConnected = true;
+                self.wsSend(Sfera.urls.get("subscribe"));
+            }
             writeResponse(event.data);
         };
 
         webSocket.onclose = function(event) {
             writeResponse("Connection closed");
+            openSocket(); // reopen
         };
     }
 
@@ -1332,13 +1360,10 @@ Sfera.Net = function (client) {
     	openSocket();
     }
     this.wsSend = function (txt) {
+        console.log("sending "+txt);
         webSocket.send(txt);
     }
     this.wsClose = function () {
-    	closeSocket();
-    }
-
-    function closeSocket() {
         webSocket.close();
     }
 
@@ -1385,16 +1410,21 @@ Sfera.Net = function (client) {
 		for (var s in this.localTs) {
 			if (this.localTs[s] == -1) { // || this.localTs[s] < this.remoteTs[s]) {
 				cSync = s;
-				req.open(httpBaseUrl+Sfera.URLS.get(s),20);
+				req.open(httpBaseUrl+Sfera.urls.get(s),20);
 				return; // one resource per time
 			}
 		}
 
+        // use websockets?
+        if (true) {
+            openSocket();
+            return;
+        }
+
 		if (!this.subscribed) {
 			cSync = "subscribe";
 
-            openSocket();
-			//req.open(urls.get("subscribe"));
+			req.open(urls.get("subscribe"));
 			return;
 		}
 
@@ -1457,6 +1487,15 @@ Sfera.Net = function (client) {
 
         return null;
 
+    };
+
+
+    this.sendCommand = function (id, command) {
+        if (true) {
+            this.wsSend(Sfera.urls.get("command")+"?"+command);
+        } else {
+
+        }
     };
 
 };
@@ -3076,6 +3115,10 @@ Sfera.Components.new("Component", {
                 this.setProperty(p, this.properties[p].value);
         },
 
+        boot: function () {
+
+        },
+
         children: [],
 
         addChild: function(child) {
@@ -3124,6 +3167,69 @@ Sfera.Components.new("Component", {
             }
         }
 
+    }
+});
+
+
+/**
+ * Button component.
+ *
+ * @class Sfera.Components.Button
+ * @constructor
+ */
+Sfera.Components.new("Button", {
+    properties: {
+        /**
+         * @property {string} text - The  configuration object.
+         */
+        // text
+        Button: {
+            type: "string",
+            value: ""
+        },
+
+        // style
+        style: {
+            type: "string",
+            value: ""
+        },
+
+        // visible
+        visible: {
+            type: "boolean",
+            value: true
+        },
+
+        // command
+        command: {
+            type: "string",
+            value: ""
+        }
+
+    },
+
+    constructor: function(properties) {
+        this.ancestor.constructor.call(this, properties);
+
+        this.element.onclick = function () {
+            Sfera.client.sendCommand(this.properties.command.value);
+        };
+    },
+
+    prototype: {
+        setProperty: function(name, value) {
+            if (!this.ancestor.setProperty.call(this, name, value))
+                return false;
+
+            // refresh
+            value = this.properties[name].value;
+
+            switch (name) {
+                case "Button":
+                    this.element.innerHTML = value;
+                    break;
+            }
+        }
     }
 });
 
