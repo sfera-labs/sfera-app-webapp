@@ -1,17 +1,12 @@
 <interface id="new" skin="default" language="it_IT" title="My New Project" width="700" height="500">
 	<page id="page:homepage" title="" orientation="landscape" gestures="">
 		<label id="text_zero" x="20" y="20" width="160" height="18" text="this is label ZERO" color="blue" font-size="20"/>
-		<!--
-		<image id="img1" x="520" y="10" width="200" height="140" src="/camera/cam-openspace?compression=80&amp;fps=7"/>
-		<image id="img1" x="520" y="160" width="200" height="140" src="/camera/cam-entrance?fps=7"/>
-		<label id="text1" x="520" y="320" width="160" height="18" text="this is some text" color="green" size="20"/>
-		<link id="link1" x="520" y="350" width="120" height="40" label="this is some text"/>
-		-->
+		<button id="button_one" x="20" y="50" width="160" height="18" label="this is a button" command="remote.myvalue=5" color="blue" font-size="20"/>
 	</page>
 	<page id="page:one" title="Page One">
 		<label id="text_one" x="20" y="20" width="160" height="18" text="this is label ONE" color="green" font-size="20"/>
 	</page>
 	<page id="page:two" title="Page Two">
-		<label id="text_two" x="20" y="20" width="160" height="18" text="this is labe TWO" color="red" font-size="20"/>
+		<label id="text_two" x="20" y="20" width="160" height="18" text="this is label TWO" color="red" font-size="20"/>
 	</page>
 </interface>
