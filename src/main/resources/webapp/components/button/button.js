@@ -17,7 +17,7 @@ Sfera.Components.new("Button", {
          * @property {string} text - The  configuration object.
          */
         // text
-        Button: {
+        label: {
             type: "string",
             value: ""
         },
@@ -38,19 +38,34 @@ Sfera.Components.new("Button", {
         command: {
             type: "string",
             value: ""
+        },
+
+        // event
+        event: {
+            type: "string",
+            value: ""
         }
 
     },
 
     constructor: function(properties) {
         this.ancestor.constructor.call(this, properties);
-
-        this.element.onclick = function () {
-            Sfera.client.sendCommand(this.properties.command.value);
-        };
     },
 
     prototype: {
+        init: function() {
+            this.ancestor.init.call(this);
+
+            var comm = this.properties.command.value;
+            var even = this.properties.event.value;
+            this.element.onclick = function () {
+                if (even)
+                    Sfera.client.sendEvent(even);
+                if (comm)
+                    Sfera.client.sendCommand(comm);
+            };
+        },
+
         setProperty: function(name, value) {
             if (!this.ancestor.setProperty.call(this, name, value))
                 return false;
@@ -59,8 +74,12 @@ Sfera.Components.new("Button", {
             value = this.properties[name].value;
 
             switch (name) {
-                case "Button":
+                case "label":
                     this.element.innerHTML = value;
+                    break;
+                case "event":
+                    var a = value.split("=");
+                    this.properties.event.value = "eid="+a[0]+"&eval="+a[1];
                     break;
             }
         }
