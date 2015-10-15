@@ -1,7 +1,5 @@
 /*! sfera-webapp - v0.0.2 - 2015-10-15 */
 
-/*! sfera-webapp - v0.0.2 - 2015-10-15 */
-
 (function(){
 
     var root = this;
@@ -15,7 +13,7 @@ var Sfera = Sfera || {
     /**
     * The Sfera version number.
     * @constant
-    * @type {string}
+    * @type {string} - version
     */
     VERSION: '0.1.0',
 
@@ -189,8 +187,6 @@ Sfera.Compiler = function(client) {
     this.compilePropertyValue = function (value) {
         var str;
 
-        //str = '<div class="hr"></div> <p class="tags hidden-mobile"><a href="http://www.rockpapershotgun.com/tag/arkane-studios/" rel="tag">Arkane Studios</a>, <a href="http://www.rockpapershotgun.com/tag/bethesda/" rel="tag">Bethesda</a>, <a href="http://www.rockpapershotgun.com/tag/dishonored/" rel="tag">Dishonored</a>, <a href="http://www.rockpapershotgun.com/tag/dishonored-2/" rel="tag">Dishonored 2</a>.</p> <p class="comments"><a href="http://www.rockpapershotgun.com/2015/09/17/dishonored-2-karnaca/#comments" title="Comment on Southland Tales: Dishonored 2&#8217;s Sun-Scorched Bloodflies">21 Comments &#187;</a></p> </footer> </div> </div> <div id="post-314999" class="block featured-block"> <p class="featured-block-title"> <a class="featured-block__text featured-block__text--feature" href="http://www.rockpapershotgun.com/category/featured-articles">RPS Feature</a> It's a number one. </p> <div class="post-inner"> <h2><a href="http://www.rockpapershotgun.com/2015/09/17/is-this-gamings-greatest-toilet-the-toilet-publishers-dont-want-you-to-see/" rel="bookmark" title="Permanent Link to Is This Gaming&#8217;s Greatest Toilet? The Toilet Publishers Don&#8217;t Want You To See">Is This Gaming&#8217;s Greatest Toilet? The Toilet Publishers Don&#8217;t Want You To See</a></h2> <div class="entry"> <div class="top-matter hidden-mobile"> <aside class="byline"> <p>By <a href="/cdn-cgi/l/email-protection#472d61647676767c2f61647676777c616471737c352861647e7e7c61647677707c61647676757c61647e707c61647676757c2261647676737c61647676727c616476X04;ot&#103;un.c&#111;&#109;">John Walker</a> on September 17th, 2015 at 5:00 pm.</p> </aside> <div class="social-buttons"> <h4>Share this:</h4> <ul class="social-icons"> <li><a class="social-facebook icon-facebook" href="http://www.facebook.com/sharer.php?u=http://www.rockpapershotgun.com/2015/09/17/is-this-gamings-greatest-toilet-the-toilet-publishers-dont-want-you-to-see//"><span>Facebook</span></a></li> <li><a class="social-twitter icon-twitter" href="http://twitter.com/intent/tweet?text=Is This Gaming&#8217;s Greatest Toilet? The Toilet Publishers Don&#8217;t Want You To See http://www.rockpapershotgun.com/2015/09/17/is-this-gamings-greatest-toilet-the-toilet-publishers-dont-want-you-to-see/"><span>Twitter</span></a></li> <li><a class="social-reddit icon-reddit" href="http://www.reddit.com/submit?url=http://www.rockpapershotgun.com/2015/09/17/is-this-gamings-greatest-toilet-the-toilet-publishers-dont-want-you-to-see//"><span>Reddit</span></a></li> </ul> </div> </div> <p><a href="http://www.rockpapershotgun.com/images/15/sep/albt1b.jpg" rel="lightbox[314999]"><img src="http://www.rockpapershotgun.com/images/15/sep/albt1.jpg" alt=""/></a></p> <p><em>I&#8217;m really getting the hang of these headlines, I think. In <a href="http://www.rockpapershotgun.com/2015/09/15/albino-lullaby-review/">my review of Albino Lullaby</a> this week, I included a throwaway line that I then didn&#8217;t justify in pictorial form. I wrote that it features, &#822#8220;the best toilet in gaming history.&#8221; You can&#8217;t just say a thing like that and expect not to be required to prove it. I think the image above has already done that, but there are more, just in case &#8211; click on them to appreciate them fully.</em></p> <p> <a href="http://www.rockpapershotgun.com/2015/09/17/is-this-gamings-greatest-toilet-the-toilet-publishers-dont-want-you-to-see/#more-314999" class="more-link">Read the rest of this entry &raquo;</a></p> </div> <footer class="article-footer"> <div class="hr"></div> <p class="tags hidden-mobile"><a href="http://www.rockpapershotgun.com/tag/albino-lullaby/" rel="tag">Albino Lullaby</a>, <a href="http://www.rockpapershotgun.com/tag/ape-law/" rel="tag">Ape Law</a>, <a href="http://www.rockpapershotgun.com/tag/feature/" rel="tag">feature</a>, <a href="http://www.rockpapershotgun.com/tag/toilets-in-games/" rel="tag">toilets-in-games</a>.</p> <p class="comments"><a href="http://www.rockpapershotgun.com/2015/09/17/is-this-gamings-greatest-toilet-the-toilet-publishers-dont-want-you-to-see/#comments" title="Comment on Is This Gaming&#8217;s Greatest Toilet? The Toilet Publishers Don&#8217;t Want You To See">20 Comments &#187;</a></p> </footer> </div> </div> <div id="post-315221" class="block featured-block"> <div class="post-inner"> <h2><a href="http://www.rockpapershotgun.com/2015/09/17/warhammer-40k-deathwatch-pc/" rel="bookmark" title="Permanent Link to Warhammer 40,000: Deathwatch Crusading Onto PC">Warhammer 40,000: Deathwatch Crusading Onto PC</a></h2> <div class="entry"> <div class="top-matter hidden-mobile"> <aside class="byline"> <p>By <a href="/cdn-cgi/l/email-protection#e584c3c6d4d5ddde8cc3c6dcdcde80c3c6d3d1dec3c6d4d4d1dec3c6d4d4d4de86c3c6d4d5d2dec3c6d4d4d7de8495c3c6d4d5d4de97c3c6d4d4d0dec3c6d4d5d1deXo&#116;gu&#110;&#46;&#99;o&#109;">Alice O'Connor</a> on September 17th, 2015 at 4:11 pm.</p> </aside> <div class="social-buttons"> <h4>Share this:</h4> <ul class="social-icons"> <li><a class="social-facebook icon-facebook" href="http://www.facebook.com/sharer.php?u=http://www.rockpapershotgun.com/2015/09/17/warhammer-40k-deathwatch-pc//"><span>Facebook</span></a></li> <li><a class="social-twitter icon-twitter" href="http://twitter.com/intent/tweet?text=Warhammer 40,000: Deathwatch Crusading Onto PC http://www.rockpapershotgun.com/2015/09/17/warhammer-40k-deathwatch-pc/"><span>Twitter</span></a></li> <li><a class="social-reddit icon-reddit" href="http://www.reddit.com/submit?url=http://www.rockpapershotgun.com/2015/09/17/warhammer-40k-deathwatch-pc//"><span>Reddit</span></a></li> </ul> </div> </div> <p><img src="http://www.rockpapershotgun.com/images/15/sep/17wh40kdeathwatch.jpg" title="Aye, a can of Raid won't solve this one."/></p> <p>The Warhammer 40,000 game I&#8217;d really like is still <a href="http://www.rockpapershotgun.com/2015/07/14/dawn-of-war-3-rumours/">Dawn of War 3</a>, but in the meantime I shall need to investigate other opportunities to wear a big ole skull on my crotch.</p> <p>Rodeo Games, the folks behind <a href="http://www.rockpapershotgun.com/tag/warhammer-quest/">Warhammer Quest</a>, have announced that they&#8217;re bringing another mobile doodad over to PC a little fancied up, and this one has all the crotchskulls I demand &#8211; Warhammer 40,000: Deathwatch [<a href="http://rodeogames.co.uk/deathwatch">official site</a>]. It&#8217;s a turn-based tactical affair about hunting down and squishing those naughty Tyranids, from cities to the guts of bio-ships, while expanding, levelling up, and equipping your Deathwatch Kill Team.</p> <p> <a href="http://www.rockpapershotgun.com/2015/09/17/warhammer-40k-deathwatch-pc/#more-315221" class="more-link">Read the rest of this entry &raquo;</a></p> </div> <footer class="article-footer"> <div class="hr"></div> <p class="tags hidden-mobile"><a href="http://www.rockpapershotgun.com/tag/rodeo-games/" rel="tag">Rodeo Games</a>, <a href="http://www.rockpapershotgun.com/tag/warhammer-40000/" rel="tag">Warhammer 40000</a>, <a href="http://www.rockpapershotgun.com/tag/warhammer-40000-deathwatch/" rel="tag">Warhammer 40000: Deathwatch</a>, <a href="http://www.rockpapershotgun.com/tag/warhammer-40000-deathwatch-enhanced-edition/" rel="tag">Warhammer 40000: Deathwatch - Enhanced Edition</a>.</p> <p class="comments"><a href="http://www.rockpapershotgun.{{that is}}com/2015/09/17/warhammer-40k-deathwatch-pc/#comments" title="Comment on Warhammer 40,000: Deathwatch Crusading Onto PC">10 Comments &#187;</a></p> </footer> </div> </div> <div id="post-299851" class="block featured-block"> <div class="post-inner"> <h2><a href="http://www.rockpapershotgun.com/2015/09/17/have-you-played-kyrandia-2-hand-of-fate/" rel="bookmark" title="Permanent Link to Have You Played&#8230; Kyrandia 2: Hand Of Fate?">Have You Played&#8230; Kyrandia 2: Hand Of Fate?</a></h2> <div class="entry"> <div class="top-matter hidden-mobile"> <aside class="byline"> <p>By <a href="/cdn-cgi/l/email-protection#91b7b2a0a0a5aab7b2a0a1a4aab7b2a8a8aab7b2a0a1a5aaf0b7b2a0a0a5aaf5b7b2a7a5aae3feb7b2a8a8aafab7b2a0a0a3aaf0b7b2a0a0a3aab7b2a0a1a0aab7b2X114;&#115;hot&#103;un.&#99;&#111;&#109;">Richard Cobbett</a> on September 17th, 2015 at 3:00 pm.</p> </aside> <div class="social-buttons"> <h4>Share this:</h4> <ul class="social-icons"> <li><a class="social-facebook icon-facebook" href="http://www.facebook.com/sharer.php?u=http://www.rockpapershotgun.com/2015/09/17/have-you-played-kyrandia-2-hand-of-fate//"><span>Facebook</span></a></li> <li><a class="social-twitter icon-twitter" href="http://twitter.com/intent/tweet?text=Have You Played&#8230; Kyrandia 2: Hand Of Fate? http://www.rockpapershotgun.com/2015/09/17/have-you-played-kyrandia-2-hand-of-fate/"><span>{{this is}}</span></a></li> <li><a class="social-reddit icon-reddit" href="http://www.reddit.com/submit?url=http://www.rockpapershotgun.com/2015/09/17/have-you-played-kyrandia-2-hand-of-fate//"><span>Reddit</span></a></li> </ul> </div> </div>';
-
         str = '<div>{{one}}</div><p></p><br /><div>{{two}}</div>';
         var MUSTACHE = /\{\{([^}]*)\}\}/;
 
@@ -354,16 +350,18 @@ Sfera.Components = new function () {
     };
 
     this.new = function(name, init) {
-        Sfera.Components[name] = init.constructor;
+        Sfera.Components[name] = init.constructor ? init.constructor : {};
 
-        if (init.extends) {
-
+        if (init.extends == "") {
+            Sfera.Components[name].prototype.properties = init.properties ? init.properties : {};
         } else {
             Sfera.Utils.extend(Sfera.Components[name], Sfera.Components.Component);
+            Sfera.Components[name].prototype.properties = Sfera.Components.Component.prototype.properties;
+            for (var f in init.properties) {
+                Sfera.Components[name].prototype.properties[f] = init.properties[f];
+            }
         }
-
-        Sfera.Components[name].prototype.type = "Label";
-        Sfera.Components[name].prototype.properties = init.properties;
+        Sfera.Components[name].prototype.type = name;
 
         for (var f in init.prototype) {
             Sfera.Components[name].prototype[f] = init.prototype[f];
@@ -474,13 +472,15 @@ Sfera.Client = function(config) {
         }
     }
 
+
+    var interfaceC;
     /**
      * Initialize the client and start it.
      *
      * @method Sfera.Client#boot
      * @protected
      */
-    this.boot = function (url) {
+    this.boot = function(url) {
         if (this.isBooted) {
             return;
         }
@@ -502,8 +502,8 @@ Sfera.Client = function(config) {
         // get name
         this.name = this.browser.getLocation().interface;
 
-        if (false && this.config.enableDebug) {
-            this.debug = new Sfera.Debug(this);
+        if (true || this.config.enableDebug) {
+            this.debug = Sfera.Debug;
             this.debug.boot();
         } else {
 
@@ -516,6 +516,8 @@ Sfera.Client = function(config) {
         this.showDebugHeader();
 
         this.net.boot();
+
+        window.onresize = adjustLayout;
     };
 
     /**
@@ -587,13 +589,21 @@ Sfera.Client = function(config) {
         // ???
     };
 
-    this.onUpdateDictionary = function (xmlDoc) {
+    this.onUpdateDictionary = function(xmlDoc) {
         var root = this.compiler.compileDictionary(xmlDoc);
     };
-    this.onUpdateIndex = function (xmlDoc) {
+    this.onUpdateIndex = function(xmlDoc) {
         var root = this.compiler.compileXML(xmlDoc);
         document.getElementById("sfera").appendChild(root.element);
+
+        this.start();
     };
+
+    this.start = function () {
+        this.browser.start();
+        interfaceC = this.components.getObjsByType("Interface")[0];
+        adjustLayout();
+    }
 
     this.indexComponent = function(component) {
         this.components.index(component);
@@ -616,11 +626,14 @@ Sfera.Client = function(config) {
         if (p) {
             p.setProperty("visible", true);
             this.cPage = p;
+            Sfera.Browser.updateUrl(id, p.properties.title.value);
+        } else {
+            console.log("page not found: " + id);
         }
     };
 
     this.commandQueue = [];
-    this.sendCommand = function (command, sender) {
+    this.sendCommand = function(command, sender) {
         var id = (new Date()).getTime();
         this.commandQueue.push({
             command: command,
@@ -634,7 +647,7 @@ Sfera.Client = function(config) {
     };
 
     this.eventQueue = [];
-    this.sendEvent = function (event, sender) {
+    this.sendEvent = function(event, sender) {
         var id = (new Date()).getTime();
         this.eventQueue.push({
             event: event,
@@ -647,13 +660,424 @@ Sfera.Client = function(config) {
         return id;
     };
 
-    this.onCommand = function (command) {
+    this.onCommand = function(command) {
 
     };
 
-    this.onStateUpdate = function () {
+    this.onEvent = function(json) {
+        // {"type":"event","events":{"remote.myvalue":"5","system.plugins":"reload","remote.":"undefined","system.state":"ready"}}
+        // {"type":"event","events":{"gui.button_link1.label":"changed"}}
+        for (var e in json.events) {
+            var n = e.split(".");
+            if (n[0] == "gui") {
+                n = n.slice(1);
+                var a = n.pop();
+                var c = this.components.getObjsById(n.join("."));
+                for (var i=0; i<c.length; i++) {
+                    c[i].setProperty(a,json.events[e]);
+                }
+            }
+        }
+    }
+
+    this.onStateUpdate = function() {
 
     };
+
+    function adjustLayout() {
+        // not initialized yet
+        if (!interfaceC) return;
+
+        var width = parseInt(interfaceC.properties.width.value);
+        var height = parseInt(interfaceC.properties.height.value);
+
+        // center container within window size
+        var viewportWidth;
+        var viewportHeight;
+
+        if (window.innerWidth) {
+            viewportWidth = window.innerWidth;
+            viewportHeight = window.innerHeight;
+        } else if (document.documentElement && document.documentElement.clientWidth) {
+            viewportWidth = document.documentElement.clientWidth;
+            viewportHeight = document.documentElement.clientHeight;
+        } else if (document.body.clientWidth) {
+            viewportWidth = document.body.clientWidth;
+            viewportHeight = document.body.clientHeight;
+        } else {
+            viewportWidth = 0;
+            viewportHeight = 0;
+        }
+
+        if (viewportWidth > 0) {
+            var left = (viewportWidth > width) ? (viewportWidth - width) / 2 : 0;
+            var top = (viewportHeight > height) ? (viewportHeight - height) / 2 : 0;
+
+            interfaceC.element.style.display = "none";
+            interfaceC.element.style.left = left + "px";
+            interfaceC.element.style.top = top + "px";
+            interfaceC.element.style.display = "block";
+        } // viewportWidth>0
+    } // adjustLayout()
+
+};
+
+
+/**
+ * Debug obj
+ *
+ * @class Sfera.Client
+ * @constructor
+ */
+Sfera.Debug = new(function() {
+    var self = this;
+    var logE,
+        debugE;
+
+    // this needs to be done on Device?
+    //
+    document.addEventListener("keydown", keyDown, false);
+
+    this.visible = false;
+
+    this.boot = function() {
+        logE = document.getElementById("debugLog");
+        debugE = document.getElementById("debug");
+        show(false);
+    };
+
+    this.toggle = function() {
+        this.visible = !this.visible;
+        show(this.visible);
+    };
+
+    function show(v) {
+        debugE.style.display = v ? "block" : "none";
+        if (v)
+            self.initPane();
+    };
+
+    function keyDown(e) {
+        var keyCode = e.keyCode;
+        if (keyCode == 13) {
+            // enter key
+        } else if (event.keyCode >= 65 && event.keyCode <= 90) { // if a letter pressed
+            switch (String.fromCharCode(event.keyCode)) {
+                case "D":
+                    self.toggle();
+                    break;
+            }
+        } else {
+
+        }
+        return true;
+    }
+
+    var logCounter = 0;
+    this.log = function(title, txt) {
+        logCounter++;
+
+        var d = new Date();
+        var ds = d.getDate() + "/" + (d.getMonth() + 1) + "/" + d.getFullYear() + " " + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds() +
+            ":" + d.getMilliseconds();
+        title = ds + " - " + title;
+
+        var src =
+            '<label class="menu_label" for="debugEntry' + logCounter + '">' +
+            title +
+            '</label>' +
+            '<input type="checkbox" id="debugEntry' + logCounter + '" /><div class="arrow"></div>' +
+            '<ol><li><textarea style="width:500px; height:200px">' +
+            txt +
+            '</textarea></li></ol>';
+
+        var e = document.createElement("div");
+        e.innerHTML = src;
+        logE.appendChild(e);
+    };
+
+
+})();
+
+
+
+
+/////////////////////
+Sfera.Debug.initPane = function() {
+    /*
+     * @author https://twitter.com/blurspline / https://github.com/zz85
+     * See post @ http://www.lab4games.net/zz85/blog/2014/11/15/resizing-moving-snapping-windows-with-js-css/
+     */
+
+    // Minimum resizable area
+    var minWidth = 60;
+    var minHeight = 40;
+
+    // Thresholds
+    var FULLSCREEN_MARGINS = -10;
+    var MARGINS = 10;
+
+    // End of what's configurable.
+    var clicked = null;
+    var onRightEdge, onBottomEdge, onLeftEdge, onTopEdge;
+
+    var rightScreenEdge, bottomScreenEdge;
+
+    var preSnapped;
+
+    var b, x, y;
+
+    var redraw = false;
+
+    var pane = document.getElementById('debugPane');
+    var paneTitle = document.getElementById('debugTitle');
+    var ghostpane = document.getElementById('debugGhost');
+
+    paneTitle.style.width = pane.style.width;
+
+    function setBounds(element, x, y, w, h) {
+        element.style.left = x + 'px';
+        element.style.top = y + 'px';
+        element.style.width = w + 'px';
+        element.style.height = h + 'px';
+    }
+
+    function hintHide() {
+        setBounds(ghostpane, b.left, b.top, b.width, b.height);
+        ghostpane.style.opacity = 0;
+
+        // var b = ghostpane.getBoundingClientRect();
+        // ghostpane.style.top = b.top + b.height / 2;
+        // ghostpane.style.left = b.left + b.width / 2;
+        // ghostpane.style.width = 0;
+        // ghostpane.style.height = 0;
+    }
+
+
+    // Mouse events
+    pane.addEventListener('mousedown', onMouseDown);
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
+
+    // Touch events
+    pane.addEventListener('touchstart', onTouchDown);
+    document.addEventListener('touchmove', onTouchMove);
+    document.addEventListener('touchend', onTouchEnd);
+
+
+    function onTouchDown(e) {
+        onDown(e.touches[0]);
+        e.preventDefault();
+    }
+
+    function onTouchMove(e) {
+        onMove(e.touches[0]);
+    }
+
+    function onTouchEnd(e) {
+        if (e.touches.length == 0) onUp(e.changedTouches[0]);
+    }
+
+    function onMouseDown(e) {
+        onDown(e);
+        e.preventDefault();
+    }
+
+    function onDown(e) {
+        calc(e);
+
+        var isResizing = onRightEdge || onBottomEdge || onTopEdge || onLeftEdge;
+
+        clicked = {
+            x: x,
+            y: y,
+            cx: e.clientX,
+            cy: e.clientY,
+            w: b.width,
+            h: b.height,
+            isResizing: isResizing,
+            isMoving: !isResizing && canMove(),
+            onTopEdge: onTopEdge,
+            onLeftEdge: onLeftEdge,
+            onRightEdge: onRightEdge,
+            onBottomEdge: onBottomEdge
+        };
+    }
+
+    function canMove() {
+        return x > 0 && x < b.width && y > 0 && y < b.height && y < 30;
+    }
+
+    function calc(e) {
+        b = pane.getBoundingClientRect();
+        x = e.clientX - b.left;
+        y = e.clientY - b.top;
+
+        onTopEdge = y < MARGINS;
+        onLeftEdge = x < MARGINS;
+        onRightEdge = x >= b.width - MARGINS;
+        onBottomEdge = y >= b.height - MARGINS;
+
+        rightScreenEdge = window.innerWidth - MARGINS;
+        bottomScreenEdge = window.innerHeight - MARGINS;
+    }
+
+    var e;
+
+    function onMove(ee) {
+        calc(ee);
+
+        e = ee;
+
+        redraw = true;
+
+    }
+
+    function animate() {
+
+        requestAnimationFrame(animate);
+
+        if (!redraw) return;
+
+        redraw = false;
+
+        if (clicked && clicked.isResizing) {
+
+            if (clicked.onRightEdge) pane.style.width = Math.max(x, minWidth) + 'px';
+            if (clicked.onBottomEdge) pane.style.height = Math.max(y, minHeight) + 'px';
+
+            if (clicked.onLeftEdge) {
+                var currentWidth = Math.max(clicked.cx - e.clientX + clicked.w, minWidth);
+                if (currentWidth > minWidth) {
+                    pane.style.width = currentWidth + 'px';
+                    pane.style.left = e.clientX + 'px';
+                }
+            }
+
+            if (clicked.onTopEdge) {
+                var currentHeight = Math.max(clicked.cy - e.clientY + clicked.h, minHeight);
+                if (currentHeight > minHeight) {
+                    pane.style.height = currentHeight + 'px';
+                    pane.style.top = e.clientY + 'px';
+                }
+            }
+
+            hintHide();
+
+            paneTitle.style.width = pane.style.width;
+
+            return;
+        }
+
+        if (clicked && clicked.isMoving) {
+
+            if (b.top < FULLSCREEN_MARGINS || b.left < FULLSCREEN_MARGINS || b.right > window.innerWidth - FULLSCREEN_MARGINS || b.bottom > window.innerHeight - FULLSCREEN_MARGINS) {
+                // hintFull();
+                setBounds(ghostpane, 0, 0, window.innerWidth, window.innerHeight);
+                ghostpane.style.opacity = 0.2;
+            } else if (b.top < MARGINS) {
+                // hintTop();
+                setBounds(ghostpane, 0, 0, window.innerWidth, window.innerHeight / 2);
+                ghostpane.style.opacity = 0.2;
+            } else if (b.left < MARGINS) {
+                // hintLeft();
+                setBounds(ghostpane, 0, 0, window.innerWidth / 2, window.innerHeight);
+                ghostpane.style.opacity = 0.2;
+            } else if (b.right > rightScreenEdge) {
+                // hintRight();
+                setBounds(ghostpane, window.innerWidth / 2, 0, window.innerWidth / 2, window.innerHeight);
+                ghostpane.style.opacity = 0.2;
+            } else if (b.bottom > bottomScreenEdge) {
+                // hintBottom();
+                setBounds(ghostpane, 0, window.innerHeight / 2, window.innerWidth, window.innerWidth / 2);
+                ghostpane.style.opacity = 0.2;
+            } else {
+                hintHide();
+            }
+
+            if (preSnapped) {
+                setBounds(pane,
+                    e.clientX - preSnapped.width / 2,
+                    e.clientY - Math.min(clicked.y, preSnapped.height),
+                    preSnapped.width,
+                    preSnapped.height
+                );
+
+                paneTitle.style.width = pane.style.width;
+
+                return;
+            }
+
+            // moving
+            pane.style.top = (e.clientY - clicked.y) + 'px';
+            pane.style.left = (e.clientX - clicked.x) + 'px';
+
+            paneTitle.style.width = pane.style.width;
+
+            return;
+        }
+
+        // This code executes when mouse moves without clicking
+
+        // style cursor
+        if (onRightEdge && onBottomEdge || onLeftEdge && onTopEdge) {
+            pane.style.cursor = 'nwse-resize';
+        } else if (onRightEdge && onTopEdge || onBottomEdge && onLeftEdge) {
+            pane.style.cursor = 'nesw-resize';
+        } else if (onRightEdge || onLeftEdge) {
+            pane.style.cursor = 'ew-resize';
+        } else if (onBottomEdge || onTopEdge) {
+            pane.style.cursor = 'ns-resize';
+        } else if (canMove()) {
+            pane.style.cursor = 'move';
+        } else {
+            pane.style.cursor = 'default';
+        }
+    }
+
+    animate();
+
+    function onUp(e) {
+        calc(e);
+
+        if (clicked && clicked.isMoving) {
+            // Snap
+            var snapped = {
+                width: b.width,
+                height: b.height
+            };
+
+            if (b.top < FULLSCREEN_MARGINS || b.left < FULLSCREEN_MARGINS || b.right > window.innerWidth - FULLSCREEN_MARGINS || b.bottom > window.innerHeight - FULLSCREEN_MARGINS) {
+                // hintFull();
+                setBounds(pane, 0, 0, window.innerWidth, window.innerHeight);
+                preSnapped = snapped;
+            } else if (b.top < MARGINS) {
+                // hintTop();
+                setBounds(pane, 0, 0, window.innerWidth, window.innerHeight / 2);
+                preSnapped = snapped;
+            } else if (b.left < MARGINS) {
+                // hintLeft();
+                setBounds(pane, 0, 0, window.innerWidth / 2, window.innerHeight);
+                preSnapped = snapped;
+            } else if (b.right > rightScreenEdge) {
+                // hintRight();
+                setBounds(pane, window.innerWidth / 2, 0, window.innerWidth / 2, window.innerHeight);
+                preSnapped = snapped;
+            } else if (b.bottom > bottomScreenEdge) {
+                // hintBottom();
+                setBounds(pane, 0, window.innerHeight / 2, window.innerWidth, window.innerWidth / 2);
+                preSnapped = snapped;
+            } else {
+                preSnapped = null;
+            }
+
+            hintHide();
+
+        }
+
+        clicked = null;
+
+    }
 };
 
 
@@ -1336,7 +1760,7 @@ Sfera.Net = function (client) {
     	console.log("opening socket on "+wsBaseUrl);
         // Ensures only one connection is open at a time
         if (webSocket !== undefined && webSocket.readyState !== WebSocket.CLOSED) {
-            writeResponse("WebSocket is already opened.");
+            Sfera.Debug.log("websocket: is already opened.");
             return;
         }
         // Create a new instance of the websocket
@@ -1350,9 +1774,7 @@ Sfera.Net = function (client) {
             if (event.data === undefined)
                 return;
 
-            console.log("websocket open, sending subscribe");
-
-            writeResponse(event.data);
+            Sfera.Debug.log("websocket: open, sending subscribe", event.data);
 
             //self.wsSend("hello");
             self.wsSend(Sfera.urls.get("subscribe"));
@@ -1363,11 +1785,17 @@ Sfera.Net = function (client) {
                 wsConnected = true;
                 self.wsSend(Sfera.urls.get("subscribe"));
             }
-            writeResponse(event.data);
+            Sfera.Debug.log("websocket: onmessage", event.data);
+
+            json = JSON.parse(event.data);
+
+            // {"type":"event","events":{"remote.myvalue":"5","system.plugins":"reload","remote.":"undefined","system.state":"ready"}}
+            if (json.type = "event")
+                client.onEvent(json);
         };
 
         webSocket.onclose = function(event) {
-            writeResponse("Connection closed");
+            Sfera.Debug.log("web socket: connection closed");
             openSocket(); // reopen
         };
     }
@@ -1384,12 +1812,6 @@ Sfera.Net = function (client) {
     }
     this.wsClose = function () {
         webSocket.close();
-    }
-
-    function writeResponse(text) {
-    	console.log("websocket: "+text);
-		var e = document.getElementById("output");
-		e.innerHTML += "webSocket response:<br><textarea style='width:500px; height:200px'>"+text+"</textarea><br><br>";
     }
 
     ///////////
@@ -1452,9 +1874,8 @@ Sfera.Net = function (client) {
 	};
 
 	function onReqLoaded() {
-		console.log(cSync+" loaded");
-		var e = document.getElementById("output");
-		e.innerHTML += cSync+" loaded:<br><textarea style='width:500px; height:200px'>"+req.getResponseText()+"</textarea><br><br>";
+        console.log(cSync+" loaded");
+        Sfera.Debug.log("xmlreq: loaded",req.getResponseText());
 
 		if (self.localTs[cSync] != null)
 			self.localTs[cSync] = getTimestamp();
@@ -1823,7 +2244,7 @@ Sfera.Browser = function() {
      * @param  {string} url   - URL of the page
      * @return {boolean}      - true if successful, false otherwise
      */
-    this.changeUrl = function (title, url) {
+    this.changeUrl = function(title, url) {
         if (typeof(history.pushState) != "undefined") {
             var obj = {
                 Title: title,
@@ -1835,13 +2256,13 @@ Sfera.Browser = function() {
         return false;
     }
 
-    this.changePage = function (pageId, pageLabel) {
+    this.updateUrl = function(pageId, pageLabel) {
         var location = this.getLocation();
         hash = pageId;
         this.changeUrl(pageLabel, location.pathname + "#" + pageId + "?" + location.search);
     }
 
-    this.getLocation = function () {
+    this.getLocation = function() {
         var url = window.location.href; // "http://localhost:8080/new/index.html#page1?a=2"
 
         if (!location || location.url != url) {
@@ -1869,12 +2290,12 @@ Sfera.Browser = function() {
             }
 
             location = {
-                url:url,
+                url: url,
                 host: window.location.host, // "localhost:8080"
                 protocol: window.location.protocol, // http:
                 pathname: window.location.pathname, // /new/index.html
-                hash:hash, // #page1
-                search:search, // ?a=2
+                hash: hash, // #page1
+                search: search, // ?a=2
                 interface: window.location.pathname.split("/")[1] // new
             };
         }
@@ -1882,17 +2303,19 @@ Sfera.Browser = function() {
         return location;
     }
 
-    var hash = window.location.hash;
+    var lastHash = null;
     var self = this;
 
-    setInterval(function(){
-        if (window.location.hash != hash) {
-            hash = window.location.hash;
-            var location = self.getLocation();
-            Sfera.client.showPage(location.hash);
-            //alert("User went back or forward to application state represented by " + hash);
-        }
-    }, 100);
+    this.start = function() {
+        setInterval(function() {
+            var location = Sfera.Browser.getLocation();
+            if (location.hash !== lastHash) {
+                lastHash = location.hash;
+                Sfera.client.showPage(location.hash ? location.hash : "homepage");
+                //alert("User went back or forward to application state represented by " + hash);
+            }
+        }, 100);
+    };
 }
 
 // Browser is a singleton/static entity; instantiate it
@@ -3046,7 +3469,7 @@ Sfera.Utils = function () {
 
     this.extend = function (c,e) {
         c.prototype = Object.create(e.prototype);
-        this.initClass(c);
+        c.prototype.constructor = c;
         c.prototype.ancestor = e.prototype;
         /*
         for (var i = 0; i < arguments.length; i++) {
@@ -3093,6 +3516,8 @@ Sfera.Utils = new Sfera.Utils();
  * @param {Object} properties - Object containing property values.
  */
 Sfera.Components.new("Component", {
+    extends: "", // it's the first
+
     constructor: function(properties) {
         // set property values
         for (var p in properties) {
@@ -3102,6 +3527,35 @@ Sfera.Components.new("Component", {
                 this.properties[p].value = properties[p];
             }
         }
+    },
+
+    properties: {
+        // visible
+        visible: {
+            type: "boolean",
+            value: true
+        },
+
+        x: {
+            type: "integer",
+            value: 0
+        },
+
+        y: {
+            type: "integer",
+            value: 0
+        },
+
+        width: {
+            type: "integer",
+            value: 0
+        },
+
+        height: {
+            type: "integer",
+            value: 0
+        }
+
     },
 
     prototype: {
@@ -3142,7 +3596,7 @@ Sfera.Components.new("Component", {
                 this.setProperty(p, this.properties[p].value);
         },
 
-        boot: function () {
+        boot: function() {
 
         },
 
@@ -3185,6 +3639,23 @@ Sfera.Components.new("Component", {
             }
 
             p.value = value;
+
+            switch (name) {
+                case "x":
+                    this.element.style.left = value + "px";
+                    return false;
+                case "y":
+                    this.element.style.top = value + "px";
+                    return false;
+                case "width":
+                    this.element.style.width = value + "px";
+                    return false;
+                case "height":
+                    this.element.style.height = value + "px";
+                    return false;
+            }
+
+
             return true;
         },
 
@@ -3196,261 +3667,6 @@ Sfera.Components.new("Component", {
 
     }
 });
-
-
-/**
- * Button component.
- *
- * @class Sfera.Components.Button
- * @constructor
- */
-Sfera.Components.new("Button", {
-    properties: {
-        /**
-         * @property {string} text - The  configuration object.
-         */
-        // text
-        label: {
-            type: "string",
-            value: ""
-        },
-
-        // style
-        style: {
-            type: "string",
-            value: ""
-        },
-
-        // visible
-        visible: {
-            type: "boolean",
-            value: true
-        },
-
-        // command
-        command: {
-            type: "string",
-            value: ""
-        },
-
-        // event
-        event: {
-            type: "string",
-            value: ""
-        }
-
-    },
-
-    constructor: function(properties) {
-        this.ancestor.constructor.call(this, properties);
-    },
-
-    prototype: {
-        init: function() {
-            this.ancestor.init.call(this);
-
-            var comm = this.properties.command.value;
-            var even = this.properties.event.value;
-            this.element.onclick = function () {
-                if (even)
-                    Sfera.client.sendEvent(even);
-                if (comm)
-                    Sfera.client.sendCommand(comm);
-            };
-        },
-
-        setProperty: function(name, value) {
-            if (!this.ancestor.setProperty.call(this, name, value))
-                return false;
-
-            // refresh
-            value = this.properties[name].value;
-
-            switch (name) {
-                case "label":
-                    this.element.innerHTML = value;
-                    break;
-                case "event":
-                    var a = value.split("=");
-                    this.properties.event.value = "eid="+a[0]+"&eval="+a[1];
-                    break;
-            }
-        }
-    }
-});
-
-
-/**
- * Interface component.
- *
- * @class Sfera.Components.Interface
- * @constructor
- */
-Sfera.Components.Interface = function(properties) {
-    this.type = "Interface";
-
-    /**
-     * @property {object} properties - The component's properties.
-     */
-    this.properties = {
-        /**
-         * @property {string} text - The  configuration object.
-         */
-        // text
-        text: {
-            type: String,
-            value: ""
-        },
-
-        // style
-        style: {
-            type: String,
-            value: ""
-        }
-
-    };
-
-    Sfera.Components.Component.call(this, properties)
-
-};
-
-Sfera.Utils.extend(Sfera.Components.Interface, Sfera.Components.Component);
-
-Sfera.Components.Interface.prototype.setProperty = function(name, value) {
-    if (!this.ancestor.setProperty.call(this, name, value))
-        return false;
-
-    // refresh
-    value = this.properties[name].value;
-
-    switch (name) {
-        case "text":
-            this.element.innerHTML = value;
-            break;
-    }
-};
-
-
-/**
- * Label component.
- *
- * @class Sfera.Components.Label
- * @constructor
- */
-Sfera.Components.new("Label", {
-    properties: {
-        /**
-         * @property {string} text - The  configuration object.
-         */
-        // text
-        text: {
-            type: "string",
-            value: ""
-        },
-
-        // style
-        style: {
-            type: "string",
-            value: ""
-        },
-
-        // visible
-        visible: {
-            type: "boolean",
-            value: true
-        }
-
-    },
-
-    constructor: function(properties) {
-        this.ancestor.constructor.call(this, properties)
-    },
-
-    prototype: {
-        setProperty: function(name, value) {
-            if (!this.ancestor.setProperty.call(this, name, value))
-                return false;
-
-            // refresh
-            value = this.properties[name].value;
-
-            switch (name) {
-                case "text":
-                    this.element.innerHTML = value;
-                    break;
-            }
-        }
-    }
-});
-
-
-/**
- * Page component.
- *
- * @class Sfera.Components.Page
- * @constructor
- */
-Sfera.Components.Page = function(properties) {
-    this.type = "Page";
-
-    /**
-     * @property {object} properties - The component's properties.
-     */
-    this.properties = {
-        /**
-         * @property {string} text - The  configuration object.
-         */
-        // title
-        title: {
-            type: String,
-            value: ""
-        },
-
-        // style
-        style: {
-            type: String,
-            value: ""
-        },
-
-        // visible
-        visible: {
-            type: "boolean",
-            value: true
-        }
-
-    };
-
-    Sfera.Components.Component.call(this, properties)
-
-};
-
-Sfera.Utils.extend(Sfera.Components.Page, Sfera.Components.Component);
-
-Sfera.Components.Page.prototype.setProperty = function(name, value) {
-    if (!this.ancestor.setProperty.call(this, name, value))
-        return false;
-
-    // refresh
-    value = this.properties[name].value;
-
-    switch (name) {
-        case "text":
-            this.element.innerHTML = value;
-            return true;
-
-        case "visible":
-            this.element.style.display = value?"":"none";
-            return true;
-    }
-
-    return false;
-};
-
-Sfera.Components.Page.prototype.init = function() {
-    Sfera.Components.Component.prototype.init.call(this);
-
-    this.element.style.display = "none";
-};
 
 
 if (typeof exports !== 'undefined') {
@@ -3469,5 +3685,4 @@ if (typeof exports !== 'undefined') {
 * ""
 */
 
-//
-//# sourceMappingURL=client.js.map
+//# sourceMappingURL=sfera-webapp.js.map

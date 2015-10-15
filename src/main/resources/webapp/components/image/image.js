@@ -2,17 +2,17 @@
  * @author       Gionatan Iasio <gionatan@sferalabs.cc>
  * @copyright    2015 SferaLabs
  * @license      {@link https://github.com/sfera-labs/sfera-webapp/license.txt|MIT License}
- * Label.js
+ * Image.js
  */
 
 /**
- * Label component.
+ * Image component.
  *
- * @class Sfera.Components.Label
+ * @class Sfera.Components.Image
  * @constructor
  */
-Sfera.Components.Label = function(properties) {
-    this.type = "Label";
+Sfera.Components.Image = function(properties) {
+    this.type = "Image";
 
     /**
      * @property {object} properties - The component's properties.
@@ -22,13 +22,7 @@ Sfera.Components.Label = function(properties) {
          * @property {string} text - The  configuration object.
          */
         // text
-        text: {
-            type: "string",
-            value: ""
-        },
-
-        // style
-        style: {
+        source: {
             type: "string",
             value: ""
         },
@@ -64,9 +58,9 @@ Sfera.Components.Label = function(properties) {
 
 };
 
-Sfera.Utils.extend(Sfera.Components.Label, Sfera.Components.Component);
+Sfera.Utils.extend(Sfera.Components.Image, Sfera.Components.Component);
 
-Sfera.Components.Label.prototype.setProperty = function(name, value) {
+Sfera.Components.Image.prototype.setProperty = function(name, value) {
     if (!this.ancestor.setProperty.call(this, name, value))
         return false;
 
@@ -74,12 +68,12 @@ Sfera.Components.Label.prototype.setProperty = function(name, value) {
     value = this.properties[name].value;
 
     switch (name) {
-        case "text":
-            this.element.innerHTML = value;
+        case "source":
+            this.element.innerHTML = "<img src='"+value+"' width='100%' height='100%'>";
             break;
     }
 }
 
-Sfera.Components.Label.prototype.init = function() {
+Sfera.Components.Image.prototype.init = function() {
     Sfera.Components.Component.prototype.init.call(this);
 };

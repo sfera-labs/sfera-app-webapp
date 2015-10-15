@@ -19,6 +19,7 @@ Sfera.Components.Interface = function(properties) {
      */
     this.properties = {
         /**
+        /**
          * @property {string} text - The  configuration object.
          */
         // text
@@ -31,9 +32,19 @@ Sfera.Components.Interface = function(properties) {
         style: {
             type: String,
             value: ""
+        },
+
+        width: {
+            type: "integer",
+            value: 0
+        },
+
+        height: {
+            type: "integer",
+            value: 0
         }
 
-    };
+    }
 
     Sfera.Components.Component.call(this, properties)
 
@@ -53,4 +64,4 @@ Sfera.Components.Interface.prototype.setProperty = function(name, value) {
             this.element.innerHTML = value;
             break;
     }
-};
+}

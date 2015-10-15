@@ -1,60 +1,412 @@
+ /*
 @font-face {
     font-family: C64base;
     font-style: normal;
     font-weight: normal;
     src: url("c64.ttf");
 }
+*/
 BODY {
-    padding: 0;
-    margin: 0;
-    font-family: C64base;
-    text-align: center;
-    font-size: 12pt;
-}
+  font-family: Arial, Helvetica, sans-serif;
+  color: white;
+  padding: 0;
+  margin: 0;
+  background: #2f3336; }
+
 IMG {
-    padding: 0;
-    margin: 0;
-}
+  padding: 0;
+  margin: 0; }
 
 .component {
-    .page {
-        background-color:#4040e0;
-    }
-}
+  position: absolute;
+  left: 0px;
+  top: 0px; }
+  .component.page {
+    background-color: #4040e0; }
+  .component.interface {
+    background-color: rgba(0, 0, 0, 0.2); }
+  .component.button {
+    display: table;
+    zoom: 1;
+    line-height: normal;
+    white-space: nowrap;
+    text-align: center;
+    cursor: pointer;
+    -webkit-user-drag: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    float: right;
+    text-align: center;
+    font-size: 12px;
+    cursor: default;
+    vertical-align: middle;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    -webkit-transition: opacity 250ms linear;
+    -moz-transition: opacity 250ms linear;
+    -o-transition: opacity 250ms linear;
+    transition: opacity 250ms linear;
+    color: #fff;
+    text-shadow: 0 1px rgba(0, 0, 0, 0.6);
+    -webkit-box-shadow: rgba(0, 0, 0, 0.1) 0 0 0 2px, rgba(0,0,0,0.4) 0px 0px 1px 1px;
+    -moz-box-shadow: rgba(0, 0, 0, 0.1) 0 0 0 2px, rgba(0,0,0,0.4) 0px 0px 1px 1px;
+    box-shadow: rgba(0, 0, 0, 0.1) 0 0 0 2px, rgba(0,0,0,0.4) 0px 0px 1px 1px;
+    		/*
+    		& { @include button-1(#7a7e80,#575858,#222528); } // default1: b
+    
+    		&.g { @include button-1(#84db24,#4f9316,#135915); }
+    		&.y, &.highlight { @include button-1(#f4ed00,#ddc700,#b17300); } // highlight: y
+    		&.r, &.alert { @include button-1(#dd006a,#97003f,#5e0041); } // alert: r, ex.logout
+    		&.default2 { @include button-1(#c0c0d9,#73738d,#48486a); } // default2: gr
+    		&.lgr, &.default3 { @include button-1(#f5f7f7,#e0e5e6,#adb2b3); } // default3: lgr, ex.slider cursors
+    		&.glass { @include button-g(rgb(255,255,255),rgb(225,232,232),rgb(200,207,207),rgb(171,177,177),rgb(215,224,224)); }
+    		&.transparent { @include button-t(rgb(255,255,255)); }
+    		*/ }
+    .component.button .inner {
+      display: table-cell;
+      vertical-align: middle; }
+    .component.button .bg {
+      -webkit-border-radius: 4px;
+      -moz-border-radius: 4px;
+      border-radius: 4px;
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      z-index: -1; }
+    .component.button.disabled {
+      -ms-filter: 'progid:DXImageTransform.Microsoft.Alpha(Opacity="50")';
+      filter: alpha(opacity=50);
+      opacity: 0.5; }
+    .component.button.mini {
+      min-width: 0; }
+    .component.button.mini span {
+      display: none; }
+    .component.button .clear {
+      clear: both; }
+    .component.button > span {
+      float: left; }
+    .component.button.switch.pressed {
+      -webkit-box-shadow: none;
+      -moz-box-shadow: none;
+      box-shadow: none; }
+    .component.button.down {
+      -webkit-box-shadow: rgba(0,0,0,0.8) 0 1px 0, rgba(0,0,0,0.4) 0px 0px 1px 1px, inset 0px 1px 4px rgba(0,0,0,0.7);
+      -moz-box-shadow: rgba(0,0,0,0.8) 0 1px 0, rgba(0,0,0,0.4) 0px 0px 1px 1px, inset 0px 1px 4px rgba(0,0,0,0.7);
+      box-shadow: rgba(0,0,0,0.8) 0 1px 0, rgba(0,0,0,0.4) 0px 0px 1px 1px, inset 0px 1px 4px rgba(0,0,0,0.7); }
+    .component.button.error {
+      color: #e03050; }
+    .component.button {
+      border-top: 1px solid #676367;
+      background-color: #423f42;
+      background-image: -webkit-linear-gradient(top, #4a474a 0%,#3a373a 100%);
+      background-image: -moz-linear-gradient(top, #4a474a 0%,#3a373a 100%);
+      background-image: -o-linear-gradient(top, #4a474a 0%,#3a373a 100%);
+      background-image: -ms-linear-gradient(top, #4a474a 0%,#3a373a 100%);
+      background-image: linear-gradient(top, #4a474a 0%,#3a373a 100%); }
+      .component.button.over {
+        border-top: 1px solid #878387;
+        background-color: #625f62;
+        background-image: -webkit-linear-gradient(top, #6a676a 0%,#5a575a 100%);
+        background-image: -moz-linear-gradient(top, #6a676a 0%,#5a575a 100%);
+        background-image: -o-linear-gradient(top, #6a676a 0%,#5a575a 100%);
+        background-image: -ms-linear-gradient(top, #6a676a 0%,#5a575a 100%);
+        background-image: linear-gradient(top, #6a676a 0%,#5a575a 100%); }
+      .component.button.down {
+        border-top: 1px solid #3a373a;
+        background: #5a575a; }
+      .component.button.selected {
+        background-color: #827f82;
+        background-image: -webkit-linear-gradient(top, #8a878a 0%,#7a777a 100%);
+        background-image: -moz-linear-gradient(top, #8a878a 0%,#7a777a 100%);
+        background-image: -o-linear-gradient(top, #8a878a 0%,#7a777a 100%);
+        background-image: -ms-linear-gradient(top, #8a878a 0%,#7a777a 100%);
+        background-image: linear-gradient(top, #8a878a 0%,#7a777a 100%); }
+    .component.button.b, .component.button.blue {
+      border-top: 1px solid #2677d3;
+      background-color: #154f92;
+      background-image: -webkit-linear-gradient(top, #1f5797 0%,#0a478c 100%);
+      background-image: -moz-linear-gradient(top, #1f5797 0%,#0a478c 100%);
+      background-image: -o-linear-gradient(top, #1f5797 0%,#0a478c 100%);
+      background-image: -ms-linear-gradient(top, #1f5797 0%,#0a478c 100%);
+      background-image: linear-gradient(top, #1f5797 0%,#0a478c 100%); }
+      .component.button.b.over, .component.button.blue.over {
+        border-top: 1px solid #4697f3;
+        background-color: #356fb2;
+        background-image: -webkit-linear-gradient(top, #3f77b7 0%,#2a67ac 100%);
+        background-image: -moz-linear-gradient(top, #3f77b7 0%,#2a67ac 100%);
+        background-image: -o-linear-gradient(top, #3f77b7 0%,#2a67ac 100%);
+        background-image: -ms-linear-gradient(top, #3f77b7 0%,#2a67ac 100%);
+        background-image: linear-gradient(top, #3f77b7 0%,#2a67ac 100%); }
+      .component.button.b.down, .component.button.blue.down {
+        border-top: 1px solid #0a478c;
+        background: #2a67ac; }
+      .component.button.b.selected, .component.button.blue.selected {
+        background-color: #558fd2;
+        background-image: -webkit-linear-gradient(top, #5f97d7 0%,#4a87cc 100%);
+        background-image: -moz-linear-gradient(top, #5f97d7 0%,#4a87cc 100%);
+        background-image: -o-linear-gradient(top, #5f97d7 0%,#4a87cc 100%);
+        background-image: -ms-linear-gradient(top, #5f97d7 0%,#4a87cc 100%);
+        background-image: linear-gradient(top, #5f97d7 0%,#4a87cc 100%); }
+    .component.button.g, .component.button.green {
+      border-top: 1px solid #64c280;
+      background-color: #3d8552;
+      background-image: -webkit-linear-gradient(top, #488d5c 0%,#317d48 100%);
+      background-image: -moz-linear-gradient(top, #488d5c 0%,#317d48 100%);
+      background-image: -o-linear-gradient(top, #488d5c 0%,#317d48 100%);
+      background-image: -ms-linear-gradient(top, #488d5c 0%,#317d48 100%);
+      background-image: linear-gradient(top, #488d5c 0%,#317d48 100%); }
+      .component.button.g.over, .component.button.green.over {
+        border-top: 1px solid #84e2a0;
+        background-color: #5da572;
+        background-image: -webkit-linear-gradient(top, #68ad7c 0%,#519d68 100%);
+        background-image: -moz-linear-gradient(top, #68ad7c 0%,#519d68 100%);
+        background-image: -o-linear-gradient(top, #68ad7c 0%,#519d68 100%);
+        background-image: -ms-linear-gradient(top, #68ad7c 0%,#519d68 100%);
+        background-image: linear-gradient(top, #68ad7c 0%,#519d68 100%); }
+      .component.button.g.down, .component.button.green.down {
+        border-top: 1px solid #317d48;
+        background: #519d68; }
+      .component.button.g.selected, .component.button.green.selected {
+        background-color: #7dc592;
+        background-image: -webkit-linear-gradient(top, #88cd9c 0%,#71bd88 100%);
+        background-image: -moz-linear-gradient(top, #88cd9c 0%,#71bd88 100%);
+        background-image: -o-linear-gradient(top, #88cd9c 0%,#71bd88 100%);
+        background-image: -ms-linear-gradient(top, #88cd9c 0%,#71bd88 100%);
+        background-image: linear-gradient(top, #88cd9c 0%,#71bd88 100%); }
+    .component.button.y, .component.button.yellow, .component.button.highlight {
+      border-top: 1px solid #ffe658;
+      background-color: #c0ab36;
+      background-image: -webkit-linear-gradient(top, #c8b443 0%,#b8a229 100%);
+      background-image: -moz-linear-gradient(top, #c8b443 0%,#b8a229 100%);
+      background-image: -o-linear-gradient(top, #c8b443 0%,#b8a229 100%);
+      background-image: -ms-linear-gradient(top, #c8b443 0%,#b8a229 100%);
+      background-image: linear-gradient(top, #c8b443 0%,#b8a229 100%); }
+      .component.button.y.over, .component.button.yellow.over, .component.button.highlight.over {
+        border-top: 1px solid #ffff78;
+        background-color: #e0cb56;
+        background-image: -webkit-linear-gradient(top, #e8d463 0%,#d8c249 100%);
+        background-image: -moz-linear-gradient(top, #e8d463 0%,#d8c249 100%);
+        background-image: -o-linear-gradient(top, #e8d463 0%,#d8c249 100%);
+        background-image: -ms-linear-gradient(top, #e8d463 0%,#d8c249 100%);
+        background-image: linear-gradient(top, #e8d463 0%,#d8c249 100%); }
+      .component.button.y.down, .component.button.yellow.down, .component.button.highlight.down {
+        border-top: 1px solid #b8a229;
+        background: #d8c249; }
+      .component.button.y.selected, .component.button.yellow.selected, .component.button.highlight.selected {
+        background-color: #fceb76;
+        background-image: -webkit-linear-gradient(top, #fff483 0%,#f8e269 100%);
+        background-image: -moz-linear-gradient(top, #fff483 0%,#f8e269 100%);
+        background-image: -o-linear-gradient(top, #fff483 0%,#f8e269 100%);
+        background-image: -ms-linear-gradient(top, #fff483 0%,#f8e269 100%);
+        background-image: linear-gradient(top, #fff483 0%,#f8e269 100%); }
+    .component.button.r, .component.button.red, .component.button.alert {
+      border-top: 1px solid #ca1200;
+      background-color: #7e0b00;
+      background-image: -webkit-linear-gradient(top, #8a0c00 0%,#720a00 100%);
+      background-image: -moz-linear-gradient(top, #8a0c00 0%,#720a00 100%);
+      background-image: -o-linear-gradient(top, #8a0c00 0%,#720a00 100%);
+      background-image: -ms-linear-gradient(top, #8a0c00 0%,#720a00 100%);
+      background-image: linear-gradient(top, #8a0c00 0%,#720a00 100%); }
+      .component.button.r.over, .component.button.red.over, .component.button.alert.over {
+        border-top: 1px solid #ea3220;
+        background-color: #9e2b20;
+        background-image: -webkit-linear-gradient(top, #aa2c20 0%,#922a20 100%);
+        background-image: -moz-linear-gradient(top, #aa2c20 0%,#922a20 100%);
+        background-image: -o-linear-gradient(top, #aa2c20 0%,#922a20 100%);
+        background-image: -ms-linear-gradient(top, #aa2c20 0%,#922a20 100%);
+        background-image: linear-gradient(top, #aa2c20 0%,#922a20 100%); }
+      .component.button.r.down, .component.button.red.down, .component.button.alert.down {
+        border-top: 1px solid #720a00;
+        background: #922a20; }
+      .component.button.r.selected, .component.button.red.selected, .component.button.alert.selected {
+        background-color: #be4b40;
+        background-image: -webkit-linear-gradient(top, #ca4c40 0%,#b24a40 100%);
+        background-image: -moz-linear-gradient(top, #ca4c40 0%,#b24a40 100%);
+        background-image: -o-linear-gradient(top, #ca4c40 0%,#b24a40 100%);
+        background-image: -ms-linear-gradient(top, #ca4c40 0%,#b24a40 100%);
+        background-image: linear-gradient(top, #ca4c40 0%,#b24a40 100%); }
+    .component.button.lgr, .component.button.default3 {
+      border-top: 1px solid #979397;
+      background-color: #726f72;
+      background-image: -webkit-linear-gradient(top, #7a777a 0%,#6a676a 100%);
+      background-image: -moz-linear-gradient(top, #7a777a 0%,#6a676a 100%);
+      background-image: -o-linear-gradient(top, #7a777a 0%,#6a676a 100%);
+      background-image: -ms-linear-gradient(top, #7a777a 0%,#6a676a 100%);
+      background-image: linear-gradient(top, #7a777a 0%,#6a676a 100%); }
+      .component.button.lgr.over, .component.button.default3.over {
+        border-top: 1px solid #b7b3b7;
+        background-color: #928f92;
+        background-image: -webkit-linear-gradient(top, #9a979a 0%,#8a878a 100%);
+        background-image: -moz-linear-gradient(top, #9a979a 0%,#8a878a 100%);
+        background-image: -o-linear-gradient(top, #9a979a 0%,#8a878a 100%);
+        background-image: -ms-linear-gradient(top, #9a979a 0%,#8a878a 100%);
+        background-image: linear-gradient(top, #9a979a 0%,#8a878a 100%); }
+      .component.button.lgr.down, .component.button.default3.down {
+        border-top: 1px solid #6a676a;
+        background: #8a878a; }
+      .component.button.lgr.selected, .component.button.default3.selected {
+        background-color: #b2afb2;
+        background-image: -webkit-linear-gradient(top, #bab7ba 0%,#aaa7aa 100%);
+        background-image: -moz-linear-gradient(top, #bab7ba 0%,#aaa7aa 100%);
+        background-image: -o-linear-gradient(top, #bab7ba 0%,#aaa7aa 100%);
+        background-image: -ms-linear-gradient(top, #bab7ba 0%,#aaa7aa 100%);
+        background-image: linear-gradient(top, #bab7ba 0%,#aaa7aa 100%); }
+    .component.button.glass {
+      border-top: 1px solid rgba(255, 255, 255, 0.7);
+      background-color: rgba(225, 232, 232, 0.5);
+      background-image: -webkit-linear-gradient(top, rgba(225, 232, 232, 0.5) 0%, rgba(200, 207, 207, 0.5) 49.9%, rgba(171, 177, 177, 0.5) 50%, rgba(215, 224, 224, 0.5) 100%);
+      background-image: -moz-linear-gradient(top, rgba(225, 232, 232, 0.5) 0%, rgba(200, 207, 207, 0.5) 49.9%, rgba(171, 177, 177, 0.5) 50%, rgba(215, 224, 224, 0.5) 100%);
+      background-image: -o-linear-gradient(top, rgba(225, 232, 232, 0.5) 0%, rgba(200, 207, 207, 0.5) 49.9%, rgba(171, 177, 177, 0.5) 50%, rgba(215, 224, 224, 0.5) 100%);
+      background-image: -ms-linear-gradient(top, rgba(225, 232, 232, 0.5) 0%, rgba(200, 207, 207, 0.5) 49.9%, rgba(171, 177, 177, 0.5) 50%, rgba(215, 224, 224, 0.5) 100%);
+      background-image: linear-gradient(top, rgba(225, 232, 232, 0.5) 0%, rgba(200, 207, 207, 0.5) 49.9%, rgba(171, 177, 177, 0.5) 50%, rgba(215, 224, 224, 0.5) 100%); }
+      .component.button.glass.over {
+        border-top: 1px solid rgba(255, 255, 255, 0.7);
+        background-color: rgba(245, 252, 252, 0.5);
+        background-image: -webkit-linear-gradient(top, rgba(245, 252, 252, 0.5) 0%, rgba(220, 227, 227, 0.5) 49.9%, rgba(191, 197, 197, 0.5) 50%, rgba(235, 244, 244, 0.5) 100%);
+        background-image: -moz-linear-gradient(top, rgba(245, 252, 252, 0.5) 0%, rgba(220, 227, 227, 0.5) 49.9%, rgba(191, 197, 197, 0.5) 50%, rgba(235, 244, 244, 0.5) 100%);
+        background-image: -o-linear-gradient(top, rgba(245, 252, 252, 0.5) 0%, rgba(220, 227, 227, 0.5) 49.9%, rgba(191, 197, 197, 0.5) 50%, rgba(235, 244, 244, 0.5) 100%);
+        background-image: -ms-linear-gradient(top, rgba(245, 252, 252, 0.5) 0%, rgba(220, 227, 227, 0.5) 49.9%, rgba(191, 197, 197, 0.5) 50%, rgba(235, 244, 244, 0.5) 100%);
+        background-image: linear-gradient(top, rgba(245, 252, 252, 0.5) 0%, rgba(220, 227, 227, 0.5) 49.9%, rgba(191, 197, 197, 0.5) 50%, rgba(235, 244, 244, 0.5) 100%); }
+      .component.button.glass.down {
+        border-top: 1px solid rgba(0, 0, 0, 0.4);
+        background: rgba(171, 177, 177, 0.5); }
+    .component.button.transparent {
+      border-top: 1px solid rgba(255, 255, 255, 0.7);
+      background-image: none;
+      background-color: transparent; }
+      .component.button.transparent.over {
+        border-top: 1px solid rgba(255, 255, 255, 0.7);
+        background: rgba(255, 255, 255, 0.3); }
+      .component.button.transparent.down {
+        border-top: 1px solid rgba(0, 0, 0, 0.4);
+        background: rgba(0, 0, 0, 0.3); }
 
 .bg-type1 {
-    background-color: #a0a0ff;
-}
+  background-color: #a0a0ff; }
+
 .bg-type2 {
-    background-color: #4040e0;
-}
+  background-color: #4040e0; }
+
 .font-type1 {
-    color: #a0a0ff;
-    text-transform: uppercase;
-}
+  color: #a0a0ff;
+  text-transform: uppercase; }
+
 .text-space {
-    letter-spacing: 2pt;
-}
+  letter-spacing: 2pt; }
+
 .basicscreen {
-    margin: 5% auto 0;
-    text-align: left;
-    width: 550pt;
-    height: 350pt;
-    padding: 2px;
-}
+  margin: 5% auto 0;
+  text-align: left;
+  width: 550pt;
+  height: 350pt;
+  padding: 2px; }
+
 ul,
 li {
-    margin: 0;
-    padding: 0;
-    list-style-type: none;
-}
+  margin: 0;
+  padding: 0;
+  list-style-type: none; }
+
 .txt-header {
-    padding-top: 15pt;
-}
+  padding-top: 15pt; }
+
 .txt-header-list LI {
-    text-align: center;
-    padding: 0 0 15pt;
-}
+  text-align: center;
+  padding: 0 0 15pt; }
+
 .txt-real {
-    line-height: 14pt;
-}
+  line-height: 14pt; }
+
+/* DEBUG */
+#debugPane {
+  position: absolute;
+  width: 500px;
+  height: 300px;
+  top: 20%;
+  left: 20%;
+  margin: 0;
+  padding: 0;
+  z-index: 99;
+  border: 3px solid black;
+  color: black;
+  background: rgba(255, 255, 255, 0.7);
+  overflow: scroll; }
+
+#debugTitle {
+  position: fixed;
+  font-family: monospace;
+  background: #0a320a;
+  color: white;
+  font-size: 24px;
+  width: 500px;
+  height: 30px;
+  text-align: center; }
+
+#debugContent {
+  margin-top: 30px;
+  padding-left: 5px; }
+
+#debugGhost {
+  background: #999;
+  opacity: 0.2;
+  width: 500px;
+  height: 300px;
+  top: 20%;
+  left: 20%;
+  position: absolute;
+  margin: 0;
+  padding: 0;
+  z-index: 98;
+  -webkit-transition: all 0.25s ease-in-out;
+  -moz-transition: all 0.25s ease-in-out;
+  -ms-transition: all 0.25s ease-in-out;
+  -o-transition: all 0.25s ease-in-out;
+  transition: all 0.25s ease-in-out; }
+
+#debug {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 100%;
+  height: 100%;
+  display: none; }
+  #debug #debugLog li {
+    list-style: none;
+    /* all list item li dots invisible */ }
+  #debug #debugLog .menu_label {
+    cursor: pointer;
+    /* cursor changes when you mouse over this class */ }
+    #debug #debugLog .menu_label + input[type=checkbox] {
+      opacity: 0;
+      /* checkboxes invisible and use no space */
+      /* display: none; is better but fails in ie8 */
+      /* could add the many user-select: none; commands here */ }
+    #debug #debugLog .menu_label + input[type=checkbox] + div + ol > li {
+      display: none;
+      /* prevents sublists below unchecked labels from displaying */ }
+    #debug #debugLog .menu_label + input[type=checkbox]:checked + div + ol > li {
+      display: block;
+      /* display submenu on click */ }
+    #debug #debugLog .menu_label + input[type=checkbox] + div.arrow {
+      float: left;
+      width: 0;
+      height: 0;
+      border-top: 6px solid transparent;
+      border-bottom: 6px solid transparent;
+      border-left: 6px solid black;
+      margin-top: 2px;
+      margin-right: 9px; }
+    #debug #debugLog .menu_label + input[type=checkbox]:checked + div.arrow {
+      border-left: 6px solid transparent;
+      border-right: 6px solid transparent;
+      border-top: 6px solid black;
+      margin-top: 4px;
+      margin-right: 3px; }
+
+/*# sourceMappingURL=default.css.map */
