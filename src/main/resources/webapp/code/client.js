@@ -1,6 +1,6 @@
-/*! sfera-webapp - v0.0.2 - 2015-10-14 */
+/*! sfera-webapp - v0.0.2 - 2015-10-15 */
 
-/*! sfera-webapp - v0.0.2 - 2015-10-14 */
+/*! sfera-webapp - v0.0.2 - 2015-10-15 */
 
 (function(){
 
@@ -35,6 +35,7 @@ var Sfera = Sfera || {
     		case "subscribe" :  return "subscribe?id="+(Sfera.client.net.subscribeId?Sfera.client.net.subscribeId+"&":"")+"nodes=*";
     		case "state" :      return "state/"+Sfera.client.net.subscribeId+"?ts="+Sfera.client.stateTs;
             case "command":     return  "command";
+            case "event":       return  "event";
     		}
     	}
     }
@@ -621,7 +622,7 @@ Sfera.Client = function(config) {
     this.commandQueue = [];
     this.sendCommand = function (command, sender) {
         var id = (new Date()).getTime();
-        commandQueue.push({
+        this.commandQueue.push({
             command: command,
             id: id,
             sender: sender
@@ -632,9 +633,27 @@ Sfera.Client = function(config) {
         return id;
     };
 
+    this.eventQueue = [];
+    this.sendEvent = function (event, sender) {
+        var id = (new Date()).getTime();
+        this.eventQueue.push({
+            event: event,
+            id: id,
+            sender: sender
+        });
+
+        this.net.sendEvent(id, event);
+
+        return id;
+    };
+
     this.onCommand = function (command) {
 
-    }
+    };
+
+    this.onStateUpdate = function () {
+
+    };
 };
 
 
@@ -1492,7 +1511,15 @@ Sfera.Net = function (client) {
 
     this.sendCommand = function (id, command) {
         if (true) {
-            this.wsSend(Sfera.urls.get("command")+"?"+command);
+            this.wsSend(Sfera.urls.get("command")+"?id="+id+"&"+command);
+        } else {
+
+        }
+    };
+
+    this.sendEvent = function (id, event) {
+        if (true) {
+            this.wsSend(Sfera.urls.get("event")+"?id="+id+"&"+event);
         } else {
 
         }
@@ -3183,7 +3210,7 @@ Sfera.Components.new("Button", {
          * @property {string} text - The  configuration object.
          */
         // text
-        Button: {
+        label: {
             type: "string",
             value: ""
         },
@@ -3204,19 +3231,34 @@ Sfera.Components.new("Button", {
         command: {
             type: "string",
             value: ""
+        },
+
+        // event
+        event: {
+            type: "string",
+            value: ""
         }
 
     },
 
     constructor: function(properties) {
         this.ancestor.constructor.call(this, properties);
-
-        this.element.onclick = function () {
-            Sfera.client.sendCommand(this.properties.command.value);
-        };
     },
 
     prototype: {
+        init: function() {
+            this.ancestor.init.call(this);
+
+            var comm = this.properties.command.value;
+            var even = this.properties.event.value;
+            this.element.onclick = function () {
+                if (even)
+                    Sfera.client.sendEvent(even);
+                if (comm)
+                    Sfera.client.sendCommand(comm);
+            };
+        },
+
         setProperty: function(name, value) {
             if (!this.ancestor.setProperty.call(this, name, value))
                 return false;
@@ -3225,8 +3267,12 @@ Sfera.Components.new("Button", {
             value = this.properties[name].value;
 
             switch (name) {
-                case "Button":
+                case "label":
                     this.element.innerHTML = value;
+                    break;
+                case "event":
+                    var a = value.split("=");
+                    this.properties.event.value = "eid="+a[0]+"&eval="+a[1];
                     break;
             }
         }
