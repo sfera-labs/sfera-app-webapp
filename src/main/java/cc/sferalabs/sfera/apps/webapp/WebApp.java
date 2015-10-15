@@ -46,12 +46,12 @@ public class WebApp extends Application {
 	}
 
 	@Subscribe
-	public void handleHttpEvent(RemoteEvent e) {
+	public void handleHttpEvent(RemoteEvent event) {
 		// TODO handle user events here
 		try {
-			e.reply("ciao " + e.getUser().getUsername() + " - " + e.getValue());
-		} catch (Exception e1) {
-			e1.printStackTrace();
+			event.reply("ciao " + event.getUser().getUsername() + " - " + event.getValue());
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
