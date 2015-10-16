@@ -57,6 +57,17 @@ Sfera.Components.Label = function(properties) {
         height: {
             type: "integer",
             value: 0
+        },
+
+
+        'font-size': {
+            type: "string",
+            value: ""
+        },
+
+        'text-align': {
+            type: "string",
+            value: ""
         }
     }
 
@@ -76,6 +87,15 @@ Sfera.Components.Label.prototype.setProperty = function(name, value) {
     switch (name) {
         case "text":
             this.element.innerHTML = value;
+            break;
+        case "style":
+            this.element.style = value;
+            break;
+        case "font-size":
+            this.element.style.fontSize = value + "px";
+            break;
+        case "text-align":
+            this.element.style.textAlign = value;
             break;
     }
 }

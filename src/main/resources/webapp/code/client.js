@@ -1,4 +1,4 @@
-/*! sfera-webapp - v0.0.2 - 2015-10-15 */
+/*! sfera-webapp - v0.0.2 - 2015-10-16 */
 
 (function(){
 
@@ -32,8 +32,10 @@ var Sfera = Sfera || {
     		case "index" :      return Sfera.client.name+"/index.xml";
     		case "subscribe" :  return "subscribe?id="+(Sfera.client.net.subscribeId?Sfera.client.net.subscribeId+"&":"")+"nodes=*";
     		case "state" :      return "state/"+Sfera.client.net.subscribeId+"?ts="+Sfera.client.stateTs;
-            case "command":     return  "command";
-            case "event":       return  "event";
+            case "command":     return "command";
+            case "event":       return "event";
+            case "websocket":   return (Sfera.Browser.getLocation().protocol == "https:" ? "wss:" : "ws:")+
+                                        "//"+Sfera.Browser.getLocation().host+"/api/websocket";
     		}
     	}
     }
@@ -186,6 +188,8 @@ Sfera.Compiler = function(client) {
      */
     this.compilePropertyValue = function (value) {
         var str;
+
+        //str = '<div class="hr"></div> <p class="tags hidden-mobile"><a href="http://www.rockpapershotgun.com/tag/arkane-studios/" rel="tag">Arkane Studios</a>, <a href="http://www.rockpapershotgun.com/tag/bethesda/" rel="tag">Bethesda</a>, <a href="http://www.rockpapershotgun.com/tag/dishonored/" rel="tag">Dishonored</a>, <a href="http://www.rockpapershotgun.com/tag/dishonored-2/" rel="tag">Dishonored 2</a>.</p> <p class="comments"><a href="http://www.rockpapershotgun.com/2015/09/17/dishonored-2-karnaca/#comments" title="Comment on Southland Tales: Dishonored 2&#8217;s Sun-Scorched Bloodflies">21 Comments &#187;</a></p> </footer> </div> </div> <div id="post-314999" class="block featured-block"> <p class="featured-block-title"> <a class="featured-block__text featured-block__text--feature" href="http://www.rockpapershotgun.com/category/featured-articles">RPS Feature</a> It's a number one. </p> <div class="post-inner"> <h2><a href="http://www.rockpapershotgun.com/2015/09/17/is-this-gamings-greatest-toilet-the-toilet-publishers-dont-want-you-to-see/" rel="bookmark" title="Permanent Link to Is This Gaming&#8217;s Greatest Toilet? The Toilet Publishers Don&#8217;t Want You To See">Is This Gaming&#8217;s Greatest Toilet? The Toilet Publishers Don&#8217;t Want You To See</a></h2> <div class="entry"> <div class="top-matter hidden-mobile"> <aside class="byline"> <p>By <a href="/cdn-cgi/l/email-protection#472d61647676767c2f61647676777c616471737c352861647e7e7c61647677707c61647676757c61647e707c61647676757c2261647676737c61647676727c616476X04;ot&#103;un.c&#111;&#109;">John Walker</a> on September 17th, 2015 at 5:00 pm.</p> </aside> <div class="social-buttons"> <h4>Share this:</h4> <ul class="social-icons"> <li><a class="social-facebook icon-facebook" href="http://www.facebook.com/sharer.php?u=http://www.rockpapershotgun.com/2015/09/17/is-this-gamings-greatest-toilet-the-toilet-publishers-dont-want-you-to-see//"><span>Facebook</span></a></li> <li><a class="social-twitter icon-twitter" href="http://twitter.com/intent/tweet?text=Is This Gaming&#8217;s Greatest Toilet? The Toilet Publishers Don&#8217;t Want You To See http://www.rockpapershotgun.com/2015/09/17/is-this-gamings-greatest-toilet-the-toilet-publishers-dont-want-you-to-see/"><span>Twitter</span></a></li> <li><a class="social-reddit icon-reddit" href="http://www.reddit.com/submit?url=http://www.rockpapershotgun.com/2015/09/17/is-this-gamings-greatest-toilet-the-toilet-publishers-dont-want-you-to-see//"><span>Reddit</span></a></li> </ul> </div> </div> <p><a href="http://www.rockpapershotgun.com/images/15/sep/albt1b.jpg" rel="lightbox[314999]"><img src="http://www.rockpapershotgun.com/images/15/sep/albt1.jpg" alt=""/></a></p> <p><em>I&#8217;m really getting the hang of these headlines, I think. In <a href="http://www.rockpapershotgun.com/2015/09/15/albino-lullaby-review/">my review of Albino Lullaby</a> this week, I included a throwaway line that I then didn&#8217;t justify in pictorial form. I wrote that it features, &#822#8220;the best toilet in gaming history.&#8221; You can&#8217;t just say a thing like that and expect not to be required to prove it. I think the image above has already done that, but there are more, just in case &#8211; click on them to appreciate them fully.</em></p> <p> <a href="http://www.rockpapershotgun.com/2015/09/17/is-this-gamings-greatest-toilet-the-toilet-publishers-dont-want-you-to-see/#more-314999" class="more-link">Read the rest of this entry &raquo;</a></p> </div> <footer class="article-footer"> <div class="hr"></div> <p class="tags hidden-mobile"><a href="http://www.rockpapershotgun.com/tag/albino-lullaby/" rel="tag">Albino Lullaby</a>, <a href="http://www.rockpapershotgun.com/tag/ape-law/" rel="tag">Ape Law</a>, <a href="http://www.rockpapershotgun.com/tag/feature/" rel="tag">feature</a>, <a href="http://www.rockpapershotgun.com/tag/toilets-in-games/" rel="tag">toilets-in-games</a>.</p> <p class="comments"><a href="http://www.rockpapershotgun.com/2015/09/17/is-this-gamings-greatest-toilet-the-toilet-publishers-dont-want-you-to-see/#comments" title="Comment on Is This Gaming&#8217;s Greatest Toilet? The Toilet Publishers Don&#8217;t Want You To See">20 Comments &#187;</a></p> </footer> </div> </div> <div id="post-315221" class="block featured-block"> <div class="post-inner"> <h2><a href="http://www.rockpapershotgun.com/2015/09/17/warhammer-40k-deathwatch-pc/" rel="bookmark" title="Permanent Link to Warhammer 40,000: Deathwatch Crusading Onto PC">Warhammer 40,000: Deathwatch Crusading Onto PC</a></h2> <div class="entry"> <div class="top-matter hidden-mobile"> <aside class="byline"> <p>By <a href="/cdn-cgi/l/email-protection#e584c3c6d4d5ddde8cc3c6dcdcde80c3c6d3d1dec3c6d4d4d1dec3c6d4d4d4de86c3c6d4d5d2dec3c6d4d4d7de8495c3c6d4d5d4de97c3c6d4d4d0dec3c6d4d5d1deXo&#116;gu&#110;&#46;&#99;o&#109;">Alice O'Connor</a> on September 17th, 2015 at 4:11 pm.</p> </aside> <div class="social-buttons"> <h4>Share this:</h4> <ul class="social-icons"> <li><a class="social-facebook icon-facebook" href="http://www.facebook.com/sharer.php?u=http://www.rockpapershotgun.com/2015/09/17/warhammer-40k-deathwatch-pc//"><span>Facebook</span></a></li> <li><a class="social-twitter icon-twitter" href="http://twitter.com/intent/tweet?text=Warhammer 40,000: Deathwatch Crusading Onto PC http://www.rockpapershotgun.com/2015/09/17/warhammer-40k-deathwatch-pc/"><span>Twitter</span></a></li> <li><a class="social-reddit icon-reddit" href="http://www.reddit.com/submit?url=http://www.rockpapershotgun.com/2015/09/17/warhammer-40k-deathwatch-pc//"><span>Reddit</span></a></li> </ul> </div> </div> <p><img src="http://www.rockpapershotgun.com/images/15/sep/17wh40kdeathwatch.jpg" title="Aye, a can of Raid won't solve this one."/></p> <p>The Warhammer 40,000 game I&#8217;d really like is still <a href="http://www.rockpapershotgun.com/2015/07/14/dawn-of-war-3-rumours/">Dawn of War 3</a>, but in the meantime I shall need to investigate other opportunities to wear a big ole skull on my crotch.</p> <p>Rodeo Games, the folks behind <a href="http://www.rockpapershotgun.com/tag/warhammer-quest/">Warhammer Quest</a>, have announced that they&#8217;re bringing another mobile doodad over to PC a little fancied up, and this one has all the crotchskulls I demand &#8211; Warhammer 40,000: Deathwatch [<a href="http://rodeogames.co.uk/deathwatch">official site</a>]. It&#8217;s a turn-based tactical affair about hunting down and squishing those naughty Tyranids, from cities to the guts of bio-ships, while expanding, levelling up, and equipping your Deathwatch Kill Team.</p> <p> <a href="http://www.rockpapershotgun.com/2015/09/17/warhammer-40k-deathwatch-pc/#more-315221" class="more-link">Read the rest of this entry &raquo;</a></p> </div> <footer class="article-footer"> <div class="hr"></div> <p class="tags hidden-mobile"><a href="http://www.rockpapershotgun.com/tag/rodeo-games/" rel="tag">Rodeo Games</a>, <a href="http://www.rockpapershotgun.com/tag/warhammer-40000/" rel="tag">Warhammer 40000</a>, <a href="http://www.rockpapershotgun.com/tag/warhammer-40000-deathwatch/" rel="tag">Warhammer 40000: Deathwatch</a>, <a href="http://www.rockpapershotgun.com/tag/warhammer-40000-deathwatch-enhanced-edition/" rel="tag">Warhammer 40000: Deathwatch - Enhanced Edition</a>.</p> <p class="comments"><a href="http://www.rockpapershotgun.{{that is}}com/2015/09/17/warhammer-40k-deathwatch-pc/#comments" title="Comment on Warhammer 40,000: Deathwatch Crusading Onto PC">10 Comments &#187;</a></p> </footer> </div> </div> <div id="post-299851" class="block featured-block"> <div class="post-inner"> <h2><a href="http://www.rockpapershotgun.com/2015/09/17/have-you-played-kyrandia-2-hand-of-fate/" rel="bookmark" title="Permanent Link to Have You Played&#8230; Kyrandia 2: Hand Of Fate?">Have You Played&#8230; Kyrandia 2: Hand Of Fate?</a></h2> <div class="entry"> <div class="top-matter hidden-mobile"> <aside class="byline"> <p>By <a href="/cdn-cgi/l/email-protection#91b7b2a0a0a5aab7b2a0a1a4aab7b2a8a8aab7b2a0a1a5aaf0b7b2a0a0a5aaf5b7b2a7a5aae3feb7b2a8a8aafab7b2a0a0a3aaf0b7b2a0a0a3aab7b2a0a1a0aab7b2X114;&#115;hot&#103;un.&#99;&#111;&#109;">Richard Cobbett</a> on September 17th, 2015 at 3:00 pm.</p> </aside> <div class="social-buttons"> <h4>Share this:</h4> <ul class="social-icons"> <li><a class="social-facebook icon-facebook" href="http://www.facebook.com/sharer.php?u=http://www.rockpapershotgun.com/2015/09/17/have-you-played-kyrandia-2-hand-of-fate//"><span>Facebook</span></a></li> <li><a class="social-twitter icon-twitter" href="http://twitter.com/intent/tweet?text=Have You Played&#8230; Kyrandia 2: Hand Of Fate? http://www.rockpapershotgun.com/2015/09/17/have-you-played-kyrandia-2-hand-of-fate/"><span>{{this is}}</span></a></li> <li><a class="social-reddit icon-reddit" href="http://www.reddit.com/submit?url=http://www.rockpapershotgun.com/2015/09/17/have-you-played-kyrandia-2-hand-of-fate//"><span>Reddit</span></a></li> </ul> </div> </div>';
 
         str = '<div>{{one}}</div><p></p><br /><div>{{two}}</div>';
         var MUSTACHE = /\{\{([^}]*)\}\}/;
@@ -1751,13 +1755,13 @@ Sfera.Net = function (client) {
     var wsConnected = false;
 
     var self = this;
-    var wsBaseUrl = "ws://localhost:8080/api/websocket";
+    var wsUrl = "";
     var httpBaseUrl = "/";
 
     this.subscribeId = (new Date()).getTime();
 
     function openSocket() {
-    	console.log("opening socket on "+wsBaseUrl);
+    	console.log("opening socket on "+wsUrl);
         // Ensures only one connection is open at a time
         if (webSocket !== undefined && webSocket.readyState !== WebSocket.CLOSED) {
             Sfera.Debug.log("websocket: is already opened.");
@@ -1765,7 +1769,7 @@ Sfera.Net = function (client) {
         }
         // Create a new instance of the websocket
 
-        webSocket = new WebSocket(wsBaseUrl);
+        webSocket = new WebSocket(wsUrl);
 
         webSocket.onopen = function(event) {
             // For reasons I can't determine, onopen gets called twice
@@ -1843,6 +1847,8 @@ Sfera.Net = function (client) {
 
 	// boot
 	this.boot = function () {
+        wsUrl = Sfera.urls.get("websocket");
+
 		this.sync();
 	}; // boot()
 
@@ -1906,12 +1912,12 @@ Sfera.Net = function (client) {
 
 		self.sync();
 	}
+
 	function onReqError() {
 		console.log("error");
 		var e = document.getElementById("output");
 		e.innerHTML += "<br><br>Error.<br><br>";
 	}
-
 
     /**
     * Returns the hostname given by the browser.
@@ -1926,9 +1932,7 @@ Sfera.Net = function (client) {
         }
 
         return null;
-
     };
-
 
     this.sendCommand = function (id, command) {
         if (true) {
