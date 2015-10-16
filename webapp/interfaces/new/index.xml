@@ -1,21 +1,15 @@
-<interface id="new" skin="default" language="it_IT" title="My New Project" width="700" height="500">
-	<page id="page:homepage" title="" orientation="landscape" gestures="">
-		<label id="text_zero" x="50" y="50" width="160" height="160" text="this is label ZERO" color="blue" font-size="20"/>
-
-		<button id="button_link1" x="20" y="50" width="160" height="58" label="page one" page="page:one" color="red" font-size="15"/>
-		<button id="button_link2" x="250" y="50" width="160" height="58" label="page two" page="page:two" font-size="15"/>
-
-		<image x="20" y="300" source="http://www.sferalabs.cc/wp-content/uploads/2015/09/logo_SFERALABS_11.png" width="350" height="50"/>
-	</page>
-	<page id="page:one" title="Page One">
-		<label id="text_one" x="20" y="20" width="160" height="58" text="this is label ONE" color="green" font-size="15"/>
-		<button id="button_one" x="20" y="50" width="160" height="58" label="send event" event="myvalue=5" color="blue" font-size="20"/>
-
-		<button id="button_linkh1" x="280" y="150" width="160" height="160" label="homepage" page="page:homepage" font-size="30"/>
-	</page>
-	<page id="page:two" title="Page Two">
-		<label id="text_two" x="20" y="20" width="160" height="58" text="this is label TWO" color="red" font-size="15"/>
-
-		<button id="button_linkh2" x="280" y="150" width="160" height="160" label="homepage" page="page:homepage" font-size="30"/>
+<interface id="new" skin="default" language="it_IT" title="My New Project"
+	width="700" height="500">
+	<page id="page:homepage" title="" orientation="landscape"
+		gestures="">
+		<image x="175" y="70"
+			source="http://www.sferalabs.cc/wp-content/uploads/2015/09/logo_SFERALABS_11.png"
+			width="350" height="50" />
+			
+		<label id="text" x="150" y="200" width="300" height="50"
+			text="this is label ZERO" color="blue" font-size="20" />
+			
+		<button id="button_one" x="260" y="300" width="180" height="58"
+			label="PANIC BUTTON" event="myvalue=5" color="blue" font-size="20" />
 	</page>
 </interface>
