@@ -1,4 +1,4 @@
-/*! sfera-webapp - v0.0.2 - 2015-10-16 */
+/*! sfera-webapp - v0.0.2 - 2015-10-19 */
 
 (function(){
 
@@ -673,8 +673,8 @@ Sfera.Client = function(config) {
         // {"type":"event","events":{"gui.button_link1.label":"changed"}}
         for (var e in json.events) {
             var n = e.split(".");
-            if (n[0] == "gui") {
-                n = n.slice(1);
+            if (n[0] == "ui" && n[1] == "set") {
+                n = n.slice(2);
                 var a = n.pop();
                 var c = this.components.getObjsById(n.join("."));
                 for (var i=0; i<c.length; i++) {
