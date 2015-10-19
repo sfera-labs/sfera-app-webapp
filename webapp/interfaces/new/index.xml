@@ -6,10 +6,10 @@
 			source="http://www.sferalabs.cc/wp-content/uploads/2015/09/logo_SFERALABS_11.png"
 			width="350" height="50" />
 			
-		<label id="text" x="150" y="200" width="300" height="50"
-			text="this is label ZERO" color="blue" font-size="20" />
+		<label id="message" x="150" y="200" width="300" height="50"
+			text="---" color="blue" font-size="20" />
 			
 		<button id="button_one" x="260" y="300" width="180" height="58"
-			label="PANIC BUTTON" event="myvalue=5" color="blue" font-size="20" />
+			label="PANIC BUTTON" event="webapp.ui.panic=meh" color="blue" font-size="20" />
 	</page>
 </interface>

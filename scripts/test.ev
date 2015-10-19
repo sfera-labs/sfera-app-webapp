@@ -1,0 +1,7 @@
+init {
+	var x = 1;
+}
+
+ui.panic == "meh" : {
+	ui.set("message", "text", "X: " + x++);
+}
