@@ -154,7 +154,7 @@ public class InterfaceCache {
 			logger.debug("Creating cache for interface '{}'...", interfaceName);
 			InterfaceCache icc = new InterfaceCache(interfaceName);
 			icc.create();
-			logger.debug("Created cache for interface '{}'", interfaceName);
+			logger.info("Created cache for interface '{}'", interfaceName);
 		} finally {
 			ResourcesUtil.release();
 		}

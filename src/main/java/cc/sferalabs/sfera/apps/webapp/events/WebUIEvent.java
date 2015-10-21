@@ -28,8 +28,20 @@ public class WebUIEvent extends UIEvent {
 	}
 
 	@Override
+	public WebUI getSource() {
+		return (WebUI) super.getSource();
+	}
+
+	@Override
 	public String getValue() {
 		return value;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
+	public String getSessionId() {
+		return getSource().getHttpRequest().getSession().getId();
+	}
 }

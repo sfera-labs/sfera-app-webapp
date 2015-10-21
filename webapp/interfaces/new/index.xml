@@ -2,14 +2,17 @@
 	width="700" height="500">
 	<page id="page:homepage" title="" orientation="landscape"
 		gestures="">
-		<image x="175" y="70"
-			source="http://www.sferalabs.cc/wp-content/uploads/2015/09/logo_SFERALABS_11.png"
-			width="350" height="50" />
-			
-		<label id="message" x="150" y="200" width="300" height="50"
-			text="---" color="blue" font-size="20" />
-			
-		<button id="button_one" x="260" y="300" width="180" height="58"
-			label="PANIC BUTTON" event="webapp.ui.panic=meh" color="blue" font-size="20" />
+		<image x="175" y="70" source="assets/sferalabs_logo.png" width="350"
+			height="50" />
+
+		<label id="message" x="150" y="170" width="400" height="50"
+			text="---" font-size="50" text-align="center" />
+
+		<label id="message1" x="150" y="220" width="400" height="50"
+			text="---" font-size="50" text-align="center" />
+
+		<button id="button_one" x="260" y="320" width="180" height="58"
+			label="PANIC BUTTON" event="webapp.ui.panic=meh" color="blue"
+			font-size="20" />
 	</page>
 </interface>

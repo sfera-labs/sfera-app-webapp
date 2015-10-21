@@ -3,5 +3,7 @@ init {
 }
 
 ui.panic == "meh" : {
-	ui.set("message", "text", "X: " + x++);
+	x++;
+	ui.set("message", "text", "Session: " + x, _e.sessionId);
+	ui.set("message1", "text", "Global: " + x);
 }
