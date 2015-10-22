@@ -3,9 +3,6 @@
  */
 package cc.sferalabs.sfera.apps.webapp.events;
 
-import javax.servlet.http.HttpServletRequest;
-
-import cc.sferalabs.sfera.access.User;
 import cc.sferalabs.sfera.http.api.HttpApiEvent;
 import cc.sferalabs.sfera.http.api.HttpRemoteNode;
 import cc.sferalabs.sfera.ui.UI;
@@ -19,29 +16,20 @@ import cc.sferalabs.sfera.ui.UI;
  */
 public class WebUI extends UI {
 
-	private final HttpServletRequest httpRequest;
-	private final User user;
+	private HttpRemoteNode remote;
 
 	/**
 	 * @param httpEvent
 	 */
 	public WebUI(HttpApiEvent httpEvent) {
-		HttpRemoteNode remote = httpEvent.getSource();
-		this.httpRequest = remote.getHttpRequest();
-		this.user = remote.getUser();
+		this.remote = httpEvent.getSource();
 	}
 
 	/**
-	 * @return the user
+	 * @return the remote
 	 */
-	public User getUser() {
-		return user;
+	public HttpRemoteNode getRemote() {
+		return remote;
 	}
 
-	/**
-	 * @return the httpRequest
-	 */
-	public HttpServletRequest getHttpRequest() {
-		return httpRequest;
-	}
 }
