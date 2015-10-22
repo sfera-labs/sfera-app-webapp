@@ -1,4 +1,4 @@
-/*! sfera-webapp - v0.0.2 - 2015-10-19 */
+/*! sfera-webapp - v0.0.2 - 2015-10-22 */
 
 (function(){
 
@@ -35,7 +35,8 @@ var Sfera = Sfera || {
             case "command":     return "command";
             case "event":       return "event";
             case "websocket":   return (Sfera.Browser.getLocation().protocol == "https:" ? "wss:" : "ws:")+
-                                        "//"+Sfera.Browser.getLocation().host+"/api/websocket";
+                                        //"//"+Sfera.Browser.getLocation().host+"/api/websocket";
+                                        "//localhost:8080/api/websocket";
     		}
     	}
     }
@@ -1758,6 +1759,10 @@ Sfera.Net = function (client) {
     var wsUrl = "";
     var httpBaseUrl = "/";
 
+    var pingInterval;
+    var pongTimeout;
+    var connCheckTimeoutId;
+
     this.subscribeId = (new Date()).getTime();
 
     function openSocket() {
@@ -1785,23 +1790,43 @@ Sfera.Net = function (client) {
         };
 
         webSocket.onmessage = function(event) {
-            if (!wsConnected) {
-                wsConnected = true;
-                self.wsSend(Sfera.urls.get("subscribe"));
+            resetConnCheckTimeout();
+
+            // ping
+            if (event.data == "&") {
+                self.wsSend("&");
+            } else {
+                Sfera.Debug.log("websocket: onmessage", event.data);
+                json = JSON.parse(event.data);
+
+                // {"type":"event","events":{"remote.myvalue":"5","system.plugins":"reload","remote.":"undefined","system.state":"ready"}}
+                switch (json.type) {
+                    case "connection":
+                        pingInterval = parseInt(json.pingInterval);
+                        pongTimeout = parseInt(json.pongTimeout);
+
+                        resetConnCheckTimeout();
+
+                        self.wsSend(Sfera.urls.get("subscribe"));
+                        wsConnected = true;
+                        break;
+                    case "event":
+                        client.onEvent(json);
+                        break;
+                }
             }
-            Sfera.Debug.log("websocket: onmessage", event.data);
-
-            json = JSON.parse(event.data);
-
-            // {"type":"event","events":{"remote.myvalue":"5","system.plugins":"reload","remote.":"undefined","system.state":"ready"}}
-            if (json.type = "event")
-                client.onEvent(json);
         };
 
         webSocket.onclose = function(event) {
             Sfera.Debug.log("web socket: connection closed");
+            wsConnected = false;
             openSocket(); // reopen
         };
+    }
+
+    function resetConnCheckTimeout() {
+        clearTimeout(connCheckTimeoutId);
+        setTimeout(this.wsClose, pingInterval+pongTimeout);
     }
 
     /**
