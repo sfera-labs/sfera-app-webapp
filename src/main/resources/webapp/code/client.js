@@ -1790,10 +1790,10 @@ Sfera.Net = function (client) {
         };
 
         webSocket.onmessage = function(event) {
-            resetConnCheckTimeout();
 
             // ping
             if (event.data == "&") {
+                resetConnCheckTimeout();
                 self.wsSend("&");
             } else {
                 Sfera.Debug.log("websocket: onmessage", event.data);
