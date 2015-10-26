@@ -6,6 +6,7 @@ package cc.sferalabs.sfera.apps.webapp.events;
 import java.io.IOException;
 
 import cc.sferalabs.sfera.http.api.HttpApiEvent;
+import cc.sferalabs.sfera.ui.UI;
 import cc.sferalabs.sfera.ui.UIEvent;
 
 /**
@@ -17,7 +18,7 @@ import cc.sferalabs.sfera.ui.UIEvent;
  */
 public class WebUIEvent extends UIEvent {
 
-	private final String value;
+	private final HttpApiEvent httpEvent;
 
 	/**
 	 * 
@@ -25,18 +26,13 @@ public class WebUIEvent extends UIEvent {
 	 * @param httpEvent
 	 */
 	public WebUIEvent(String id, HttpApiEvent httpEvent) {
-		super(new WebUI(httpEvent), id);
-		this.value = httpEvent.getValue();
-	}
-
-	@Override
-	public WebUI getSource() {
-		return (WebUI) super.getSource();
+		super(UI.getInstance(), id);
+		this.httpEvent = httpEvent;
 	}
 
 	@Override
 	public String getValue() {
-		return value;
+		return httpEvent.getValue();
 	}
 
 	/**
@@ -44,7 +40,7 @@ public class WebUIEvent extends UIEvent {
 	 * @return
 	 */
 	public String getSessionId() {
-		return getSource().getRemote().getHttpRequest().getSession().getId();
+		return httpEvent.getSource().getHttpRequest().getSession().getId();
 	}
 
 	/**
@@ -52,7 +48,7 @@ public class WebUIEvent extends UIEvent {
 	 * @throws IOException
 	 */
 	public void reply(Object result) throws IOException {
-		getSource().getRemote().reply(result);
+		httpEvent.reply(result);
 	}
 
 }
