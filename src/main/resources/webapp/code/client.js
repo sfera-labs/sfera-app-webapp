@@ -1,4 +1,4 @@
-/*! sfera-webapp - v0.0.2 - 2015-10-22 */
+/*! sfera-webapp - v0.0.2 - 2015-10-30 */
 
 (function(){
 
@@ -44,6 +44,81 @@ var Sfera = Sfera || {
 };
 
 
+Sfera.Behaviors = {};
+Sfera.Behaviors.Visibility = function() {
+    // extend attributes
+    this.attrDefs.visible = {
+        type: "boolean",
+        compile: function() {
+            this.changed = false;
+            this.value = !(!this.source || this.source == "false");
+            this.update();
+        },
+        update: function() {
+            this.component.element.style.display = this.value ? "inline" : "none";
+        }
+    };
+};
+Sfera.Behaviors.Position = function() {
+    // extend attributes
+    this.attrDefs.x = {
+        type: "int",
+        update: function() {
+            this.component.element.style.left = this.value + "px";
+        }
+    };
+    this.attrDefs.y = {
+        type: "int",
+        update: function() {
+            this.component.element.style.top = this.value + "px";
+        }
+    };
+};
+Sfera.Behaviors.Size = function() {
+    // extend attributes
+    this.attrDefs.width = {
+        type: "int",
+        update: function() {
+            this.component.element.style.width = this.value + "px";
+        }
+    };
+    this.attrDefs.height = {
+        type: "int",
+        update: function() {
+            this.component.element.style.height = this.value + "px";
+        }
+    };
+};
+Sfera.Behaviors.Label = function() {
+    // extend attributes
+    this.attrDefs.label = {
+        type: "string",
+        update: function() {
+            this.component.element.innerHTML = this.value;
+        }
+    };
+    this.attrDefs.color = {
+        type: "string",
+        update: function() {
+            this.component.element.style.color = this.value;
+        }
+    };
+    this.attrDefs.fontSize = {
+        type: "int",
+        update: function() {
+            this.component.element.style.fontSize = this.value + "px";
+        }
+    };
+    this.attrDefs.textAlign = {
+        type: "string",
+        update: function() {
+            this.component.element.style.textAlign = this.value;
+        }
+    };
+
+};
+
+
 /**
  * Sfera.Compiler compiles components into DOM
  *
@@ -85,10 +160,10 @@ Sfera.Compiler = function(client) {
     /**
      * Create component instance.
      * @param  {[type]} name       [description]
-     * @param  {[type]} properties [description]
+     * @param  {[type]} attributes [description]
      * @return {[type]}            [description]
      */
-    this.createComponent = function(name, properties) {
+    this.createComponent = function(name, attributes) {
         /*
         if (src.indexOf("<!--sml") != -1) {
             var comments = getComments(newDiv);
@@ -98,7 +173,7 @@ Sfera.Compiler = function(client) {
         }
         */
 
-        var component = Sfera.Components.getInstance(name, properties);
+        var component = Sfera.Components.getInstance(name, attributes);
         return component;
     }
 
@@ -218,6 +293,63 @@ Sfera.Compiler = function(client) {
 
 
 /**
+ * Sfera.Attribute Component attribute
+ *
+ * @namespace Sfera.Attribute
+ */
+Sfera.Attribute = function(component, config) {
+    // type
+    this.type = "string";
+    // needs update?
+    this.changed = false;
+    // value source
+    this.source = "";
+    // compiled value
+    this.value = "";
+    // owner component
+    this.component = component;
+
+    for (var c in config) {
+        switch (c) {
+        case "type":
+        case "source":
+        case "value":
+            this[c] = config[c];
+            break;
+        case "set":
+        case "get":
+        case "compile":
+        case "update":
+            this[c] = config[c].bind(this);
+            break;
+        };
+    }
+};
+Sfera.Attribute.prototype = {
+    set: function(value, manualUpdate) {
+        this.changed = true;
+        this.source = value;
+        if (!manualUpdate)
+            this.compile();
+    },
+
+    get: function() {
+        return this.value;
+    },
+
+    compile: function () {
+        this.changed = false;
+        this.value = this.source; //Sfera.Compiler.compileAttributeValue(this.source);
+        this.update();
+    },
+
+    update: function () {
+        // do something with the value
+    }
+};
+
+
+/**
 * Sfera.ComponentManager holds current client's components
 *
 * @class Sfera.ComponentManager
@@ -323,7 +455,7 @@ Sfera.Components = new function () {
         return Sfera.Components[this.getClassName(componentName)];
     };
 
-    this.getInstance = function(componentName, properties) {
+    this.getInstance = function(componentName, attributes) {
         // component class
         var cc = this.getClass(componentName);
 
@@ -331,47 +463,96 @@ Sfera.Components = new function () {
         if (cc == null)
             return null;
 
-        var component = new cc(properties);
-
-        if (component.source) {
-            // DOM
-            var d = document.createElement("div");
-            d.innerHTML = component.source;
-
-            component.element = Sfera.Utils.getFirstChildNodeOfType(d, 1);
-            component.element.controller = component;
-
-            component.element.setAttribute("data-controller",componentName);
-            component.element.setAttribute("data-id",component.id);
-
-            // TODO: get children components
-            // fastest way.. parse the whole html code and then dig through and associate?
-            // also for composed components, save the html the first time you dig through, to optimize
-        }
-
-        component.init();
+        var component = new cc({attributes:attributes});
 
         return component;
     };
 
-    this.new = function(name, init) {
-        Sfera.Components[name] = init.constructor ? init.constructor : {};
+    this.create = function (name,config) {
+        // constructor
+        Sfera.Components[name] = function Component (config) {
+            // html element
+            if (config.element) {
+                this.element = element;
+            } else {
+                // DOM
+                var d = document.createElement("div");
+                d.innerHTML = this.source;
 
-        if (init.extends == "") {
-            Sfera.Components[name].prototype.properties = init.properties ? init.properties : {};
-        } else {
-            Sfera.Utils.extend(Sfera.Components[name], Sfera.Components.Component);
-            Sfera.Components[name].prototype.properties = Sfera.Components.Component.prototype.properties;
-            for (var f in init.properties) {
-                Sfera.Components[name].prototype.properties[f] = init.properties[f];
+                this.element = Sfera.Utils.getFirstChildNodeOfType(d, 1);
+                this.element.controller = this;
+
+                this.element.setAttribute("data-controller",name);
+
+                // TODO: get children components
+                // fastest way.. parse the whole html code and then dig through and associate?
+                // also for composed components, save the html the first time you dig through, to optimize
+            }
+
+            // attributes
+            this.attributes = {};
+            for (var attr in this.attrDefs) {
+                this.attributes[attr] = new Sfera.Attribute(this, this.attrDefs[attr]);
+            }
+            // attribute values
+            if (config.attributes) {
+                for (var attr in config.attributes) {
+                    this.setAttribute(attr, config.attributes[attr]);
+                }
+            }
+
+            // init
+            this.super("_Base","init");
+            this.init();
+        };
+        var comp = Sfera.Components[name];
+
+        // non standard, allows developer tools to display object class names correctly
+        comp.displayName = "Sfera.Component."+name;
+        /*
+        Object.defineProperty(Sfera.Components[name], 'name', {
+          value: "Sfera.Component."+name
+        });
+        */
+
+        // extends
+        if (!config.extends)
+            config.extends = "_Base";
+
+        var sup = Sfera.Components[config.extends].prototype;
+
+        comp.prototype = Object.create(sup);
+        comp.prototype.constructor = comp;
+        comp.prototype.type = name;
+
+        // copy attributes
+        comp.prototype.attrDefs = {};
+        for (var a in sup.attrDefs) {
+            comp.prototype.attrDefs[a] = sup.attrDefs[a];
+        }
+
+        for (var f in config) {
+            switch (f){
+                case "behaviors":
+                    var be;
+                    for (var i=0; i < config.behaviors.length; i++) {
+                        be = Sfera.Behaviors[config.behaviors[i]];
+                        be.call(comp.prototype); // extend prototype
+                    }
+                    break;
+                case "attributes":
+                    for (var attr in config.attributes) {
+                        comp.prototype.attrDefs[attr] = config.attributes[attr];
+                    }
+                    break;
+
+                default:
+                    comp.prototype[f] = config[f];
+                    if (typeof comp.prototype[f] === "function")
+                        comp.prototype[f].displayName = "Sfera.Components."+name+"."+f;
+                    break;
             }
         }
-        Sfera.Components[name].prototype.type = name;
-
-        for (var f in init.prototype) {
-            Sfera.Components[name].prototype[f] = init.prototype[f];
-        }
-
     };
 
 };
@@ -614,10 +795,10 @@ Sfera.Client = function(config) {
         this.components.index(component);
     };
 
-    this.setProperty = function(id, name, value) {
+    this.setAttribute = function(id, name, value) {
         var c = this.components.getObjsById(id);
         for (var i = 0; i < c.length; i++)
-            c[i].setProperty(name, value);
+            c[i].setAttribute(name, value);
     };
 
     this.showPage = function(id) {
@@ -625,13 +806,13 @@ Sfera.Client = function(config) {
             id = "page:" + id;
 
         if (this.cPage)
-            this.cPage.setProperty("visible", false);
+            this.cPage.setAttribute("visible", false);
 
         var p = this.components.getObjById(id);
         if (p) {
-            p.setProperty("visible", true);
+            p.setAttribute("visible", true);
             this.cPage = p;
-            Sfera.Browser.updateUrl(id, p.properties.title.value);
+            Sfera.Browser.updateUrl(id, p.getAttribute("title"));
         } else {
             console.log("page not found: " + id);
         }
@@ -639,30 +820,31 @@ Sfera.Client = function(config) {
 
     this.commandQueue = [];
     this.sendCommand = function(command, sender) {
-        var id = (new Date()).getTime();
-        this.commandQueue.push({
+        var tag = (new Date()).getTime();
+        var req = {
             command: command,
-            id: id,
+            tag: tag,
             sender: sender
-        });
+        };
+        this.commandQueue.push(req);
+        this.net.sendCommand(req);
 
-        this.net.sendCommand(id, command);
-
-        return id;
+        return tag;
     };
 
     this.eventQueue = [];
-    this.sendEvent = function(event, sender) {
-        var id = (new Date()).getTime();
-        this.eventQueue.push({
-            event: event,
+    this.sendEvent = function(id, value, sender) {
+        var tag = (new Date()).getTime(); // request id
+        var req = {
             id: id,
+            value: value,
+            tag: tag,
             sender: sender
-        });
+        };
+        this.eventQueue.push(req);
+        this.net.sendEvent(req);
 
-        this.net.sendEvent(id, event);
-
-        return id;
+        return tag;
     };
 
     this.onCommand = function(command) {
@@ -679,7 +861,7 @@ Sfera.Client = function(config) {
                 var a = n.pop();
                 var c = this.components.getObjsById(n.join("."));
                 for (var i=0; i<c.length; i++) {
-                    c[i].setProperty(a,json.events[e]);
+                    c[i].setAttribute(a,json.events[e]);
                 }
             }
         }
@@ -693,8 +875,8 @@ Sfera.Client = function(config) {
         // not initialized yet
         if (!interfaceC) return;
 
-        var width = parseInt(interfaceC.properties.width.value);
-        var height = parseInt(interfaceC.properties.height.value);
+        var width = parseInt(interfaceC.getAttribute("width"));
+        var height = parseInt(interfaceC.getAttribute("height"));
 
         // center container within window size
         var viewportWidth;
@@ -1959,20 +2141,27 @@ Sfera.Net = function (client) {
         return null;
     };
 
-    this.sendCommand = function (id, command) {
-        if (true) {
-            this.wsSend(Sfera.urls.get("command")+"?id="+id+"&"+command);
-        } else {
+    this.sendCommand = function (req) {
+        //this.wsSend(Sfera.urls.get("command")+"?id="+id+"&"+command);
 
-        }
+        var r = {
+            cmd: req.command,
+            tag: req.tag
+        };
+        this.wsSend(JSON.stringify(r));
     };
 
-    this.sendEvent = function (id, event) {
-        if (true) {
-            this.wsSend(Sfera.urls.get("event")+"?id="+id+"&"+event);
-        } else {
+    this.sendEvent = function (req) {
+        //    this.wsSend(Sfera.urls.get("event")+"?id="+id+"&"+event);
 
-        }
+        var r = {
+            id: req.id,
+            value: req.value,
+            tag: req.tag
+        };
+        this.wsSend(JSON.stringify(r));
+
+
     };
 
 };
@@ -2283,13 +2472,20 @@ Sfera.Browser = function() {
             return true;
         }
         return false;
-    }
+    };
 
-    this.updateUrl = function(pageId, pageLabel) {
+    this.updateUrl = function(pageId, pageTitle) {
         var location = this.getLocation();
-        hash = pageId;
-        this.changeUrl(pageLabel, location.pathname + "#" + pageId + "?" + location.search);
-    }
+        hash = pageId == "page:homepage"?"":pageId;
+        document.title = pageTitle;
+        if (location.hash != hash) {
+            lastHash = hash; // so the interval won't detect the change
+            var url = location.pathname + "#" + pageId;
+            if (pageId && location.search)
+                url += "?" + location.search
+            this.changeUrl(pageTitle, url);
+        }
+    };
 
     this.getLocation = function() {
         var url = window.location.href; // "http://localhost:8080/new/index.html#page1?a=2"
@@ -2338,8 +2534,9 @@ Sfera.Browser = function() {
     this.start = function() {
         setInterval(function() {
             var location = Sfera.Browser.getLocation();
-            if (location.hash !== lastHash) {
-                lastHash = location.hash;
+            var locHash = location.hash == "page:homepage"?"":location.hash
+            if (locHash !== lastHash) {
+                lastHash = locHash;
                 Sfera.client.showPage(location.hash ? location.hash : "homepage");
                 //alert("User went back or forward to application state represented by " + hash);
             }
@@ -3538,163 +3735,75 @@ Sfera.Utils = new Sfera.Utils();
 
 
 /**
- * Sfera.Component base class for component
+ * Sfera._Base component base class
  *
- * @class Sfera.Component
+ * @class Sfera._Base
  * @constructor
- * @param {Object} properties - Object containing property values.
  */
-Sfera.Components.new("Component", {
-    extends: "", // it's the first
+Sfera.Components.create("_Base", {
+    id: null,
 
-    constructor: function(properties) {
-        // set property values
-        for (var p in properties) {
-            if (p == "id") {
-                this.id = properties[p];
-            } else if (this.properties[p]) {
-                this.properties[p].value = properties[p];
+    // require update: null, true/ {}
+    requireUpdate: null,
+
+    children: [],
+
+    attributes: {
+        id: {
+            type: "string",
+            set: function(value) {
+                this.value.id = value;
+                this.component.id = value;
+                this.component.element.setAttribute("data-id", value);
+            },
+            get: function() {
+                return this.attributeValues.id;
             }
         }
     },
 
-    properties: {
-        // visible
-        visible: {
-            type: "boolean",
-            value: true
-        },
-
-        x: {
-            type: "integer",
-            value: 0
-        },
-
-        y: {
-            type: "integer",
-            value: 0
-        },
-
-        width: {
-            type: "integer",
-            value: 0
-        },
-
-        height: {
-            type: "integer",
-            value: 0
-        }
-
+    init: function() {
+        console.log("init base");
     },
 
-    prototype: {
-        /**
-         * Component instance id
-         * @type {String}
-         */
-        id: "",
-
-        /**
-         * Component type
-         * @type {String}
-         */
-        type: "",
-
-        /**
-         * Has the source been processed?
-         * @type {Boolean}
-         */
-        processed: false,
-
-        /**
-         * HTML element
-         * @type {DOM Element}
-         */
-        element: null,
-
-        /**
-         * Set component's html source. Reset processed variable
-         * @param {string} src - html source
-         */
-        setSource: function(src) {
-            this.processed = false;
-        },
-
-        init: function() {
-            for (var p in this.properties)
-                this.setProperty(p, this.properties[p].value);
-        },
-
-        boot: function() {
-
-        },
-
-        children: [],
-
-        addChild: function(child) {
-            this.children.push(child);
-            child.parent = this;
-            if (this.element) {
-                this.element.appendChild(child.element);
-            }
-        },
-
-        setProperty: function(name, value) {
-            var p = this.properties[name];
-            // no property by that name?
-            if (p == null)
-                return false;
-
-            // contains mustache variable?
-            if (Sfera.Utils.isString(value) && value.indexOf("{{") != -1) {
-                p.mustache = {};
-            } else {
-                p.mustache = null;
-            }
-
-            // parse mustache
-            if (p.mustache) {
-
-            }
-
-            // parse value depending on type
-            switch (p.type) {
-                case "boolean":
-                    value = (value == "true" || value == true);
-                    break;
-                case "integer":
-                    value = parseInt(value);
-                    break;
-            }
-
-            p.value = value;
-
-            switch (name) {
-                case "x":
-                    this.element.style.left = value + "px";
-                    return false;
-                case "y":
-                    this.element.style.top = value + "px";
-                    return false;
-                case "width":
-                    this.element.style.width = value + "px";
-                    return false;
-                case "height":
-                    this.element.style.height = value + "px";
-                    return false;
-            }
-
-
-            return true;
-        },
-
-        setProperties: function(properties) {
-            for (var p in properties) {
-                this.setProperty(p, properties[p]);
-            }
+    // shared methods
+    getAttribute: function(name) {
+        if (this.attributes[name]) {
+            return this.attributes[name].get();
         }
+    },
 
+    // shared methods
+    setAttribute: function(name, value) {
+        if (this.attributes[name]) {
+            this.attributes[name].set(value);
+        }
+    },
+
+    // update
+    update: function() {},
+
+    // super
+    super: function(superClassName, methodName) {
+        Sfera.Components[superClassName].prototype[methodName].call(this);
+    },
+
+    /**
+     * Set component's html source. Reset processed variable
+     * @param {string} src - html source
+     */
+    setSource: function(src) {
+        this.processed = false;
+    },
+
+    addChild: function(child) {
+        this.children.push(child);
+        child.parent = this;
+        if (this.element) {
+            this.element.appendChild(child.element);
+        }
     }
+
 });
 
 
