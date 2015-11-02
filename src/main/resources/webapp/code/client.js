@@ -1972,7 +1972,7 @@ Sfera.Net = function (client) {
         };
 
         webSocket.onmessage = function(event) {
-
+            console.log("received "+event.data);
             // ping
             if (event.data == "&") {
                 resetConnCheckTimeout();
@@ -1989,7 +1989,13 @@ Sfera.Net = function (client) {
 
                         resetConnCheckTimeout();
 
-                        self.wsSend(Sfera.urls.get("subscribe"));
+                        var r = {
+                            action: "subscribe",
+                            id: Sfera.client.net.subscribeId ? Sfera.client.net.subscribeId : "",
+                            spec: "*"
+                        };
+
+                        self.wsSend(JSON.stringify(r));
                         wsConnected = true;
                         break;
                     case "event":
@@ -2145,6 +2151,7 @@ Sfera.Net = function (client) {
         //this.wsSend(Sfera.urls.get("command")+"?id="+id+"&"+command);
 
         var r = {
+            action:"command",
             cmd: req.command,
             tag: req.tag
         };
@@ -2155,6 +2162,7 @@ Sfera.Net = function (client) {
         //    this.wsSend(Sfera.urls.get("event")+"?id="+id+"&"+event);
 
         var r = {
+            action:"event",
             id: req.id,
             value: req.value,
             tag: req.tag
