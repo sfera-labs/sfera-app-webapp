@@ -12,7 +12,7 @@
 			text="---" font-size="50" text-align="center" />
 
 		<button id="button_one" x="260" y="320" width="180" height="58"
-			label="PANIC BUTTON" event="webapp.ui.panic=meh" color="blue"
-			font-size="20" />
+			label="PANIC BUTTON" onClick="event('panic','meh')" color="blue"
+			font-size="30" />
 	</page>
 </interface>
