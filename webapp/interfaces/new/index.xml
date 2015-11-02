@@ -13,6 +13,6 @@
 
 		<button id="button_one" x="260" y="320" width="180" height="58"
 			label="PANIC BUTTON" onClick="event('panic','meh')" color="blue"
-			font-size="30" />
+			font-size="18" />
 	</page>
 </interface>
