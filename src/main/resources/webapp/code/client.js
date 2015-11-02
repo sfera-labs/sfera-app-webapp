@@ -836,7 +836,7 @@ Sfera.Client = function(config) {
     this.sendEvent = function(id, value, sender) {
         var tag = (new Date()).getTime(); // request id
         var req = {
-            id: id,
+            id: "webapp.ui."+id,
             value: value,
             tag: tag,
             sender: sender
@@ -1919,6 +1919,56 @@ Sfera.SignalBinding.prototype = {
 Sfera.SignalBinding.prototype.constructor = Sfera.SignalBinding;
 
 
+var mySingleton = (function () {
+
+  // Instance stores a reference to the Singleton
+  var instance;
+
+  function init() {
+
+    // Singleton
+
+    // Private methods and variables
+    function privateMethod(){
+        console.log( "I am private" );
+    }
+
+    var privateVariable = "Im also private";
+
+    return {
+
+      // Public methods and variables
+      publicMethod: function () {
+        console.log( "The public can see me!" );
+      },
+
+      publicProperty: "I am also public"
+    };
+
+  };
+
+  return {
+
+    // Get the Singleton instance if one exists
+    // or create one if it doesn't
+    getInstance: function () {
+
+      if ( !instance ) {
+        instance = init();
+      }
+
+      return instance;
+    }
+
+  };
+
+})();
+
+// Usage:
+
+var singleA = mySingleton.getInstance();  
+
+
 /**
 * Sfera.Net handles browser URL related tasks such as checking host names, domain names and query string manipulation.
 *
@@ -1988,11 +2038,12 @@ Sfera.Net = function (client) {
                         pongTimeout = parseInt(json.pongTimeout);
 
                         resetConnCheckTimeout();
-
+                        var tag = (new Date()).getTime(); // request id
                         var r = {
                             action: "subscribe",
                             id: Sfera.client.net.subscribeId ? Sfera.client.net.subscribeId : "",
-                            spec: "*"
+                            spec: "*",
+                            tag: tag
                         };
 
                         self.wsSend(JSON.stringify(r));
