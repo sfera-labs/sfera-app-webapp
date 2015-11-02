@@ -12,5 +12,17 @@
  * @constructor
  */
 Sfera.Components.create("Label", {
-    behaviors: ["Visibility", "Position", "Size", "Label"]
+    behaviors: ["Visibility", "Position", "Size", "Label"],
+
+    attributes: {
+        // change label to text
+        label: null,
+        
+        text: {
+            type: "string",
+            update: function() {
+                this.component.element.innerHTML = this.value;
+            }
+        }
+    }
 });
