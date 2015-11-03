@@ -16,13 +16,14 @@ import cc.sferalabs.sfera.http.api.HttpApiEvent;
 public class WebApp extends Application {
 
 	static final Path ROOT = Paths.get("webapp/");
-	private static final String UI_EVENTS_PREFIX = "webapp.ui.";
+	private static final String EVENTS_PREFIX = "webapp.ui.";
 
 	@Override
 	public void onEnable(Configuration config) {
 		boolean useApplicationCache = config.get("application_cache", true);
+		boolean manualRebuild = config.get("manual_rebuild", false);
 		try {
-			InterfaceCache.init(useApplicationCache);
+			InterfaceCache.init(useApplicationCache, manualRebuild);
 		} catch (Exception e) {
 			log.error("Error creating cache", e);
 		}
@@ -51,8 +52,8 @@ public class WebApp extends Application {
 	@Subscribe
 	public void handleHttpEvent(HttpApiEvent event) {
 		String id = event.getSubId();
-		if (id.startsWith(UI_EVENTS_PREFIX)) {
-			Bus.post(new WebUIEvent(id.substring(UI_EVENTS_PREFIX.length()), event));
+		if (id.startsWith(EVENTS_PREFIX)) {
+			Bus.post(new WebUIEvent(id.substring(EVENTS_PREFIX.length()), event));
 		}
 	}
 

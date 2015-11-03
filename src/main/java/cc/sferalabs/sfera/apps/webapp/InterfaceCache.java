@@ -32,6 +32,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import cc.sferalabs.sfera.core.services.FilesWatcher;
+import cc.sferalabs.sfera.core.services.console.Console;
 
 public class InterfaceCache {
 
@@ -77,30 +78,22 @@ public class InterfaceCache {
 	/**
 	 * 
 	 * @param useApplicationCache
+	 * @param manualRebuild
 	 * @throws Exception
 	 */
-	public synchronized static void init(boolean useApplicationCache) throws Exception {
+	public synchronized static void init(boolean useApplicationCache, boolean manualRebuild)
+			throws Exception {
 		InterfaceCache.useApplicationCache = useApplicationCache;
 		ResourcesUtil.lookForPluginsOverwritingWebapp();
-		try {
-			createCache();
-		} finally {
+		createCache();
+		if (manualRebuild) {
+			Console.addHandler("webapp", WebAppConsoleCommandHandler.INSTANCE);
+		} else {
 			try {
-				Runnable cacheCreator = new Runnable() {
-
-					@Override
-					public void run() {
-						try {
-							createCache();
-						} catch (IOException e) {
-							logger.error("Error creating cache", e);
-						}
-					}
-				};
-
-				FilesWatcher.register(INTERFACES_PATH, cacheCreator, false);
+				FilesWatcher.register(INTERFACES_PATH, InterfaceCache::createCache, false);
 				// For development
-				FilesWatcher.register(Paths.get("src/main/resources/webapp/"), cacheCreator, false);
+				FilesWatcher.register(Paths.get("src/main/resources/webapp/"),
+						InterfaceCache::createCache, false);
 			} catch (Exception e) {
 				logger.error("Error registering WebApp files watcher", e);
 			}
@@ -117,28 +110,33 @@ public class InterfaceCache {
 
 	/**
 	 * 
-	 * @throws IOException
 	 */
-	private static void createCache() throws IOException {
+	static void createCache() {
 		interfaces = new HashSet<String>();
 		try {
-			for (String interfaceName : ResourcesUtil.listDirectoriesNamesIn(INTERFACES_PATH,
-					true)) {
-				try {
-					createCacheFor(interfaceName);
-					interfaces.add(interfaceName);
-				} catch (Exception e) {
-					logger.error("Error creating cache for interface '" + interfaceName + "'", e);
+			try {
+				for (String interfaceName : ResourcesUtil.listDirectoriesNamesIn(INTERFACES_PATH,
+						true)) {
+					try {
+						createCacheFor(interfaceName);
+						interfaces.add(interfaceName);
+					} catch (Exception e) {
+						logger.error("Error creating cache for interface '" + interfaceName + "'",
+								e);
+					}
 				}
-			}
 
-			for (String interfaceName : ResourcesUtil.listDirectoriesNamesIn(CACHE_ROOT, false)) {
-				if (!interfaces.contains(interfaceName)) {
-					ResourcesUtil.deleteRecursive(CACHE_ROOT.resolve(interfaceName + "/"));
+				for (String interfaceName : ResourcesUtil.listDirectoriesNamesIn(CACHE_ROOT,
+						false)) {
+					if (!interfaces.contains(interfaceName)) {
+						ResourcesUtil.deleteRecursive(CACHE_ROOT.resolve(interfaceName + "/"));
+					}
 				}
+			} catch (NoSuchFileException nsfe) {
+				ResourcesUtil.deleteRecursive(CACHE_ROOT);
 			}
-		} catch (NoSuchFileException nsfe) {
-			ResourcesUtil.deleteRecursive(CACHE_ROOT);
+		} catch (IOException e) {
+			logger.error("Error creating cache", e);
 		}
 	}
 
