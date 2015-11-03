@@ -183,7 +183,7 @@ Sfera.Compiler = function(client) {
             var attrs = {};
             for (i = 0; i < xmlNode.attributes.length; i++) {
                 a = xmlNode.attributes[i];
-                attrs[a.name] = a.value;
+                attrs[Sfera.Utils.dashToCamel(a.name)] = a.value;
             }
 
             var component = this.createComponent(xmlNode.nodeName, attrs);
@@ -964,9 +964,7 @@ Sfera.Debug = new(function() {
     this.log = function(title, txt) {
         logCounter++;
 
-        var d = new Date();
-        var ds = d.getDate() + "/" + (d.getMonth() + 1) + "/" + d.getFullYear() + " " + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds() +
-            ":" + d.getMilliseconds();
+        var ds = Sfera.Utils.getDate();
         title = ds + " - " + title;
 
         var src =
@@ -1995,13 +1993,11 @@ Sfera.Net = function (client) {
     var pongTimeout;
     var connCheckTimeoutId;
 
-    this.subscribeId = (new Date()).getTime();
-
     function openSocket() {
-    	console.log("opening socket on "+wsUrl);
+    	console.log(Sfera.Utils.getDate("hisu")+" - opening socket on "+wsUrl);
         // Ensures only one connection is open at a time
         if (webSocket !== undefined && webSocket.readyState !== WebSocket.CLOSED) {
-            Sfera.Debug.log("websocket: is already opened.");
+            Sfera.Debug.log(Sfera.Utils.getDate()+" - websocket: is already opened.");
             return;
         }
         // Create a new instance of the websocket
@@ -2015,14 +2011,14 @@ Sfera.Net = function (client) {
             if (event.data === undefined)
                 return;
 
-            Sfera.Debug.log("websocket: open, sending subscribe", event.data);
+            Sfera.Debug.log(Sfera.Utils.getDate("hisu")+" - websocket: open, sending subscribe", event.data);
 
             //self.wsSend("hello");
             self.wsSend(Sfera.urls.get("subscribe"));
         };
 
         webSocket.onmessage = function(event) {
-            console.log("received "+event.data);
+            console.log(Sfera.Utils.getDate("hisu")+" - received: "+event.data);
             // ping
             if (event.data == "&") {
                 resetConnCheckTimeout();
@@ -2041,7 +2037,6 @@ Sfera.Net = function (client) {
                         var tag = (new Date()).getTime(); // request id
                         var r = {
                             action: "subscribe",
-                            id: Sfera.client.net.subscribeId ? Sfera.client.net.subscribeId : "",
                             spec: "*",
                             tag: tag
                         };
@@ -2057,7 +2052,7 @@ Sfera.Net = function (client) {
         };
 
         webSocket.onclose = function(event) {
-            Sfera.Debug.log("web socket: connection closed");
+            Sfera.Debug.log(Sfera.Utils.getDate("hisu")+" - web socket: connection closed");
             wsConnected = false;
             openSocket(); // reopen
         };
@@ -2075,7 +2070,7 @@ Sfera.Net = function (client) {
     	openSocket();
     }
     this.wsSend = function (txt) {
-        console.log("sending "+txt);
+        console.log(Sfera.Utils.getDate("hisu")+" - sending:  "+txt);
         webSocket.send(txt);
     }
     this.wsClose = function () {
@@ -2219,7 +2214,6 @@ Sfera.Net = function (client) {
             tag: req.tag
         };
         this.wsSend(JSON.stringify(r));
-
 
     };
 
@@ -3742,17 +3736,17 @@ Sfera.Device.canPlayVideo = function (type) {
 
 
 /**
-* Sfera.Utils singleton
-*
-* @class Sfera.Utils
-* @constructor
-*/
-Sfera.Utils = function () {
-    this.mixin = function (a, b) {
+ * Sfera.Utils singleton
+ *
+ * @class Sfera.Utils
+ * @constructor
+ */
+Sfera.Utils = function() {
+    this.mixin = function(a, b) {
 
     };
 
-    this.extend = function (c,e) {
+    this.extend = function(c, e) {
         c.prototype = Object.create(e.prototype);
         c.prototype.constructor = c;
         c.prototype.ancestor = e.prototype;
@@ -3764,12 +3758,12 @@ Sfera.Utils = function () {
     };
 
 
-    this.initClass = function (c) {
+    this.initClass = function(c) {
         c.prototype.constructor = c;
     };
 
-    this.getFirstChildNodeOfType = function (xmlNode, type) {
-        for (var i=0; i<xmlNode.childNodes.length; i++) {
+    this.getFirstChildNodeOfType = function(xmlNode, type) {
+        for (var i = 0; i < xmlNode.childNodes.length; i++) {
             if (xmlNode.childNodes[i].nodeType == type) {
                 return xmlNode.childNodes[i];
             }
@@ -3777,16 +3771,68 @@ Sfera.Utils = function () {
         return null;
     };
 
-    this.getCDATA = function (xmlNode) {
+    this.getCDATA = function(xmlNode) {
         var node = this.getFirstChildNodeOfType(xmlNode, 4);
         return node ? node.nodeValue : "";
     };
 
 
-    this.isString = function (v) {
+    this.isString = function(v) {
         return (typeof v === 'string' || v instanceof String);
     }
 
+    this.camelToDash = function(str) {
+        return str.replace(/\W+/g, '-')
+            .replace(/([a-z\d])([A-Z])/g, '$1-$2')
+            .toLowerCase();
+    }
+
+    this.dashToCamel = function(str) {
+        return str.toLowerCase().replace(/\W+(.)/g, function(x, chr) {
+            return chr.toUpperCase();
+        })
+    }
+
+    this.getDate = function(format) {
+        function pan(str,len) {
+            str = str + "";
+            if (!len) len = 2;
+            while (str.length < len)
+                str = "0"+str;
+            return str;
+        }
+
+        var date = new Date();
+        if (!format) {
+            format = "dmyhisu";
+        }
+        var f = {};
+        for (var i=0; i<format.length; i++)
+            f[format[i]] = true;
+        var str = "";
+        if (f.d) {
+            str += pan(date.getDate());
+        }
+        if (f.m) {
+            str += (str?"/":"") + pan(date.getMonth() + 1);
+        }
+        if (f.y) {
+            str += (str?"/":"") + date.getFullYear();
+        }
+        if (f.h) {
+            str += (str?" ":"") + pan(date.getHours());
+        }
+        if (f.i) {
+            str += (str?":":"") + pan(date.getMinutes());
+        }
+        if (f.s) {
+            str += (str?":":"") + pan(date.getSeconds());
+        }
+        if (f.u) {
+            str += (str?":":"") + pan(date.getMilliseconds(),3);
+        }
+        return str;
+    }
 
 };
 

@@ -1,18 +1,18 @@
-<interface id="new" skin="default" language="it_IT" title="My New Project"
-	width="700" height="500">
-	<page id="page:homepage" title="" orientation="landscape"
-		gestures="">
-		<image x="175" y="70" source="assets/sferalabs_logo.png" width="350"
-			height="50" />
+<interface height="500" id="new" language="it_IT" skin="default" title="My New Project" width="700">
+    <page gestures="" id="page:homepage" orientation="landscape" title="">
+        <image height="50" source="assets/sferalabs_logo.png" width="350" x="175" y="70"/>
 
-		<label id="message" x="150" y="170" width="400" height="50"
-			text="---" font-size="50" text-align="center" />
+        <label font-size="50" height="50" id="message" text-align="center" text="---" width="400" x="150" y="170"/>
 
-		<label id="message1" x="150" y="220" width="400" height="50"
-			text="---" font-size="50" text-align="center" />
+        <label font-size="50" height="50" id="message1" text-align="center" text="---" width="400" x="150" y="220"/>
 
+<<<<<<< Updated upstream
 		<button id="button_one" x="260" y="320" width="180" height="58"
 			label="PANIC BUTTON" onClick="event('panic','meh')" color="blue"
 			font-size="18" />
 	</page>
+=======
+        <button color="blue" font-size="18" height="58" id="button_one" label="PANIC BUTTON" on-click="event('panic','meh')" width="180" x="260" y="320"/>
+    </page>
+>>>>>>> Stashed changes
 </interface>
