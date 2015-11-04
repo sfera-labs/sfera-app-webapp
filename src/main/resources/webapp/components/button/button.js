@@ -54,7 +54,8 @@ Sfera.Components.create("Button", {
     },
 
     init: function() {
-        this.element.onclick = this.onClick.bind(this);
+        this.btObj = new Sfera.UI.Button(this.element, {onclick: this.onClick.bind(this)});
+        //this.element.onclick = this.onClick.bind(this);
     },
 
     onClick: function() {

@@ -6,13 +6,6 @@
 
         <label font-size="50" height="50" id="message1" text-align="center" text="---" width="400" x="150" y="220"/>
 
-<<<<<<< Updated upstream
-		<button id="button_one" x="260" y="320" width="180" height="58"
-			label="PANIC BUTTON" onClick="event('panic','meh')" color="blue"
-			font-size="18" />
+		<button id="button_one" x="260" y="320" width="180" height="58" label="PANIC BUTTON" on-click="event('panic','meh')" color="blue" font-size="18" />
 	</page>
-=======
-        <button color="blue" font-size="18" height="58" id="button_one" label="PANIC BUTTON" on-click="event('panic','meh')" width="180" x="260" y="320"/>
-    </page>
->>>>>>> Stashed changes
 </interface>
