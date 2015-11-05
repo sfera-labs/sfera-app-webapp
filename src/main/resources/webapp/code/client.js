@@ -2084,20 +2084,17 @@ Sfera.UI.Button.prototype = {
 		if (f.onclick) // default action is on up
 			f.onup = f.onclick;
 
-        var ev = [];
 		if (Sfera.Device.touch) {
-			this.element.ontouchstart = function (event) {this.btObj.onEvent(event,'touchstart',f.ondown)};
-			this.element.ontouchmove = function (event) {this.btObj.onEvent(event,'touchmove',f.onmove,f.onout)};
-			this.element.ontouchend = function (event) {this.btObj.onEvent(event,'touchend',f.onup)};
-
-//            this.element.ontouchstart = this.onEvent.bind(this,'touchstart',f.ondown);
+            this.element.ontouchstart = this.onEvent.bind(this,'touchstart',f.ondown,null);
+            this.element.ontouchmove = this.onEvent.bind(this,'touchmove',f.onmove,f.onout);
+            this.element.ontouchstart = this.onEvent.bind(this,'touchend',f.onup,null);
 		} else {
-			this.element.onmouseover = function (event) {this.btObj.onEvent(event,'mouseover',f.onover)};
-			this.element.onmouseout = function (event) {this.btObj.onEvent(event,'mouseout',f.onout)};
+            this.element.onmouseover = this.onEvent.bind(this,'mouseover',f.onover,null);
+			this.element.onmouseout = this.onEvent.bind(this,'mouseout',f.onout,null);
 			if (f.onmove)
-				this.element.onmousemove = function (event) {this.btObj.onEvent(event,'mousemove',f.onmove)};
-			this.element.onmousedown = function (event) {this.btObj.onEvent(event,'mousedown',f.ondown)};
-			this.element.onmouseup = function (event) {this.btObj.onEvent(event,'mouseup',f.onup)};
+				this.element.onmousemove = this.onEvent.bind(this,'mousemove',f.onmove,null);
+			this.element.onmousedown = this.onEvent.bind(this,'mousedown',f.ondown,null);
+			this.element.onmouseup = this.onEvent.bind(this,'mouseup',f.onup,null);
 		}
 
         //this.initData();
@@ -2199,7 +2196,7 @@ Sfera.UI.Button.prototype = {
     },
 
 	// generic button event. graphic feedback and function associated to the event. f can be a string or a function(event,e). of is an additional optional function (user on touchmove for onout). clt: cancel long touch on android devices when clicking on an image
-	onEvent: function (event,w,f,of) {
+	onEvent: function (w,f,of,event) {
         if (Sfera.UI.skipButtonEvents) return;
 
 		// event
