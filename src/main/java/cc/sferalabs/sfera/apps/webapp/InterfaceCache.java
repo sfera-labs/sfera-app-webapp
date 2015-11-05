@@ -346,6 +346,7 @@ public class InterfaceCache {
 		try (BufferedReader reader = Files.newBufferedReader(indexPath, StandardCharsets.UTF_8)) {
 			boolean manifestReplaced = false;
 			boolean tsReplaced = false;
+			boolean appCacheEnabledReplaced = false;
 			String manifestReplacement;
 			if (useApplicationCache) {
 				manifestReplacement = "manifest=\"/" + interfaceName + manifestPath + "\"";
@@ -354,11 +355,15 @@ public class InterfaceCache {
 			}
 			String line = null;
 			while ((line = reader.readLine()) != null) {
-				if (!manifestReplaced) {
+				if (!appCacheEnabledReplaced && line.contains("$appCacheEnabled")) {
+					line = line.replace("$appCacheEnabled;", "" + useApplicationCache);
+					appCacheEnabledReplaced = true;
+				}
+				if (!manifestReplaced && line.contains("$manifest;")) {
 					line = line.replace("$manifest;", manifestReplacement);
 					manifestReplaced = true;
 				}
-				if (!tsReplaced) {
+				if (!tsReplaced && line.contains("$timestamp;")) {
 					line = line.replace("$timestamp;", "" + timestamp);
 					tsReplaced = true;
 				}
