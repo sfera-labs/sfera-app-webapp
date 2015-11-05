@@ -4,7 +4,7 @@
 package cc.sferalabs.sfera.apps.webapp.events;
 
 import cc.sferalabs.sfera.apps.webapp.WebApp;
-import cc.sferalabs.sfera.events.BaseEvent;
+import cc.sferalabs.sfera.events.NumberEvent;
 
 /**
  *
@@ -13,18 +13,15 @@ import cc.sferalabs.sfera.events.BaseEvent;
  * @version 1.0.0
  *
  */
-public class InterfaceUpdateEvent extends BaseEvent {
+public class InterfaceUpdateEvent extends NumberEvent {
 
 	/**
+	 * 
 	 * @param interfaceName
+	 * @param timestamp
 	 */
-	public InterfaceUpdateEvent(String interfaceName) {
-		super(WebApp.getInstance(), "interface." + interfaceName + ".update");
-	}
-
-	@Override
-	public Long getValue() {
-		return getTimestamp();
+	public InterfaceUpdateEvent(String interfaceName, long timestamp) {
+		super(WebApp.getInstance(), "interface." + interfaceName + ".update", (double) timestamp);
 	}
 
 }

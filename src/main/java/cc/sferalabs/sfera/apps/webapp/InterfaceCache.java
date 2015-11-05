@@ -65,6 +65,7 @@ public class InterfaceCache {
 	private String skin = null;
 	private String language = null;
 	private String iconSet = null;
+	private long timestamp;
 
 	/**
 	 * 
@@ -154,7 +155,6 @@ public class InterfaceCache {
 			logger.debug("Creating cache for interface '{}'...", interfaceName);
 			InterfaceCache icc = new InterfaceCache(interfaceName);
 			icc.create();
-			Bus.post(new InterfaceUpdateEvent(interfaceName));
 			logger.info("Created cache for interface '{}'", interfaceName);
 		} finally {
 			ResourcesUtil.release();
@@ -168,11 +168,13 @@ public class InterfaceCache {
 	 */
 	private void create() throws XMLStreamException, IOException {
 		try {
+			timestamp = System.currentTimeMillis();
 			createIntefaceCache();
 			createLoginCache();
 			ResourcesUtil.deleteRecursive(interfaceCacheRoot);
 			Files.createDirectories(CACHE_ROOT);
 			Files.move(interfaceTmpCacheRoot, interfaceCacheRoot);
+			Bus.post(new InterfaceUpdateEvent(interfaceName, timestamp));
 		} finally {
 			try {
 				ResourcesUtil.deleteRecursive(interfaceTmpCacheRoot);
@@ -343,17 +345,22 @@ public class InterfaceCache {
 		List<String> lines = new ArrayList<String>();
 		try (BufferedReader reader = Files.newBufferedReader(indexPath, StandardCharsets.UTF_8)) {
 			boolean manifestReplaced = false;
+			boolean tsReplaced = false;
+			String manifestReplacement;
+			if (useApplicationCache) {
+				manifestReplacement = "manifest=\"/" + interfaceName + manifestPath + "\"";
+			} else {
+				manifestReplacement = "";
+			}
 			String line = null;
 			while ((line = reader.readLine()) != null) {
-				if (!manifestReplaced && line.contains("$manifest;")) {
-					String replacement;
-					if (useApplicationCache) {
-						replacement = "manifest=\"/" + interfaceName + manifestPath + "\"";
-					} else {
-						replacement = "";
-					}
-					line = line.replace("$manifest;", replacement);
+				if (!manifestReplaced) {
+					line = line.replace("$manifest;", manifestReplacement);
 					manifestReplaced = true;
+				}
+				if (!tsReplaced) {
+					line = line.replace("$timestamp;", "" + timestamp);
+					tsReplaced = true;
 				}
 				if (line.contains("$interface;")) {
 					if (extractImages) {
