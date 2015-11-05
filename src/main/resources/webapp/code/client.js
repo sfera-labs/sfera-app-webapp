@@ -1,4 +1,4 @@
-/*! sfera-webapp - v0.0.2 - 2015-11-04 */
+/*! sfera-webapp - v0.0.2 - 2015-11-05 */
 
 (function(){
 
@@ -623,6 +623,8 @@ Sfera.Client = function(config) {
     // currently visible page
     this.cPage = null;
 
+    var manifestTimestamp = 0;
+
     // Default settings
     var _defaultConfig = {
         /** Whether this instance should log debug messages. */
@@ -671,6 +673,9 @@ Sfera.Client = function(config) {
             return;
         }
 
+        if (config && config.timestamp)
+            manifestTimestamp = config.timestamp;
+
         Sfera.client = this;
 
         this.device = Sfera.Device;
@@ -686,7 +691,7 @@ Sfera.Client = function(config) {
         this.components = new Sfera.ComponentManager(this);
 
         // get name
-        this.name = this.browser.getLocation().interface;
+        this.name = config.interface; //this.browser.getLocation().interface;
 
         if (true || this.config.enableDebug) {
             this.debug = Sfera.Debug;
@@ -704,6 +709,8 @@ Sfera.Client = function(config) {
         this.net.boot();
 
         window.onresize = adjustLayout;
+
+        delete config;
     };
 
     /**
@@ -2097,8 +2104,6 @@ Sfera.UI.Button.prototype = {
 			this.element.onmouseup = this.onEvent.bind(this,'mouseup',f.onup,null);
 		}
 
-        //this.initData();
-
 		// on lift? when button is lifted with liftButton() (ex. when scrolling)
 		if (f.onlift)
 			this.onLift = f.onlift;
@@ -2518,8 +2523,8 @@ Sfera.Net = function (client) {
 
 	function onReqError() {
 		console.log("error");
-		var e = document.getElementById("output");
-		e.innerHTML += "<br><br>Error.<br><br>";
+		//var e = document.getElementById("output");
+		//e.innerHTML += "<br><br>Error.<br><br>";
 	}
 
     /**

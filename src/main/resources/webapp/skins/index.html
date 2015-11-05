@@ -11,6 +11,10 @@
 <body>
     <script type="text/javascript">
         var client;
+        var config = {
+            timestamp: $timestamp;,
+            interface: "$interface;"
+        };
         Sfera.Device.whenReady(function() {
             client = new Sfera.Client()
             client.boot();
