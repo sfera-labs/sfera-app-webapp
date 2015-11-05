@@ -9,14 +9,35 @@ import cc.sferalabs.sfera.apps.Application;
 import cc.sferalabs.sfera.apps.webapp.events.WebUIEvent;
 import cc.sferalabs.sfera.core.Configuration;
 import cc.sferalabs.sfera.events.Bus;
+import cc.sferalabs.sfera.events.Node;
 import cc.sferalabs.sfera.http.HttpServer;
 import cc.sferalabs.sfera.http.HttpServerException;
 import cc.sferalabs.sfera.http.api.HttpApiEvent;
 
-public class WebApp extends Application {
+public class WebApp extends Application implements Node {
 
 	static final Path ROOT = Paths.get("webapp/");
 	private static final String EVENTS_PREFIX = "webapp.ui.";
+	private static WebApp INSTANCE;
+
+	/**
+	 * 
+	 */
+	public WebApp() {
+		INSTANCE = this;
+	}
+
+	/**
+	 * @return the instance
+	 */
+	public static WebApp getInstance() {
+		return INSTANCE;
+	}
+
+	@Override
+	public String getId() {
+		return "webapp";
+	}
 
 	@Override
 	public void onEnable(Configuration config) {

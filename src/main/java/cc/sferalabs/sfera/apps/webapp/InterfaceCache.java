@@ -31,8 +31,10 @@ import org.apache.http.client.utils.DateUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import cc.sferalabs.sfera.apps.webapp.events.InterfaceUpdateEvent;
 import cc.sferalabs.sfera.core.services.FilesWatcher;
 import cc.sferalabs.sfera.core.services.console.Console;
+import cc.sferalabs.sfera.events.Bus;
 
 public class InterfaceCache {
 
@@ -152,6 +154,7 @@ public class InterfaceCache {
 			logger.debug("Creating cache for interface '{}'...", interfaceName);
 			InterfaceCache icc = new InterfaceCache(interfaceName);
 			icc.create();
+			Bus.post(new InterfaceUpdateEvent(interfaceName));
 			logger.info("Created cache for interface '{}'", interfaceName);
 		} finally {
 			ResourcesUtil.release();
