@@ -1,4 +1,4 @@
-/*! sfera-webapp - v0.0.2 - 2015-11-05 */
+/*! sfera-webapp - v0.0.2 - 2015-11-06 */
 
 (function(){
 
@@ -627,6 +627,8 @@ Sfera.Client = function(config) {
 
     // Default settings
     var _defaultConfig = {
+        name: Sfera.Browser.getLocation().interface,
+
         /** Whether this instance should log debug messages. */
         enableDebug: true,
 
@@ -654,7 +656,7 @@ Sfera.Client = function(config) {
     // Overwrite and define settings with options if they exist.
     for (var key in config) {
         if (typeof config[key] !== 'undefined') {
-            this[key] = defaultConfig[key];
+            this[key] = _defaultConfig[key];
         } else {
             this[key] = config[key];
         }
@@ -691,7 +693,7 @@ Sfera.Client = function(config) {
         this.components = new Sfera.ComponentManager(this);
 
         // get name
-        this.name = config.interface; //this.browser.getLocation().interface;
+        this.name = config.interface;
 
         if (true || this.config.enableDebug) {
             this.debug = Sfera.Debug;

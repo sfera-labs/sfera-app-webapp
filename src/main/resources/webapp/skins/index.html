@@ -13,10 +13,11 @@
         var client;
         var config = {
             timestamp: $timestamp;,
+			appCacheEnabled: $appCacheEnabled;,
             interface: "$interface;"
         };
         Sfera.Device.whenReady(function() {
-            client = new Sfera.Client()
+            client = new Sfera.Client(config)
             client.boot();
         }, client);
     </script>
