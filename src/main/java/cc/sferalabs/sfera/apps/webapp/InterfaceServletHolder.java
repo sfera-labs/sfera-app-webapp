@@ -13,7 +13,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.eclipse.jetty.server.Request;
 
-public class InterfaceServletHolder extends WebappServletHolder {
+public class InterfaceServletHolder extends WebappCacheServletHolder {
 
 	static final InterfaceServletHolder INSTANCE = new InterfaceServletHolder();
 	private final static Logger logger = LogManager.getLogger();

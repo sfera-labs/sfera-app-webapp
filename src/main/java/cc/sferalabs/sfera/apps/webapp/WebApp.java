@@ -49,10 +49,15 @@ public class WebApp extends Application implements Node {
 			log.error("Error creating cache", e);
 		}
 
+		try {
+			HttpServer.addServlet(WebappServletHolder.INSTANCE, "/manager/*");
+		} catch (HttpServerException e) {
+			log.error("Error registering servlet for manager", e);
+		}
 		for (String interfaceName : InterfaceCache.getInterfaces()) {
 			try {
 				HttpServer.addServlet(InterfaceServletHolder.INSTANCE, "/" + interfaceName + "/*");
-				HttpServer.addServlet(WebappServletHolder.INSTANCE,
+				HttpServer.addServlet(WebappCacheServletHolder.INSTANCE,
 						"/" + interfaceName + "/login/*");
 			} catch (Exception e) {
 				log.error("Error registering servlet for interface " + interfaceName, e);
@@ -64,7 +69,7 @@ public class WebApp extends Application implements Node {
 	public void onDisable() {
 		try {
 			HttpServer.removeServlet(InterfaceServletHolder.INSTANCE);
-			HttpServer.removeServlet(WebappServletHolder.INSTANCE);
+			HttpServer.removeServlet(WebappCacheServletHolder.INSTANCE);
 		} catch (HttpServerException e) {
 			log.error("Error removing servlet", e);
 		}
