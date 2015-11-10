@@ -35,8 +35,7 @@ var Sfera = Sfera || {
             case "command":     return "command";
             case "event":       return "event";
             case "websocket":   return (Sfera.Browser.getLocation().protocol == "https:" ? "wss:" : "ws:")+
-                                        //"//"+Sfera.Browser.getLocation().host+"/api/websocket";
-                                        "//localhost:8080/api/websocket";
+                                        "//"+Sfera.Browser.getLocation().host+"/api/websocket";
     		}
     	}
     }
