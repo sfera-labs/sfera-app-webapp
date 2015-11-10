@@ -13,6 +13,9 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.eventbus.Subscribe;
 
+import cc.sferalabs.sfera.apps.webapp.servlets.AuthInterfaceCacheServletHolder;
+import cc.sferalabs.sfera.apps.webapp.servlets.InterfaceCacheServletHolder;
+import cc.sferalabs.sfera.apps.webapp.servlets.ManagerCacheServletHolder;
 import cc.sferalabs.sfera.core.events.PluginsEvent;
 import cc.sferalabs.sfera.core.services.FilesWatcher;
 import cc.sferalabs.sfera.core.services.console.Console;
@@ -27,9 +30,9 @@ public abstract class Cache {
 	static final Path INTERFACES_PATH = WebApp.ROOT.resolve("interfaces/");
 	static final Path MANAGER_PATH = WebApp.ROOT.resolve("manager/");
 
-	static final Path CACHE_ROOT = WebApp.ROOT.resolve("cache/");
-	static final Path INTERFACES_CACHE_ROOT = CACHE_ROOT.resolve("interfaces/");
-	static final Path MANAGER_CACHE_ROOT = CACHE_ROOT.resolve("manager/");
+	public static final Path CACHE_ROOT = WebApp.ROOT.resolve("cache/");
+	public static final Path INTERFACES_CACHE_ROOT = CACHE_ROOT.resolve("interfaces/");
+	public static final Path MANAGER_CACHE_ROOT = CACHE_ROOT.resolve("manager/");
 
 	private static Set<String> interfaces;
 

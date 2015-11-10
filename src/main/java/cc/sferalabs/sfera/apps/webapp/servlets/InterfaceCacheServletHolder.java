@@ -1,4 +1,6 @@
-package cc.sferalabs.sfera.apps.webapp;
+package cc.sferalabs.sfera.apps.webapp.servlets;
+
+import cc.sferalabs.sfera.apps.webapp.Cache;
 
 /**
  *
@@ -9,7 +11,7 @@ package cc.sferalabs.sfera.apps.webapp;
  */
 public class InterfaceCacheServletHolder extends WebAppServletHolder {
 
-	static final InterfaceCacheServletHolder INSTANCE = new InterfaceCacheServletHolder();
+	public static final InterfaceCacheServletHolder INSTANCE = new InterfaceCacheServletHolder();
 
 	/**
 	 * 

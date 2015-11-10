@@ -1,4 +1,4 @@
-package cc.sferalabs.sfera.apps.webapp;
+package cc.sferalabs.sfera.apps.webapp.servlets;
 
 import java.io.IOException;
 
@@ -12,7 +12,7 @@ import org.eclipse.jetty.server.Request;
 
 public class AuthInterfaceCacheServletHolder extends InterfaceCacheServletHolder {
 
-	static final AuthInterfaceCacheServletHolder INSTANCE = new AuthInterfaceCacheServletHolder();
+	public static final AuthInterfaceCacheServletHolder INSTANCE = new AuthInterfaceCacheServletHolder();
 
 	@Override
 	public void handle(Request baseRequest, ServletRequest request, ServletResponse response)

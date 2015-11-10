@@ -1,4 +1,4 @@
-package cc.sferalabs.sfera.apps.webapp;
+package cc.sferalabs.sfera.apps.webapp.servlets;
 
 import java.io.IOException;
 
@@ -9,6 +9,8 @@ import javax.servlet.UnavailableException;
 
 import org.eclipse.jetty.server.Request;
 
+import cc.sferalabs.sfera.apps.webapp.Cache;
+
 /**
  *
  * @author Giampiero Baggiani
@@ -18,7 +20,7 @@ import org.eclipse.jetty.server.Request;
  */
 public class ManagerCacheServletHolder extends WebAppServletHolder {
 
-	static final ManagerCacheServletHolder INSTANCE = new ManagerCacheServletHolder();
+	public static final ManagerCacheServletHolder INSTANCE = new ManagerCacheServletHolder();
 
 	/**
 	 * 

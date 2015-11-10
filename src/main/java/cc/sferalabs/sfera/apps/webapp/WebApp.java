@@ -7,6 +7,8 @@ import com.google.common.eventbus.Subscribe;
 
 import cc.sferalabs.sfera.apps.Application;
 import cc.sferalabs.sfera.apps.webapp.events.WebUIEvent;
+import cc.sferalabs.sfera.apps.webapp.servlets.AuthInterfaceCacheServletHolder;
+import cc.sferalabs.sfera.apps.webapp.servlets.InterfaceCacheServletHolder;
 import cc.sferalabs.sfera.core.Configuration;
 import cc.sferalabs.sfera.events.Bus;
 import cc.sferalabs.sfera.events.Node;
