@@ -1,4 +1,4 @@
-/*! sfera-webapp - v0.0.2 - 2015-11-06 */
+/*! sfera-webapp - v0.0.2 - 2015-11-10 */
 
 (function(){
 
@@ -863,15 +863,30 @@ Sfera.Client = function(config) {
     this.onEvent = function(json) {
         // {"type":"event","events":{"remote.myvalue":"5","system.plugins":"reload","remote.":"undefined","system.state":"ready"}}
         // {"type":"event","events":{"gui.button_link1.label":"changed"}}
-        for (var e in json.events) {
+        for (var e in json.nodes) {
             var n = e.split(".");
-            if (n[0] == "ui" && n[1] == "set") {
-                n = n.slice(2);
-                var a = n.pop();
-                var c = this.components.getObjsById(n.join("."));
-                for (var i=0; i<c.length; i++) {
-                    c[i].setAttribute(a,json.events[e]);
+            switch (n[0]) {
+            case "ui":
+                if (n[1] == "set") {
+                    n = n.slice(2);
+                    var a = n.pop();
+                    var c = this.components.getObjsById(n.join("."));
+                    for (var i=0; i<c.length; i++) {
+                        c[i].setAttribute(a,json.nodes[e]);
+                    }
                 }
+                break;
+            case "webapp":
+                //webapp.interface.new.update":1446813798521
+                if (n[1] == "interface" &&
+                    n[2] == this.name &&
+                    n[3] == "update") {
+                    if (json.nodes[e] != manifestTimestamp) {
+                        manifestTimestamp = json.nodes[e];
+                        Sfera.Browser.reload();
+                    }
+                }
+                break;
             }
         }
     }
@@ -2319,13 +2334,13 @@ Sfera.UI.Button.prototype = {
 
 
 /**
-* Sfera.Net handles browser URL related tasks such as checking host names, domain names and query string manipulation.
-*
-* @class Sfera.Net
-* @constructor
-* @param {Sfera.Client} client - A reference to the currently running client.
-*/
-Sfera.Net = function (client) {
+ * Sfera.Net handles browser URL related tasks such as checking host names, domain names and query string manipulation.
+ *
+ * @class Sfera.Net
+ * @constructor
+ * @param {Sfera.Client} client - A reference to the currently running client.
+ */
+Sfera.Net = function(client) {
 
     this.client = client;
 
@@ -2345,10 +2360,10 @@ Sfera.Net = function (client) {
     var connCheckTimeoutId;
 
     function openSocket() {
-    	console.log(Sfera.Utils.getDate("hisu")+" - opening socket on "+wsUrl);
+        console.log(Sfera.Utils.getDate("hisu") + " - opening socket on " + wsUrl);
         // Ensures only one connection is open at a time
         if (webSocket !== undefined && webSocket.readyState !== WebSocket.CLOSED) {
-            Sfera.Debug.log(Sfera.Utils.getDate()+" - websocket: is already opened.");
+            Sfera.Debug.log(Sfera.Utils.getDate() + " - websocket: is already opened.");
             return;
         }
         // Create a new instance of the websocket
@@ -2362,14 +2377,14 @@ Sfera.Net = function (client) {
             if (event.data === undefined)
                 return;
 
-            Sfera.Debug.log(Sfera.Utils.getDate("hisu")+" - websocket: open, sending subscribe", event.data);
+            Sfera.Debug.log(Sfera.Utils.getDate("hisu") + " - websocket: open, sending subscribe", event.data);
 
             //self.wsSend("hello");
             self.wsSend(Sfera.urls.get("subscribe"));
         };
 
         webSocket.onmessage = function(event) {
-            console.log(Sfera.Utils.getDate("hisu")+" - received: "+event.data);
+            console.log(Sfera.Utils.getDate("hisu") + " - received: " + event.data);
             // ping
             if (event.data == "&") {
                 resetConnCheckTimeout();
@@ -2388,7 +2403,7 @@ Sfera.Net = function (client) {
                         var tag = (new Date()).getTime(); // request id
                         var r = {
                             action: "subscribe",
-                            spec: "*",
+                            nodes: "*",
                             tag: tag
                         };
 
@@ -2403,74 +2418,116 @@ Sfera.Net = function (client) {
         };
 
         webSocket.onclose = function(event) {
-            Sfera.Debug.log(Sfera.Utils.getDate("hisu")+" - web socket: connection closed");
+            Sfera.Debug.log(Sfera.Utils.getDate("hisu") + " - web socket: connection closed");
             wsConnected = false;
             openSocket(); // reopen
+        };
+
+        webSocket.onerror = function(event) {
+            console.log("here", event);
+        }
+
+        webSocket.onclose = function(event) {
+            var reason;
+
+            // See http://tools.ietf.org/html/rfc6455#section-7.4.1
+            if (event.code == 1000)
+                reason = "Normal closure, meaning that the purpose for which the connection was established has been fulfilled.";
+            else if (event.code == 1001)
+                reason = "An endpoint is \"going away\", such as a server going down or a browser having navigated away from a page.";
+            else if (event.code == 1002)
+                reason = "An endpoint is terminating the connection due to a protocol error";
+            else if (event.code == 1003)
+                reason = "An endpoint is terminating the connection because it has received a type of data it cannot accept (e.g., an endpoint that understands only text data MAY send this if it receives a binary message).";
+            else if (event.code == 1004)
+                reason = "Reserved. The specific meaning might be defined in the future.";
+            else if (event.code == 1005)
+                reason = "No status code was actually present.";
+            else if (event.code == 1006)
+                reason = "The connection was closed abnormally, e.g., without sending or receiving a Close control frame";
+            else if (event.code == 1007)
+                reason = "An endpoint is terminating the connection because it has received data within a message that was not consistent with the type of the message (e.g., non-UTF-8 [http://tools.ietf.org/html/rfc3629] data within a text message).";
+            else if (event.code == 1008)
+                reason = "An endpoint is terminating the connection because it has received a message that \"violates its policy\". This reason is given either if there is no other sutible reason, or if there is a need to hide specific details about the policy.";
+            else if (event.code == 1009)
+                reason = "An endpoint is terminating the connection because it has received a message that is too big for it to process.";
+            else if (event.code == 1010) // Note that this status code is not used by the server, because it can fail the WebSocket handshake instead.
+                reason = "An endpoint (client) is terminating the connection because it has expected the server to negotiate one or more extension, but the server didn't return them in the response message of the WebSocket handshake. <br /> Specifically, the extensions that are needed are: " + event.reason;
+            else if (event.code == 1011)
+                reason = "A server is terminating the connection because it encountered an unexpected condition that prevented it from fulfilling the request.";
+            else if (event.code == 1015)
+                reason = "The connection was closed due to a failure to perform a TLS handshake (e.g., the server certificate can't be verified).";
+            else
+                reason = "Unknown reason";
+
+            console.log(event.code,reason);
+
+            
         };
     }
 
     function resetConnCheckTimeout() {
         clearTimeout(connCheckTimeoutId);
-        setTimeout(this.wsClose, pingInterval+pongTimeout);
+        setTimeout(this.wsClose, pingInterval + pongTimeout);
     }
 
     /**
      * Sends the value of the text input to the server
      */
-    this.wsOpen = function () {
-    	openSocket();
+    this.wsOpen = function() {
+        openSocket();
     }
-    this.wsSend = function (txt) {
-        console.log(Sfera.Utils.getDate("hisu")+" - sending:  "+txt);
+    this.wsSend = function(txt) {
+        console.log(Sfera.Utils.getDate("hisu") + " - sending:  " + txt);
         webSocket.send(txt);
     }
-    this.wsClose = function () {
+    this.wsClose = function() {
         webSocket.close();
     }
 
     ///////////
 
-	var started = false; // connected: ongoing state requests
+    var started = false; // connected: ongoing state requests
 
-	var cSync = ""; // currently synchronizing resource
+    var cSync = ""; // currently synchronizing resource
 
-	var self = this;
+    var self = this;
 
-	this.stateTs = -1;
-	this.subscribed = false; // change this
+    this.stateTs = -1;
+    this.subscribed = false; // change this
 
-	// local timestamps, to check required updates
-	this.localTs = {
-		"dictionary":-1,
-		"index":-1
-	};
+    // local timestamps, to check required updates
+    this.localTs = {
+        "dictionary": -1,
+        "index": -1
+    };
 
-	this.remoteTs = {
-		"dictionary":-1,
-		"index":-1
-	};
+    this.remoteTs = {
+        "dictionary": -1,
+        "index": -1
+    };
 
-	// get current timestamp
-	function getTimestamp() {
-		return (new Date()).getTime();
-	}
+    // get current timestamp
+    function getTimestamp() {
+        return (new Date()).getTime();
+    }
 
-	// boot
-	this.boot = function () {
+    // boot
+    this.boot = function() {
         wsUrl = Sfera.urls.get("websocket");
 
-		this.sync();
-	}; // boot()
+        this.sync();
+    }; // boot()
 
-	// sync, if necessary
-	this.sync = function () {
-		for (var s in this.localTs) {
-			if (this.localTs[s] == -1) { // || this.localTs[s] < this.remoteTs[s]) {
-				cSync = s;
-				req.open(httpBaseUrl+Sfera.urls.get(s),20);
-				return; // one resource per time
-			}
-		}
+    // sync, if necessary
+    this.sync = function() {
+        for (var s in this.localTs) {
+            if (this.localTs[s] == -1) { // || this.localTs[s] < this.remoteTs[s]) {
+                cSync = s;
+                req.open(httpBaseUrl + Sfera.urls.get(s), 20);
+                return; // one resource per time
+            }
+        }
 
         // use websockets?
         if (true) {
@@ -2478,64 +2535,64 @@ Sfera.Net = function (client) {
             return;
         }
 
-		if (!this.subscribed) {
-			cSync = "subscribe";
+        if (!this.subscribed) {
+            cSync = "subscribe";
 
-			req.open(urls.get("subscribe"));
-			return;
-		}
+            req.open(urls.get("subscribe"));
+            return;
+        }
 
-		cSync = "state";
-		req.open(httpBaseUrl+urls.get("state"));
-	};
+        cSync = "state";
+        req.open(httpBaseUrl + urls.get("state"));
+    };
 
-	function onReqLoaded() {
-        console.log(cSync+" loaded");
-        Sfera.Debug.log("xmlreq: loaded",req.getResponseText());
+    function onReqLoaded() {
+        console.log(cSync + " loaded");
+        Sfera.Debug.log("xmlreq: loaded", req.getResponseText());
 
-		if (self.localTs[cSync] != null)
-			self.localTs[cSync] = getTimestamp();
+        if (self.localTs[cSync] != null)
+            self.localTs[cSync] = getTimestamp();
 
-		var state;
+        var state;
 
-		switch (cSync) {
-		case "dictionary":
-			console.log("loaded dictionary");
-            client.onUpdateDictionary(req.getResponseXML())
-			break;
-		case "index":
-			console.log("loaded index");
-            client.onUpdateIndex(req.getResponseXML());
-			break;
+        switch (cSync) {
+            case "dictionary":
+                console.log("loaded dictionary");
+                client.onUpdateDictionary(req.getResponseXML())
+                break;
+            case "index":
+                console.log("loaded index");
+                client.onUpdateIndex(req.getResponseXML());
+                break;
 
-		case "subscribe":
-			self.subscribed = true;
+            case "subscribe":
+                self.subscribed = true;
 
-		case "state":
-			state = JSON.parse(req.getResponseText());
-			if (state.id)
-				config.clientId = state.id;
-			if (state.timestamp)
-				self.stateTs = state.timestamp;
-			break;
-		}
+            case "state":
+                state = JSON.parse(req.getResponseText());
+                if (state.id)
+                    config.clientId = state.id;
+                if (state.timestamp)
+                    self.stateTs = state.timestamp;
+                break;
+        }
 
-		self.sync();
-	}
+        self.sync();
+    }
 
-	function onReqError() {
-		console.log("error");
-		//var e = document.getElementById("output");
-		//e.innerHTML += "<br><br>Error.<br><br>";
-	}
+    function onReqError() {
+        console.log("error");
+        //var e = document.getElementById("output");
+        //e.innerHTML += "<br><br>Error.<br><br>";
+    }
 
     /**
-    * Returns the hostname given by the browser.
-    *
-    * @method Sfera.Net#getHostName
-    * @return {string}
-    */
-    this.getHostName = function () {
+     * Returns the hostname given by the browser.
+     *
+     * @method Sfera.Net#getHostName
+     * @return {string}
+     */
+    this.getHostName = function() {
 
         if (window.location && window.location.hostname) {
             return window.location.hostname;
@@ -2544,22 +2601,22 @@ Sfera.Net = function (client) {
         return null;
     };
 
-    this.sendCommand = function (req) {
+    this.sendCommand = function(req) {
         //this.wsSend(Sfera.urls.get("command")+"?id="+id+"&"+command);
 
         var r = {
-            action:"command",
+            action: "command",
             cmd: req.command,
             tag: req.tag
         };
         this.wsSend(JSON.stringify(r));
     };
 
-    this.sendEvent = function (req) {
+    this.sendEvent = function(req) {
         //    this.wsSend(Sfera.urls.get("event")+"?id="+id+"&"+event);
 
         var r = {
-            action:"event",
+            action: "event",
             id: req.id,
             value: req.value,
             tag: req.tag
@@ -2857,8 +2914,12 @@ Sfera.Skins = function (client) {
 /**
  * Browser singleton
  */
-Sfera.Browser = function() {
+Sfera.Browser = new (function() {
     var location;
+
+    this.reload = function() {
+        window.location.reload();
+    };
 
     /**
      * Change the browser tab URL without reloading (if supported)
@@ -2946,11 +3007,7 @@ Sfera.Browser = function() {
             }
         }, 100);
     };
-}
-
-// Browser is a singleton/static entity; instantiate it
-// and add new methods directly sans-prototype.
-Sfera.Browser = new Sfera.Browser();
+})();
 
 
 /**

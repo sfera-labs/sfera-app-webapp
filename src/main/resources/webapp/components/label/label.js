@@ -17,7 +17,7 @@ Sfera.Components.create("Label", {
     attributes: {
         // change label to text
         label: null,
-        
+
         text: {
             type: "string",
             update: function() {
