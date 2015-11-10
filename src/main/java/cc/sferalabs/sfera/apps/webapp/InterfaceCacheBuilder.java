@@ -1,3 +1,6 @@
+/**
+ * 
+ */
 package cc.sferalabs.sfera.apps.webapp;
 
 import java.io.BufferedReader;
@@ -7,7 +10,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -28,18 +30,19 @@ import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
 import org.apache.http.client.utils.DateUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import cc.sferalabs.sfera.apps.webapp.events.InterfaceUpdateEvent;
-import cc.sferalabs.sfera.core.services.FilesWatcher;
-import cc.sferalabs.sfera.core.services.console.Console;
 import cc.sferalabs.sfera.events.Bus;
 
-public class InterfaceCache {
+/**
+ *
+ * @author Giampiero Baggiani
+ *
+ * @version 1.0.0
+ *
+ */
+public class InterfaceCacheBuilder {
 
-	static final Path CACHE_ROOT = WebApp.ROOT.resolve("cache/");
-	static final Path INTERFACES_PATH = WebApp.ROOT.resolve("interfaces/");
 	private static final String CACHE_MANIFEST_NAME = "sfera.appcache";
 
 	private static final XMLInputFactory INPUT_FACTORY = XMLInputFactory.newInstance();
@@ -50,12 +53,6 @@ public class InterfaceCache {
 
 	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat(
 			DateUtils.PATTERN_RFC1123);
-
-	private static Set<String> interfaces;
-
-	private static boolean useApplicationCache;
-
-	private final static Logger logger = LogManager.getLogger();
 
 	private final String interfaceName;
 	private final Path interfaceCacheRoot;
@@ -68,97 +65,13 @@ public class InterfaceCache {
 	private long timestamp;
 
 	/**
-	 * 
 	 * @param interfaceName
 	 * @throws IOException
 	 */
-	private InterfaceCache(String interfaceName) throws IOException {
+	public InterfaceCacheBuilder(String interfaceName) throws IOException {
 		this.interfaceName = interfaceName;
 		this.interfaceTmpCacheRoot = Files.createTempDirectory(getClass().getName());
-		this.interfaceCacheRoot = CACHE_ROOT.resolve(interfaceName + "/");
-	}
-
-	/**
-	 * 
-	 * @param useApplicationCache
-	 * @param manualRebuild
-	 * @throws Exception
-	 */
-	public synchronized static void init(boolean useApplicationCache, boolean manualRebuild)
-			throws Exception {
-		InterfaceCache.useApplicationCache = useApplicationCache;
-		ResourcesUtil.lookForPluginsOverwritingWebapp();
-		createCache();
-		if (manualRebuild) {
-			Console.addHandler("webapp", WebAppConsoleCommandHandler.INSTANCE);
-		} else {
-			try {
-				FilesWatcher.register(INTERFACES_PATH, InterfaceCache::createCache, false);
-				// For development
-				FilesWatcher.register(Paths.get("src/main/resources/webapp/"),
-						InterfaceCache::createCache, false);
-			} catch (Exception e) {
-				logger.error("Error registering WebApp files watcher", e);
-			}
-		}
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	static Set<String> getInterfaces() {
-		return interfaces;
-	}
-
-	/**
-	 * 
-	 */
-	static void createCache() {
-		interfaces = new HashSet<String>();
-		try {
-			try {
-				for (String interfaceName : ResourcesUtil.listDirectoriesNamesIn(INTERFACES_PATH,
-						true)) {
-					try {
-						createCacheFor(interfaceName);
-						interfaces.add(interfaceName);
-					} catch (Exception e) {
-						logger.error("Error creating cache for interface '" + interfaceName + "'",
-								e);
-					}
-				}
-
-				for (String interfaceName : ResourcesUtil.listDirectoriesNamesIn(CACHE_ROOT,
-						false)) {
-					if (!interfaces.contains(interfaceName)) {
-						ResourcesUtil.deleteRecursive(CACHE_ROOT.resolve(interfaceName + "/"));
-					}
-				}
-			} catch (NoSuchFileException nsfe) {
-				ResourcesUtil.deleteRecursive(CACHE_ROOT);
-			}
-		} catch (IOException e) {
-			logger.error("Error creating cache", e);
-		}
-	}
-
-	/**
-	 * 
-	 * @param interfaceName
-	 * @throws IOException
-	 * @throws XMLStreamException
-	 */
-	private synchronized static void createCacheFor(String interfaceName)
-			throws IOException, XMLStreamException {
-		try {
-			logger.debug("Creating cache for interface '{}'...", interfaceName);
-			InterfaceCache icc = new InterfaceCache(interfaceName);
-			icc.create();
-			logger.info("Created cache for interface '{}'", interfaceName);
-		} finally {
-			ResourcesUtil.release();
-		}
+		this.interfaceCacheRoot = Cache.INTERFACES_CACHE_ROOT.resolve(interfaceName + "/");
 	}
 
 	/**
@@ -166,13 +79,11 @@ public class InterfaceCache {
 	 * @throws XMLStreamException
 	 * @throws IOException
 	 */
-	private void create() throws XMLStreamException, IOException {
+	void build() throws XMLStreamException, IOException {
 		try {
 			timestamp = System.currentTimeMillis();
 			createIntefaceCache();
 			createLoginCache();
-			ResourcesUtil.deleteRecursive(interfaceCacheRoot);
-			Files.createDirectories(CACHE_ROOT);
 			Files.move(interfaceTmpCacheRoot, interfaceCacheRoot);
 			Bus.post(new InterfaceUpdateEvent(interfaceName, timestamp));
 		} finally {
@@ -180,6 +91,7 @@ public class InterfaceCache {
 				ResourcesUtil.deleteRecursive(interfaceTmpCacheRoot);
 			} catch (Exception e) {
 			}
+			ResourcesUtil.release();
 		}
 	}
 
@@ -195,7 +107,7 @@ public class InterfaceCache {
 		createIndex("skins/index.html", "index.html", "/" + CACHE_MANIFEST_NAME, false);
 		createInterfaceCode();
 		createInterfaceCSS();
-		if (useApplicationCache) {
+		if (Cache.useApplicationCache) {
 			resources.add(interfaceTmpCacheRoot.resolve("style.css"));
 			resources.add(interfaceTmpCacheRoot.resolve("code.js"));
 			createManifest(CACHE_MANIFEST_NAME, resources);
@@ -213,7 +125,7 @@ public class InterfaceCache {
 		Set<Path> loginResources = copyLoginResources(imgs);
 		createLoginCode();
 		createLoginCSS();
-		if (useApplicationCache) {
+		if (Cache.useApplicationCache) {
 			loginResources.add(interfaceTmpCacheRoot.resolve("login/style.css"));
 			loginResources.add(interfaceTmpCacheRoot.resolve("login/code.js"));
 			createManifest("login/" + CACHE_MANIFEST_NAME, loginResources);
@@ -348,7 +260,7 @@ public class InterfaceCache {
 			boolean tsReplaced = false;
 			boolean appCacheEnabledReplaced = false;
 			String manifestReplacement;
-			if (useApplicationCache) {
+			if (Cache.useApplicationCache) {
 				manifestReplacement = "manifest=\"/" + interfaceName + manifestPath + "\"";
 			} else {
 				manifestReplacement = "";
@@ -356,7 +268,7 @@ public class InterfaceCache {
 			String line = null;
 			while ((line = reader.readLine()) != null) {
 				if (!appCacheEnabledReplaced && line.contains("$appCacheEnabled")) {
-					line = line.replace("$appCacheEnabled;", "" + useApplicationCache);
+					line = line.replace("$appCacheEnabled;", "" + Cache.useApplicationCache);
 					appCacheEnabledReplaced = true;
 				}
 				if (!manifestReplaced && line.contains("$manifest;")) {

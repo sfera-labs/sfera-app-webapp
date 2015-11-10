@@ -21,8 +21,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import cc.sferalabs.sfera.core.Plugin;
 import cc.sferalabs.sfera.core.Plugins;
@@ -39,7 +39,7 @@ public abstract class ResourcesUtil {
 		}
 	};
 
-	private static final Logger logger = LogManager.getLogger();
+	private static final Logger logger = LoggerFactory.getLogger(ResourcesUtil.class);
 
 	private static Path webAppPluginPath;
 	private static Set<Path> pluginsOverwritingWebapp;
@@ -55,7 +55,8 @@ public abstract class ResourcesUtil {
 			webAppPluginPath = webAppPlugin.getPath();
 		} else {
 			// When developing is OK...
-			logger.warn("WebApp plugin not found");
+			logger.warn(
+					"WebApp plugin not found. If you are not developing it, there is something wrong.");
 		}
 		for (Plugin plugin : Plugins.getAll().values()) {
 			if (!plugin.getId().equals(webAppPluginId)) {
@@ -248,15 +249,15 @@ public abstract class ResourcesUtil {
 	 * 
 	 * @param source
 	 * @param target
-	 * @param includeResources
+	 * @param includeJarResources
 	 * @return
 	 * @throws IOException
 	 */
-	public static Set<Path> copyRecursive(Path source, Path target, boolean includeResources)
+	public static Set<Path> copyRecursive(Path source, Path target, boolean includeJarResources)
 			throws IOException {
 		Set<Path> list = copyRecursive(source, target);
 
-		if (includeResources) {
+		if (includeJarResources) {
 			for (Path plugin : pluginsOverwritingWebapp) {
 				try {
 					Path pSource = getPluginResource(plugin, source);

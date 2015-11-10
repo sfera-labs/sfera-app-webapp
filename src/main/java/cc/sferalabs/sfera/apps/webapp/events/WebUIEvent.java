@@ -6,7 +6,6 @@ package cc.sferalabs.sfera.apps.webapp.events;
 import java.io.IOException;
 
 import cc.sferalabs.sfera.http.api.HttpApiEvent;
-import cc.sferalabs.sfera.ui.UI;
 import cc.sferalabs.sfera.ui.UIEvent;
 
 /**
@@ -26,13 +25,13 @@ public class WebUIEvent extends UIEvent {
 	 * @param httpEvent
 	 */
 	public WebUIEvent(String id, HttpApiEvent httpEvent) {
-		super(UI.getInstance(), id);
+		super(id, httpEvent.getValue());
 		this.httpEvent = httpEvent;
 	}
 
 	@Override
 	public String getValue() {
-		return httpEvent.getValue();
+		return (String) super.getValue();
 	}
 
 	/**

@@ -31,7 +31,7 @@ public class WebAppConsoleCommandHandler implements ConsoleCommandHandler {
 	public void accept(String cmd) {
 		switch (cmd) {
 		case "rebuild":
-			InterfaceCache.createCache();
+			Cache.buildCache();
 			break;
 
 		default:

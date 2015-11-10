@@ -44,32 +44,17 @@ public class WebApp extends Application implements Node {
 		boolean useApplicationCache = config.get("application_cache", true);
 		boolean manualRebuild = config.get("manual_rebuild", false);
 		try {
-			InterfaceCache.init(useApplicationCache, manualRebuild);
+			Cache.init(useApplicationCache, manualRebuild);
 		} catch (Exception e) {
 			log.error("Error creating cache", e);
-		}
-
-		try {
-			HttpServer.addServlet(WebappServletHolder.INSTANCE, "/manager/*");
-		} catch (HttpServerException e) {
-			log.error("Error registering servlet for manager", e);
-		}
-		for (String interfaceName : InterfaceCache.getInterfaces()) {
-			try {
-				HttpServer.addServlet(InterfaceServletHolder.INSTANCE, "/" + interfaceName + "/*");
-				HttpServer.addServlet(WebappCacheServletHolder.INSTANCE,
-						"/" + interfaceName + "/login/*");
-			} catch (Exception e) {
-				log.error("Error registering servlet for interface " + interfaceName, e);
-			}
 		}
 	}
 
 	@Override
 	public void onDisable() {
 		try {
-			HttpServer.removeServlet(InterfaceServletHolder.INSTANCE);
-			HttpServer.removeServlet(WebappCacheServletHolder.INSTANCE);
+			HttpServer.removeServlet(AuthInterfaceCacheServletHolder.INSTANCE);
+			HttpServer.removeServlet(InterfaceCacheServletHolder.INSTANCE);
 		} catch (HttpServerException e) {
 			log.error("Error removing servlet", e);
 		}
