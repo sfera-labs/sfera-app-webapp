@@ -2384,7 +2384,7 @@ Sfera.Net = function(client) {
     var httpBaseUrl = "/";
 
     var pingInterval;
-    var pongTimeout;
+    var responseTimeout;
     var connCheckTimeoutId;
 
     function openSocket() {
@@ -2435,7 +2435,7 @@ Sfera.Net = function(client) {
                         break;
                     case "connection":
                         pingInterval = parseInt(json.pingInterval);
-                        pongTimeout = parseInt(json.pongTimeout);
+                        responseTimeout = parseInt(json.responseTimeout);
 
                         resetConnCheckTimeout();
                         var tag = (new Date()).getTime(); // request id
@@ -2506,7 +2506,7 @@ Sfera.Net = function(client) {
 
     function resetConnCheckTimeout() {
         clearTimeout(connCheckTimeoutId);
-        setTimeout(this.wsClose, pingInterval + pongTimeout);
+        setTimeout(this.wsClose, pingInterval + responseTimeout);
     }
 
     /**
