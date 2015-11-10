@@ -2428,7 +2428,7 @@ Sfera.Net = function(client) {
                             for (var u in json.result.uiSet) {
                                 var n = u.split(".");
                                 var a = n.pop();
-                                var c = this.components.getObjsById(n.join("."));
+                                var c = Sfera.client.components.getObjsById(n.join("."));
                                 for (var i=0; i<c.length; i++) {
                                     c[i].setAttribute(a,json.result.uiSet[u]);
                                 }
