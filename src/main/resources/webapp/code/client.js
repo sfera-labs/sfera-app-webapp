@@ -2424,12 +2424,14 @@ Sfera.Net = function(client) {
                 // {"type":"event","events":{"remote.myvalue":"5","system.plugins":"reload","remote.":"undefined","system.state":"ready"}}
                 switch (json.type) {
                     case "reply":
-                        for (var a in json.uiSet) {
-                            var n = json.uiSet[a].split(".");
-                            var a = n.pop();
-                            var c = this.components.getObjsById(n.join("."));
-                            for (var i=0; i<c.length; i++) {
-                                c[i].setAttribute(a,json.nodes[e]);
+                        if (json && json.result && json.result.uiSet) {
+                            for (var u in json.result.uiSet) {
+                                var n = u.split(".");
+                                var a = n.pop();
+                                var c = this.components.getObjsById(n.join("."));
+                                for (var i=0; i<c.length; i++) {
+                                    c[i].setAttribute(a,json.result.uiSet[u]);
+                                }
                             }
                         }
                         break;

@@ -29,3 +29,5 @@ Thumbs.db
 webapp/interfaces/new/index.out.xml
 
 console.in
+
+src/main/resources/webapp/manager/test
