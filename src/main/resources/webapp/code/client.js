@@ -1291,6 +1291,34 @@ Sfera.Debug.initPane = function() {
 
 
 /**
+ * Log obj
+ *
+ * @class Sfera.Log
+ * @constructor
+ */
+Sfera.Log = new(function() {
+
+    // logging levels
+    // ALL < DEBUG < INFO < WARN < ERROR < FATAL < OFF
+    this.ALL = 1;
+    this.DEBUG = 2;
+    this.INFO = 3;
+    this.WARN = 4;
+    this.ERROR = 5;
+    this.FATAL = 6;
+    this.OFF = 7;
+
+    var _level = this.WARN;
+
+    // set the level
+    this.setLevel = function (level) {
+        _level = level;
+    };
+
+})();
+
+
+/**
 * A Signal is an event dispatch mechanism that supports broadcasting to multiple listeners.
 *
 * Event listeners are uniquely identified by the listener/callback function and the context.
@@ -2395,6 +2423,16 @@ Sfera.Net = function(client) {
 
                 // {"type":"event","events":{"remote.myvalue":"5","system.plugins":"reload","remote.":"undefined","system.state":"ready"}}
                 switch (json.type) {
+                    case "reply":
+                        for (var a in json.uiSet) {
+                            var n = json.uiSet[a].split(".");
+                            var a = n.pop();
+                            var c = this.components.getObjsById(n.join("."));
+                            for (var i=0; i<c.length; i++) {
+                                c[i].setAttribute(a,json.nodes[e]);
+                            }
+                        }
+                        break;
                     case "connection":
                         pingInterval = parseInt(json.pingInterval);
                         pongTimeout = parseInt(json.pongTimeout);
@@ -2462,7 +2500,7 @@ Sfera.Net = function(client) {
 
             console.log(event.code,reason);
 
-            
+
         };
     }
 
@@ -4276,7 +4314,6 @@ Sfera.Components.create("_Base", {
     },
 
     init: function() {
-        console.log("init base");
     },
 
     // shared methods

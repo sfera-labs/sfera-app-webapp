@@ -27,6 +27,5 @@ Thumbs.db
 /bin/
 
 webapp/interfaces/new/index.out.xml
-*.map
 
 console.in
