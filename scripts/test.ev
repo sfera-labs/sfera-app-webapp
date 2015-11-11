@@ -3,8 +3,9 @@ init {
 }
 
 ui.panic == "meh" : {
-	ui.set("message", "text", "Session: " + x, _e.sessionId);
 	ui.set("message1", "text", "Global: " + x);
-	_e.reply("bella!!!");
+	var rui = _e.remoteUi;
+	rui.set("message", "text", "Local: " + x);
+	_e.reply(rui);
 	x++;
 }
