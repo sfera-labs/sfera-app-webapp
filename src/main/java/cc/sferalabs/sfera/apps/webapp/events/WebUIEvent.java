@@ -45,12 +45,4 @@ public class WebUIEvent extends UIEvent {
 		return remoteUi;
 	}
 
-	/**
-	 * @param result
-	 * @throws IOException
-	 */
-	public void reply(Object result) throws IOException {
-		httpEvent.reply(result);
-	}
-
 }
