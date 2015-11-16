@@ -68,7 +68,7 @@ public class InterfaceCacheBuilder {
 	 * @param interfaceName
 	 * @throws IOException
 	 */
-	public InterfaceCacheBuilder(String interfaceName) throws IOException {
+	InterfaceCacheBuilder(String interfaceName) throws IOException {
 		this.interfaceName = interfaceName;
 		this.interfaceTmpCacheRoot = Files.createTempDirectory(getClass().getName());
 		this.interfaceCacheRoot = Cache.INTERFACES_CACHE_ROOT.resolve(interfaceName + "/");
@@ -171,6 +171,35 @@ public class InterfaceCacheBuilder {
 	 * @throws IOException
 	 */
 	private void createInterfaceCode() throws IOException {
+		// TODO fix
+		try {
+			List<String> files = new ArrayList<>();
+			files.add("code/client.js");
+			files.add("skins/" + skin + "/" + skin + ".js");
+			for (String comp : conponents) {
+				files.add("components/" + comp + "/" + comp + ".js");
+			}
+			String interfacePath = "interfaces/" + interfaceName + "/";
+			try {
+				Set<String> fs = ResourcesUtil
+						.listRegularFilesNamesIn(WebApp.ROOT.resolve(interfacePath), true);
+				for (String file : fs) {
+					if (file.toLowerCase().endsWith(".js")) {
+						files.add(interfacePath + file);
+					}
+				}
+			} catch (NoSuchFileException e) {
+			}
+
+			JavaScriptBuilder.build(files, interfaceTmpCacheRoot);
+
+			return;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		// TODO -------------------------------------
+
 		try (BufferedWriter writer = Files.newBufferedWriter(
 				interfaceTmpCacheRoot.resolve("code.js"), StandardCharsets.UTF_8)) {
 			try {
