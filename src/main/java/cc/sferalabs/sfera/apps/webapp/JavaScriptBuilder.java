@@ -85,9 +85,7 @@ public class JavaScriptBuilder {
 	 */
 	private static void init() throws ScriptException, IOException {
 		ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");
-		load(engine, "source-map.js");
 		load(engine, "uglify.js");
-		load(engine, "compile.js");
 		invocable = (Invocable) engine;
 	}
 
