@@ -37,16 +37,19 @@ public abstract class Cache {
 	private static Set<String> interfaces;
 
 	static boolean useApplicationCache;
+	static boolean useJSBuilder;
 
 	/**
 	 * 
 	 * @param useApplicationCache
 	 * @param manualRebuild
+	 * @param useJSBuilder
 	 * @throws Exception
 	 */
-	public synchronized static void init(boolean useApplicationCache, boolean manualRebuild)
-			throws Exception {
+	public synchronized static void init(boolean useApplicationCache, boolean manualRebuild,
+			boolean useJSBuilder) throws Exception {
 		Cache.useApplicationCache = useApplicationCache;
+		Cache.useJSBuilder = useJSBuilder;
 		ResourcesUtil.lookForPluginsOverwritingWebapp();
 		buildCache();
 		if (manualRebuild) {
@@ -124,7 +127,8 @@ public abstract class Cache {
 						true)) {
 					try {
 						logger.debug("Building cache for interface '{}'...", interfaceName);
-						InterfaceCacheBuilder icb = new InterfaceCacheBuilder(interfaceName);
+						InterfaceCacheBuilder icb = new InterfaceCacheBuilder(interfaceName,
+								useJSBuilder);
 						icb.build();
 						interfaces.add(interfaceName);
 						logger.info("Interface '{}' built", interfaceName);

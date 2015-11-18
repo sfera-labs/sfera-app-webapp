@@ -68,14 +68,14 @@ public class JavaScriptBuilder {
 		long start = System.currentTimeMillis();
 		Map<String, String> res;
 		try {
-			res = (Map<String, String>) invocable.invokeFunction("compile", "code.js", files, "");
+			res = (Map<String, String>) invocable.invokeFunction("compile", "code.js", files, null);
 		} catch (NoSuchMethodException e) {
 			throw new RuntimeException(e);
 		}
 		System.err.println("t: " + (System.currentTimeMillis() - start));
 
-		Files.write(dir.resolve("code.js"), res.get("output").getBytes());
-		Files.write(dir.resolve("code.js.map"), res.get("map").getBytes());
+		Files.write(dir.resolve("code.js"), res.get("output").getBytes(StandardCharsets.UTF_8));
+		Files.write(dir.resolve("code.js.map"), res.get("map").getBytes(StandardCharsets.UTF_8));
 	}
 
 	/**

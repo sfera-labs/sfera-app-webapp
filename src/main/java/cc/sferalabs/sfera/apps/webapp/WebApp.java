@@ -45,8 +45,9 @@ public class WebApp extends Application implements Node {
 	public void onEnable(Configuration config) {
 		boolean useApplicationCache = config.get("application_cache", true);
 		boolean manualRebuild = config.get("manual_rebuild", false);
+		boolean useJSBuilder = config.get("js_builder", false);
 		try {
-			Cache.init(useApplicationCache, manualRebuild);
+			Cache.init(useApplicationCache, manualRebuild, useJSBuilder);
 		} catch (Exception e) {
 			log.error("Error creating cache", e);
 		}

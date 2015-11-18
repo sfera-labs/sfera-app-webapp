@@ -71,8 +71,8 @@ public class JavaScriptBuilder2 {
 		Map<String, String> res = (Map<String, String>) builder.eval();
 		System.err.println("t: " + (System.currentTimeMillis() - start));
 
-		Files.write(dir.resolve("code.js"), res.get("output").getBytes());
-		Files.write(dir.resolve("code.js.map"), res.get("map").getBytes());
+		Files.write(dir.resolve("code.js"), res.get("output").getBytes(StandardCharsets.UTF_8));
+		Files.write(dir.resolve("code.js.map"), res.get("map").getBytes(StandardCharsets.UTF_8));
 	}
 
 	/**

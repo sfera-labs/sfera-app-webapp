@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import javax.script.ScriptException;
 import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLEventWriter;
@@ -55,6 +56,7 @@ public class InterfaceCacheBuilder {
 			DateUtils.PATTERN_RFC1123);
 
 	private final String interfaceName;
+	private final boolean useJSBuilder;
 	private final Path interfaceCacheRoot;
 	private final Path interfaceTmpCacheRoot;
 
@@ -65,11 +67,14 @@ public class InterfaceCacheBuilder {
 	private long timestamp;
 
 	/**
+	 * 
 	 * @param interfaceName
+	 * @param useJSBuilder
 	 * @throws IOException
 	 */
-	InterfaceCacheBuilder(String interfaceName) throws IOException {
+	InterfaceCacheBuilder(String interfaceName, boolean useJSBuilder) throws IOException {
 		this.interfaceName = interfaceName;
+		this.useJSBuilder = useJSBuilder;
 		this.interfaceTmpCacheRoot = Files.createTempDirectory(getClass().getName());
 		this.interfaceCacheRoot = Cache.INTERFACES_CACHE_ROOT.resolve(interfaceName + "/");
 	}
@@ -78,8 +83,9 @@ public class InterfaceCacheBuilder {
 	 * 
 	 * @throws XMLStreamException
 	 * @throws IOException
+	 * @throws ScriptException
 	 */
-	void build() throws XMLStreamException, IOException {
+	void build() throws XMLStreamException, IOException, ScriptException {
 		try {
 			timestamp = System.currentTimeMillis();
 			createIntefaceCache();
@@ -99,8 +105,9 @@ public class InterfaceCacheBuilder {
 	 * 
 	 * @throws IOException
 	 * @throws XMLStreamException
+	 * @throws ScriptException
 	 */
-	private void createIntefaceCache() throws IOException, XMLStreamException {
+	private void createIntefaceCache() throws IOException, XMLStreamException, ScriptException {
 		createInterfaceXmlAndExtractAttributes();
 		createDictionaryAndExtractSkinIconSet();
 		Set<Path> resources = copyResources();
@@ -169,69 +176,37 @@ public class InterfaceCacheBuilder {
 	/**
 	 * 
 	 * @throws IOException
+	 * @throws ScriptException
 	 */
-	private void createInterfaceCode() throws IOException {
-		// TODO fix
-		try {
-			List<String> files = new ArrayList<>();
-			files.add("code/client.js");
-			files.add("skins/" + skin + "/" + skin + ".js");
-			for (String comp : conponents) {
-				files.add("components/" + comp + "/" + comp + ".js");
-			}
-			String interfacePath = "interfaces/" + interfaceName + "/";
-			try {
-				Set<String> fs = ResourcesUtil
-						.listRegularFilesNamesIn(WebApp.ROOT.resolve(interfacePath), true);
-				for (String file : fs) {
-					if (file.toLowerCase().endsWith(".js")) {
-						files.add(interfacePath + file);
-					}
-				}
-			} catch (NoSuchFileException e) {
-			}
-
-			JavaScriptBuilder.build(files, interfaceTmpCacheRoot);
-
-			return;
-		} catch (Exception e) {
-			e.printStackTrace();
+	private void createInterfaceCode() throws IOException, ScriptException {
+		List<String> files = new ArrayList<>();
+		files.add("code/client.js");
+		files.add("skins/" + skin + "/" + skin + ".js");
+		for (String comp : conponents) {
+			files.add("components/" + comp + "/" + comp + ".js");
 		}
-
-		// TODO -------------------------------------
-
-		try (BufferedWriter writer = Files.newBufferedWriter(
-				interfaceTmpCacheRoot.resolve("code.js"), StandardCharsets.UTF_8)) {
-			try {
-				writeContentFrom("code/client.min.js", writer);
-			} catch (NoSuchFileException e) {
-				writeContentFrom("code/client.js", writer);
-			}
-
-			try {
-				writeContentFrom("skins/" + skin + "/" + skin + ".min.js", writer);
-			} catch (NoSuchFileException e) {
-				writeContentFrom("skins/" + skin + "/" + skin + ".js", writer);
-			}
-
-			for (String comp : conponents) {
-				try {
-					writeContentFrom("components/" + comp + "/" + comp + ".min.js", writer);
-				} catch (NoSuchFileException e) {
-					writeContentFrom("components/" + comp + "/" + comp + ".js", writer);
+		files.add("code/client.custom_intro.js");
+		String interfacePath = "interfaces/" + interfaceName + "/";
+		try {
+			Set<String> customJsFiles = ResourcesUtil
+					.listRegularFilesNamesIn(WebApp.ROOT.resolve(interfacePath), true);
+			for (String file : customJsFiles) {
+				if (file.toLowerCase().endsWith(".js")) {
+					files.add(interfacePath + file);
 				}
 			}
+		} catch (NoSuchFileException e) {
+		}
+		files.add("code/client.custom_outro.js");
 
-			String interfacePath = "interfaces/" + interfaceName + "/";
-			try {
-				Set<String> files = ResourcesUtil
-						.listRegularFilesNamesIn(WebApp.ROOT.resolve(interfacePath), true);
+		if (useJSBuilder) {
+			JavaScriptBuilder.build(files, interfaceTmpCacheRoot);
+		} else {
+			try (BufferedWriter writer = Files.newBufferedWriter(
+					interfaceTmpCacheRoot.resolve("code.js"), StandardCharsets.UTF_8)) {
 				for (String file : files) {
-					if (file.toLowerCase().endsWith(".js")) {
-						writeContentFrom(interfacePath + file, writer);
-					}
+					writeContentFrom(file, writer);
 				}
-			} catch (NoSuchFileException e) {
 			}
 		}
 	}
@@ -243,11 +218,7 @@ public class InterfaceCacheBuilder {
 	private void createLoginCode() throws IOException {
 		try (BufferedWriter writer = Files.newBufferedWriter(
 				interfaceTmpCacheRoot.resolve("login/code.js"), StandardCharsets.UTF_8)) {
-			try {
-				writeContentFrom("code/login.min.js", writer);
-			} catch (NoSuchFileException e) {
-				writeContentFrom("code/login.js", writer);
-			}
+			writeContentFrom("code/login.js", writer);
 		}
 	}
 
@@ -260,7 +231,14 @@ public class InterfaceCacheBuilder {
 	 */
 	private void writeContentFrom(String file, BufferedWriter writer)
 			throws IOException, NoSuchFileException {
-		Path filePath = ResourcesUtil.getResource(WebApp.ROOT.resolve(file));
+		int extSep = file.lastIndexOf('.');
+		String minFile = file.substring(0, extSep) + ".min" + file.substring(extSep);
+		Path filePath;
+		try {
+			filePath = ResourcesUtil.getResource(WebApp.ROOT.resolve(minFile));
+		} catch (NoSuchFileException nsfe) {
+			filePath = ResourcesUtil.getResource(WebApp.ROOT.resolve(file));
+		}
 		try (BufferedReader reader = Files.newBufferedReader(filePath, StandardCharsets.UTF_8)) {
 			String line = null;
 			while ((line = reader.readLine()) != null) {
