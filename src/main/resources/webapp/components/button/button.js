@@ -59,30 +59,8 @@ Sfera.Components.create("Button", {
     },
 
     onClick: function() {
-        // context functions
-        function page(id) {
-            Sfera.client.showPage(id);
-        }
-
-        function event(id, value) {
-            Sfera.client.sendEvent(id, value, this);
-        }
-
-        function command(command)  {
-            Sfera.client.sendCommand(command, this);
-        }
-
-        // eval button js
-        try {
-            var f = this.getAttribute("onClick");
-            eval(f);
-        } catch (e) {
-            if (e instanceof SyntaxError) {
-                alert(e.message);
-            } else {
-                throw (e);
-            }
-        }
+        var f = this.getAttribute("onClick");
+        Sfera.Custom.exec(f);
     }
 
 });

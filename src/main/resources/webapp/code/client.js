@@ -1,4 +1,4 @@
-/*! sfera-webapp - v0.0.2 - 2015-11-17 */
+/*! sfera-webapp - v0.0.2 - 2015-11-18 */
 
 (function(){
 
