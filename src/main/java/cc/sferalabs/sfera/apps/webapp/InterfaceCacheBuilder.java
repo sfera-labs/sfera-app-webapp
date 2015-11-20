@@ -45,8 +45,8 @@ import cc.sferalabs.sfera.events.Bus;
  *
  */
 public class InterfaceCacheBuilder {
-	
-	private static final Logger logger = LoggerFactory.getLogger(Cache.class);
+
+	private static final Logger logger = LoggerFactory.getLogger(InterfaceCacheBuilder.class);
 
 	private static final String CACHE_MANIFEST_NAME = "sfera.appcache";
 
@@ -203,23 +203,20 @@ public class InterfaceCacheBuilder {
 		}
 		files.add("code/client.custom_outro.js");
 
-		boolean jsBuilderError = false;
 		if (useJSBuilder) {
 			try {
 				JavaScriptBuilder.build(files, interfaceTmpCacheRoot);
+				return;
 			} catch (Exception e) {
-				jsBuilderError = true;
-				logger.error("Error building cache for interface '" + interfaceName + "', reverting to other method",
-						e);
+				logger.warn("Error building cache for interface '" + interfaceName
+						+ "'. Reverting to other method", e);
 			}
-		} 
-		
-		if (!useJSBuilder || jsBuilderError){
-			try (BufferedWriter writer = Files.newBufferedWriter(
-					interfaceTmpCacheRoot.resolve("code.js"), StandardCharsets.UTF_8)) {
-				for (String file : files) {
-					writeContentFrom(file, writer);
-				}
+		}
+
+		try (BufferedWriter writer = Files.newBufferedWriter(
+				interfaceTmpCacheRoot.resolve("code.js"), StandardCharsets.UTF_8)) {
+			for (String file : files) {
+				writeContentFrom(file, writer);
 			}
 		}
 	}

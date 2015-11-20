@@ -8,7 +8,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,18 +33,16 @@ public class JavaScriptBuilder {
 	 *
 	 */
 	public static class JsFile {
-		public String name;
-		public String content;
+		public final String name;
+		public String content = "";
 
-		private JsFile(String name) throws NoSuchFileException, IOException {
+		private JsFile(String name) throws IOException {
 			this.name = name;
-			Path filePath = ResourcesUtil.getResource(WebApp.ROOT.resolve(name));
-			this.content = new String(Files.readAllBytes(filePath), StandardCharsets.UTF_8);
 		}
-		
-		private JsFile() {
-			this.name = "";
-			this.content = "";
+
+		private void addContentFrom(String file) throws IOException {
+			Path filePath = ResourcesUtil.getResource(WebApp.ROOT.resolve(file));
+			this.content += new String(Files.readAllBytes(filePath), StandardCharsets.UTF_8);
 		}
 	}
 
@@ -60,40 +57,34 @@ public class JavaScriptBuilder {
 	static synchronized void build(List<String> fileNames, Path dir)
 			throws ScriptException, IOException {
 		if (invocable == null) {
-			System.err.println("init");
 			init();
 		}
 
 		List<JsFile> files = new ArrayList<>();
-		
-		JsFile cFile; // current file, if concatenating
-		JsFile custom = null; // stores all files from custom_intro to outro, (as index.js)
-		
+		JsFile customJs = null;
 		for (String name : fileNames) {
-			if (name.contains("client.custom_intro.js")) {
-				custom = new JsFile();
-				custom.name = "custom.js";
-			}
-			cFile = new JsFile(name);
-			if (custom != null) {
-				custom.content += cFile.content;
+			JsFile jsFile;
+			if (customJs == null) {
+				if (name.contains("client.custom_intro.js")) {
+					jsFile = new JsFile("custom.js");
+					customJs = jsFile;
+				} else {
+					jsFile = new JsFile(name);
+				}
+				jsFile.addContentFrom(name);
+				files.add(jsFile);
+
 			} else {
-				files.add(cFile);
+				customJs.addContentFrom(name);
 			}
 		}
-		// ass custom if any
-		if (custom != null)
-			files.add(custom);
 
-		System.err.println("start");
-		long start = System.currentTimeMillis();
 		Map<String, String> res;
 		try {
 			res = (Map<String, String>) invocable.invokeFunction("compile", "code.js", files, null);
 		} catch (NoSuchMethodException e) {
 			throw new RuntimeException(e);
 		}
-		System.err.println("t: " + (System.currentTimeMillis() - start));
 
 		Files.write(dir.resolve("code.js"), res.get("output").getBytes(StandardCharsets.UTF_8));
 		Files.write(dir.resolve("code.js.map"), res.get("map").getBytes(StandardCharsets.UTF_8));
