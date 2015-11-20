@@ -31,6 +31,8 @@ import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
 import org.apache.http.client.utils.DateUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import cc.sferalabs.sfera.apps.webapp.events.InterfaceUpdateEvent;
 import cc.sferalabs.sfera.events.Bus;
@@ -43,6 +45,8 @@ import cc.sferalabs.sfera.events.Bus;
  *
  */
 public class InterfaceCacheBuilder {
+	
+	private static final Logger logger = LoggerFactory.getLogger(Cache.class);
 
 	private static final String CACHE_MANIFEST_NAME = "sfera.appcache";
 
@@ -199,9 +203,18 @@ public class InterfaceCacheBuilder {
 		}
 		files.add("code/client.custom_outro.js");
 
+		boolean jsBuilderError = false;
 		if (useJSBuilder) {
-			JavaScriptBuilder.build(files, interfaceTmpCacheRoot);
-		} else {
+			try {
+				JavaScriptBuilder.build(files, interfaceTmpCacheRoot);
+			} catch (Exception e) {
+				jsBuilderError = true;
+				logger.error("Error building cache for interface '" + interfaceName + "', reverting to other method",
+						e);
+			}
+		} 
+		
+		if (!useJSBuilder || jsBuilderError){
 			try (BufferedWriter writer = Files.newBufferedWriter(
 					interfaceTmpCacheRoot.resolve("code.js"), StandardCharsets.UTF_8)) {
 				for (String file : files) {

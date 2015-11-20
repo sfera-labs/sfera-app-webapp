@@ -22,7 +22,7 @@
         Sfera.client.sendEvent(id, value, this);
     }
 
-    function command(command)  {
+    function command(command, callback)  {
         Sfera.client.sendCommand(command, this);
     }
 
@@ -30,7 +30,6 @@
     this.exec = function (f) {
         // eval button js
         try {
-            var f = this.getAttribute("onClick");
             eval(f);
         } catch (e) {
             if (e instanceof SyntaxError) {

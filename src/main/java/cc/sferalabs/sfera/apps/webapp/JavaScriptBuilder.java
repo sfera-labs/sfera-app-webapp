@@ -34,13 +34,18 @@ public class JavaScriptBuilder {
 	 *
 	 */
 	public static class JsFile {
-		public final String name;
-		public final String code;
+		public String name;
+		public String content;
 
 		private JsFile(String name) throws NoSuchFileException, IOException {
 			this.name = name;
 			Path filePath = ResourcesUtil.getResource(WebApp.ROOT.resolve(name));
-			this.code = new String(Files.readAllBytes(filePath), StandardCharsets.UTF_8);
+			this.content = new String(Files.readAllBytes(filePath), StandardCharsets.UTF_8);
+		}
+		
+		private JsFile() {
+			this.name = "";
+			this.content = "";
 		}
 	}
 
@@ -60,9 +65,25 @@ public class JavaScriptBuilder {
 		}
 
 		List<JsFile> files = new ArrayList<>();
+		
+		JsFile cFile; // current file, if concatenating
+		JsFile custom = null; // stores all files from custom_intro to outro, (as index.js)
+		
 		for (String name : fileNames) {
-			files.add(new JsFile(name));
+			if (name.contains("client.custom_intro.js")) {
+				custom = new JsFile();
+				custom.name = "custom.js";
+			}
+			cFile = new JsFile(name);
+			if (custom != null) {
+				custom.content += cFile.content;
+			} else {
+				files.add(cFile);
+			}
 		}
+		// ass custom if any
+		if (custom != null)
+			files.add(custom);
 
 		System.err.println("start");
 		long start = System.currentTimeMillis();

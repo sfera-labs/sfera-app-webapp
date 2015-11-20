@@ -1,4 +1,4 @@
-/*! sfera-webapp - v0.0.2 - 2015-11-18 */
+/*! sfera-webapp - v0.0.2 - 2015-11-20 */
 
 (function(){
 
@@ -123,11 +123,8 @@ Sfera.Behaviors.Label = function() {
  *
  * @class Sfera.Compiler
  * @constructor
- * @param {Sfera.Client} client - A reference to the currently running client.
  */
-Sfera.Compiler = function(client) {
-
-    this.client = client;
+Sfera.Compiler = new(function() {
 
     function getComments(context) {
         var foundComments = [];
@@ -189,7 +186,7 @@ Sfera.Compiler = function(client) {
 
             // add to the index
             if (component) {
-                client.indexComponent(component);
+                Sfera.client.indexComponent(component);
 
                 var child;
                 var c = xmlNode.childNodes;
@@ -258,37 +255,80 @@ Sfera.Compiler = function(client) {
         }
     };
 
+    this.getMustacheData = function(source) {
+        if (!Sfera.Utils.isString(source) ||
+            source.indexOf("{") == -1)
+            return null;
+
+        var data = {
+            vars: []
+        };
+        var MUSTACHE = /\{\{([^}]*)\}\}/g;
+        var m;
+        while (m = MUSTACHE.exec(source)) {
+            data.vars.push(m[1]);
+        }
+
+        // done
+        if (!data.vars.length)
+            return null;
+
+        return data;
+    }
+
     /**
      *
      */
-    this.compilePropertyValue = function (value) {
+    this.compileAttributeValue = function(attr) {
         var str;
+        var MUSTACHE = /\{\{([^}]*)\}\}/g;
 
-        //str = '<div class="hr"></div> <p class="tags hidden-mobile"><a href="http://www.rockpapershotgun.com/tag/arkane-studios/" rel="tag">Arkane Studios</a>, <a href="http://www.rockpapershotgun.com/tag/bethesda/" rel="tag">Bethesda</a>, <a href="http://www.rockpapershotgun.com/tag/dishonored/" rel="tag">Dishonored</a>, <a href="http://www.rockpapershotgun.com/tag/dishonored-2/" rel="tag">Dishonored 2</a>.</p> <p class="comments"><a href="http://www.rockpapershotgun.com/2015/09/17/dishonored-2-karnaca/#comments" title="Comment on Southland Tales: Dishonored 2&#8217;s Sun-Scorched Bloodflies">21 Comments &#187;</a></p> </footer> </div> </div> <div id="post-314999" class="block featured-block"> <p class="featured-block-title"> <a class="featured-block__text featured-block__text--feature" href="http://www.rockpapershotgun.com/category/featured-articles">RPS Feature</a> It's a number one. </p> <div class="post-inner"> <h2><a href="http://www.rockpapershotgun.com/2015/09/17/is-this-gamings-greatest-toilet-the-toilet-publishers-dont-want-you-to-see/" rel="bookmark" title="Permanent Link to Is This Gaming&#8217;s Greatest Toilet? The Toilet Publishers Don&#8217;t Want You To See">Is This Gaming&#8217;s Greatest Toilet? The Toilet Publishers Don&#8217;t Want You To See</a></h2> <div class="entry"> <div class="top-matter hidden-mobile"> <aside class="byline"> <p>By <a href="/cdn-cgi/l/email-protection#472d61647676767c2f61647676777c616471737c352861647e7e7c61647677707c61647676757c61647e707c61647676757c2261647676737c61647676727c616476X04;ot&#103;un.c&#111;&#109;">John Walker</a> on September 17th, 2015 at 5:00 pm.</p> </aside> <div class="social-buttons"> <h4>Share this:</h4> <ul class="social-icons"> <li><a class="social-facebook icon-facebook" href="http://www.facebook.com/sharer.php?u=http://www.rockpapershotgun.com/2015/09/17/is-this-gamings-greatest-toilet-the-toilet-publishers-dont-want-you-to-see//"><span>Facebook</span></a></li> <li><a class="social-twitter icon-twitter" href="http://twitter.com/intent/tweet?text=Is This Gaming&#8217;s Greatest Toilet? The Toilet Publishers Don&#8217;t Want You To See http://www.rockpapershotgun.com/2015/09/17/is-this-gamings-greatest-toilet-the-toilet-publishers-dont-want-you-to-see/"><span>Twitter</span></a></li> <li><a class="social-reddit icon-reddit" href="http://www.reddit.com/submit?url=http://www.rockpapershotgun.com/2015/09/17/is-this-gamings-greatest-toilet-the-toilet-publishers-dont-want-you-to-see//"><span>Reddit</span></a></li> </ul> </div> </div> <p><a href="http://www.rockpapershotgun.com/images/15/sep/albt1b.jpg" rel="lightbox[314999]"><img src="http://www.rockpapershotgun.com/images/15/sep/albt1.jpg" alt=""/></a></p> <p><em>I&#8217;m really getting the hang of these headlines, I think. In <a href="http://www.rockpapershotgun.com/2015/09/15/albino-lullaby-review/">my review of Albino Lullaby</a> this week, I included a throwaway line that I then didn&#8217;t justify in pictorial form. I wrote that it features, &#822#8220;the best toilet in gaming history.&#8221; You can&#8217;t just say a thing like that and expect not to be required to prove it. I think the image above has already done that, but there are more, just in case &#8211; click on them to appreciate them fully.</em></p> <p> <a href="http://www.rockpapershotgun.com/2015/09/17/is-this-gamings-greatest-toilet-the-toilet-publishers-dont-want-you-to-see/#more-314999" class="more-link">Read the rest of this entry &raquo;</a></p> </div> <footer class="article-footer"> <div class="hr"></div> <p class="tags hidden-mobile"><a href="http://www.rockpapershotgun.com/tag/albino-lullaby/" rel="tag">Albino Lullaby</a>, <a href="http://www.rockpapershotgun.com/tag/ape-law/" rel="tag">Ape Law</a>, <a href="http://www.rockpapershotgun.com/tag/feature/" rel="tag">feature</a>, <a href="http://www.rockpapershotgun.com/tag/toilets-in-games/" rel="tag">toilets-in-games</a>.</p> <p class="comments"><a href="http://www.rockpapershotgun.com/2015/09/17/is-this-gamings-greatest-toilet-the-toilet-publishers-dont-want-you-to-see/#comments" title="Comment on Is This Gaming&#8217;s Greatest Toilet? The Toilet Publishers Don&#8217;t Want You To See">20 Comments &#187;</a></p> </footer> </div> </div> <div id="post-315221" class="block featured-block"> <div class="post-inner"> <h2><a href="http://www.rockpapershotgun.com/2015/09/17/warhammer-40k-deathwatch-pc/" rel="bookmark" title="Permanent Link to Warhammer 40,000: Deathwatch Crusading Onto PC">Warhammer 40,000: Deathwatch Crusading Onto PC</a></h2> <div class="entry"> <div class="top-matter hidden-mobile"> <aside class="byline"> <p>By <a href="/cdn-cgi/l/email-protection#e584c3c6d4d5ddde8cc3c6dcdcde80c3c6d3d1dec3c6d4d4d1dec3c6d4d4d4de86c3c6d4d5d2dec3c6d4d4d7de8495c3c6d4d5d4de97c3c6d4d4d0dec3c6d4d5d1deXo&#116;gu&#110;&#46;&#99;o&#109;">Alice O'Connor</a> on September 17th, 2015 at 4:11 pm.</p> </aside> <div class="social-buttons"> <h4>Share this:</h4> <ul class="social-icons"> <li><a class="social-facebook icon-facebook" href="http://www.facebook.com/sharer.php?u=http://www.rockpapershotgun.com/2015/09/17/warhammer-40k-deathwatch-pc//"><span>Facebook</span></a></li> <li><a class="social-twitter icon-twitter" href="http://twitter.com/intent/tweet?text=Warhammer 40,000: Deathwatch Crusading Onto PC http://www.rockpapershotgun.com/2015/09/17/warhammer-40k-deathwatch-pc/"><span>Twitter</span></a></li> <li><a class="social-reddit icon-reddit" href="http://www.reddit.com/submit?url=http://www.rockpapershotgun.com/2015/09/17/warhammer-40k-deathwatch-pc//"><span>Reddit</span></a></li> </ul> </div> </div> <p><img src="http://www.rockpapershotgun.com/images/15/sep/17wh40kdeathwatch.jpg" title="Aye, a can of Raid won't solve this one."/></p> <p>The Warhammer 40,000 game I&#8217;d really like is still <a href="http://www.rockpapershotgun.com/2015/07/14/dawn-of-war-3-rumours/">Dawn of War 3</a>, but in the meantime I shall need to investigate other opportunities to wear a big ole skull on my crotch.</p> <p>Rodeo Games, the folks behind <a href="http://www.rockpapershotgun.com/tag/warhammer-quest/">Warhammer Quest</a>, have announced that they&#8217;re bringing another mobile doodad over to PC a little fancied up, and this one has all the crotchskulls I demand &#8211; Warhammer 40,000: Deathwatch [<a href="http://rodeogames.co.uk/deathwatch">official site</a>]. It&#8217;s a turn-based tactical affair about hunting down and squishing those naughty Tyranids, from cities to the guts of bio-ships, while expanding, levelling up, and equipping your Deathwatch Kill Team.</p> <p> <a href="http://www.rockpapershotgun.com/2015/09/17/warhammer-40k-deathwatch-pc/#more-315221" class="more-link">Read the rest of this entry &raquo;</a></p> </div> <footer class="article-footer"> <div class="hr"></div> <p class="tags hidden-mobile"><a href="http://www.rockpapershotgun.com/tag/rodeo-games/" rel="tag">Rodeo Games</a>, <a href="http://www.rockpapershotgun.com/tag/warhammer-40000/" rel="tag">Warhammer 40000</a>, <a href="http://www.rockpapershotgun.com/tag/warhammer-40000-deathwatch/" rel="tag">Warhammer 40000: Deathwatch</a>, <a href="http://www.rockpapershotgun.com/tag/warhammer-40000-deathwatch-enhanced-edition/" rel="tag">Warhammer 40000: Deathwatch - Enhanced Edition</a>.</p> <p class="comments"><a href="http://www.rockpapershotgun.{{that is}}com/2015/09/17/warhammer-40k-deathwatch-pc/#comments" title="Comment on Warhammer 40,000: Deathwatch Crusading Onto PC">10 Comments &#187;</a></p> </footer> </div> </div> <div id="post-299851" class="block featured-block"> <div class="post-inner"> <h2><a href="http://www.rockpapershotgun.com/2015/09/17/have-you-played-kyrandia-2-hand-of-fate/" rel="bookmark" title="Permanent Link to Have You Played&#8230; Kyrandia 2: Hand Of Fate?">Have You Played&#8230; Kyrandia 2: Hand Of Fate?</a></h2> <div class="entry"> <div class="top-matter hidden-mobile"> <aside class="byline"> <p>By <a href="/cdn-cgi/l/email-protection#91b7b2a0a0a5aab7b2a0a1a4aab7b2a8a8aab7b2a0a1a5aaf0b7b2a0a0a5aaf5b7b2a7a5aae3feb7b2a8a8aafab7b2a0a0a3aaf0b7b2a0a0a3aab7b2a0a1a0aab7b2X114;&#115;hot&#103;un.&#99;&#111;&#109;">Richard Cobbett</a> on September 17th, 2015 at 3:00 pm.</p> </aside> <div class="social-buttons"> <h4>Share this:</h4> <ul class="social-icons"> <li><a class="social-facebook icon-facebook" href="http://www.facebook.com/sharer.php?u=http://www.rockpapershotgun.com/2015/09/17/have-you-played-kyrandia-2-hand-of-fate//"><span>Facebook</span></a></li> <li><a class="social-twitter icon-twitter" href="http://twitter.com/intent/tweet?text=Have You Played&#8230; Kyrandia 2: Hand Of Fate? http://www.rockpapershotgun.com/2015/09/17/have-you-played-kyrandia-2-hand-of-fate/"><span>{{this is}}</span></a></li> <li><a class="social-reddit icon-reddit" href="http://www.reddit.com/submit?url=http://www.rockpapershotgun.com/2015/09/17/have-you-played-kyrandia-2-hand-of-fate//"><span>Reddit</span></a></li> </ul> </div> </div>';
-
-        str = '<div>{{one}}</div><p></p><br /><div>{{two}}</div>';
-        var MUSTACHE = /\{\{([^}]*)\}\}/;
-
-        str = '<div><!--sfera><--!></div><p></p><br /><div>{{two}}</div>';
-
-        function myRep(what) {
-            switch (what) {
-            case "one":
-                return "1";
-                break;
-            case "two":
-                return "2";
-                break;
+        /*/
+        function myRep(match, capture) {
+            switch (capture) {
+                case "one":
+                    return "1";
+                    break;
+                case "two":
+                    return "2";
+                    break;
             }
 
             return "";
         }
+        //str = '<div class="hr"></div> <p class="tags hidden-mobile"><a href="http://www.rockpapershotgun.com/tag/arkane-studios/" rel="tag">Arkane Studios</a>, <a href="http://www.rockpapershotgun.com/tag/bethesda/" rel="tag">Bethesda</a>, <a href="http://www.rockpapershotgun.com/tag/dishonored/" rel="tag">Dishonored</a>, <a href="http://www.rockpapershotgun.com/tag/dishonored-2/" rel="tag">Dishonored 2</a>.</p> <p class="comments"><a href="http://www.rockpapershotgun.com/2015/09/17/dishonored-2-karnaca/#comments" title="Comment on Southland Tales: Dishonored 2&#8217;s Sun-Scorched Bloodflies">21 Comments &#187;</a></p> </footer> </div> </div> <div id="post-314999" class="block featured-block"> <p class="featured-block-title"> <a class="featured-block__text featured-block__text--feature" href="http://www.rockpapershotgun.com/category/featured-articles">RPS Feature</a> It's a number one. </p> <div class="post-inner"> <h2><a href="http://www.rockpapershotgun.com/2015/09/17/is-this-gamings-greatest-toilet-the-toilet-publishers-dont-want-you-to-see/" rel="bookmark" title="Permanent Link to Is This Gaming&#8217;s Greatest Toilet? The Toilet Publishers Don&#8217;t Want You To See">Is This Gaming&#8217;s Greatest Toilet? The Toilet Publishers Don&#8217;t Want You To See</a></h2> <div class="entry"> <div class="top-matter hidden-mobile"> <aside class="byline"> <p>By <a href="/cdn-cgi/l/email-protection#472d61647676767c2f61647676777c616471737c352861647e7e7c61647677707c61647676757c61647e707c61647676757c2261647676737c61647676727c616476X04;ot&#103;un.c&#111;&#109;">John Walker</a> on September 17th, 2015 at 5:00 pm.</p> </aside> <div class="social-buttons"> <h4>Share this:</h4> <ul class="social-icons"> <li><a class="social-facebook icon-facebook" href="http://www.facebook.com/sharer.php?u=http://www.rockpapershotgun.com/2015/09/17/is-this-gamings-greatest-toilet-the-toilet-publishers-dont-want-you-to-see//"><span>Facebook</span></a></li> <li><a class="social-twitter icon-twitter" href="http://twitter.com/intent/tweet?text=Is This Gaming&#8217;s Greatest Toilet? The Toilet Publishers Don&#8217;t Want You To See http://www.rockpapershotgun.com/2015/09/17/is-this-gamings-greatest-toilet-the-toilet-publishers-dont-want-you-to-see/"><span>Twitter</span></a></li> <li><a class="social-reddit icon-reddit" href="http://www.reddit.com/submit?url=http://www.rockpapershotgun.com/2015/09/17/is-this-gamings-greatest-toilet-the-toilet-publishers-dont-want-you-to-see//"><span>Reddit</span></a></li> </ul> </div> </div> <p><a href="http://www.rockpapershotgun.com/images/15/sep/albt1b.jpg" rel="lightbox[314999]"><img src="http://www.rockpapershotgun.com/images/15/sep/albt1.jpg" alt=""/></a></p> <p><em>I&#8217;m really getting the hang of these headlines, I think. In <a href="http://www.rockpapershotgun.com/2015/09/15/albino-lullaby-review/">my review of Albino Lullaby</a> this week, I included a throwaway line that I then didn&#8217;t justify in pictorial form. I wrote that it features, &#822#8220;the best toilet in gaming history.&#8221; You can&#8217;t just say a thing like that and expect not to be required to prove it. I think the image above has already done that, but there are more, just in case &#8211; click on them to appreciate them fully.</em></p> <p> <a href="http://www.rockpapershotgun.com/2015/09/17/is-this-gamings-greatest-toilet-the-toilet-publishers-dont-want-you-to-see/#more-314999" class="more-link">Read the rest of this entry &raquo;</a></p> </div> <footer class="article-footer"> <div class="hr"></div> <p class="tags hidden-mobile"><a href="http://www.rockpapershotgun.com/tag/albino-lullaby/" rel="tag">Albino Lullaby</a>, <a href="http://www.rockpapershotgun.com/tag/ape-law/" rel="tag">Ape Law</a>, <a href="http://www.rockpapershotgun.com/tag/feature/" rel="tag">feature</a>, <a href="http://www.rockpapershotgun.com/tag/toilets-in-games/" rel="tag">toilets-in-games</a>.</p> <p class="comments"><a href="http://www.rockpapershotgun.com/2015/09/17/is-this-gamings-greatest-toilet-the-toilet-publishers-dont-want-you-to-see/#comments" title="Comment on Is This Gaming&#8217;s Greatest Toilet? The Toilet Publishers Don&#8217;t Want You To See">20 Comments &#187;</a></p> </footer> </div> </div> <div id="post-315221" class="block featured-block"> <div class="post-inner"> <h2><a href="http://www.rockpapershotgun.com/2015/09/17/warhammer-40k-deathwatch-pc/" rel="bookmark" title="Permanent Link to Warhammer 40,000: Deathwatch Crusading Onto PC">Warhammer 40,000: Deathwatch Crusading Onto PC</a></h2> <div class="entry"> <div class="top-matter hidden-mobile"> <aside class="byline"> <p>By <a href="/cdn-cgi/l/email-protection#e584c3c6d4d5ddde8cc3c6dcdcde80c3c6d3d1dec3c6d4d4d1dec3c6d4d4d4de86c3c6d4d5d2dec3c6d4d4d7de8495c3c6d4d5d4de97c3c6d4d4d0dec3c6d4d5d1deXo&#116;gu&#110;&#46;&#99;o&#109;">Alice O'Connor</a> on September 17th, 2015 at 4:11 pm.</p> </aside> <div class="social-buttons"> <h4>Share this:</h4> <ul class="social-icons"> <li><a class="social-facebook icon-facebook" href="http://www.facebook.com/sharer.php?u=http://www.rockpapershotgun.com/2015/09/17/warhammer-40k-deathwatch-pc//"><span>Facebook</span></a></li> <li><a class="social-twitter icon-twitter" href="http://twitter.com/intent/tweet?text=Warhammer 40,000: Deathwatch Crusading Onto PC http://www.rockpapershotgun.com/2015/09/17/warhammer-40k-deathwatch-pc/"><span>Twitter</span></a></li> <li><a class="social-reddit icon-reddit" href="http://www.reddit.com/submit?url=http://www.rockpapershotgun.com/2015/09/17/warhammer-40k-deathwatch-pc//"><span>Reddit</span></a></li> </ul> </div> </div> <p><img src="http://www.rockpapershotgun.com/images/15/sep/17wh40kdeathwatch.jpg" title="Aye, a can of Raid won't solve this one."/></p> <p>The Warhammer 40,000 game I&#8217;d really like is still <a href="http://www.rockpapershotgun.com/2015/07/14/dawn-of-war-3-rumours/">Dawn of War 3</a>, but in the meantime I shall need to investigate other opportunities to wear a big ole skull on my crotch.</p> <p>Rodeo Games, the folks behind <a href="http://www.rockpapershotgun.com/tag/warhammer-quest/">Warhammer Quest</a>, have announced that they&#8217;re bringing another mobile doodad over to PC a little fancied up, and this one has all the crotchskulls I demand &#8211; Warhammer 40,000: Deathwatch [<a href="http://rodeogames.co.uk/deathwatch">official site</a>]. It&#8217;s a turn-based tactical affair about hunting down and squishing those naughty Tyranids, from cities to the guts of bio-ships, while expanding, levelling up, and equipping your Deathwatch Kill Team.</p> <p> <a href="http://www.rockpapershotgun.com/2015/09/17/warhammer-40k-deathwatch-pc/#more-315221" class="more-link">Read the rest of this entry &raquo;</a></p> </div> <footer class="article-footer"> <div class="hr"></div> <p class="tags hidden-mobile"><a href="http://www.rockpapershotgun.com/tag/rodeo-games/" rel="tag">Rodeo Games</a>, <a href="http://www.rockpapershotgun.com/tag/warhammer-40000/" rel="tag">Warhammer 40000</a>, <a href="http://www.rockpapershotgun.com/tag/warhammer-40000-deathwatch/" rel="tag">Warhammer 40000: Deathwatch</a>, <a href="http://www.rockpapershotgun.com/tag/warhammer-40000-deathwatch-enhanced-edition/" rel="tag">Warhammer 40000: Deathwatch - Enhanced Edition</a>.</p> <p class="comments"><a href="http://www.rockpapershotgun.{{that is}}com/2015/09/17/warhammer-40k-deathwatch-pc/#comments" title="Comment on Warhammer 40,000: Deathwatch Crusading Onto PC">10 Comments &#187;</a></p> </footer> </div> </div> <div id="post-299851" class="block featured-block"> <div class="post-inner"> <h2><a href="http://www.rockpapershotgun.com/2015/09/17/have-you-played-kyrandia-2-hand-of-fate/" rel="bookmark" title="Permanent Link to Have You Played&#8230; Kyrandia 2: Hand Of Fate?">Have You Played&#8230; Kyrandia 2: Hand Of Fate?</a></h2> <div class="entry"> <div class="top-matter hidden-mobile"> <aside class="byline"> <p>By <a href="/cdn-cgi/l/email-protection#91b7b2a0a0a5aab7b2a0a1a4aab7b2a8a8aab7b2a0a1a5aaf0b7b2a0a0a5aaf5b7b2a7a5aae3feb7b2a8a8aafab7b2a0a0a3aaf0b7b2a0a0a3aab7b2a0a1a0aab7b2X114;&#115;hot&#103;un.&#99;&#111;&#109;">Richard Cobbett</a> on September 17th, 2015 at 3:00 pm.</p> </aside> <div class="social-buttons"> <h4>Share this:</h4> <ul class="social-icons"> <li><a class="social-facebook icon-facebook" href="http://www.facebook.com/sharer.php?u=http://www.rockpapershotgun.com/2015/09/17/have-you-played-kyrandia-2-hand-of-fate//"><span>Facebook</span></a></li> <li><a class="social-twitter icon-twitter" href="http://twitter.com/intent/tweet?text=Have You Played&#8230; Kyrandia 2: Hand Of Fate? http://www.rockpapershotgun.com/2015/09/17/have-you-played-kyrandia-2-hand-of-fate/"><span>{{this is}}</span></a></li> <li><a class="social-reddit icon-reddit" href="http://www.reddit.com/submit?url=http://www.rockpapershotgun.com/2015/09/17/have-you-played-kyrandia-2-hand-of-fate//"><span>Reddit</span></a></li> </ul> </div> </div>';
+        //str = '<div><!--sfera><--!></div><p></p><br /><div>{{two}}</div>';
+        str = '<div>{{one}}</div><p></p><br /><div>{{two}}</div>';
+        str = str.replace(MUSTACHE, myRep); // return 'gold ' + capture + '|' + match; "gold ring|string"
+        /**/
 
+        var value = attr.source;
 
-        str.replace(MUSTACHE, function (match, capture) { return myRep(capture); }); // return 'gold ' + capture + '|' + match; "gold ring|string"
+        // mustache
+        if (attr.mustache) {
+            function rep(match, capture) {
+                return Sfera.client.getNodeValue(capture);
+            }
+            value = value.replace(MUSTACHE, rep);
+        }
+
+        // type
+        switch (attr.type) {
+            case "integer":
+                value = parseInt(value);
+                break;
+            case "string":
+                break;
+            case "boolean":
+                value = !(value === "false" || value === false || value === undefined || value === null);
+                break;
+        }
+
+        // done
+        return value;
     };
 
-};
+})();
 
 
 /**
@@ -328,6 +368,11 @@ Sfera.Attribute.prototype = {
     set: function(value, manualUpdate) {
         this.changed = true;
         this.source = value;
+        this.mustache = Sfera.Compiler.getMustacheData(value);
+        if (this.mustache) {
+            for (var i=0; i<this.mustache.vars.length; i++)
+                Sfera.client.bindAttrObserver(this.mustache.vars[i], this);
+        }
         if (!manualUpdate)
             this.compile();
     },
@@ -338,7 +383,7 @@ Sfera.Attribute.prototype = {
 
     compile: function () {
         this.changed = false;
-        this.value = this.source; //Sfera.Compiler.compileAttributeValue(this.source);
+        this.value = Sfera.Compiler.compileAttributeValue(this);
         this.update();
     },
 
@@ -592,16 +637,6 @@ Sfera.Client = function(config) {
     this.device = null;
 
     /**
-     * @property {Sfera.Net} net - Reference to the network manager.
-     */
-    this.net = null;
-
-    /**
-     * @property {Sfera.Compiler} compiler - Reference to the compiler.
-     */
-    this.compiler = null;
-
-    /**
      * @property {Sfera.ComponentManager} - Reference to the component manager.
      */
     this.components = null;
@@ -623,6 +658,8 @@ Sfera.Client = function(config) {
     this.cPage = null;
 
     var manifestTimestamp = 0;
+
+    var self = this;
 
     // Default settings
     var _defaultConfig = {
@@ -685,10 +722,6 @@ Sfera.Client = function(config) {
 
         this.isBooted = true;
 
-        this.net = new Sfera.Net(this);
-
-        this.compiler = new Sfera.Compiler(this);
-
         this.components = new Sfera.ComponentManager(this);
 
         // get name
@@ -707,7 +740,12 @@ Sfera.Client = function(config) {
 
         this.showDebugHeader();
 
-        this.net.boot();
+        // configure Sfera.Net
+        Sfera.Net.onReply.add(onReply);
+        Sfera.Net.onEvent.add(onEvent);
+        Sfera.Net.onUpdateDictionary.add(onUpdateDictionary);
+        Sfera.Net.onUpdateIndex.add(onUpdateIndex);
+        Sfera.Net.connect();
 
         window.onresize = adjustLayout;
 
@@ -783,14 +821,29 @@ Sfera.Client = function(config) {
         // ???
     };
 
-    this.onUpdateDictionary = function(xmlDoc) {
-        var root = this.compiler.compileDictionary(xmlDoc);
+
+    // Net callbacks
+    function onReply(json) {
+        if (json.result && json.result.uiSet) {
+            for (var u in json.result.uiSet) {
+                var n = u.split(".");
+                var a = n.pop();
+                var c = self.components.getObjsById(n.join("."));
+                for (var i=0; i<c.length; i++) {
+                    c[i].setAttribute(a,json.result.uiSet[u]);
+                }
+            }
+        }
+    }
+
+    function onUpdateDictionary(xmlDoc) {
+        var root = Sfera.Compiler.compileDictionary(xmlDoc);
     };
-    this.onUpdateIndex = function(xmlDoc) {
-        var root = this.compiler.compileXML(xmlDoc);
+    function onUpdateIndex(xmlDoc) {
+        var root = Sfera.Compiler.compileXML(xmlDoc);
         document.getElementById("sfera").appendChild(root.element);
 
-        this.start();
+        self.start();
     };
 
     this.start = function () {
@@ -826,40 +879,43 @@ Sfera.Client = function(config) {
         }
     };
 
-    this.commandQueue = [];
-    this.sendCommand = function(command, sender) {
+    var commandQueue = [];
+    this.sendCommand = function(command, callback) {
         var tag = (new Date()).getTime();
         var req = {
             command: command,
             tag: tag,
-            sender: sender
+            callback: callback
         };
-        this.commandQueue.push(req);
-        this.net.sendCommand(req);
+        commandQueue.push(req);
+        Sfera.Net.sendCommand(req);
 
         return tag;
     };
 
-    this.eventQueue = [];
-    this.sendEvent = function(id, value, sender) {
+    var eventQueue = [];
+    this.sendEvent = function(id, value, callback) {
         var tag = (new Date()).getTime(); // request id
         var req = {
             id: "webapp.ui."+id,
             value: value,
             tag: tag,
-            sender: sender
+            callback: callback
         };
-        this.eventQueue.push(req);
-        this.net.sendEvent(req);
+        eventQueue.push(req, callback);
+        Sfera.Net.sendEvent(req);
 
         return tag;
     };
 
-    this.onCommand = function(command) {
 
-    };
+    var nodeValues = {};
 
-    this.onEvent = function(json) {
+    this.getNodeValue = function (node) {
+        return nodeValues[node] ? nodeValues[node] : "";
+    }
+
+    function onEvent(json) {
         // {"type":"event","events":{"remote.myvalue":"5","system.plugins":"reload","remote.":"undefined","system.state":"ready"}}
         // {"type":"event","events":{"gui.button_link1.label":"changed"}}
         for (var e in json.nodes) {
@@ -869,7 +925,7 @@ Sfera.Client = function(config) {
                 if (n[1] == "set") {
                     n = n.slice(2);
                     var a = n.pop();
-                    var c = this.components.getObjsById(n.join("."));
+                    var c = self.components.getObjsById(n.join("."));
                     for (var i=0; i<c.length; i++) {
                         c[i].setAttribute(a,json.nodes[e]);
                     }
@@ -878,7 +934,7 @@ Sfera.Client = function(config) {
             case "webapp":
                 //webapp.interface.new.update":1446813798521
                 if (n[1] == "interface" &&
-                    n[2] == this.name &&
+                    n[2] == self.name &&
                     n[3] == "update") {
                     if (json.nodes[e] != manifestTimestamp) {
                         manifestTimestamp = json.nodes[e];
@@ -887,13 +943,15 @@ Sfera.Client = function(config) {
                 }
                 break;
             }
+
+            // update local node values
+            nodeValues[e] = json.nodes[e];
+
+            // attribute observer
+            if (attrObservers[e])
+                attrObservers[e].dispatch();
         }
     }
-
-    this.onStateUpdate = function() {
-
-    };
-
     function adjustLayout() {
         // not initialized yet
         if (!interfaceC) return;
@@ -930,6 +988,17 @@ Sfera.Client = function(config) {
         } // viewportWidth>0
     } // adjustLayout()
 
+
+    var attrObservers = {};
+    // attribute observers
+    this.bindAttrObserver = function (node, attribute) {
+        if (!attrObservers[node])
+            attrObservers[node] = new Sfera.Signal();
+        attrObservers[node].addOnce(attribute.compile, attribute);
+    }
+    this.removeAttrObserver = function (node) {
+
+    }
 };
 
 
@@ -984,7 +1053,7 @@ Sfera.Debug = new(function() {
     }
 
     var logCounter = 0;
-    this.log = function(title, txt) {
+    this.log = function(level, title, txt) {
         logCounter++;
 
         var ds = Sfera.Utils.getDate();
@@ -2365,15 +2434,9 @@ Sfera.UI.Button.prototype = {
  *
  * @class Sfera.Net
  * @constructor
- * @param {Sfera.Client} client - A reference to the currently running client.
  */
-Sfera.Net = function(client) {
-
-    this.client = client;
-
-    var req = new Sfera.Net.Request();
-    req.onLoaded = onReqLoaded;
-    req.onError = onReqError;
+Sfera.Net = new (function() {
+    var req;
 
     var webSocket;
     var wsConnected = false;
@@ -2385,6 +2448,13 @@ Sfera.Net = function(client) {
     var pingInterval;
     var responseTimeout;
     var connCheckTimeoutId;
+
+    // signals
+    this.onMessage = new Sfera.Signal();
+    this.onEvent = new Sfera.Signal();
+    this.onReply = new Sfera.Signal();
+    this.onUpdateDictionary = new Sfera.Signal();
+    this.onUpdateIndex = new Sfera.Signal();
 
     function openSocket() {
         console.log(Sfera.Utils.getDate("hisu") + " - opening socket on " + wsUrl);
@@ -2412,27 +2482,20 @@ Sfera.Net = function(client) {
 
         webSocket.onmessage = function(event) {
             console.log(Sfera.Utils.getDate("hisu") + " - received: " + event.data);
+
             // ping
             if (event.data == "&") {
                 resetConnCheckTimeout();
                 self.wsSend("&");
             } else {
+                self.onMessage.dispatch(event.data);
                 Sfera.Debug.log("websocket: onmessage", event.data);
                 json = JSON.parse(event.data);
 
                 // {"type":"event","events":{"remote.myvalue":"5","system.plugins":"reload","remote.":"undefined","system.state":"ready"}}
                 switch (json.type) {
                     case "reply":
-                        if (json && json.result && json.result.uiSet) {
-                            for (var u in json.result.uiSet) {
-                                var n = u.split(".");
-                                var a = n.pop();
-                                var c = Sfera.client.components.getObjsById(n.join("."));
-                                for (var i=0; i<c.length; i++) {
-                                    c[i].setAttribute(a,json.result.uiSet[u]);
-                                }
-                            }
-                        }
+                        self.onReply.dispatch(json);
                         break;
                     case "connection":
                         pingInterval = parseInt(json.pingInterval);
@@ -2450,7 +2513,7 @@ Sfera.Net = function(client) {
                         wsConnected = true;
                         break;
                     case "event":
-                        client.onEvent(json);
+                        self.onEvent.dispatch(json);
                         break;
                 }
             }
@@ -2551,12 +2614,18 @@ Sfera.Net = function(client) {
         return (new Date()).getTime();
     }
 
-    // boot
-    this.boot = function() {
+    // connect
+    this.connect = function() {
+        if (!req) {
+            req = new Sfera.Net.Request()
+            req.onLoaded = onReqLoaded;
+            req.onError = onReqError;
+        }
+
         wsUrl = Sfera.urls.get("websocket");
 
         this.sync();
-    }; // boot()
+    }; // connect()
 
     // sync, if necessary
     this.sync = function() {
@@ -2597,11 +2666,11 @@ Sfera.Net = function(client) {
         switch (cSync) {
             case "dictionary":
                 console.log("loaded dictionary");
-                client.onUpdateDictionary(req.getResponseXML())
+                self.onUpdateDictionary.dispatch(req.getResponseXML())
                 break;
             case "index":
                 console.log("loaded index");
-                client.onUpdateIndex(req.getResponseXML());
+                self.onUpdateIndex.dispatch(req.getResponseXML());
                 break;
 
             case "subscribe":
@@ -2664,7 +2733,7 @@ Sfera.Net = function(client) {
 
     };
 
-};
+})();
 
 
 Sfera.Net.Request = function () {
