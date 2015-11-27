@@ -54,9 +54,8 @@ public abstract class ResourcesUtil {
 		if (webAppPlugin != null) {
 			webAppPluginPath = webAppPlugin.getPath();
 		} else {
-			// When developing is OK...
 			logger.warn(
-					"WebApp plugin not found. If you are not developing it, there is something wrong.");
+					"WebApp plugin not found. If you are not developing it there is something wrong");
 		}
 		for (Plugin plugin : Plugins.getAll().values()) {
 			if (!plugin.getId().equals(webAppPluginId)) {

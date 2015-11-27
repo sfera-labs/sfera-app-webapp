@@ -65,7 +65,7 @@ public class JavaScriptBuilder {
 		for (String name : fileNames) {
 			JsFile jsFile;
 			if (customJs == null) {
-				if (name.contains("client.custom_intro.js")) {
+				if (name.endsWith("client.custom_intro.js")) {
 					jsFile = new JsFile("custom.js");
 					customJs = jsFile;
 				} else {

@@ -3,7 +3,7 @@
  */
 package cc.sferalabs.sfera.apps.webapp.events;
 
-import java.io.IOException;
+import javax.servlet.http.HttpServletRequest;
 
 import cc.sferalabs.sfera.http.api.HttpApiEvent;
 import cc.sferalabs.sfera.ui.UIEvent;
@@ -36,6 +36,15 @@ public class WebUIEvent extends UIEvent {
 	}
 
 	/**
+	 * @return
+	 */
+	public HttpServletRequest getHttpRequest() {
+		return httpEvent.getSource().getHttpRequest();
+	}
+
+	/**
+	 * TODO remove
+	 * 
 	 * @return
 	 */
 	public synchronized RemoteUi getRemoteUi() {
