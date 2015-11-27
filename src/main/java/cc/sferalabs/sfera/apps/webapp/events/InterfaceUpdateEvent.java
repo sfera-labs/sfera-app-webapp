@@ -3,7 +3,6 @@
  */
 package cc.sferalabs.sfera.apps.webapp.events;
 
-import cc.sferalabs.sfera.apps.webapp.WebApp;
 import cc.sferalabs.sfera.events.NumberEvent;
 
 /**
@@ -21,7 +20,7 @@ public class InterfaceUpdateEvent extends NumberEvent {
 	 * @param timestamp
 	 */
 	public InterfaceUpdateEvent(String interfaceName, long timestamp) {
-		super(WebApp.getInstance(), "interface." + interfaceName + ".update", timestamp);
+		super(WebAppNode.INSTANCE, "interface." + interfaceName + ".update", timestamp);
 	}
 
 }

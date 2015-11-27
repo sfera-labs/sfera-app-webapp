@@ -39,7 +39,7 @@ public class WebUIEvent extends UIEvent {
 	 * @return
 	 */
 	public HttpServletRequest getHttpRequest() {
-		return httpEvent.getSource().getHttpRequest();
+		return httpEvent.getHttpRequest();
 	}
 
 	/**

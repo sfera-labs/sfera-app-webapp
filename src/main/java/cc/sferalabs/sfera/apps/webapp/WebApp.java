@@ -11,35 +11,14 @@ import cc.sferalabs.sfera.apps.webapp.servlets.AuthInterfaceCacheServletHolder;
 import cc.sferalabs.sfera.apps.webapp.servlets.InterfaceCacheServletHolder;
 import cc.sferalabs.sfera.core.Configuration;
 import cc.sferalabs.sfera.events.Bus;
-import cc.sferalabs.sfera.events.Node;
 import cc.sferalabs.sfera.http.HttpServer;
 import cc.sferalabs.sfera.http.HttpServerException;
 import cc.sferalabs.sfera.http.api.HttpApiEvent;
 
-public class WebApp extends Application implements Node {
+public class WebApp extends Application {
 
 	static final Path ROOT = Paths.get("webapp/");
 	private static final String EVENTS_PREFIX = "webapp.ui.";
-	private static WebApp INSTANCE;
-
-	/**
-	 * 
-	 */
-	public WebApp() {
-		INSTANCE = this;
-	}
-
-	/**
-	 * @return the instance
-	 */
-	public static WebApp getInstance() {
-		return INSTANCE;
-	}
-
-	@Override
-	public String getId() {
-		return "webapp";
-	}
 
 	@Override
 	public void onEnable(Configuration config) {
