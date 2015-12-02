@@ -13,7 +13,7 @@ import cc.sferalabs.sfera.core.Configuration;
 import cc.sferalabs.sfera.events.Bus;
 import cc.sferalabs.sfera.http.HttpServer;
 import cc.sferalabs.sfera.http.HttpServerException;
-import cc.sferalabs.sfera.http.api.HttpApiEvent;
+import cc.sferalabs.sfera.http.api.RemoteApiEvent;
 
 public class WebApp extends Application {
 
@@ -43,7 +43,7 @@ public class WebApp extends Application {
 	}
 
 	@Subscribe
-	public void handleHttpEvent(HttpApiEvent event) {
+	public void handleHttpEvent(RemoteApiEvent event) {
 		String id = event.getSubId();
 		if (id.startsWith(EVENTS_PREFIX)) {
 			Bus.post(new WebUIEvent(id.substring(EVENTS_PREFIX.length()), event));

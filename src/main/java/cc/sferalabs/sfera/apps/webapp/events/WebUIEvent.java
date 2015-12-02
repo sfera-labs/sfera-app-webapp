@@ -5,7 +5,7 @@ package cc.sferalabs.sfera.apps.webapp.events;
 
 import javax.servlet.http.HttpServletRequest;
 
-import cc.sferalabs.sfera.http.api.HttpApiEvent;
+import cc.sferalabs.sfera.http.api.RemoteApiEvent;
 import cc.sferalabs.sfera.ui.UIEvent;
 
 /**
@@ -17,7 +17,7 @@ import cc.sferalabs.sfera.ui.UIEvent;
  */
 public class WebUIEvent extends UIEvent {
 
-	private final HttpApiEvent httpEvent;
+	private final RemoteApiEvent httpEvent;
 	private RemoteUi remoteUi;
 
 	/**
@@ -25,8 +25,8 @@ public class WebUIEvent extends UIEvent {
 	 * @param id
 	 * @param httpEvent
 	 */
-	public WebUIEvent(String id, HttpApiEvent httpEvent) {
-		super(id, httpEvent.getValue());
+	public WebUIEvent(String id, RemoteApiEvent httpEvent) {
+		super(id, httpEvent.getValue(), httpEvent.getConnectionId());
 		this.httpEvent = httpEvent;
 	}
 
