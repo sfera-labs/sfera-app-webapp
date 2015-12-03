@@ -923,7 +923,7 @@ Sfera.Client = function(config) {
             switch (n[0]) {
             case "ui":
                 if (n[1] == "set") {
-                    n = n.slice(2);
+                    n = n.slice(3);
                     var a = n.pop();
                     var c = self.components.getObjsById(n.join("."));
                     for (var i=0; i<c.length; i++) {

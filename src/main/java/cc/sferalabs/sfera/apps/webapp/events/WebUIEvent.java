@@ -18,7 +18,6 @@ import cc.sferalabs.sfera.ui.UIEvent;
 public class WebUIEvent extends UIEvent {
 
 	private final RemoteApiEvent httpEvent;
-	private RemoteUi remoteUi;
 
 	/**
 	 * 
@@ -40,18 +39,6 @@ public class WebUIEvent extends UIEvent {
 	 */
 	public HttpServletRequest getHttpRequest() {
 		return httpEvent.getHttpRequest();
-	}
-
-	/**
-	 * TODO remove
-	 * 
-	 * @return
-	 */
-	public synchronized RemoteUi getRemoteUi() {
-		if (remoteUi == null) {
-			remoteUi = new RemoteUi();
-		}
-		return remoteUi;
 	}
 
 }
