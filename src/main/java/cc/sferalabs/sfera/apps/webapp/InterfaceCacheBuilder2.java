@@ -13,11 +13,9 @@ import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.script.ScriptException;
@@ -46,9 +44,9 @@ import cc.sferalabs.sfera.events.Bus;
  * @version 1.0.0
  *
  */
-public class InterfaceCacheBuilder {
+public class InterfaceCacheBuilder2 {
 
-	private static final Logger logger = LoggerFactory.getLogger(InterfaceCacheBuilder.class);
+	private static final Logger logger = LoggerFactory.getLogger(InterfaceCacheBuilder2.class);
 
 	private static final String CACHE_MANIFEST_NAME = "sfera.appcache";
 
@@ -66,6 +64,10 @@ public class InterfaceCacheBuilder {
 	private final Path interfaceCacheRoot;
 	private final Path interfaceTmpCacheRoot;
 
+	private Set<String> conponents = new HashSet<String>();
+	private String skin = null;
+	private String language = null;
+	private String iconSet = null;
 	private long timestamp;
 
 	/**
@@ -74,7 +76,7 @@ public class InterfaceCacheBuilder {
 	 * @param useJSBuilder
 	 * @throws IOException
 	 */
-	InterfaceCacheBuilder(String interfaceName, boolean useJSBuilder) throws IOException {
+	InterfaceCacheBuilder2(String interfaceName, boolean useJSBuilder) throws IOException {
 		this.interfaceName = interfaceName;
 		this.useJSBuilder = useJSBuilder;
 		this.interfaceTmpCacheRoot = Files.createTempDirectory(getClass().getName());
@@ -90,12 +92,8 @@ public class InterfaceCacheBuilder {
 	void build() throws XMLStreamException, IOException, ScriptException {
 		try {
 			timestamp = System.currentTimeMillis();
-			Files.createDirectories(interfaceTmpCacheRoot.resolve("login"));
-			Map<String, String> attributes = new HashMap<>();
-			attributes.put("language", null);
-			attributes.put("skin", null);
-			createCache("/", attributes);
-			createCache("/login/", attributes);
+			createIntefaceCache();
+			createLoginCache();
 			Files.move(interfaceTmpCacheRoot, interfaceCacheRoot);
 			Bus.post(new InterfaceUpdateEvent(interfaceName, timestamp));
 		} finally {
@@ -109,111 +107,60 @@ public class InterfaceCacheBuilder {
 
 	/**
 	 * 
-	 * @param sub
-	 * @param attributes
 	 * @throws IOException
 	 * @throws XMLStreamException
 	 * @throws ScriptException
 	 */
-	private void createCache(String sub, Map<String, String> attributes)
-			throws IOException, XMLStreamException, ScriptException {
-		Path indexXml;
-		try {
-			indexXml = copyToCache("interfaces/" + interfaceName + sub + "index.xml", sub + "index.xml");
-		} catch (NoSuchFileException nsfe) {
-			String skin = attributes.get("skin");
-			if (skin == null) {
-				throw nsfe;
-			}
-			indexXml = copyToCache("skins/" + skin + sub + "index.xml", sub + "index.xml");
-		}
-		Set<String> components = new HashSet<String>();
-		extractComponentsAndInterfaceAttributes(indexXml, components, attributes);
-		createDictionaryAndExtractSkinIconSet(sub, components, attributes);
-		Set<Path> resources = copyResources(sub, components, attributes);
-		createHTML("skins" + sub + "index.html", sub + "index.html", sub + CACHE_MANIFEST_NAME);
-		createCode(sub, components, attributes);
-		createCSS(sub, components, attributes);
+	private void createIntefaceCache() throws IOException, XMLStreamException, ScriptException {
+		createInterfaceXmlAndExtractAttributes();
+		createDictionaryAndExtractSkinIconSet();
+		Set<Path> resources = copyResources();
+		createIndex("skins/index.html", "index.html", "/" + CACHE_MANIFEST_NAME, false);
+		createInterfaceCode();
+		createInterfaceCSS();
 		if (Cache.useApplicationCache) {
-			resources.add(interfaceTmpCacheRoot.resolve("." + sub + "style.css"));
-			resources.add(interfaceTmpCacheRoot.resolve("." + sub + "code.js"));
-			createManifest(sub + CACHE_MANIFEST_NAME, resources);
+			resources.add(interfaceTmpCacheRoot.resolve("style.css"));
+			resources.add(interfaceTmpCacheRoot.resolve("code.js"));
+			createManifest(CACHE_MANIFEST_NAME, resources);
 		}
 	}
 
 	/**
 	 * 
-	 * @param source
-	 * @param target
-	 * @return
 	 * @throws IOException
 	 */
-	private Path copyToCache(String source, String target) throws IOException {
-		Path s = ResourcesUtil.getResource(WebApp.ROOT.resolve(source));
-		Path t = interfaceTmpCacheRoot.resolve("." + target);
-		return Files.copy(s, t);
-	}
-
-	/**
-	 * 
-	 * @param file
-	 * @param components
-	 * @param attributes
-	 * @throws IOException
-	 * @throws XMLStreamException
-	 */
-	private void extractComponentsAndInterfaceAttributes(Path file, Set<String> components,
-			Map<String, String> attributes) throws IOException, XMLStreamException {
-		XMLEventReader eventReader = null;
-		try (BufferedReader in = Files.newBufferedReader(file, StandardCharsets.UTF_8)) {
-			eventReader = INPUT_FACTORY.createXMLEventReader(in);
-			while (eventReader.hasNext()) {
-				XMLEvent event = eventReader.nextEvent();
-				if (event.isStartElement()) {
-					StartElement startElement = event.asStartElement();
-					String comp = startElement.getName().getLocalPart();
-					components.add(comp);
-					if (comp.equals("interface")) {
-						Iterator<?> attrs = startElement.getAttributes();
-						while (attrs.hasNext()) {
-							Attribute attribute = (Attribute) attrs.next();
-							String attributeName = attribute.getName().getLocalPart();
-							if (attributes.containsKey(attributeName)) {
-								attributes.put(attributeName, attribute.getValue());
-							}
-						}
-					}
-				}
-			}
-		} finally {
-			try {
-				eventReader.close();
-			} catch (Exception e) {
-			}
+	private void createLoginCache() throws IOException {
+		Files.createDirectories(interfaceTmpCacheRoot.resolve("login"));
+		Set<String> imgs = createIndex("skins/login.html", "login/index.html",
+				"/login/" + CACHE_MANIFEST_NAME, true);
+		Set<Path> loginResources = copyLoginResources(imgs);
+		createLoginCode();
+		createLoginCSS();
+		if (Cache.useApplicationCache) {
+			loginResources.add(interfaceTmpCacheRoot.resolve("login/style.css"));
+			loginResources.add(interfaceTmpCacheRoot.resolve("login/code.js"));
+			createManifest("login/" + CACHE_MANIFEST_NAME, loginResources);
 		}
 	}
 
 	/**
 	 * 
-	 * @param sub
-	 * @param components
-	 * @param attributes
 	 * @throws IOException
 	 */
-	private void createCSS(String sub, Set<String> components, Map<String, String> attributes)
-			throws IOException {
+	private void createInterfaceCSS() throws IOException {
 		try (BufferedWriter writer = Files.newBufferedWriter(
-				interfaceTmpCacheRoot.resolve("." + sub + "style.css"), StandardCharsets.UTF_8)) {
-			String skin = attributes.get("skin");
+				interfaceTmpCacheRoot.resolve("style.css"), StandardCharsets.UTF_8)) {
 			writeContentFrom("skins/" + skin + "/" + skin + ".css", writer);
-			for (String comp : components) {
+
+			for (String comp : conponents) {
 				try {
 					writeContentFrom("components/" + comp + "/" + comp + ".css", writer);
 				} catch (NoSuchFileException e) {
 				}
 			}
+
 			try {
-				writeContentFrom("interfaces/" + interfaceName + sub + "style.css", writer);
+				writeContentFrom("interfaces/" + interfaceName + "/style.css", writer);
 			} catch (NoSuchFileException e) {
 			}
 		}
@@ -221,23 +168,29 @@ public class InterfaceCacheBuilder {
 
 	/**
 	 * 
-	 * @param sub
-	 * @param components
-	 * @param attributes
+	 * @throws IOException
+	 */
+	private void createLoginCSS() throws IOException {
+		try (BufferedWriter writer = Files.newBufferedWriter(
+				interfaceTmpCacheRoot.resolve("login/style.css"), StandardCharsets.UTF_8)) {
+			writeContentFrom("skins/" + skin + "/login/style.css", writer);
+		}
+	}
+
+	/**
+	 * 
 	 * @throws IOException
 	 * @throws ScriptException
 	 */
-	private void createCode(String sub, Set<String> components, Map<String, String> attributes)
-			throws IOException, ScriptException {
-		String skin = attributes.get("skin");
+	private void createInterfaceCode() throws IOException, ScriptException {
 		List<String> files = new ArrayList<>();
-		files.add("code" + sub + "client.js");
+		files.add("code/client.js");
 		files.add("skins/" + skin + "/" + skin + ".js");
-		for (String comp : components) {
+		for (String comp : conponents) {
 			files.add("components/" + comp + "/" + comp + ".js");
 		}
 		files.add("code/client.custom_intro.js");
-		String interfacePath = "interfaces/" + interfaceName + sub;
+		String interfacePath = "interfaces/" + interfaceName + "/";
 		try {
 			Set<String> customJsFiles = ResourcesUtil
 					.listRegularFilesNamesIn(WebApp.ROOT.resolve(interfacePath), true);
@@ -252,7 +205,7 @@ public class InterfaceCacheBuilder {
 
 		if (useJSBuilder) {
 			try {
-				JavaScriptBuilder.build(files, interfaceTmpCacheRoot.resolve("." + sub));
+				JavaScriptBuilder.build(files, interfaceTmpCacheRoot);
 				return;
 			} catch (Exception e) {
 				logger.warn("Error building cache for interface '" + interfaceName
@@ -261,10 +214,21 @@ public class InterfaceCacheBuilder {
 		}
 
 		try (BufferedWriter writer = Files.newBufferedWriter(
-				interfaceTmpCacheRoot.resolve("." + sub + "code.js"), StandardCharsets.UTF_8)) {
+				interfaceTmpCacheRoot.resolve("code.js"), StandardCharsets.UTF_8)) {
 			for (String file : files) {
 				writeContentFrom(file, writer);
 			}
+		}
+	}
+
+	/**
+	 * 
+	 * @throws IOException
+	 */
+	private void createLoginCode() throws IOException {
+		try (BufferedWriter writer = Files.newBufferedWriter(
+				interfaceTmpCacheRoot.resolve("login/code.js"), StandardCharsets.UTF_8)) {
+			writeContentFrom("code/login.js", writer);
 		}
 	}
 
@@ -299,11 +263,12 @@ public class InterfaceCacheBuilder {
 	 * @param source
 	 * @param target
 	 * @param manifestPath
+	 * @param extractImages
 	 * @return
 	 * @throws IOException
 	 */
-	private Set<String> createHTML(String source, String target, String manifestPath)
-			throws IOException {
+	private Set<String> createIndex(String source, String target, String manifestPath,
+			boolean extractImages) throws IOException {
 		Path indexPath = ResourcesUtil.getResource(WebApp.ROOT.resolve(source));
 		Set<String> imgs = new HashSet<String>();
 		List<String> lines = new ArrayList<String>();
@@ -332,61 +297,110 @@ public class InterfaceCacheBuilder {
 					tsReplaced = true;
 				}
 				if (line.contains("$interface;")) {
+					if (extractImages) {
+						String img = extractImage(line);
+						if (img != null) {
+							imgs.add(img);
+						}
+					}
 					line = line.replace("$interface;", interfaceName);
 				}
 				lines.add(line);
 			}
 		}
 
-		Files.write(interfaceTmpCacheRoot.resolve("." + target), lines, StandardCharsets.UTF_8);
+		Files.write(interfaceTmpCacheRoot.resolve(target), lines, StandardCharsets.UTF_8);
 
 		return imgs;
 	}
 
 	/**
 	 * 
-	 * @param sub
-	 * @param components
-	 * @param attributes
+	 * @param line
 	 * @return
+	 */
+	private String extractImage(String line) {
+		String imgPrefix = "/$interface;/login/icons/";
+		int imgIdx = line.indexOf(imgPrefix);
+		if (imgIdx >= 0) {
+			int begin = imgIdx + imgPrefix.length();
+			char[] terminators = { ')', ',', '"' };
+			int end = line.length();
+			for (char t : terminators) {
+				int tIdx = line.indexOf(t, begin);
+				if (tIdx > 0 && tIdx < end) {
+					end = tIdx;
+				}
+			}
+
+			return line.substring(begin, end);
+		}
+
+		return null;
+	}
+
+	/**
+	 * 
 	 * @throws IOException
 	 */
-	private Set<Path> copyResources(String sub, Set<String> components,
-			Map<String, String> attributes) throws IOException {
+	private Set<Path> copyResources() throws IOException {
 		Set<Path> resources = new HashSet<Path>();
 		resources.addAll(ResourcesUtil.copyRecursive(
-				WebApp.ROOT.resolve("interfaces/" + interfaceName + sub + "assets/"),
-				interfaceTmpCacheRoot.resolve("." + sub + "assets/"), true));
+				WebApp.ROOT.resolve("interfaces/" + interfaceName + "/assets/"),
+				interfaceTmpCacheRoot.resolve("assets/"), true));
 
-		Files.createDirectories(interfaceTmpCacheRoot.resolve("." + sub + "images/components/"));
+		Files.createDirectories(interfaceTmpCacheRoot.resolve("images/components/"));
 
-		resources.addAll(ResourcesUtil.copyRecursive(
-				WebApp.ROOT.resolve("skins/" + attributes.get("skin") + sub + "images/"),
-				interfaceTmpCacheRoot.resolve("." + sub + "images/skin/"), true));
+		resources.addAll(
+				ResourcesUtil.copyRecursive(WebApp.ROOT.resolve("skins/" + skin + "/images/"),
+						interfaceTmpCacheRoot.resolve("images/skin/"), true));
 
-		String iconSet = attributes.get("iconSet");
-		for (String c : components) {
+		for (String o : conponents) {
 			resources.addAll(ResourcesUtil.copyRecursive(
-					WebApp.ROOT.resolve("components/" + c + "/images/" + iconSet + "/"),
-					interfaceTmpCacheRoot.resolve("." + sub + "images/components/" + c + "/"),
-					true));
+					WebApp.ROOT.resolve("components/" + o + "/images/" + iconSet + "/"),
+					interfaceTmpCacheRoot.resolve("images/components/" + o + "/"), true));
 		}
 
 		resources.addAll(ResourcesUtil.copyRecursive(WebApp.ROOT.resolve("icons/" + iconSet + "/"),
-				interfaceTmpCacheRoot.resolve("." + sub + "icons/"), true));
+				interfaceTmpCacheRoot.resolve("icons/"), true));
 
 		return resources;
 	}
 
 	/**
 	 * 
-	 * @param path
+	 * @param images
+	 * @return
+	 * @throws IOException
+	 */
+	private Set<Path> copyLoginResources(Set<String> images) throws IOException {
+		Set<Path> loginResources = new HashSet<Path>();
+
+		Files.createDirectories(interfaceTmpCacheRoot.resolve("login/images/"));
+
+		loginResources.addAll(
+				ResourcesUtil.copyRecursive(WebApp.ROOT.resolve("skins/" + skin + "/login/images/"),
+						interfaceTmpCacheRoot.resolve("login/images/skin/"), true));
+
+		Files.createDirectories(interfaceTmpCacheRoot.resolve("login/icons/"));
+
+		for (String img : images) {
+			Files.copy(
+					ResourcesUtil.getResource(WebApp.ROOT.resolve("icons/" + iconSet + "/" + img)),
+					interfaceTmpCacheRoot.resolve("login/icons/" + img));
+		}
+
+		return loginResources;
+	}
+
+	/**
+	 * 
 	 * @param resources
 	 * @throws IOException
 	 */
 	private void createManifest(String path, Set<Path> resources) throws IOException {
-		try (BufferedWriter writer = Files.newBufferedWriter(
-				interfaceTmpCacheRoot.resolve("." + path), StandardCharsets.UTF_8)) {
+		try (BufferedWriter writer = Files.newBufferedWriter(interfaceTmpCacheRoot.resolve(path),
+				StandardCharsets.UTF_8)) {
 			writer.write("CACHE MANIFEST\r\n\r\n# ");
 			writer.write(DATE_FORMAT.format(new Date()));
 			writer.write("\r\n\r\nCACHE:\r\n");
@@ -408,18 +422,13 @@ public class InterfaceCacheBuilder {
 
 	/**
 	 * 
-	 * @param sub
-	 * @param components
-	 * @param attributes
 	 * @throws IOException
 	 * @throws XMLStreamException
 	 */
-	private void createDictionaryAndExtractSkinIconSet(String sub, Set<String> components,
-			Map<String, String> attributes) throws IOException, XMLStreamException {
+	private void createDictionaryAndExtractSkinIconSet() throws IOException, XMLStreamException {
 		XMLEventWriter eventWriter = null;
 		try (BufferedWriter out = Files.newBufferedWriter(
-				interfaceTmpCacheRoot.resolve("." + sub + "dictionary.xml"),
-				StandardCharsets.UTF_8)) {
+				interfaceTmpCacheRoot.resolve("dictionary.xml"), StandardCharsets.UTF_8)) {
 			eventWriter = OUTPUT_FACTORY.createXMLEventWriter(out);
 
 			StartDocument startDocument = EVENT_FACTORY.createStartDocument();
@@ -431,8 +440,8 @@ public class InterfaceCacheBuilder {
 			eventWriter.add(dictionaryStartElement);
 			eventWriter.add(NL);
 
-			addSkinDefinitionAndExtractIconSet(eventWriter, attributes);
-			addComponents(eventWriter, components, attributes);
+			addSkinDefinitionAndExtractIconSet(eventWriter);
+			addComponents(eventWriter);
 
 			eventWriter.add(EVENT_FACTORY.createEndElement("", "", "dictionary"));
 			eventWriter.add(NL);
@@ -450,15 +459,45 @@ public class InterfaceCacheBuilder {
 	/**
 	 * 
 	 * @param eventWriter
-	 * @param attributes
+	 * @throws XMLStreamException
+	 * @throws IOException
+	 */
+	private void addComponents(XMLEventWriter eventWriter) throws XMLStreamException, IOException {
+		eventWriter.add(EVENT_FACTORY.createStartElement("", "", "components"));
+		eventWriter.add(NL);
+
+		for (String comp : conponents) {
+			eventWriter.add(EVENT_FACTORY.createStartElement("", "", comp));
+			addElementWithCDataContentFromFile(
+					WebApp.ROOT.resolve("components/" + comp + "/" + comp + ".html"), "src",
+					eventWriter, EVENT_FACTORY);
+			try {
+				addElementWithCDataContentFromFile(
+						WebApp.ROOT
+								.resolve("components/" + comp + "/languages/" + language + ".ini"),
+						"language", eventWriter, EVENT_FACTORY);
+			} catch (NoSuchFileException e) {
+				// this component has no languages, and that's fine
+			}
+			eventWriter.add(EVENT_FACTORY.createEndElement("", "", comp));
+			eventWriter.add(NL);
+		}
+
+		eventWriter.add(EVENT_FACTORY.createEndElement("", "", "components"));
+		eventWriter.add(NL);
+	}
+
+	/**
+	 * 
+	 * @param eventWriter
 	 * @throws IOException
 	 * @throws XMLStreamException
 	 */
-	private void addSkinDefinitionAndExtractIconSet(XMLEventWriter eventWriter,
-			Map<String, String> attributes) throws IOException, XMLStreamException {
-		Path skinDefXmlPath = ResourcesUtil.getResource(
-				WebApp.ROOT.resolve("skins/" + attributes.get("skin") + "/" + "definition.xml"));
-		String iconSet = null;
+	private void addSkinDefinitionAndExtractIconSet(XMLEventWriter eventWriter)
+			throws IOException, XMLStreamException {
+		Path skinDefXmlPath = ResourcesUtil
+				.getResource(WebApp.ROOT.resolve("skins/" + skin + "/" + "definition.xml"));
+
 		XMLEventReader eventReader = null;
 		try (BufferedReader in = Files.newBufferedReader(skinDefXmlPath, StandardCharsets.UTF_8)) {
 			eventReader = INPUT_FACTORY.createXMLEventReader(in);
@@ -474,12 +513,12 @@ public class InterfaceCacheBuilder {
 							}
 						} else if (nextIsIconSet) {
 							iconSet = event.asCharacters().getData();
-							attributes.put("iconSet", iconSet);
 						}
 					}
 				}
 			}
 			eventWriter.add(NL);
+
 		} finally {
 			try {
 				eventReader.close();
@@ -489,37 +528,49 @@ public class InterfaceCacheBuilder {
 	}
 
 	/**
+	 * Extracts skin, language and components used in the interface
 	 * 
-	 * @param eventWriter
-	 * @param components
-	 * @param attributes
-	 * @throws XMLStreamException
 	 * @throws IOException
+	 * @throws XMLStreamException
 	 */
-	private void addComponents(XMLEventWriter eventWriter, Set<String> components,
-			Map<String, String> attributes) throws XMLStreamException, IOException {
-		eventWriter.add(EVENT_FACTORY.createStartElement("", "", "components"));
-		eventWriter.add(NL);
+	private void createInterfaceXmlAndExtractAttributes() throws IOException, XMLStreamException {
+		Path indexXml = ResourcesUtil
+				.getResource(WebApp.ROOT.resolve("interfaces/" + interfaceName + "/index.xml"));
+		Path cacheXml = interfaceTmpCacheRoot.resolve("index.xml");
+		Files.copy(indexXml, cacheXml);
 
-		for (String comp : components) {
-			eventWriter.add(EVENT_FACTORY.createStartElement("", "", comp));
-			addElementWithCDataContentFromFile(
-					WebApp.ROOT.resolve("components/" + comp + "/" + comp + ".html"), "src",
-					eventWriter, EVENT_FACTORY);
-			try {
-				addElementWithCDataContentFromFile(
-						WebApp.ROOT.resolve("components/" + comp + "/languages/"
-								+ attributes.get("language") + ".ini"),
-						"language", eventWriter, EVENT_FACTORY);
-			} catch (NoSuchFileException nsfe) {
-				// this component has no languages, and that's fine
+		XMLEventReader eventReader = null;
+		try (BufferedReader in = Files.newBufferedReader(cacheXml, StandardCharsets.UTF_8)) {
+			eventReader = INPUT_FACTORY.createXMLEventReader(in);
+
+			while (eventReader.hasNext()) {
+				XMLEvent event = eventReader.nextEvent();
+				if (event.isStartElement()) {
+					StartElement startElement = event.asStartElement();
+					String comp = startElement.getName().getLocalPart();
+					conponents.add(comp);
+
+					if (comp.equals("interface")) {
+						Iterator<?> attributes = startElement.getAttributes();
+						while (attributes.hasNext()) {
+							Attribute attribute = (Attribute) attributes.next();
+							String attributeName = attribute.getName().getLocalPart();
+							if (attributeName.equals("language")) {
+								language = attribute.getValue();
+							} else if (attributeName.equals("skin")) {
+								skin = attribute.getValue();
+							}
+						}
+					}
+				}
 			}
-			eventWriter.add(EVENT_FACTORY.createEndElement("", "", comp));
-			eventWriter.add(NL);
-		}
 
-		eventWriter.add(EVENT_FACTORY.createEndElement("", "", "components"));
-		eventWriter.add(NL);
+		} finally {
+			try {
+				eventReader.close();
+			} catch (Exception e) {
+			}
+		}
 	}
 
 	/**
