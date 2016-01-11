@@ -16,13 +16,20 @@ import com.google.common.eventbus.Subscribe;
 import cc.sferalabs.sfera.apps.webapp.servlets.AuthInterfaceCacheServletHolder;
 import cc.sferalabs.sfera.apps.webapp.servlets.InterfaceCacheServletHolder;
 import cc.sferalabs.sfera.apps.webapp.servlets.ManagerCacheServletHolder;
+import cc.sferalabs.sfera.console.Console;
 import cc.sferalabs.sfera.core.events.PluginsEvent;
-import cc.sferalabs.sfera.core.services.FilesWatcher;
-import cc.sferalabs.sfera.core.services.console.Console;
 import cc.sferalabs.sfera.events.Bus;
 import cc.sferalabs.sfera.http.HttpServer;
 import cc.sferalabs.sfera.http.HttpServerException;
+import cc.sferalabs.sfera.util.files.FilesWatcher;
 
+/**
+ *
+ * @author Giampiero Baggiani
+ *
+ * @version 1.0.0
+ *
+ */
 public abstract class Cache {
 
 	private static final Logger logger = LoggerFactory.getLogger(Cache.class);
