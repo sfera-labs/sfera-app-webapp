@@ -26,6 +26,14 @@
         Sfera.client.sendCommand(command, this);
     }
 
+    function logout() {
+        Sfera.Login.logout();
+    }
+
+    function login(username, password) {
+        Sfera.Login.login(username, password);
+    }
+
     // exec custom code
     this.exec = function (f) {
         // eval button js

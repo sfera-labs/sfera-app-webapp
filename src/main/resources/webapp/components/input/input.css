@@ -1,0 +1,14 @@
+.component.input {
+    background:green;
+    height:60px;
+}
+.component.input .icon {
+    float:left;
+    width:60px;
+}
+.component.input .main {
+
+}
+.component.input .erase {
+    float:right;
+}
