@@ -3,9 +3,6 @@
  */
 package cc.sferalabs.sfera.apps.webapp;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import cc.sferalabs.sfera.console.ConsoleCommandHandler;
 
 /**
@@ -17,8 +14,6 @@ import cc.sferalabs.sfera.console.ConsoleCommandHandler;
  */
 public class WebAppConsoleCommandHandler implements ConsoleCommandHandler {
 
-	private static final Logger logger = LoggerFactory.getLogger(WebAppConsoleCommandHandler.class);
-
 	static final WebAppConsoleCommandHandler INSTANCE = new WebAppConsoleCommandHandler();
 
 	/**
@@ -28,15 +23,14 @@ public class WebAppConsoleCommandHandler implements ConsoleCommandHandler {
 	}
 
 	@Override
-	public void accept(String cmd) {
+	public String accept(String cmd) {
 		switch (cmd) {
 		case "rebuild":
 			Cache.buildCache();
-			break;
+			return "Done";
 
 		default:
-			logger.warn("Unkown command");
-			break;
+			return "Unkown command";
 		}
 	}
 

@@ -319,7 +319,7 @@ public class InterfaceCacheBuilder {
 			}
 			String line = null;
 			while ((line = reader.readLine()) != null) {
-				if (!appCacheEnabledReplaced && line.contains("$appCacheEnabled")) {
+				if (!appCacheEnabledReplaced && line.contains("$appCacheEnabled;")) {
 					line = line.replace("$appCacheEnabled;", "" + Cache.useApplicationCache);
 					appCacheEnabledReplaced = true;
 				}
