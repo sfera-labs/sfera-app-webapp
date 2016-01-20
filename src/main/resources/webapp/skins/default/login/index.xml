@@ -1,9 +1,10 @@
-<interface height="500"  width="500" id="new" title="Login">
+<interface height="250"  width="300" id="new" title="Login">
     <page gestures="" id="page:homepage" orientation="landscape" title="">
-        <input id="username" x="50" y="100" />
+        <input id="username" x="10" y="30" icon="images/skin/0114-user.svg" font-size="20" width="280" style="clear" erase-button="true" />
+        <input id="password" x="10" y="71" icon="images/skin/0142-key.svg" font-size="20" width="280" style="clear" erase-button="true" />
 
-        <input id="password" x="50" y="200" />
+		<button id="button_link2" x="120" y="170" width="160" height="58" label="LOGIN" on-click="login()" font-size="15"/>
 
-		<button id="button_link2" x="50" y="280" width="160" height="58" label="LOGIN" on-click="login()" font-size="15"/>
+        <image source="" width="1" height="1" x="0" y="0"/>
 	</page>
 </interface>

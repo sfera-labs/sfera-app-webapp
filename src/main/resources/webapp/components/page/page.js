@@ -17,10 +17,13 @@
      attributes: {
          title: {
              type:"string"
+         },
+
+         visible: {
+             default:"false"
          }
      },
 
      init: function(){
-         this.setAttribute("visible",false);
      }
  });

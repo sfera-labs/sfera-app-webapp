@@ -1,4 +1,4 @@
-/*! sfera-webapp - v0.0.2 - 2016-01-13 */
+/*! sfera-webapp - v0.0.2 - 2016-01-20 */
 
 (function(){
 
@@ -44,6 +44,12 @@ Sfera.Behaviors.Visibility = function() {
 };
 Sfera.Behaviors.Position = function() {
     // extend attributes
+    this.attrDefs.position = {
+        type: "string",
+        update: function() {
+            this.component.element.style.position = this.value == "static"?"static":"absolute";
+        }
+    };
     this.attrDefs.x = {
         type: "int",
         update: function() {
@@ -62,13 +68,13 @@ Sfera.Behaviors.Size = function() {
     this.attrDefs.width = {
         type: "int",
         update: function() {
-            this.component.element.style.width = this.value + "px";
+            this.component.element.style.width = this.value == "auto"?"auto":this.value + "px";
         }
     };
     this.attrDefs.height = {
         type: "int",
         update: function() {
-            this.component.element.style.height = this.value + "px";
+            this.component.element.style.height = this.value == "auto"?"auto":this.value + "px";
         }
     };
 };
@@ -156,8 +162,11 @@ Sfera.Compiler = new(function() {
         return component;
     };
 
-    this.compileXMLNode = function(xmlNode) {
+    this.compileXMLNode = function(xmlNode,options) {
         if (xmlNode.nodeType == 1) { // 1 = element
+            options = options || {};
+            options.index = options.index || true; // default is true
+
             var i, a;
             var attrs = {};
             for (i = 0; i < xmlNode.attributes.length; i++) {
@@ -165,11 +174,16 @@ Sfera.Compiler = new(function() {
                 attrs[Sfera.Utils.dashToCamel(a.name)] = a.value;
             }
 
+            // add prefix?
+            if (options.idPrefix && attrs.id)
+                attrs.id = options.idPrefix + "." + attrs.id;
+
             var component = this.createComponent(xmlNode.nodeName, attrs);
 
             // add to the index
             if (component) {
-                Sfera.client.indexComponent(component);
+                if (options.index)
+                    Sfera.client.indexComponent(component);
 
                 var child;
                 var c = xmlNode.childNodes;
@@ -189,8 +203,8 @@ Sfera.Compiler = new(function() {
     /**
      *
      */
-    this.compileXML = function(xmlDoc) {
-        return this.compileXMLNode(xmlDoc.documentElement);
+    this.compileXML = function(xmlDoc,options) {
+        return this.compileXMLNode(xmlDoc.documentElement,options);
     };
 
     this.compileString = function(xmlStr) {
@@ -241,7 +255,7 @@ Sfera.Compiler = new(function() {
     this.compileHTML = function (source) {
         source = source.replace(/\$interface\;/g, Sfera.client.name);
 
-
+        // ...
 
         return source;
     };
@@ -340,6 +354,8 @@ Sfera.Attribute = function(component, config) {
     this.type = "string";
     // needs to be compiled?
     this.changed = false;
+    // default source value. if != null, it's applied after .init()
+    this.default = null;
     // value source
     this.source = "";
     // compiled value
@@ -352,6 +368,7 @@ Sfera.Attribute = function(component, config) {
         case "type":
         case "source":
         case "value":
+        case "default":
             this[c] = config[c];
             break;
         case "set":
@@ -365,7 +382,7 @@ Sfera.Attribute = function(component, config) {
 };
 Sfera.Attribute.prototype = {
     set: function(value, manualUpdate) {
-        if (this.source == value) return; // no changes
+        if (this.source === value) return; // no changes
 
         this.changed = true; // if true, we need to call compile
         this.source = value;
@@ -393,7 +410,7 @@ Sfera.Attribute.prototype = {
     compile: function () {
         var value = Sfera.Compiler.compileAttributeValue(this);
         // update only if changed. TODO: same source compiles to different values???????????????????
-        if (value != this.value) {
+        if (value !== this.value) {
             this.changed = false;
             this.value = value;
             this.update();
@@ -501,7 +518,21 @@ Sfera.Components = new (function () {
 
     this.setSource = function (componentName, source) {
         var cc = this.getClass(componentName);
-        cc.prototype.source = Sfera.Compiler.compileHTML(source);
+        cc.prototype.source = source;
+    };
+
+    this.bakeSource = function (componentName) {
+        var cc = this.getClass(componentName);
+
+        // bake DOM
+        var d = document.createElement("div");
+        d.innerHTML = Sfera.Compiler.compileHTML(cc.prototype.source);
+
+        var dom = Sfera.Utils.getFirstChildNodeOfType(d, 1);
+        dom.setAttribute("data-controller",componentName);
+
+        // set dom, ready for cloning
+        cc.prototype.dom = dom;
     };
 
     this.getClassName = function (componentName) {
@@ -528,39 +559,62 @@ Sfera.Components = new (function () {
     this.create = function (name,config) {
         // constructor
         Sfera.Components[name] = function Component (config) {
+            // children, if container
+            this.children = [];
+
             // html element
             if (config.element) {
                 this.element = element;
             } else {
                 // DOM
-                var d = document.createElement("div");
-                d.innerHTML = this.source;
+                if (!this.dom)
+                    Sfera.Components.bakeSource(name);
 
-                this.element = Sfera.Utils.getFirstChildNodeOfType(d, 1);
+                this.element = this.dom.cloneNode(true);
                 this.element.controller = this;
 
-                this.element.setAttribute("data-controller",name);
+                // subcomponents, if composed component
+                this.subComponents = {};
 
-                // TODO: get children components
-                // fastest way.. parse the whole html code and then dig through and associate?
-                // also for composed components, save the html the first time you dig through, to optimize
+                // replace sml comment nodes with compiled xml
+                var nodes = Sfera.Utils.getAllCommentChildNodes(this.element);
+                var xml;
+                // we need the id now, will set it again later. TODO: find better way?
+                this.id = config.attributes?config.attributes.id:null;
+                for (var i=0; i<nodes.length; i++) {
+                    if (nodes[i].nodeValue.substr(0,3) == "sml") {
+                        xml = Sfera.Utils.parseXML(nodes[i].nodeValue.substr(3));
+
+                        var root = Sfera.Compiler.compileXML(xml,{index:this.id?true:false, idPrefix:this.id});
+
+                        // replace existing node
+                        if (root && root.element) {
+                            nodes[i].parentNode.replaceChild(root.element, nodes[i]);
+                            this.addSubComponent(root);
+                        }
+                    }
+                }
+
             }
+
 
             // attributes
             this.attributes = {};
             for (var attr in this.attrDefs) {
                 this.attributes[attr] = new Sfera.Attribute(this, this.attrDefs[attr]);
             }
-            // attribute values
-            if (config.attributes) {
-                for (var attr in config.attributes) {
-                    this.setAttribute(attr, config.attributes[attr]);
-                }
-            }
 
             // init
             this.super("_Base","init");
             this.init();
+
+            // attribute values
+            for (var attr in this.attributes) {
+                if (config.attributes && config.attributes[attr])
+                    this.setAttribute(attr, config.attributes[attr]);
+                else if (this.attributes[attr].default)
+                    this.setAttribute(attr, this.attributes[attr].default);
+            }
         };
         var comp = Sfera.Components[name];
 
@@ -588,27 +642,37 @@ Sfera.Components = new (function () {
             comp.prototype.attrDefs[a] = sup.attrDefs[a];
         }
 
-        for (var f in config) {
-            switch (f){
-                case "behaviors":
-                    var be;
-                    for (var i=0; i < config.behaviors.length; i++) {
-                        be = Sfera.Behaviors[config.behaviors[i]];
-                        be.call(comp.prototype); // extend prototype
-                    }
-                    break;
-                case "attributes":
-                    for (var attr in config.attributes) {
-                        comp.prototype.attrDefs[attr] = config.attributes[attr];
-                    }
-                    break;
-
-                default:
-                    comp.prototype[f] = config[f];
-                    if (typeof comp.prototype[f] === "function")
-                        comp.prototype[f].displayName = "Sfera.Components."+name+"."+f;
-                    break;
+        // behaviors
+        if (config.behaviors) {
+            var be;
+            for (var i=0; i < config.behaviors.length; i++) {
+                be = Sfera.Behaviors[config.behaviors[i]];
+                be.call(comp.prototype); // extend prototype
             }
+        }
+
+        // attributes
+        if (config.attributes) {
+            for (var attr in config.attributes) {
+                if (!comp.prototype.attrDefs[attr]) {
+                    comp.prototype.attrDefs[attr] = config.attributes[attr];
+                } else {
+                    // extend rather than replace (in case it was already defined by behavior)
+                    for (var i in config.attributes[attr])
+                        comp.prototype.attrDefs[attr][i] = config.attributes[attr][i];
+                }
+            }
+        }
+
+        // the rest
+        for (var f in config) {
+            // skip, already done
+            if (f == "behaviors" || f == "attributes")
+                continue;
+
+            comp.prototype[f] = config[f];
+            if (typeof comp.prototype[f] === "function")
+                comp.prototype[f].displayName = "Sfera.Components."+name+"."+f;
         }
     };
 
@@ -4384,17 +4448,69 @@ Sfera.Utils = function() {
         c.prototype.constructor = c;
     };
 
-    this.getFirstChildNodeOfType = function(xmlNode, type) {
-        for (var i = 0; i < xmlNode.childNodes.length; i++) {
-            if (xmlNode.childNodes[i].nodeType == type) {
-                return xmlNode.childNodes[i];
+    function filterNone() {
+        return NodeFilter.FILTER_ACCEPT;
+    }
+
+    this.getAllCommentChildNodes = function(rootNode) {
+        var comments = [];
+        // Fourth argument, which is actually obsolete according to the DOM4 standard, is required in IE 11
+        var iterator = document.createNodeIterator(rootNode, NodeFilter.SHOW_COMMENT, filterNone, false);
+        var curNode;
+        while (curNode = iterator.nextNode()) {
+            comments.push(curNode);
+        }
+        return comments;
+    };
+
+    this.getFirstChildNodeOfType = function(rootNode, type, recursive) {
+        for (var i = 0; i < rootNode.childNodes.length; i++) {
+            if (rootNode.childNodes[i].nodeType == type) {
+                return rootNode.childNodes[i];
+            }
+            if (recursive && rootNode.childNodes[i].childNodes) {
+                var r = this.getFirstChildNodeOfType(rootNode.childNodes[i], type, recursive);
+                if (r != null)
+                    return r;
             }
         }
         return null;
     };
 
-    this.getCDATA = function(xmlNode) {
-        var node = this.getFirstChildNodeOfType(xmlNode, 4);
+    this.getFirstChildNodeWithName = function(rootNode, name, recursive) {
+        var i, r;
+        for (i = 0; i < rootNode.childNodes.length; i++) {
+            if (rootNode.childNodes[i].getAttribute && rootNode.childNodes[i].getAttribute("name") == name) {
+                return rootNode.childNodes[i];
+            }
+            if (recursive && rootNode.childNodes[i].childNodes) {
+                r = this.getFirstChildNodeWithName(rootNode.childNodes[i], name, recursive);
+                if (r != null)
+                    return r;
+            }
+        }
+        return null;
+    };
+
+    this.getComponentElements = function(rootNode, recursive, obj) {
+        // object containing all nodes by name
+        var obj = obj || {},
+            name, i, r;
+        for (var i = 0; i < rootNode.childNodes.length; i++) {
+            if (rootNode.childNodes[i].getAttribute) {
+                name = rootNode.childNodes[i].getAttribute("name");
+                if (name)
+                    obj[name] = rootNode.childNodes[i];
+            }
+            if (recursive && rootNode.childNodes[i].childNodes) {
+                obj = this.getComponentElements(rootNode.childNodes[i], recursive, obj);
+            }
+        }
+        return obj;
+    };
+
+    this.getCDATA = function(rootNode) {
+        var node = this.getFirstChildNodeOfType(rootNode, 4);
         return node ? node.nodeValue : "";
     };
 
@@ -4416,11 +4532,11 @@ Sfera.Utils = function() {
     }
 
     this.getDate = function(format) {
-        function pan(str,len) {
+        function pan(str, len) {
             str = str + "";
             if (!len) len = 2;
             while (str.length < len)
-                str = "0"+str;
+                str = "0" + str;
             return str;
         }
 
@@ -4429,38 +4545,54 @@ Sfera.Utils = function() {
             format = "dmyhisu";
         }
         var f = {};
-        for (var i=0; i<format.length; i++)
+        for (var i = 0; i < format.length; i++)
             f[format[i]] = true;
         var str = "";
         if (f.d) {
             str += pan(date.getDate());
         }
         if (f.m) {
-            str += (str?"/":"") + pan(date.getMonth() + 1);
+            str += (str ? "/" : "") + pan(date.getMonth() + 1);
         }
         if (f.y) {
-            str += (str?"/":"") + date.getFullYear();
+            str += (str ? "/" : "") + date.getFullYear();
         }
         if (f.h) {
-            str += (str?" ":"") + pan(date.getHours());
+            str += (str ? " " : "") + pan(date.getHours());
         }
         if (f.i) {
-            str += (str?":":"") + pan(date.getMinutes());
+            str += (str ? ":" : "") + pan(date.getMinutes());
         }
         if (f.s) {
-            str += (str?":":"") + pan(date.getSeconds());
+            str += (str ? ":" : "") + pan(date.getSeconds());
         }
         if (f.u) {
-            str += (str?":":"") + pan(date.getMilliseconds(),3);
+            str += (str ? ":" : "") + pan(date.getMilliseconds(), 3);
         }
         return str;
+    };
+
+    if (typeof window.DOMParser != "undefined") {
+        this.parseXML = function(xmlStr) {
+            return (new window.DOMParser()).parseFromString(xmlStr, "text/xml");
+        };
+    } else if (typeof window.ActiveXObject != "undefined" &&
+        new window.ActiveXObject("Microsoft.XMLDOM")) {
+        this.parseXML = function(xmlStr) {
+            var xmlDoc = new window.ActiveXObject("Microsoft.XMLDOM");
+            xmlDoc.async = "false";
+            xmlDoc.loadXML(xmlStr);
+            return xmlDoc;
+        };
+    } else {
+        throw new Error("No XML parser found");
     }
 
 };
 
 Sfera.Utils = new Sfera.Utils();
 
-Array.prototype.equals = function (array, strict) {
+Array.prototype.equals = function(array, strict) {
     if (!array)
         return false;
 
@@ -4474,11 +4606,9 @@ Array.prototype.equals = function (array, strict) {
         if (this[i] instanceof Array && array[i] instanceof Array) {
             if (!this[i].equals(array[i], strict))
                 return false;
-        }
-        else if (strict && this[i] != array[i]) {
+        } else if (strict && this[i] != array[i]) {
             return false;
-        }
-        else if (!strict) {
+        } else if (!strict) {
             return this.sort().equals(array.sort(), true);
         }
     }
@@ -4497,8 +4627,6 @@ Sfera.Components.create("_Base", {
 
     // require update: null, true/ {}
     requireUpdate: null,
-
-    children: [],
 
     attributes: {
         id: {
@@ -4554,6 +4682,134 @@ Sfera.Components.create("_Base", {
         if (this.element) {
             this.element.appendChild(child.element);
         }
+    },
+
+    addSubComponent: function(co) {
+        var id = co.id;
+        // remove this.id. TODO: find a better way
+        if (this.id)
+            id = id.substr(this.id.length+1);
+        this.subComponents[id] = co;
+        co.parent = this;
+    },
+
+    //
+    isVisible: function() {
+        return true;
+    },
+
+    //
+    isEnabled: function() {
+        return true;
+    }
+
+});
+
+
+/**
+ * Field virtual component
+ *
+ * @class Sfera.Components._Field
+ * @constructor
+ */
+Sfera.Components.create("_Field", {
+    behaviors: ["Visibility", "Position", "Size"],
+
+    attributes: {
+
+        autoSend: {
+            type: "boolean"
+        },
+
+        value: {},
+
+        safeValue: {},
+    },
+
+    // safe value
+    value: "",
+
+    init: function() {},
+
+    focus: function() {},
+
+    blur: function() {},
+
+    onFocus: function() {},
+
+    onBlur: function() {},
+
+    focusNext: function(dir) {
+        function canFocus(co) {
+            return (co != this && co.extends == "_Field" && co.isVisible() && co.isEnabled());
+        }
+        // focus first object in container (start from the first or the last)
+        function focusFirstObj(container, dir) {
+            var l = container.children.length;
+            var co = container.children[dir ? l - 1 : 0];
+            if (co.isVisible()) {
+                if (co.focus && co.isEnabled()) { // found
+                    co.focus();
+                    return co;
+                } else if (co.children && co.children.length) { // container? look inside
+                    return focusFirstObj(co, dir);
+                }
+            }
+
+            // couldn't focus, keep looking
+            return next(co);
+        } // focusFirstObj()
+        function next(co) {
+            var cos = co.parent.children;
+            var oi = -1;
+            var i;
+            var r; // result
+            // search this co index
+            for (i = 0; i < cos.length; i++) {
+                if (cos[i] == co) {
+                    oi = i;
+                    break;
+                }
+            }
+
+            if (oi == -1) return null; // is it even possible?
+            i = oi; // start from next
+            do {
+                if (dir) {
+                    i--;
+                    if (i < 0) {
+                        // in a container? check parent
+                        if (co.parent.parent) {
+                            r = next(co.parent, dir);
+                            if (r) return r; // no need to focus again
+                        }
+                        i = cos.length - 1; // restart from last
+                    }
+                } else {
+                    i++;
+                    if (i >= cos.length) {
+                        // in a container? check parent
+                        if (co.parent.parent) {
+                            r = next(co.parent, dir);
+                            if (r) return r; // no need to focus again
+                        }
+                        i = 0; // restart from 0
+                    }
+                }
+                // container? go inside
+                if (cos[i].children && cos[i].children.length) {
+                    r = focusFirstObj(cos[i], dir); // get first or last
+                    if (r) return r; // no need to focus again
+                }
+                // has focus function? can focus?
+                if (canFocus(cos[i])) {
+                    cos[i].focus();
+                    return cos[i];
+                }
+            } while (cos[i] != co); // go round once
+            return null; // no next coect found (co wasn't focusable?)
+        }
+        return next(this);
     }
 
 });
