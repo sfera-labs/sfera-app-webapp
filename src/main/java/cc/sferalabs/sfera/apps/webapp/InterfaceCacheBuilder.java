@@ -6,6 +6,7 @@ package cc.sferalabs.sfera.apps.webapp;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
@@ -119,7 +120,8 @@ public class InterfaceCacheBuilder {
 			throws IOException, XMLStreamException, ScriptException {
 		Path indexXml;
 		try {
-			indexXml = copyToCache("interfaces/" + interfaceName + sub + "index.xml", sub + "index.xml");
+			indexXml = copyToCache("interfaces/" + interfaceName + sub + "index.xml",
+					sub + "index.xml");
 		} catch (NoSuchFileException nsfe) {
 			String skin = attributes.get("skin");
 			if (skin == null) {
@@ -127,11 +129,12 @@ public class InterfaceCacheBuilder {
 			}
 			indexXml = copyToCache("skins/" + skin + sub + "index.xml", sub + "index.xml");
 		}
-		Set<String> components = new HashSet<String>();
+		Set<String> components = new HashSet<>();
 		extractComponentsAndInterfaceAttributes(indexXml, components, attributes);
+		addSubComponents(components);
 		createDictionaryAndExtractSkinIconSet(sub, components, attributes);
 		Set<Path> resources = copyResources(sub, components, attributes);
-		createHTML("skins" + sub + "index.html", sub + "index.html", sub + CACHE_MANIFEST_NAME);
+		createHTML("html" + sub + "index.html", sub + "index.html", sub + CACHE_MANIFEST_NAME);
 		createCode(sub, components, attributes);
 		createCSS(sub, components, attributes);
 		if (Cache.useApplicationCache) {
@@ -139,6 +142,73 @@ public class InterfaceCacheBuilder {
 			resources.add(interfaceTmpCacheRoot.resolve("." + sub + "code.js"));
 			createManifest(sub + CACHE_MANIFEST_NAME, resources);
 		}
+	}
+
+	/**
+	 * @param components
+	 * @throws IOException
+	 * @throws NoSuchFileException
+	 * @throws XMLStreamException
+	 */
+	private static void addSubComponents(Set<String> components)
+			throws NoSuchFileException, IOException, XMLStreamException {
+		HashSet<String> original = new HashSet<>(components);
+		for (String comp : original) {
+			addSubComponents(comp, components);
+		}
+	}
+
+	/**
+	 * @param component
+	 * @param components
+	 * @throws IOException
+	 * @throws NoSuchFileException
+	 * @throws XMLStreamException
+	 */
+	private static void addSubComponents(String component, Set<String> components)
+			throws NoSuchFileException, IOException, XMLStreamException {
+		for (String sub : getDirectSubComponents(component)) {
+			if (components.add(sub)) {
+				addSubComponents(sub, components);
+			}
+		}
+	}
+
+	/**
+	 * @param component
+	 * @return
+	 * @throws IOException
+	 * @throws NoSuchFileException
+	 * @throws XMLStreamException
+	 */
+	private static Set<String> getDirectSubComponents(String component)
+			throws NoSuchFileException, IOException, XMLStreamException {
+		Set<String> sub = new HashSet<>();
+		Path path = ResourcesUtil.getResource(
+				WebApp.ROOT.resolve("components/" + component + "/" + component + ".html"));
+		String content = new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
+		String[] smls = content.split("<!--sml|-->");
+		for (int i = 1; i < smls.length; i += 2) {
+			String sml = smls[i];
+			XMLEventReader eventReader = null;
+			try {
+				eventReader = INPUT_FACTORY.createXMLEventReader(new StringReader(sml));
+				while (eventReader.hasNext()) {
+					XMLEvent event = eventReader.nextEvent();
+					if (event.isStartElement()) {
+						StartElement startElement = event.asStartElement();
+						String comp = startElement.getName().getLocalPart();
+						sub.add(comp);
+					}
+				}
+			} finally {
+				try {
+					eventReader.close();
+				} catch (Exception e) {
+				}
+			}
+		}
+		return sub;
 	}
 
 	/**
@@ -162,7 +232,7 @@ public class InterfaceCacheBuilder {
 	 * @throws IOException
 	 * @throws XMLStreamException
 	 */
-	private void extractComponentsAndInterfaceAttributes(Path file, Set<String> components,
+	private static void extractComponentsAndInterfaceAttributes(Path file, Set<String> components,
 			Map<String, String> attributes) throws IOException, XMLStreamException {
 		XMLEventReader eventReader = null;
 		try (BufferedReader in = Files.newBufferedReader(file, StandardCharsets.UTF_8)) {
@@ -275,7 +345,7 @@ public class InterfaceCacheBuilder {
 	 * @throws IOException
 	 * @throws NoSuchFileException
 	 */
-	private void writeContentFrom(String file, BufferedWriter writer)
+	private static void writeContentFrom(String file, BufferedWriter writer)
 			throws IOException, NoSuchFileException {
 		int extSep = file.lastIndexOf('.');
 		String minFile = file.substring(0, extSep) + ".min" + file.substring(extSep);
@@ -454,7 +524,7 @@ public class InterfaceCacheBuilder {
 	 * @throws IOException
 	 * @throws XMLStreamException
 	 */
-	private void addSkinDefinitionAndExtractIconSet(XMLEventWriter eventWriter,
+	private static void addSkinDefinitionAndExtractIconSet(XMLEventWriter eventWriter,
 			Map<String, String> attributes) throws IOException, XMLStreamException {
 		Path skinDefXmlPath = ResourcesUtil.getResource(
 				WebApp.ROOT.resolve("skins/" + attributes.get("skin") + "/" + "definition.xml"));
@@ -496,7 +566,7 @@ public class InterfaceCacheBuilder {
 	 * @throws XMLStreamException
 	 * @throws IOException
 	 */
-	private void addComponents(XMLEventWriter eventWriter, Set<String> components,
+	private static void addComponents(XMLEventWriter eventWriter, Set<String> components,
 			Map<String, String> attributes) throws XMLStreamException, IOException {
 		eventWriter.add(EVENT_FACTORY.createStartElement("", "", "components"));
 		eventWriter.add(NL);
@@ -531,22 +601,18 @@ public class InterfaceCacheBuilder {
 	 * @throws XMLStreamException
 	 * @throws IOException
 	 */
-	private void addElementWithCDataContentFromFile(Path file, String elementLocalName,
+	private static void addElementWithCDataContentFromFile(Path file, String elementLocalName,
 			XMLEventWriter eventWriter, XMLEventFactory eventFactory)
 					throws XMLStreamException, IOException {
 		Path filePath = ResourcesUtil.getResource(file);
-
 		try (BufferedReader reader = Files.newBufferedReader(filePath, StandardCharsets.UTF_8)) {
 			eventWriter.add(eventFactory.createStartElement("", "", elementLocalName));
-
 			StringBuilder content = new StringBuilder();
 			String line = null;
 			while ((line = reader.readLine()) != null) {
 				content.append(line).append('\n');
 			}
-
 			eventWriter.add(eventFactory.createCData(content.substring(0, content.length() - 1)));
-
 			eventWriter.add(eventFactory.createEndElement("", "", elementLocalName));
 			eventWriter.add(NL);
 		}
