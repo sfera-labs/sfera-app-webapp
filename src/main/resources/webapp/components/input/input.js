@@ -210,6 +210,41 @@ Sfera.Components.create("Input", {
 		return true; // allow
     },
 
+    onKeyPress: function(evt) {
+        var code = evt.keyCode;
+        var co = this.controller;
+        var c = co.getKey(code);
+        var inputE = co.elements.field;
+        var value = co.getAttribute("value");
+        var keyRegex = co.getAttribute("keyRegex");
+        var maxLength = co.getAttribute("maxLength");
+
+        console.log("key press "+co.id);
+
+        function getSelectedText() {
+		    var text = "";
+		    if (inputE.selectionStart != inputE.selectionEnd) {
+		    	text = value.substr(inputE.selectionStart,inputE.selectionEnd);
+			} else if (typeof window.getSelection != "undefined") {
+		        text = window.getSelection().toString();
+		    } else if (typeof document.selection != "undefined" && document.selection.type == "Text") {
+		        text = document.selection.createRange().text;
+		    }
+		    return text;
+		}
+
+		// check max length
+		if (!c && value && maxLength && value.length >= maxLength && !getSelectedText()) {
+			return false; // prevent
+		}
+
+		// validate? (only if ctrl or meta are not pressed)
+		if (!c && keyRegex && !evt.ctrlKey && !evt.metaKey && !keyRegex.test(String.fromCharCode(code)))
+			return false; // key validation failed: prevent
+
+        co.onChanged();
+		return true; // allow
+    },
 
     onKeyUp: function(evt) {
         var code = evt.keyCode;

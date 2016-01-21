@@ -4,13 +4,13 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta http-equiv="cache-control" content="no-cache">
-    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/$interface;/images/skin/images/apple-touch-icon-144x144.png" />
-    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="/$interface;/images/skin/images/apple-touch-icon-152x152.png" />
-    <link rel="icon" type="image/png" href="/$interface;/images/skin/images/favicon-32x32.png" sizes="32x32" />
-    <link rel="icon" type="image/png" href="/$interface;/images/skin/images/favicon-16x16.png" sizes="16x16" />
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/$interface;/images/apple-touch-icon-144x144.png" />
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="/$interface;/images/apple-touch-icon-152x152.png" />
+    <link rel="icon" type="image/png" href="/$interface;/images/favicon-32x32.png" sizes="32x32" />
+    <link rel="icon" type="image/png" href="/$interface;/images/favicon-16x16.png" sizes="16x16" />
     <meta name="application-name" content="Sfera"/>
     <meta name="msapplication-TileColor" content="#FFFFFF" />
-    <meta name="msapplication-TileImage" content="/$interface;/images/skin/images/mstile-144x144.png" />
+    <meta name="msapplication-TileImage" content="/$interface;/images/mstile-144x144.png" />
     <title>Sfera</title>
     <script type="text/javascript" src="code.js"></script>
     <link rel="stylesheet" href="style.css">
@@ -208,6 +208,12 @@
     <!-- SFERA BG -->
     <div id="bg"></div>
     <div id="sfera"></div>
+
+	<div id="contents">
+		<input id="user" type="input" value="admin" onkeydown="if(event.keyCode == 13) { doLogin() }">
+		<input id="password" type="input" value="00000" onkeydown="if(event.keyCode == 13) { doLogin() }">
+		<input id="loginBt" type="button" value="loginBt" onclick="doLogin();" />
+	</div>
 
     <div id="debug">
         <div id="debugPane">
