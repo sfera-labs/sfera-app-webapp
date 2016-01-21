@@ -82,14 +82,12 @@ public abstract class ResourcesUtil {
 		if (Files.exists(path)) {
 			return path;
 		}
-
 		for (Path plugin : pluginsOverwritingWebapp) {
 			try {
 				return getPluginResource(plugin, path);
 			} catch (NoSuchFileException nsfe) {
 			}
 		}
-
 		return getWebAppResource(path);
 	}
 
@@ -107,7 +105,6 @@ public abstract class ResourcesUtil {
 			} catch (NoSuchFileException | ProviderNotFoundException e) {
 			}
 		}
-
 		try {
 			URL url = ResourcesUtil.class.getClassLoader().getResource(path.toString());
 			if (url != null) {
@@ -118,7 +115,6 @@ public abstract class ResourcesUtil {
 			}
 		} catch (URISyntaxException e) {
 		}
-
 		throw new NoSuchFileException(path.toString());
 	}
 
@@ -140,7 +136,6 @@ public abstract class ResourcesUtil {
 		synchronized (OPEN_RESOURCES) {
 			OPEN_RESOURCES.add(fs);
 		}
-
 		throw new NoSuchFileException(path.toString());
 	}
 
@@ -183,9 +178,7 @@ public abstract class ResourcesUtil {
 	 */
 	public static Set<String> listDirectoriesNamesIn(Path dir, boolean includeJarResources)
 			throws NoSuchFileException, IOException {
-
 		List<Path> paths = getResources(dir, includeJarResources);
-
 		Set<String> list = new HashSet<String>();
 		for (Path path : paths) {
 			if (Files.isDirectory(path)) {
@@ -203,11 +196,9 @@ public abstract class ResourcesUtil {
 				}
 			}
 		}
-
 		if (list.isEmpty()) {
 			throw new NoSuchFileException(dir.toString());
 		}
-
 		return list;
 	}
 
@@ -221,9 +212,7 @@ public abstract class ResourcesUtil {
 	 */
 	public static Set<String> listRegularFilesNamesIn(Path dir, boolean includeJarResources)
 			throws NoSuchFileException, IOException {
-
 		List<Path> paths = getResources(dir, includeJarResources);
-
 		Set<String> list = new HashSet<String>();
 		for (Path path : paths) {
 			if (Files.isDirectory(path)) {
@@ -236,11 +225,9 @@ public abstract class ResourcesUtil {
 				}
 			}
 		}
-
 		if (list.isEmpty()) {
 			throw new NoSuchFileException(dir.toString());
 		}
-
 		return list;
 	}
 
@@ -255,7 +242,6 @@ public abstract class ResourcesUtil {
 	public static Set<Path> copyRecursive(Path source, Path target, boolean includeJarResources)
 			throws IOException {
 		Set<Path> list = copyRecursive(source, target);
-
 		if (includeJarResources) {
 			for (Path plugin : pluginsOverwritingWebapp) {
 				try {
@@ -270,7 +256,6 @@ public abstract class ResourcesUtil {
 			} catch (NoSuchFileException nsfe) {
 			}
 		}
-
 		return list;
 	}
 
@@ -297,7 +282,6 @@ public abstract class ResourcesUtil {
 				}
 			}
 		}
-
 		return list;
 	}
 

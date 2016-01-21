@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.script.ScriptException;
 import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLEventWriter;
@@ -84,11 +83,10 @@ public class InterfaceCacheBuilder {
 
 	/**
 	 * 
-	 * @throws XMLStreamException
 	 * @throws IOException
-	 * @throws ScriptException
+	 * @throws XMLStreamException
 	 */
-	void build() throws XMLStreamException, IOException, ScriptException {
+	void build() throws IOException, XMLStreamException {
 		try {
 			timestamp = System.currentTimeMillis();
 			Files.createDirectories(interfaceTmpCacheRoot.resolve("login"));
@@ -114,10 +112,9 @@ public class InterfaceCacheBuilder {
 	 * @param attributes
 	 * @throws IOException
 	 * @throws XMLStreamException
-	 * @throws ScriptException
 	 */
 	private void createCache(String sub, Map<String, String> attributes)
-			throws IOException, XMLStreamException, ScriptException {
+			throws IOException, XMLStreamException {
 		Path indexXml;
 		try {
 			indexXml = copyToCache("interfaces/" + interfaceName + sub + "index.xml",
@@ -232,8 +229,8 @@ public class InterfaceCacheBuilder {
 	 * @throws IOException
 	 * @throws XMLStreamException
 	 */
-	private static void extractComponentsAndInterfaceAttributes(Path file, Set<String> components,
-			Map<String, String> attributes) throws IOException, XMLStreamException {
+	private void extractComponentsAndInterfaceAttributes(Path file, Set<String> components,
+			Map<String, String> attributes) throws IOException {
 		XMLEventReader eventReader = null;
 		try (BufferedReader in = Files.newBufferedReader(file, StandardCharsets.UTF_8)) {
 			eventReader = INPUT_FACTORY.createXMLEventReader(in);
@@ -255,6 +252,8 @@ public class InterfaceCacheBuilder {
 					}
 				}
 			}
+		} catch (XMLStreamException e) {
+			logger.error("Error parsing index of interface '" + interfaceName + "'", e);
 		} finally {
 			try {
 				eventReader.close();
@@ -295,10 +294,9 @@ public class InterfaceCacheBuilder {
 	 * @param components
 	 * @param attributes
 	 * @throws IOException
-	 * @throws ScriptException
 	 */
 	private void createCode(String sub, Set<String> components, Map<String, String> attributes)
-			throws IOException, ScriptException {
+			throws IOException {
 		String skin = attributes.get("skin");
 		List<String> files = new ArrayList<>();
 		files.add("code" + sub + "client.js");
