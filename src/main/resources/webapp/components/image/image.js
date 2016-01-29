@@ -9,7 +9,9 @@
  * Image component.
  *
  * @class Sfera.Components.Image
- * @constructor
+ * @mixes Sfera.Behaviors.Visibility
+ * @mixes Sfera.Behaviors.Position
+ * @property {string} source - source url of the image
  */
 Sfera.Components.create("Image", {
     behaviors: ["Visibility", "Position", "Size"],

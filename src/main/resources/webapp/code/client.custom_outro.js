@@ -34,8 +34,8 @@
         Sfera.Login.login(username, password);
     }
 
-    // exec custom code
-    this.exec = function (f) {
+    // exec custom code. optional: id of the component calling, value to be sent
+    this.exec = function (f, id, value) {
         // eval button js
         try {
             eval(f);

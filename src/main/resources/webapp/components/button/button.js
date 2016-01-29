@@ -60,7 +60,7 @@ Sfera.Components.create("Button", {
 
     onClick: function() {
         var f = this.getAttribute("onClick");
-        Sfera.Custom.exec(f);
+        Sfera.Custom.exec(f, this.id);
     }
 
 });

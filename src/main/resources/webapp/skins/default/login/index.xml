@@ -1,7 +1,7 @@
 <interface height="250"  width="300" id="new" title="Login">
     <page gestures="" id="page:homepage" orientation="landscape" title="">
-        <input id="username" x="10" y="30" icon="icons/0114-user.svg" font-size="20" width="280" style="clear" erase-button="true" />
-        <input id="password" x="10" y="71" icon="icons/0142-key.svg" font-size="20" width="280" style="clear" erase-button="true" />
+        <input id="username" x="10" y="30" icon="icons/0114-user.svg" font-size="20" width="280" height="45" style="clear" erase-button="true" />
+        <input id="password" type="password" x="10" y="78" icon="icons/0142-key.svg" font-size="20" width="280" height="45" style="clear" erase-button="true" />
 
 		<button id="login" x="120" y="170" width="160" height="58" label="LOGIN" on-click="login()" font-size="15"/>
 	</page>

@@ -6,30 +6,33 @@
  */
 
 /**
- * Button component.
+ * Input component.
  *
- * @class Sfera.Components.Button
- * @constructor
+ * @class Sfera.Components.Image
+ * @extends Sfera.Components._Field
+ * @property {string} type - source url of the image
  */
 Sfera.Components.create("Input", {
     extends: "_Field",
 
     attributes: {
-        inputType: {
+        type: {
             type: "string",
-            value: "",
+            default: "input",
             update: function() {
-                switch (this.value) {
-                case "input":
-                    break;
-                case "multiline":
-                    break;
-                }
+                this.component.redraw();
             }
         },
 
         autoSend: {
             type: "boolean"
+        },
+
+        height: {
+            update: function() {
+                if (this.component.elements.field)
+                    this.component.elements.field.style.height = this.value + "px";
+            }
         },
 
         icon: {
@@ -38,7 +41,7 @@ Sfera.Components.create("Input", {
             update: function() {
                 var co = this.component;
                 var icon = co.subComponents.icon;
-                icon.setAttribute("source",this.value);
+                icon.setAttribute("source", this.value);
                 if (this.value) {
                     co.elements.icon.style.display = "";
                     //icon.setAttribute("visible",true);
@@ -54,18 +57,24 @@ Sfera.Components.create("Input", {
             default: "false",
             update: function() {
                 var co = this.component;
-                co.elements.erase.style.display = this.value?"":"none";
+                co.elements.erase.style.display = this.value ? "" : "none";
             }
         },
 
         value: {
             update: function() {
-                this.component.elements.field.value = this.value;
+                if (this.component.elements.field)
+                    this.component.elements.field.value = this.value;
             }
         },
 
         safeValue: {
 
+        },
+
+        changeDelay: {
+            type: "integer",
+            default: "1000" // msec to wait before noticing a change
         },
 
         // regular expression used to validate keydown
@@ -74,11 +83,11 @@ Sfera.Components.create("Input", {
         },
 
         // regular expression used to validate value before submitting
-    	valueRegex: {
+        valueRegex: {
             type: "regexp",
 
-            compile: function () {
-                this.value = Sfera.Compiler.compileAttributeValue(this, "^("+this.source+")$"); // add begin and end, it has to match the whole string
+            compile: function() {
+                this.value = Sfera.Compiler.compileAttributeValue(this, "^(" + this.source + ")$"); // add begin and end, it has to match the whole string
                 // do nothing else, since there's no update needed
             }
         },
@@ -86,23 +95,25 @@ Sfera.Components.create("Input", {
         fontSize: {
             type: "integer",
 
-            update: function () {
-                this.component.elements.field.style.fontSize = this.value + "px";
+            update: function() {
+                if (this.component.elements.field)
+                    this.component.elements.field.style.fontSize = this.value + "px";
                 //this.component.subComponents.erase.setAttribute("width")
             }
         },
 
         fontColor: {
-            update: function () {
-                this.component.elements.field.style.color = this.value;
+            update: function() {
+                if (this.component.elements.field)
+                    this.component.elements.field.style.color = this.value;
             }
         },
 
         style: {
             default: "default",
 
-            update: function () {
-                this.component.elements.container.className = "container "+this.value;
+            update: function() {
+                this.component.elements.container.className = "container " + this.value;
             }
         },
 
@@ -114,7 +125,8 @@ Sfera.Components.create("Input", {
             type: "string"
         },
         onChange: {
-            type: "string"
+            type: "string",
+            default: "event(id,value)"
         },
         onEnter: {
             type: "string"
@@ -127,151 +139,216 @@ Sfera.Components.create("Input", {
         }
     },
 
-    // safe value
-    value:"",
-
     init: function() {
         var self = this;
+
+        this.value = ""; // TODO: used?
+        this.changeTimeout = null;
+
 
         // fill elements with all nodes that have a name
         this.elements = Sfera.Utils.getComponentElements(this.element, true, this.elements);
 
-        this.elements.field.controller = this;
-        this.elements.field.onchange = this.onChange;
-        this.elements.field.onkeydown = this.onKeyDown;
-        this.elements.field.onkeypress = this.onKeyPress;
-        this.elements.field.onkeyup = this.onKeyUp;
-        this.elements.field.onblur = this.onBlur;
-        this.elements.field.onfocus = this.onFocus;
+        this.btObj = new Sfera.UI.Button(this.elements.erase, {
+            onclick: this.onErase.bind(this)
+        });
 
-        this.btObj = new Sfera.UI.Button(this.elements.erase, {onclick: this.onErase.bind(this)});
-
-        switch (this.getAttribute("inputType")) {
+        switch (this.getAttribute("type")) {
             case "date":
-                this.btObj = new Sfera.UI.Button(this.element, {onclick: this.onClick.bind(this)});
+                this.btObj = new Sfera.UI.Button(this.element, {
+                    onclick: this.onClick.bind(this)
+                });
         }
     },
 
     // on erase button
-    onErase: function () {
-        this.setAttribute("value","");
+    onErase: function() {
+        this.setAttribute("value", "");
     },
 
     // get key function from keycode
-	getKey: function(code) {
-		var c = "";
-		if (code == 13) { // enter
-			return "ok";
-		} else if (code == 9) { // tab: next field
-			return "t";
-		} else if (code == 8) { // back
-			return "b";
-		} else return; // nothing to see here
-	},
+    getKey: function(code) {
+        var c = "";
+        if (code == 13) { // enter
+            return "ok";
+        } else if (code == 9) { // tab: next field
+            return "t";
+        } else if (code == 8) { // back
+            return "b";
+        } else return; // nothing to see here
+    },
 
-    focus: function () {
+    focus: function() {
         this.elements.field.focus(); // will fire onFocus
     },
 
-    blur: function () {
+    blur: function() {
         this.elements.field.blur(); // will fire onBlur
     },
 
-    onChanged: function () {
-        this.attributes.value.source =
-        this.attributes.value.value = this.elements.field.value;
+    onChanged: function() {
+        var v = this.elements.field.value;
+
+        if (v != this.attributes.value.source) {
+            this.attributes.value.source =
+                this.attributes.value.value = v;
+
+            this.clearChangeTimeout();
+            //if (foo.autoSend || foo.onUserChange) { // otherwise there's nothing to do
+
+            var changeDelay = this.getAttribute("changeDelay");
+            var self = this;
+            if (changeDelay) // if 0, disabled
+                this.changeTimeout = setTimeout(function() { self.onChangedTimeout() }, changeDelay);
+        }
+    },
+
+    clearChangeTimeout: function () {
+        if (this.changeTimeout) {
+			clearTimeout(this.changeTimeout);
+			this.changeTimeout = null; // make sure?
+		}
+    },
+
+	// on changed after timeout
+	onChangedTimeout: function() {
+		this.clearChangeTimeout();
+
+        // custom change event
+        var f = this.getAttribute("onChange");
+        var value = this.getAttribute("value");
+        Sfera.Custom.exec(f, this.id, value);
+	},
+
+    // redraw
+    redraw: function() {
+        var value = "";
+
+        if (this.elements.field) {
+            this.elements.field.onfocus = null;
+            this.elements.field.onblur = null;
+            this.elements.field.onselectstart = null;
+            value = this.elements.field.value;
+            this.elements.field = null;
+        }
+        var type = this.getAttribute("type");
+        var phText = this.getAttribute("placeHolder");
+        phText = phText ? ' placeholder="' + phText + '"' : '';
+        var style = ""; // TODO: styling the field
+        style = style ? ' style="' + style + '"' : '';
+
+        if (type == "textarea")
+            this.elements.fieldC.innerHTML = '<textarea class="field" ' + style + phText + ' /></textarea>';
+        else
+            this.elements.fieldC.innerHTML = '<input class="field" type="' + type + '"' + style + phText + ' />';
+
+        this.elements.field = this.elements.fieldC.childNodes[0];
+        this.elements.field.value = value;
+        this.attributes.height.update();
+
+        if (Sfera.Device.android == "Android") { // android: gets last click on a different page if in same position
+            this.elements.field.onfocus = function() {
+                return false;
+            };
+            this.elements.field.oninput = this.onUserChange;
+        } else {
+            this.elements.field.onfocus = this.onFocus; // skip this.elements.field.focus to avoid loop
+        }
+        this.elements.field.onblur = this.onBlur;
+        this.elements.field.onselectstart = this.onSelectStart;
+
+        this.elements.field.controller = this;
     },
 
     //
     // events
     //
+    onSelectStart: function(event) {
 
-    onKeyDown: function(evt) {
-        //this.controller.setAttribute("error", "false"); // make sure we're not showing an error
-        var code = evt.keyCode;
-        var co = this.controller;
-		var c = co.getKey(code);
-
-        console.log("key down "+co.id);
-
-        var inputType = co.getAttribute("inputType");
-        var autoSend = co.getAttribute("autoSend");
-
-		if ((c == "ok" && inputType != "multiline") || c == "t") {
-			//if (autoSend)
-			//	co.send(); // send now
-			co.focusNext(evt.shiftKey);
-			if (c == "ok" && inputType != "multiline")
-				co.blur(); // still focused? (no next object)
-			return false; // done, prevent
-		}
-
-        co.onChanged();
-		return true; // allow
     },
 
-    onKeyPress: function(evt) {
-        var code = evt.keyCode;
-        var co = this.controller;
-        var c = co.getKey(code);
-        var inputE = co.elements.field;
-        var value = co.getAttribute("value");
-        var keyRegex = co.getAttribute("keyRegex");
-        var maxLength = co.getAttribute("maxLength");
+    onKeyDown: function(event) {
+        //this.controller.setAttribute("error", "false"); // make sure we're not showing an error
+        var code = event.keyCode;
+        var c = this.getKey(code);
 
-        console.log("key press "+co.id);
+        console.log("key down " + this.id + " " + c);
+
+        var type = this.getAttribute("type");
+        var autoSend = this.getAttribute("autoSend");
+
+        if ((c == "ok" && type != "textarea") || c == "t") {
+            this.onChangedTimeout(); // send now
+            Sfera.client.focusNext(event.shiftKey);
+            if (c == "ok" && type != "textarea")
+                this.blur(); // still focused? (no next object)
+            return false; // done, prevent
+        }
+
+        this.onChanged();
+        return true; // allow
+    },
+
+    onKeyPress: function(event) {
+        var code = event.keyCode;
+        var c = this.getKey(code);
+        var fieldE = this.elements.field;
+        var value = this.getAttribute("value");
+        var keyRegex = this.getAttribute("keyRegex");
+        var maxLength = this.getAttribute("maxLength");
 
         function getSelectedText() {
-		    var text = "";
-		    if (inputE.selectionStart != inputE.selectionEnd) {
-		    	text = value.substr(inputE.selectionStart,inputE.selectionEnd);
-			} else if (typeof window.getSelection != "undefined") {
-		        text = window.getSelection().toString();
-		    } else if (typeof document.selection != "undefined" && document.selection.type == "Text") {
-		        text = document.selection.createRange().text;
-		    }
-		    return text;
-		}
+            var text = "";
+            if (fieldE.selectionStart != fieldE.selectionEnd) {
+                text = value.substr(fieldE.selectionStart, fieldE.selectionEnd);
+            } else if (typeof window.getSelection != "undefined") {
+                text = window.getSelection().toString();
+            } else if (typeof document.selection != "undefined" && document.selection.type == "Text") {
+                text = document.selection.createRange().text;
+            }
+            return text;
+        }
 
-		// check max length
-		if (!c && value && maxLength && value.length >= maxLength && !getSelectedText()) {
-			return false; // prevent
-		}
+        // check max length
+        if (!c && value && maxLength && value.length >= maxLength && !getSelectedText()) {
+            return false; // prevent
+        }
 
-		// validate? (only if ctrl or meta are not pressed)
-		if (!c && keyRegex && !evt.ctrlKey && !evt.metaKey && !keyRegex.test(String.fromCharCode(code)))
-			return false; // key validation failed: prevent
+        // validate? (only if ctrl or meta are not pressed)
+        if (!c && keyRegex && !event.ctrlKey && !event.metaKey && !keyRegex.test(String.fromCharCode(code)))
+            return false; // key validation failed: prevent
 
-        co.onChanged();
-		return true; // allow
+        this.onChanged();
+        return true; // allow
     },
 
-    onKeyUp: function(evt) {
-        var code = evt.keyCode;
-        var co = this.controller;
+    onKeyUp: function(event) {
+        var code = event.keyCode;
+        var c = this.getKey(code);
+        console.log("key up " + this.id);
 
-        co.onChanged();
-        console.log("key up "+co.id);
+        if (!c || c == "b") {
+            this.onChanged();
+            return false; // nothing to see here: prevent
+        }
 
         return true;
     },
 
     onChange: function() {
-        var co = this.controller;
-
-        co.onChanged();
+        this.onChanged();
         /*
         var f = this.getAttribute("onClick");
         Sfera.Custom.exec(f);
         */
     },
 
-    onFocus: function () {
-
+    onFocus: function() {
+        Sfera.client.setFocused(this.controller);
     },
 
-    onBlur: function () {
-
+    onBlur: function() {
+        Sfera.client.clearFocused(this.controller);
     }
 
 });

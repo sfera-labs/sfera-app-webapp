@@ -1,4 +1,4 @@
-/*! sfera-webapp - v0.0.2 - 2016-01-22 */
+/*! sfera-webapp - v0.0.2 - 2016-01-29 */
 
 (function(){
 
@@ -13,7 +13,7 @@ var Sfera = Sfera || {
     /**
     * The Sfera version number.
     * @constant
-    * @type {string} - version
+    * @type {string}
     */
     VERSION: '0.1.0',
 
@@ -27,7 +27,16 @@ var Sfera = Sfera || {
 };
 
 
-Sfera.Behaviors = {};
+Sfera.Behaviors = {
+
+};
+
+/**
+ * Visibility behavior.
+ *
+ * @mixin Sfera.Behaviors.Visibility
+ * @property {boolean} visible - sets the visibility
+ */
 Sfera.Behaviors.Visibility = function() {
     // extend attributes
     this.attrDefs.visible = {
@@ -42,12 +51,21 @@ Sfera.Behaviors.Visibility = function() {
         }
     };
 };
+
+/**
+ * Position behavior.
+ *
+ * @mixin Sfera.Behaviors.Position
+ * @property {string} position - sets the position
+ * @property {string} x - sets the x coordinate
+ * @property {string} y - sets the y coordinate
+ */
 Sfera.Behaviors.Position = function() {
     // extend attributes
     this.attrDefs.position = {
         type: "string",
         update: function() {
-            this.component.element.style.position = this.value == "static"?"static":"absolute";
+            this.component.element.style.position = this.value == "static" ? "static" : "absolute";
         }
     };
     this.attrDefs.x = {
@@ -68,13 +86,13 @@ Sfera.Behaviors.Size = function() {
     this.attrDefs.width = {
         type: "int",
         update: function() {
-            this.component.element.style.width = this.value == "auto"?"auto":this.value + "px";
+            this.component.element.style.width = this.value == "auto" ? "auto" : this.value + "px";
         }
     };
     this.attrDefs.height = {
         type: "int",
         update: function() {
-            this.component.element.style.height = this.value == "auto"?"auto":this.value + "px";
+            this.component.element.style.height = this.value == "auto" ? "auto" : this.value + "px";
         }
     };
 };
@@ -144,9 +162,9 @@ Sfera.Compiler = new(function() {
 
     /**
      * Create component instance.
-     * @param  {[type]} name       [description]
-     * @param  {[type]} attributes [description]
-     * @return {[type]}            [description]
+     * @param  {string} name        name of the
+     * @param  {object} attributes  attributes of
+     * @return {object}             thing
      */
     this.createComponent = function(name, attributes) {
         /*
@@ -216,8 +234,8 @@ Sfera.Compiler = new(function() {
 
     /**
      * [function description]
-     * @param  {[type]} xmlDoc [description]
-     * @return {[type]}        [description]
+     * @param  {string} xmlDoc [description]
+     * @return {string}        [description]
      */
     this.compileDictionary = function(xmlDoc) {
         var xmlNode = xmlDoc.documentElement;
@@ -513,14 +531,27 @@ Sfera.ComponentManager = function (client) {
 * Sfera.Components singleton that handles components
 *
 * @namespace Sfera.Components
+* @class Sfera.Components
 */
 Sfera.Components = new (function () {
-
+    /**
+     * Set a component source code
+     *
+     * @method Sfera.Components#setSource
+     * @property {string} componentName - The name of the component.
+     * @property {string} source - The component source code.
+     */
     this.setSource = function (componentName, source) {
         var cc = this.getClass(componentName);
         cc.prototype.source = source;
     };
 
+    /**
+     * Bakes the source of a component into a DOM structure, so the component is ready to be instantiated
+     *
+     * @method Sfera.Components#bakeSource
+     * @property {string} componentName - The name of the component.
+     */
     this.bakeSource = function (componentName) {
         var cc = this.getClass(componentName);
 
@@ -535,14 +566,32 @@ Sfera.Components = new (function () {
         cc.prototype.dom = dom;
     };
 
+    /**
+     * Get the class name of a component starting from its name (capitalizes it)
+     *
+     * @method Sfera.Components#getClassName
+     * @property {string} componentName - The name of the component.
+     */
     this.getClassName = function (componentName) {
         return componentName[0].toUpperCase() + componentName.substr(1);
     };
 
+    /**
+     * Get the class of a component from its name
+     *
+     * @method Sfera.Components#getClass
+     */
     this.getClass = function (componentName) {
         return Sfera.Components[this.getClassName(componentName)];
     };
 
+    /**
+     * Creates an instance of a component
+     *
+     * @method Sfera.Components#createInstance
+     * @property {string} componentName - The name of the component.
+     * @property {object} attributes - The attribute values.
+     */
     this.createInstance = function(componentName, attributes) {
         // component class
         var cc = this.getClass(componentName);
@@ -556,14 +605,21 @@ Sfera.Components = new (function () {
         return component;
     };
 
-    this.create = function (name,config) {
+    /**
+     * Creates a component class from its name and definition
+     *
+     * @method Sfera.Components#create
+     * @property {string} name - The name of the component.
+     * @property {string} def - The component's definition.
+     */
+    this.create = function (name,def) {
         // constructor
-        Sfera.Components[name] = function Component (config) {
+        Sfera.Components[name] = function Component (def) {
             // children, if container
             this.children = [];
 
             // html element
-            if (config.element) {
+            if (def.element) {
                 this.element = element;
             } else {
                 // DOM
@@ -580,7 +636,7 @@ Sfera.Components = new (function () {
                 var nodes = Sfera.Utils.getAllCommentChildNodes(this.element);
                 var xml;
                 // we need the id now, will set it again later. TODO: find better way?
-                this.id = config.attributes?config.attributes.id:null;
+                this.id = def.attributes?def.attributes.id:null;
                 for (var i=0; i<nodes.length; i++) {
                     if (nodes[i].nodeValue.substr(0,3) == "sml") {
                         xml = Sfera.Utils.parseXML(nodes[i].nodeValue.substr(3));
@@ -610,8 +666,8 @@ Sfera.Components = new (function () {
 
             // attribute values
             for (var attr in this.attributes) {
-                if (config.attributes && config.attributes[attr])
-                    this.setAttribute(attr, config.attributes[attr]);
+                if (def.attributes && def.attributes[attr])
+                    this.setAttribute(attr, def.attributes[attr]);
                 else if (this.attributes[attr].default)
                     this.setAttribute(attr, this.attributes[attr].default);
             }
@@ -627,10 +683,10 @@ Sfera.Components = new (function () {
         */
 
         // extends
-        if (!config.extends)
-            config.extends = "_Base";
+        if (!def.extends)
+            def.extends = "_Base";
 
-        var sup = Sfera.Components[config.extends].prototype;
+        var sup = Sfera.Components[def.extends].prototype;
 
         comp.prototype = Object.create(sup);
         comp.prototype.constructor = comp;
@@ -643,34 +699,34 @@ Sfera.Components = new (function () {
         }
 
         // behaviors
-        if (config.behaviors) {
+        if (def.behaviors) {
             var be;
-            for (var i=0; i < config.behaviors.length; i++) {
-                be = Sfera.Behaviors[config.behaviors[i]];
+            for (var i=0; i < def.behaviors.length; i++) {
+                be = Sfera.Behaviors[def.behaviors[i]];
                 be.call(comp.prototype); // extend prototype
             }
         }
 
         // attributes
-        if (config.attributes) {
-            for (var attr in config.attributes) {
+        if (def.attributes) {
+            for (var attr in def.attributes) {
                 if (!comp.prototype.attrDefs[attr]) {
-                    comp.prototype.attrDefs[attr] = config.attributes[attr];
+                    comp.prototype.attrDefs[attr] = def.attributes[attr];
                 } else {
                     // extend rather than replace (in case it was already defined by behavior)
-                    for (var i in config.attributes[attr])
-                        comp.prototype.attrDefs[attr][i] = config.attributes[attr][i];
+                    for (var i in def.attributes[attr])
+                        comp.prototype.attrDefs[attr][i] = def.attributes[attr][i];
                 }
             }
         }
 
         // the rest
-        for (var f in config) {
+        for (var f in def) {
             // skip, already done
             if (f == "behaviors" || f == "attributes")
                 continue;
 
-            comp.prototype[f] = config[f];
+            comp.prototype[f] = def[f];
             if (typeof comp.prototype[f] === "function")
                 comp.prototype[f].displayName = "Sfera.Components."+name+"."+f;
         }
@@ -794,6 +850,9 @@ Sfera.Client = function(config) {
         Sfera.Net.connect();
 
         window.onresize = adjustLayout;
+        window.onkeydown = onKeyDown;
+		window.onkeyup = onKeyUp;
+		window.onkeypress = onKeyPress;
 
         delete config;
     };
@@ -858,6 +917,9 @@ Sfera.Client = function(config) {
         Sfera.Browser.start();
         interfaceC = this.components.getObjsByType("Interface")[0];
         adjustLayout();
+
+        // register events
+
     }
 
     this.indexComponent = function(component) {
@@ -1013,6 +1075,178 @@ Sfera.Client = function(config) {
     this.removeAttrObserver = function(node, attribute) {
         attrObservers[node].remove(attribute.compile, attribute);
     }
+
+    // events
+    // on key down event
+	function onKeyDown(event) {
+		var evt = event || window.event;
+		var code = evt.charCode || evt.keyCode;
+
+		self.ctrlKey = evt.ctrlKey;
+		self.shiftKey = evt.shiftKey;
+
+		// keyboard listener?
+		if (focusedCo && focusedCo.onKeyDown) {
+			if (!focusedCo.onKeyDown(evt,code)) {
+				// the event won't go through, prevent
+				Sfera.Browser.preventDefault(evt);
+				return false;
+			}
+		} else {
+			if (code == 9) {
+				if (self.cPage.children.length)
+					focusFirst(self.cPage,evt.shiftKey); // get first or last
+				// the event won't go through, prevent
+				Sfera.Browser.preventDefault(evt);
+				return false;
+			}
+		}
+
+		return true;
+	} // onKeyDown()
+
+	function onKeyPress(event) {
+		var evt = event || window.event;
+		var code = evt.charCode || evt.keyCode;
+
+		self.ctrlKey = evt.ctrlKey;
+		self.shiftKey = evt.shiftKey;
+
+		// keyboard listener?
+		if (focusedCo && focusedCo.onKeyPress) {
+			if (!focusedCo.onKeyPress(evt,code)) {
+				// the event won't go through, prevent
+				Sfera.Browser.preventDefault(evt);
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	// on key up event
+	function onKeyUp(event) {
+		var evt = event || window.event;
+		var code = evt.charCode || evt.keyCode;
+
+		self.ctrlKey = evt.ctrlKey;
+		self.shiftKey = evt.shiftKey;
+
+		// keyboard listener?
+		if (focusedCo && focusedCo.onKeyUp) {
+			if (focusedCo.onKeyUp(evt,code)) return true; // the event will go through
+		}
+
+		// the event won't go through, prevent
+		Sfera.Browser.preventDefault(evt);
+		return false;
+	} // onKeyUp()
+
+
+    ////////////////////////// focus
+    var focusedCo;
+    var blurTimeoutId;
+
+    // set focused component, call onFocus
+    this.setFocused = function(co) {
+        if (focusedCo && focusedCo != co)
+            focusedCo.blur();
+        focusedCo = co;
+        if (blurTimeoutId)
+            clearTimeout(blurTimeoutId);
+        if (!co.noBlurTimeout) // if noBlurTimeout = true, won't start the blur timeout
+            blurTimeoutId = setTimeout(this.focus, 30000); // blur after a while
+    };
+    // clear focused component, call onBlur
+    this.clearFocused = function(co) {
+        if (focusedCo == co)
+            focusedCo = null;
+        if (blurTimeoutId)
+            clearTimeout(blurTimeoutId);
+    };
+
+    // focus client
+    this.focus = function() {
+        if (focusedCo)
+            focusedCo.blur();
+    }; // focusProject()
+
+    function canFocus(co) {
+        return (co != this && co.focus && co.isVisible() && co.isEnabled());
+    }
+
+    // focus first component in container (start from the first or the last)
+    function focusFirst(container, dir) {
+        var l = container.children.length;
+        var co = container.children[dir ? l - 1 : 0];
+        if (co.isVisible()) {
+            if (co.focus && co.isEnabled()) { // found
+                co.focus();
+                return co;
+            } else if (co.children && co.children.length) { // container? look inside
+                return focusFirst(co, dir);
+            }
+        }
+
+        // couldn't focus, keep looking
+        return focusNext(co);
+    } // focusFirstObj()
+
+    function focusNext(co,dir) {
+        var cos = co.parent.children;
+        var oi = -1;
+        var i;
+        var r; // result
+        // search this co index
+        for (i = 0; i < cos.length; i++) {
+            if (cos[i] == co) {
+                oi = i;
+                break;
+            }
+        }
+
+        if (oi == -1) return null; // is it even possible?
+        i = oi; // start from next
+        do {
+            if (dir) {
+                i--;
+                if (i < 0) {
+                    // in a container? check parent
+                    if (co.parent.parent) {
+                        r = focusNext(co.parent, dir);
+                        if (r) return r; // no need to focus again
+                    }
+                    i = cos.length - 1; // restart from last
+                }
+            } else {
+                i++;
+                if (i >= cos.length) {
+                    // in a container? check parent
+                    if (co.parent.parent) {
+                        r = focusNext(co.parent, dir);
+                        if (r) return r; // no need to focus again
+                    }
+                    i = 0; // restart from 0
+                }
+            }
+            // container? go inside
+            if (cos[i].children && cos[i].children.length) {
+                r = focusFirst(cos[i], dir); // get first or last
+                if (r) return r; // no need to focus again
+            }
+            // has focus function? can focus?
+            if (canFocus(cos[i])) {
+                cos[i].focus();
+                return cos[i];
+            }
+        } while (cos[i] != co); // go round once
+        return null; // no next coect found (co wasn't focusable?)
+    }
+
+    this.focusNext = function(dir) {
+        return focusNext(focusedCo,dir);
+    };
+
 };
 
 
@@ -2335,7 +2569,7 @@ Sfera.UI.Button.prototype = {
 		if (Sfera.Device.touch) {
             this.element.ontouchstart = this.onEvent.bind(this,'touchstart',f.ondown,null);
             this.element.ontouchmove = this.onEvent.bind(this,'touchmove',f.onmove,f.onout);
-            this.element.ontouchstart = this.onEvent.bind(this,'touchend',f.onup,null);
+            this.element.ontouchend = this.onEvent.bind(this,'touchend',f.onup,null);
 		} else {
             this.element.onmouseover = this.onEvent.bind(this,'mouseover',f.onover,null);
 			this.element.onmouseout = this.onEvent.bind(this,'mouseout',f.onout,null);
@@ -2420,7 +2654,7 @@ Sfera.UI.Button.prototype = {
 	},
 
 	disableAndroidLongPress: function (evt,e) {
-		if (browser.OS == "Android") {
+		if (Sfera.Device.android) {
 			var d = e;
 			while (d) {
 				if (d.getAttribute && d.getAttribute("data-scrollmode")) return; // scrollable, don't disable the long press
@@ -2451,6 +2685,7 @@ Sfera.UI.Button.prototype = {
 		// touchevents or not?
 		if (w == "touchstart" || w == "touchend" || w == "touchmove") {
 			if (!Sfera.Device.touch) return false;
+console.log("yep" +w);
 		} else {
 			if (evt)
 				this.preventDefault(evt);
@@ -2465,6 +2700,8 @@ Sfera.UI.Button.prototype = {
 		var swip = swi?this.data.attrs[this._attributes["pressed"]]:false; // switch pressed
 		var nswip = swip; // new switch pressed value, to notice if it changes
 
+console.log(this.data.attrs[this._attributes["disabled"]]);
+
 		var s = ""; // class to add, down/over (only if not disabled)
 		if (!this.data.attrs[this._attributes["disabled"]]) switch (w) {
 		case "touchstart":
@@ -2474,7 +2711,8 @@ Sfera.UI.Button.prototype = {
 			touchStartY = evt.touches[0].clientY;
 			s = "down";
 			if (swi) nswip = !swip;
-			disableAndroidLongPress(evt,this.element);
+			this.disableAndroidLongPress(evt,this.element);
+console.log("here " +this.data.state);
 			break;
 		case "touchmove":
 			if (Sfera.UI.getPressedButton() == this) {
@@ -2486,7 +2724,7 @@ Sfera.UI.Button.prototype = {
 					  f = of; // execute optional function if any
 				}
 			}
-			disableAndroidLongPress(evt,this.element);
+			this.disableAndroidLongPress(evt,this.element);
 			break;
 		case "touchend":
 			if (Sfera.UI.getPressedButton() != this) {
@@ -2496,7 +2734,7 @@ Sfera.UI.Button.prototype = {
 				this.preventDefault(evt);
 			}
 			Sfera.UI.setPressedButton(null);
-			disableAndroidLongPress(evt,this.element);
+			this.disableAndroidLongPress(evt,this.element);
 			break;
 		case "mouseover":
             var pressedBt = Sfera.UI.getPressedButton();
@@ -3195,6 +3433,14 @@ Sfera.Browser = new (function() {
     this.reload = function() {
         window.location.reload();
     };
+    
+    // prevent default event
+	this.preventDefault = function (evt) {
+		if (evt.returnValue)
+			evt.returnValue = false;
+		if (evt.preventDefault)
+			evt.preventDefault();
+	}
 
     /**
      * Change the browser tab URL without reloading (if supported)
@@ -4737,80 +4983,7 @@ Sfera.Components.create("_Field", {
 
     onFocus: function() {},
 
-    onBlur: function() {},
-
-    focusNext: function(dir) {
-        function canFocus(co) {
-            return (co != this && co.extends == "_Field" && co.isVisible() && co.isEnabled());
-        }
-        // focus first object in container (start from the first or the last)
-        function focusFirstObj(container, dir) {
-            var l = container.children.length;
-            var co = container.children[dir ? l - 1 : 0];
-            if (co.isVisible()) {
-                if (co.focus && co.isEnabled()) { // found
-                    co.focus();
-                    return co;
-                } else if (co.children && co.children.length) { // container? look inside
-                    return focusFirstObj(co, dir);
-                }
-            }
-
-            // couldn't focus, keep looking
-            return next(co);
-        } // focusFirstObj()
-        function next(co) {
-            var cos = co.parent.children;
-            var oi = -1;
-            var i;
-            var r; // result
-            // search this co index
-            for (i = 0; i < cos.length; i++) {
-                if (cos[i] == co) {
-                    oi = i;
-                    break;
-                }
-            }
-
-            if (oi == -1) return null; // is it even possible?
-            i = oi; // start from next
-            do {
-                if (dir) {
-                    i--;
-                    if (i < 0) {
-                        // in a container? check parent
-                        if (co.parent.parent) {
-                            r = next(co.parent, dir);
-                            if (r) return r; // no need to focus again
-                        }
-                        i = cos.length - 1; // restart from last
-                    }
-                } else {
-                    i++;
-                    if (i >= cos.length) {
-                        // in a container? check parent
-                        if (co.parent.parent) {
-                            r = next(co.parent, dir);
-                            if (r) return r; // no need to focus again
-                        }
-                        i = 0; // restart from 0
-                    }
-                }
-                // container? go inside
-                if (cos[i].children && cos[i].children.length) {
-                    r = focusFirstObj(cos[i], dir); // get first or last
-                    if (r) return r; // no need to focus again
-                }
-                // has focus function? can focus?
-                if (canFocus(cos[i])) {
-                    cos[i].focus();
-                    return cos[i];
-                }
-            } while (cos[i] != co); // go round once
-            return null; // no next coect found (co wasn't focusable?)
-        }
-        return next(this);
-    }
+    onBlur: function() {}
 
 });
 
