@@ -179,10 +179,15 @@ public class InterfaceCacheBuilder {
 	 * @throws XMLStreamException
 	 */
 	private static Set<String> getDirectSubComponents(String component)
-			throws NoSuchFileException, IOException, XMLStreamException {
+			throws IOException, XMLStreamException {
 		Set<String> sub = new HashSet<>();
-		Path path = ResourcesUtil.getResource(
-				WebApp.ROOT.resolve("components/" + component + "/" + component + ".html"));
+		Path path;
+		try {
+			path = ResourcesUtil.getResource(
+					WebApp.ROOT.resolve("components/" + component + "/" + component + ".html"));
+		} catch (NoSuchFileException nsfe) {
+			return sub;
+		}
 		String content = new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
 		String[] smls = content.split("<!--sml|-->");
 		for (int i = 1; i < smls.length; i += 2) {
@@ -610,7 +615,10 @@ public class InterfaceCacheBuilder {
 			while ((line = reader.readLine()) != null) {
 				content.append(line).append('\n');
 			}
-			eventWriter.add(eventFactory.createCData(content.substring(0, content.length() - 1)));
+			if (content.length() > 0) {
+				eventWriter
+						.add(eventFactory.createCData(content.substring(0, content.length() - 1)));
+			}
 			eventWriter.add(eventFactory.createEndElement("", "", elementLocalName));
 			eventWriter.add(NL);
 		}
