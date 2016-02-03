@@ -38,7 +38,7 @@
     this.exec = function (f, id, value) {
         // eval button js
         try {
-            eval(f);
+            var result = eval(f);
         } catch (e) {
             if (e instanceof SyntaxError) {
                 alert(e.message);
@@ -46,6 +46,7 @@
                 throw (e);
             }
         }
+        return (result === false ? false : true); // return false (block event?) only if eval results in false
     };
 
 })();

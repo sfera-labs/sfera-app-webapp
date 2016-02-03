@@ -11,7 +11,9 @@ BODY {
   color: white;
   padding: 0;
   margin: 0;
-  background: #2f3336; }
+  background: #2f3336;
+  background: #369;
+}
 
 IMG {
   padding: 0;
@@ -62,7 +64,7 @@ IMG {
   box-shadow: rgba(0, 0, 0, 0.1) 0 0 0 2px, rgba(0, 0, 0, 0.4) 0px 0px 1px 1px;
   		/*
   		& { @include button-1(#7a7e80,#575858,#222528); } // default1: b
-  
+
   		&.g { @include button-1(#84db24,#4f9316,#135915); }
   		&.y, &.highlight { @include button-1(#f4ed00,#ddc700,#b17300); } // highlight: y
   		&.r, &.alert { @include button-1(#dd006a,#97003f,#5e0041); } // alert: r, ex.logout

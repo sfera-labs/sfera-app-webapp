@@ -1,4 +1,4 @@
-/*! sfera-webapp - v0.0.2 - 2016-01-29 */
+/*! sfera-webapp - v0.0.2 - 2016-02-03 */
 
 (function(){
 
@@ -42,12 +42,42 @@ Sfera.Behaviors.Visibility = function() {
     this.attrDefs.visible = {
         type: "boolean",
         compile: function() {
-            this.changed = false;
-            this.value = !(!this.source || this.source == "false");
-            this.update();
+            var value = !(!this.source || this.source == "false");
+            if (value !== this.value) {
+                this.changed = false;
+                this.value = value;
+                this.update();
+            }
         },
         update: function() {
+            // trigger event. component, show/hide, is it a child? (also check if its visibility is changing before triggering)
+            function trigger(co, show, child) {
+                if (!child || co.getAttribute("visible")) { // trigger?
+                    if (show && co.onShow) {
+                        co.onShow();
+                    } else if (!show && co.onHide) {
+                        co.onHide();
+                    }
+
+                    if (co.children) {
+                        for (var c = 0; c < co.children.length; c++)
+                            trigger(co.children[c], show);
+                    }
+                }
+            }
+
+            // trigger on hide before hiding
+            if (!this.value) {
+                trigger(this.component, false);
+            }
+
+            // change visibility
             this.component.element.style.display = this.value ? "inline" : "none";
+
+            // trigger on show after
+            if (this.value) {
+                trigger(this.component, true);
+            }
         }
     };
 };
@@ -69,28 +99,39 @@ Sfera.Behaviors.Position = function() {
         }
     };
     this.attrDefs.x = {
-        type: "int",
+        type: "integer",
         update: function() {
             this.component.element.style.left = this.value + "px";
         }
     };
     this.attrDefs.y = {
-        type: "int",
+        type: "integer",
         update: function() {
             this.component.element.style.top = this.value + "px";
         }
     };
+
+    this.attrDefs.rotate = {
+        type: "integer",
+        update: function () {
+            var s = this.component.element.style;
+            var r = "rotate(" + this.value + "deg)"
+            s.msTransform = /* IE 9 */
+            s.webkitTransform = /* Safari */
+            s.transform = r;
+        }
+    }
 };
 Sfera.Behaviors.Size = function() {
     // extend attributes
     this.attrDefs.width = {
-        type: "int",
+        type: "integer",
         update: function() {
             this.component.element.style.width = this.value == "auto" ? "auto" : this.value + "px";
         }
     };
     this.attrDefs.height = {
-        type: "int",
+        type: "integer",
         update: function() {
             this.component.element.style.height = this.value == "auto" ? "auto" : this.value + "px";
         }
@@ -111,7 +152,7 @@ Sfera.Behaviors.Label = function() {
         }
     };
     this.attrDefs.fontSize = {
-        type: "int",
+        type: "integer",
         update: function() {
             this.component.element.style.fontSize = this.value + "px";
         }
@@ -340,7 +381,17 @@ Sfera.Compiler = new(function() {
             case "integer":
                 value = parseInt(value);
                 break;
+            case "float":
+                value = parseFloat(value);
+                break;
             case "string":
+                if (typeof(value) != "string" && value.toString) {
+                    var v = value.toString();
+                    if (v == "[object Object]")
+                        value = JSON.stringify(value);
+                    else
+                        value = v;
+                }
                 break;
             case "boolean":
                 value = !(value === "false" || value === false || value === undefined || value === null);
@@ -375,9 +426,9 @@ Sfera.Attribute = function(component, config) {
     // default source value. if != null, it's applied after .init()
     this.default = null;
     // value source
-    this.source = "";
+    this.source = null;
     // compiled value
-    this.value = "";
+    this.value = null;
     // owner component
     this.component = component;
 
@@ -528,12 +579,12 @@ Sfera.ComponentManager = function (client) {
 
 
 /**
-* Sfera.Components singleton that handles components
-*
-* @namespace Sfera.Components
-* @class Sfera.Components
-*/
-Sfera.Components = new (function () {
+ * Sfera.Components singleton that handles components
+ *
+ * @namespace Sfera.Components
+ * @class Sfera.Components
+ */
+Sfera.Components = new(function() {
     /**
      * Set a component source code
      *
@@ -541,7 +592,7 @@ Sfera.Components = new (function () {
      * @property {string} componentName - The name of the component.
      * @property {string} source - The component source code.
      */
-    this.setSource = function (componentName, source) {
+    this.setSource = function(componentName, source) {
         var cc = this.getClass(componentName);
         cc.prototype.source = source;
     };
@@ -552,7 +603,7 @@ Sfera.Components = new (function () {
      * @method Sfera.Components#bakeSource
      * @property {string} componentName - The name of the component.
      */
-    this.bakeSource = function (componentName) {
+    this.bakeSource = function(componentName) {
         var cc = this.getClass(componentName);
 
         // bake DOM
@@ -560,7 +611,7 @@ Sfera.Components = new (function () {
         d.innerHTML = Sfera.Compiler.compileHTML(cc.prototype.source);
 
         var dom = Sfera.Utils.getFirstChildNodeOfType(d, 1);
-        dom.setAttribute("data-controller",componentName);
+        dom.setAttribute("data-controller", componentName);
 
         // set dom, ready for cloning
         cc.prototype.dom = dom;
@@ -572,7 +623,7 @@ Sfera.Components = new (function () {
      * @method Sfera.Components#getClassName
      * @property {string} componentName - The name of the component.
      */
-    this.getClassName = function (componentName) {
+    this.getClassName = function(componentName) {
         return componentName[0].toUpperCase() + componentName.substr(1);
     };
 
@@ -581,7 +632,7 @@ Sfera.Components = new (function () {
      *
      * @method Sfera.Components#getClass
      */
-    this.getClass = function (componentName) {
+    this.getClass = function(componentName) {
         return Sfera.Components[this.getClassName(componentName)];
     };
 
@@ -600,7 +651,9 @@ Sfera.Components = new (function () {
         if (cc == null)
             return null;
 
-        var component = new cc({attributes:attributes});
+        var component = new cc({
+            attributes: attributes
+        });
 
         return component;
     };
@@ -612,9 +665,9 @@ Sfera.Components = new (function () {
      * @property {string} name - The name of the component.
      * @property {string} def - The component's definition.
      */
-    this.create = function (name,def) {
+    this.create = function(name, def) {
         // constructor
-        Sfera.Components[name] = function Component (def) {
+        Sfera.Components[name] = function Component(def) {
             // children, if container
             this.children = [];
 
@@ -623,36 +676,40 @@ Sfera.Components = new (function () {
                 this.element = element;
             } else {
                 // DOM
-                if (!this.dom)
+                if (!this.dom && this.source)
                     Sfera.Components.bakeSource(name);
 
-                this.element = this.dom.cloneNode(true);
-                this.element.controller = this;
+                if (this.dom) {
+                    this.element = this.dom.cloneNode(true);
+                    this.element.controller = this;
 
-                // subcomponents, if composed component
-                this.subComponents = {};
+                    // subcomponents, if composed component
+                    this.subComponents = {};
 
-                // replace sml comment nodes with compiled xml
-                var nodes = Sfera.Utils.getAllCommentChildNodes(this.element);
-                var xml;
-                // we need the id now, will set it again later. TODO: find better way?
-                this.id = def.attributes?def.attributes.id:null;
-                for (var i=0; i<nodes.length; i++) {
-                    if (nodes[i].nodeValue.substr(0,3) == "sml") {
-                        xml = Sfera.Utils.parseXML(nodes[i].nodeValue.substr(3));
+                    // replace sml comment nodes with compiled xml
+                    var nodes = Sfera.Utils.getAllCommentChildNodes(this.element);
+                    var xml;
+                    // we need the id now, will set it again later. TODO: find better way?
+                    this.id = def.attributes ? def.attributes.id : null;
+                    for (var i = 0; i < nodes.length; i++) {
+                        if (nodes[i].nodeValue.substr(0, 3) == "sml") {
+                            xml = Sfera.Utils.parseXML(nodes[i].nodeValue.substr(3));
 
-                        var root = Sfera.Compiler.compileXML(xml,{index:this.id?true:false, idPrefix:this.id});
+                            var root = Sfera.Compiler.compileXML(xml, {
+                                index: this.id ? true : false,
+                                idPrefix: this.id
+                            });
 
-                        // replace existing node
-                        if (root && root.element) {
-                            nodes[i].parentNode.replaceChild(root.element, nodes[i]);
-                            this.addSubComponent(root);
+                            // replace existing node
+                            if (root && root.element) {
+                                nodes[i].parentNode.replaceChild(root.element, nodes[i]);
+                                this.addSubComponent(root);
+                            }
                         }
                     }
                 }
 
             }
-
 
             // attributes
             this.attributes = {};
@@ -661,21 +718,21 @@ Sfera.Components = new (function () {
             }
 
             // init
-            this.super("_Base","init");
+            this.super("_Base", "init");
             this.init();
 
             // attribute values
             for (var attr in this.attributes) {
-                if (def.attributes && def.attributes[attr])
+                if (def.attributes && def.attributes[attr] != null)
                     this.setAttribute(attr, def.attributes[attr]);
-                else if (this.attributes[attr].default)
+                else if (this.attributes[attr].default != null)
                     this.setAttribute(attr, this.attributes[attr].default);
             }
         };
         var comp = Sfera.Components[name];
 
         // non standard, allows developer tools to display object class names correctly
-        comp.displayName = "Sfera.Component."+name;
+        comp.displayName = "Sfera.Component." + name;
         /*
         Object.defineProperty(Sfera.Components[name], 'name', {
           value: "Sfera.Component."+name
@@ -701,7 +758,7 @@ Sfera.Components = new (function () {
         // behaviors
         if (def.behaviors) {
             var be;
-            for (var i=0; i < def.behaviors.length; i++) {
+            for (var i = 0; i < def.behaviors.length; i++) {
                 be = Sfera.Behaviors[def.behaviors[i]];
                 be.call(comp.prototype); // extend prototype
             }
@@ -728,7 +785,7 @@ Sfera.Components = new (function () {
 
             comp.prototype[f] = def[f];
             if (typeof comp.prototype[f] === "function")
-                comp.prototype[f].displayName = "Sfera.Components."+name+"."+f;
+                comp.prototype[f].displayName = "Sfera.Components." + name + "." + f;
         }
     };
 
@@ -2685,7 +2742,6 @@ Sfera.UI.Button.prototype = {
 		// touchevents or not?
 		if (w == "touchstart" || w == "touchend" || w == "touchmove") {
 			if (!Sfera.Device.touch) return false;
-console.log("yep" +w);
 		} else {
 			if (evt)
 				this.preventDefault(evt);
@@ -2700,8 +2756,6 @@ console.log("yep" +w);
 		var swip = swi?this.data.attrs[this._attributes["pressed"]]:false; // switch pressed
 		var nswip = swip; // new switch pressed value, to notice if it changes
 
-console.log(this.data.attrs[this._attributes["disabled"]]);
-
 		var s = ""; // class to add, down/over (only if not disabled)
 		if (!this.data.attrs[this._attributes["disabled"]]) switch (w) {
 		case "touchstart":
@@ -2712,7 +2766,6 @@ console.log(this.data.attrs[this._attributes["disabled"]]);
 			s = "down";
 			if (swi) nswip = !swip;
 			this.disableAndroidLongPress(evt,this.element);
-console.log("here " +this.data.state);
 			break;
 		case "touchmove":
 			if (Sfera.UI.getPressedButton() == this) {
@@ -4878,7 +4931,7 @@ Sfera.Components.create("_Base", {
         id: {
             type: "string",
             set: function(value) {
-                this.value.id = value;
+                this.value = value;
                 this.component.id = value;
                 this.component.element.setAttribute("data-id", value);
             },
@@ -4925,12 +4978,13 @@ Sfera.Components.create("_Base", {
     addChild: function(child) {
         this.children.push(child);
         child.parent = this;
-        if (this.element) {
+        if (this.element && child.element) {
             this.element.appendChild(child.element);
         }
     },
 
     addSubComponent: function(co) {
+        if (co.id === false) co.id = this.id+".icon";
         var id = co.id;
         // remove this.id. TODO: find a better way
         if (this.id)
@@ -4975,7 +5029,9 @@ Sfera.Components.create("_Field", {
     // safe value
     value: "",
 
-    init: function() {},
+    init: function() {
+        this.focused = false;
+    },
 
     focus: function() {},
 
