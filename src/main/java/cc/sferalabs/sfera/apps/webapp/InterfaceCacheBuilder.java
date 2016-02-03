@@ -576,9 +576,13 @@ public class InterfaceCacheBuilder {
 
 		for (String comp : components) {
 			eventWriter.add(EVENT_FACTORY.createStartElement("", "", comp));
-			addElementWithCDataContentFromFile(
-					WebApp.ROOT.resolve("components/" + comp + "/" + comp + ".html"), "src",
-					eventWriter, EVENT_FACTORY);
+			try {
+				addElementWithCDataContentFromFile(
+						WebApp.ROOT.resolve("components/" + comp + "/" + comp + ".html"), "src",
+						eventWriter, EVENT_FACTORY);
+			} catch (NoSuchFileException nsfe) {
+				// this component has no html, and that's fine
+			}
 			try {
 				addElementWithCDataContentFromFile(
 						WebApp.ROOT.resolve("components/" + comp + "/languages/"
