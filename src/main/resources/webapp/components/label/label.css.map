@@ -1,0 +1,7 @@
+{
+"version": 3,
+"mappings": "AAAA,iBAAkB;EACd,MAAM,EAAE,OAAO",
+"sources": ["label.scss"],
+"names": [],
+"file": "label.css"
+}

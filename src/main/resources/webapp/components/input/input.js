@@ -25,10 +25,6 @@ Sfera.Components.create("Input", {
             }
         },
 
-        autoSend: {
-            type: "boolean"
-        },
-
         height: {
             update: function() {
                 if (this.component.elements.field)
@@ -77,10 +73,6 @@ Sfera.Components.create("Input", {
             }
         },
 
-        safeValue: {
-
-        },
-
         changeDelay: {
             type: "integer",
             default: "1000" // msec to wait before noticing a change
@@ -123,7 +115,7 @@ Sfera.Components.create("Input", {
 
             update: function() {
                 var co = this.component;
-                co.elements.container.className = "container " + this.value + (co.focused?" focused":"");
+                co.elements.container.className = "container " + this.value;
             }
         },
 
@@ -172,17 +164,6 @@ Sfera.Components.create("Input", {
         */
     },
 
-    // get key function from keycode
-    getKey: function(code) {
-        var c = "";
-        if (code == 13) { // enter
-            return "enter";
-        } else if (code == 9) { // tab: next field
-            return "tab";
-        } else if (code == 8) { // back
-            return "del";
-        } else return; // nothing to see here
-    },
 
     focus: function() {
         this.elements.field.focus(); // will fire onFocus
@@ -191,7 +172,6 @@ Sfera.Components.create("Input", {
     blur: function() {
         this.elements.field.blur(); // will fire onBlur
     },
-
 
     // redraw
     redraw: function() {
@@ -233,6 +213,10 @@ Sfera.Components.create("Input", {
         this.elements.field.controller = this;
     },
 
+
+    updateClass: function () {
+        this.element.className = "component input" + (this.focused?" focused":"");
+    },
 
     //
     // events
@@ -287,10 +271,8 @@ Sfera.Components.create("Input", {
     onKeyDown: function(event) {
         //this.controller.setAttribute("error", "false"); // make sure we're not showing an error
         var code = event.keyCode;
-        var c = this.getKey(code);
-
+        var c = Sfera.Utils.getKeyFromCode(code);
         var type = this.getAttribute("type");
-        var autoSend = this.getAttribute("autoSend");
 
         // trigger on enter event
         if (c == "enter" && !this.onEnter()) {
@@ -314,7 +296,7 @@ Sfera.Components.create("Input", {
 
     onKeyPress: function(event) {
         var code = event.keyCode;
-        var c = this.getKey(code);
+        var c = Sfera.Utils.getKeyFromCode(code);
         var fieldE = this.elements.field;
         var value = this.getAttribute("value");
         var keyRegex = this.getAttribute("keyRegex");
@@ -347,9 +329,9 @@ Sfera.Components.create("Input", {
 
     onKeyUp: function(event) {
         var code = event.keyCode;
-        var c = this.getKey(code);
+        var c = Sfera.Utils.getKeyFromCode(code);
 
-        if (!c || c == "del") {
+        if (c != "enter" && c !== "tab") {
             this.onChanged();
             return false; // nothing to see here: prevent
         }
@@ -378,7 +360,7 @@ Sfera.Components.create("Input", {
         var co = this.controller;
         Sfera.client.setFocused(co);
         co.focused = true;
-        co.attributes.style.update();
+        co.updateClass();
     },
 
     onBlur: function() {
@@ -386,12 +368,12 @@ Sfera.Components.create("Input", {
         co.onChanged();
         Sfera.client.clearFocused(co);
         co.focused = false;
-        co.attributes.style.update();
+        co.updateClass();
     },
 
     onShow: function() {
-        if (this.value)
-            this.component.focus();
+        if (this.getAttribute("focus"))
+            this.focus();
     },
 
     onHide: function() {

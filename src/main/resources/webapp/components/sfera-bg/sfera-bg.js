@@ -10,7 +10,7 @@
  *
  * @class Sfera.Components.SferaBg
  */
-Sfera.Components.create("Sferabg", {
+Sfera.Components.create("SferaBg", {
     init: function() {
         var tid = 0;
         var p; // bg points

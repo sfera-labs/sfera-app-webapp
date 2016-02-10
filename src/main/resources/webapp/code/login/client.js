@@ -1,4 +1,4 @@
-/*! sfera-webapp - v0.0.2 - 2016-02-03 */
+/*! sfera-webapp - v0.0.2 - 2016-02-10 */
 
 (function(){
 
@@ -111,7 +111,7 @@ Sfera.Behaviors.Position = function() {
         }
     };
 
-    this.attrDefs.rotate = {
+    this.attrDefs.rotation = {
         type: "integer",
         update: function () {
             var s = this.component.element.style;
@@ -402,7 +402,9 @@ Sfera.Compiler = new(function() {
             	} catch (err) {
             		value = null;
             	}
-
+                break;
+            case "list":
+                value = value.split(",");
                 break;
         }
 
@@ -429,6 +431,8 @@ Sfera.Attribute = function(component, config) {
     this.source = null;
     // compiled value
     this.value = null;
+    // required
+    this.required = false;
     // owner component
     this.component = component;
 
@@ -502,77 +506,76 @@ Sfera.ComponentManager = function (client) {
 
     this.client = client;
 
-	var components = new function () {
-		// pointers to all components
-		this.all = [];
+	var all = [];
 
-		// pointers to components. {id:[ ... ], ...}
-		var byId = {};
-		var byAddress = {};
-		var byType = {};
+	// sets of component pointers {id:[ ... ], ...}
+	var byId = {};
+	var byGroup = {};
+	var byType = {};
 
-		// generic add by function. object, which array (byId, byAddress..), attribute (id, address..)
-		function addBy(o,arr,attr) {
-			if (!arr[o[attr]]) // ex. byId["dummy.1"]
-				arr[o[attr]] = [];
-			arr[o[attr]].push(o);
-		}
+	// generic add by function. component, which set (byId, byAddress..), value (component.id, component.group..)
+	function addBy(co,set,value) {
+		if (!set[value]) // ex. byId["dummy.1"]
+			set[value] = [];
+		set[value].push(co);
+	}
+    function removeBy(co,set,value) {
+        for (var i=0; i<set[value].length; i++) {
+            if (set[value] == co) {
+                set[value] = null;
+                delete set[value];
+                return;
+            }
+        }
+    }
 
-		// generic get by function
-		function getBy(arr,value) {
-			return (arr[value]?arr[value]:[]); // if no array return an empty one
-		}
-
-		// add object by ..
-		this.add = function (o) {
-			this.all.push(o);
-			addBy(o,byType,"type");
-			if (o.id)		addBy(o,byId,"id");
-			if (o.address)	addBy(o,byAddress,"address");
-		};
-
-		// get components by ..
-		this.getByType = function (type) { return getBy(byType,type); }
-		this.getByAddress = function (address) { return getBy(byAddress,address); }
-		this.getById = function (id) { return getBy(byId,id); }
-	}; // components
+	// generic get by function
+	function getBy(arr,value) {
+		return (arr[value]?arr[value]:[]); // if no array return an empty one
+	}
 
 	// index component
-	this.index = function (o) {
-		components.add(o);
+	this.index = function (co) {
+		all.push(co);
+		addBy(co,byType,co.type);
+		if (co.id)		addBy(co,byId,co.id);
+		if (co.group)	addBy(co,byGroup,co.group);
 	};
 
+    // live group indexing
+    // add to byGroup set
+    this.addByGroup = function (co, group) {
+        addBy(co,byGroup,group);
+    }
+    // remove component from byGroup set
+    this.removeByGroup = function (co, group) {
+        removeBy(co,byGroup,group);
+    }
+
 	// get single object (first) by id
-	this.getObjById = function (id) {
-		return components.getById(id)[0];
+	this.getFirstById = function (id) {
+		return this.getById(id)[0];
 	};
 
 	// get components by id
-	this.getObjsById = function (id) {
-		return components.getById(id);
+	this.getById = function (id) {
+		return getBy(byId,id);
 	};
 
 	// get components by type
-	this.getObjsByType = function (type) {
-		return components.getByType(type);
+	this.getByType = function (type) {
+		return getBy(byType,type);
 	};
 
-	// get value from single object (first) by id
-	this.getObjValue = function (id) {
-		var o = components.getById(id)[0];
-		return o && o.getValue?o.getValue():null;
-	};
+    // get by group
+    this.getByGroup = function (group) {
+        return getBy(byGroup,group)
+    };
 
-	// get fav pages (for app)
-	this.getFavPages = function () {
-		var pages = [];
-		var links = this.getObjsByType("link");
-		for (var i=0; i<links.length; i++)
-			 pages.push(links[i].target);
-
-		pages = pages.unique().sort();
-
-		return pages;
+	// get value from single component (first) by id
+	this.getValue = function (id) {
+		var co = this.getFirstById(id);
+		return co ? co.getAttribute("value") : null;
 	};
 
 };
@@ -615,6 +618,7 @@ Sfera.Components = new(function() {
 
         // set dom, ready for cloning
         cc.prototype.dom = dom;
+        cc.prototype.source = null; // clear source
     };
 
     /**
@@ -624,7 +628,7 @@ Sfera.Components = new(function() {
      * @property {string} componentName - The name of the component.
      */
     this.getClassName = function(componentName) {
-        return componentName[0].toUpperCase() + componentName.substr(1);
+        return componentName[0].toUpperCase() + Sfera.Utils.dashToCamel(componentName).substr(1);
     };
 
     /**
@@ -676,7 +680,7 @@ Sfera.Components = new(function() {
                 this.element = element;
             } else {
                 // DOM
-                if (!this.dom && this.source)
+                if (this.source)
                     Sfera.Components.bakeSource(name);
 
                 if (this.dom) {
@@ -770,9 +774,14 @@ Sfera.Components = new(function() {
                 if (!comp.prototype.attrDefs[attr]) {
                     comp.prototype.attrDefs[attr] = def.attributes[attr];
                 } else {
-                    // extend rather than replace (in case it was already defined by behavior)
-                    for (var i in def.attributes[attr])
+                    // instance
+                    if (comp.prototype.attrDefs[attr] == sup.attrDefs[attr]) {
+                        comp.prototype.attrDefs[attr] = Object.create(sup.attrDefs[attr]);
+                    }
+                    // extend rather than replace (in case it was already defined by extend or behavior)
+                    for (var i in def.attributes[attr]) {
                         comp.prototype.attrDefs[attr][i] = def.attributes[attr][i];
+                    }
                 }
             }
         }
@@ -951,7 +960,7 @@ Sfera.Client = function(config) {
             for (var u in json.result.uiSet) {
                 var n = u.split(".");
                 var a = n.pop();
-                var c = self.components.getObjsById(n.join("."));
+                var c = self.components.getById(n.join("."));
                 for (var i = 0; i < c.length; i++) {
                     c[i].setAttribute(a, json.result.uiSet[u]);
                 }
@@ -972,7 +981,7 @@ Sfera.Client = function(config) {
 
     this.start = function() {
         Sfera.Browser.start();
-        interfaceC = this.components.getObjsByType("Interface")[0];
+        interfaceC = this.components.getByType("Interface")[0];
         adjustLayout();
 
         // register events
@@ -984,13 +993,13 @@ Sfera.Client = function(config) {
     };
 
     this.setAttribute = function(id, name, value) {
-        var c = this.components.getObjsById(id);
+        var c = this.components.getById(id);
         for (var i = 0; i < c.length; i++)
             c[i].setAttribute(name, value);
     };
 
     this.getAttribute = function(id, name) {
-        var c = this.components.getObjById(id); // get first onerror
+        var c = this.components.getFirstById(id); // get first onerror
         return c.getAttribute(name);
     };
 
@@ -1001,7 +1010,7 @@ Sfera.Client = function(config) {
         if (this.cPage)
             this.cPage.setAttribute("visible", false);
 
-        var p = this.components.getObjById(id);
+        var p = this.components.getFirstById(id);
         if (p) {
             p.setAttribute("visible", true);
             this.cPage = p;
@@ -1057,7 +1066,7 @@ Sfera.Client = function(config) {
                     if (n[1] == "set") { // ui.set.<global | cid>
                         n = n.slice(3); // remove ui, set, global | cid
                         var a = n.pop();
-                        var c = self.components.getObjsById(n.join("."));
+                        var c = self.components.getById(n.join("."));
                         for (var i = 0; i < c.length; i++) {
                             c[i].setAttribute(a, json.nodes[e]);
                         }
@@ -2575,7 +2584,7 @@ Sfera.UI.Button.prototype = {
         "selected":1,
         "pressed":2,
         "checked":3,
-        "mini":4,
+        "focused":4,
         "error":5
     },
 
@@ -4816,19 +4825,32 @@ Sfera.Utils = function() {
 
     this.isString = function(v) {
         return (typeof v === 'string' || v instanceof String);
-    }
+    };
 
     this.camelToDash = function(str) {
         return str.replace(/\W+/g, '-')
             .replace(/([a-z\d])([A-Z])/g, '$1-$2')
             .toLowerCase();
-    }
+    };
 
     this.dashToCamel = function(str) {
         return str.toLowerCase().replace(/\W+(.)/g, function(x, chr) {
             return chr.toUpperCase();
         })
-    }
+    };
+
+    // get key function from keycode
+    this.getKeyFromCode = function(code) {
+        switch (code) {
+            case 8: return "del";
+            case 9: return "tab";
+            case 13:return "enter";
+            case 32:return "space";
+            default:
+                var c = String.fromCharCode(code);
+                return c?c.toLowerCase():null;
+        }
+    };
 
     this.getDate = function(format) {
         function pan(str, len) {
@@ -4913,6 +4935,39 @@ Array.prototype.equals = function(array, strict) {
     }
     return true;
 }
+
+window.man = function (what) {
+    // component
+    if (Sfera.Components[what]) {
+        var co = new Sfera.Components[what]({});
+
+        var hstr = "* Component "+co.type+" *****************";
+
+        console.log(hstr);
+        var sstr = "";
+        for (var sub in co.subComponents) {
+            var str = " - "+sub+" ";
+            while (str.length < 20) str += " ";
+            str += co.subComponents[sub].type;
+            sstr += str+"\n";
+        }
+        if (str) {
+            console.log("* SubComponents:");
+            console.log(sstr);
+        }
+
+        console.log("* Attributes:");
+        for (var attr in co.attributes) {
+            var a = co.attributes[attr];
+            var str = " - "+attr;
+            while (str.length < 20) str += " ";
+            str += a.type;
+            console.log(str);
+        }
+
+        console.log(hstr);
+    }
+};
 
 
 /**
@@ -5016,18 +5071,8 @@ Sfera.Components.create("_Field", {
     behaviors: ["Visibility", "Position", "Size"],
 
     attributes: {
-
-        autoSend: {
-            type: "boolean"
-        },
-
-        value: {},
-
-        safeValue: {},
+        value: {}
     },
-
-    // safe value
-    value: "",
 
     init: function() {
         this.focused = false;
