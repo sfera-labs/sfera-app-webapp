@@ -208,7 +208,7 @@ Sfera.Components.create("Input", {
 
 
     updateClass: function () {
-        this.element.className = "component input" + (this.focused?" focused":"");
+        this.element.className = "component comp_input" + (this.focused?" focused":"");
         var sty = this.getAttribute("style");
         this.elements.container.className = "container" + (sty?" style_"+sty:"");
     },

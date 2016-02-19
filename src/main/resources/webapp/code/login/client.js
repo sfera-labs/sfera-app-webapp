@@ -1847,7 +1847,7 @@ Sfera.Login = new(function() {
             	window.location.replace("/"+Sfera.client.name);
             	break;
             case "logout":
-                window.location.reload();
+                window.location.replace("/"+Sfera.client.name+"/login");
                 break;
             }
         }

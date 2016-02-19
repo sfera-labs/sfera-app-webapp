@@ -22,7 +22,7 @@
     display: table;
     width: 100%; }
     .component.comp_select .container select {
-      padding: 3px 4px 2px; }
+      padding: 9px 0 10px 4px; }
     .component.comp_select .container.style_default {
       background: white;
       -webkit-border-radius: 4px;

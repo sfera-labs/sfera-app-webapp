@@ -222,7 +222,7 @@ Sfera.Components.create("Select", {
 
 
     updateClass: function() {
-        this.element.className = "component select" + (this.focused ? " focused" : "");
+        this.element.className = "component comp_select" + (this.focused ? " focused" : "");
         var sty = this.getAttribute("style");
         this.elements.container.className = "container " + (sty?" style_"+sty:"");
     },
