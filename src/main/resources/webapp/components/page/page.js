@@ -12,7 +12,7 @@
  * @constructor
  */
  Sfera.Components.create("Page",{
-     behaviors:["Visibility"],
+     presets:["Visibility"],
 
      attributes: {
          title: {

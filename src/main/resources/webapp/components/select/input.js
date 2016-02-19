@@ -110,6 +110,15 @@ Sfera.Components.create("Input", {
             }
         },
 
+        style: {
+            default: "default",
+
+            update: function() {
+                var co = this.component;
+                co.elements.container.className = "container " + this.value;
+            }
+        },
+
         maxLength: {
             type: "integer"
         },
@@ -164,8 +173,6 @@ Sfera.Components.create("Input", {
         this.elements.field.blur(); // will fire onBlur
     },
 
-
-
     // redraw
     redraw: function() {
         var value = "";
@@ -209,8 +216,6 @@ Sfera.Components.create("Input", {
 
     updateClass: function () {
         this.element.className = "component input" + (this.focused?" focused":"");
-        var sty = this.getAttribute("style");
-        this.elements.container.className = "container" + (sty?" style_"+sty:"");
     },
 
     //

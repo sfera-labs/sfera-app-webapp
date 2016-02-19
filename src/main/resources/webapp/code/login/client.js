@@ -1,4 +1,4 @@
-/*! sfera-webapp - v0.0.2 - 2016-02-10 */
+/*! sfera-webapp - v0.0.2 - 2016-02-19 */
 
 (function(){
 
@@ -23,146 +23,6 @@ var Sfera = Sfera || {
     * @type {array}
     */
     client: null
-
-};
-
-
-Sfera.Behaviors = {
-
-};
-
-/**
- * Visibility behavior.
- *
- * @mixin Sfera.Behaviors.Visibility
- * @property {boolean} visible - sets the visibility
- */
-Sfera.Behaviors.Visibility = function() {
-    // extend attributes
-    this.attrDefs.visible = {
-        type: "boolean",
-        compile: function() {
-            var value = !(!this.source || this.source == "false");
-            if (value !== this.value) {
-                this.changed = false;
-                this.value = value;
-                this.update();
-            }
-        },
-        update: function() {
-            // trigger event. component, show/hide, is it a child? (also check if its visibility is changing before triggering)
-            function trigger(co, show, child) {
-                if (!child || co.getAttribute("visible")) { // trigger?
-                    if (show && co.onShow) {
-                        co.onShow();
-                    } else if (!show && co.onHide) {
-                        co.onHide();
-                    }
-
-                    if (co.children) {
-                        for (var c = 0; c < co.children.length; c++)
-                            trigger(co.children[c], show);
-                    }
-                }
-            }
-
-            // trigger on hide before hiding
-            if (!this.value) {
-                trigger(this.component, false);
-            }
-
-            // change visibility
-            this.component.element.style.display = this.value ? "inline" : "none";
-
-            // trigger on show after
-            if (this.value) {
-                trigger(this.component, true);
-            }
-        }
-    };
-};
-
-/**
- * Position behavior.
- *
- * @mixin Sfera.Behaviors.Position
- * @property {string} position - sets the position
- * @property {string} x - sets the x coordinate
- * @property {string} y - sets the y coordinate
- */
-Sfera.Behaviors.Position = function() {
-    // extend attributes
-    this.attrDefs.position = {
-        type: "string",
-        update: function() {
-            this.component.element.style.position = this.value == "static" ? "static" : "absolute";
-        }
-    };
-    this.attrDefs.x = {
-        type: "integer",
-        update: function() {
-            this.component.element.style.left = this.value + "px";
-        }
-    };
-    this.attrDefs.y = {
-        type: "integer",
-        update: function() {
-            this.component.element.style.top = this.value + "px";
-        }
-    };
-
-    this.attrDefs.rotation = {
-        type: "integer",
-        update: function () {
-            var s = this.component.element.style;
-            var r = "rotate(" + this.value + "deg)"
-            s.msTransform = /* IE 9 */
-            s.webkitTransform = /* Safari */
-            s.transform = r;
-        }
-    }
-};
-Sfera.Behaviors.Size = function() {
-    // extend attributes
-    this.attrDefs.width = {
-        type: "integer",
-        update: function() {
-            this.component.element.style.width = this.value == "auto" ? "auto" : this.value + "px";
-        }
-    };
-    this.attrDefs.height = {
-        type: "integer",
-        update: function() {
-            this.component.element.style.height = this.value == "auto" ? "auto" : this.value + "px";
-        }
-    };
-};
-Sfera.Behaviors.Label = function() {
-    // extend attributes
-    this.attrDefs.label = {
-        type: "string",
-        update: function() {
-            this.component.element.innerHTML = this.value;
-        }
-    };
-    this.attrDefs.color = {
-        type: "string",
-        update: function() {
-            this.component.element.style.color = this.value;
-        }
-    };
-    this.attrDefs.fontSize = {
-        type: "integer",
-        update: function() {
-            this.component.element.style.fontSize = this.value + "px";
-        }
-    };
-    this.attrDefs.textAlign = {
-        type: "string",
-        update: function() {
-            this.component.element.style.textAlign = this.value;
-        }
-    };
 
 };
 
@@ -433,6 +293,8 @@ Sfera.Attribute = function(component, config) {
     this.value = null;
     // required
     this.required = false;
+    // array of possible values
+    this.values = null;
     // owner component
     this.component = component;
 
@@ -449,6 +311,12 @@ Sfera.Attribute = function(component, config) {
         case "compile":
         case "update":
             this[c] = config[c].bind(this);
+            break;
+        case "values":
+            if (Sfera.Utils.isFunction(config[c]))
+                this[c] = config[c].bind(this);
+            else
+                this[c] = config[c];
             break;
         }
     }
@@ -482,6 +350,20 @@ Sfera.Attribute.prototype = {
 
     compile: function () {
         var value = Sfera.Compiler.compileAttributeValue(this);
+
+        // check if value list
+        if (this.values) {
+            if (Sfera.Utils.isFunction(this.values))
+                arr = this.values();
+            else
+                arr = this.values;
+
+            if (Sfera.Utils.isArray(arr)) {
+                if (arr.indexOf(value) == -1)
+                    return; // can't update it
+            }
+        }
+
         // update only if changed. TODO: same source compiles to different values???????????????????
         if (value !== this.value) {
             this.changed = false;
@@ -581,6 +463,180 @@ Sfera.ComponentManager = function (client) {
 };
 
 
+Sfera.ComponentPresets = {
+
+};
+
+/**
+ * Visibility behavior.
+ *
+ * @mixin Sfera.ComponentPresets.Visibility
+ * @property {boolean} visible - sets the visibility
+ */
+Sfera.ComponentPresets.Visibility = function() {
+    // extend attributes
+    this.attrDefs.visible = {
+        type: "boolean",
+        compile: function() {
+            var value = !(!this.source || this.source == "false");
+            if (value !== this.value) {
+                this.changed = false;
+                this.value = value;
+                this.update();
+            }
+        },
+        update: function() {
+            // trigger event. component, show/hide, is it a child? (also check if its visibility is changing before triggering)
+            function trigger(co, show, child) {
+                if (!child || co.getAttribute("visible")) { // trigger?
+                    if (show && co.onShow) {
+                        co.onShow();
+                    } else if (!show && co.onHide) {
+                        co.onHide();
+                    }
+
+                    if (co.children) {
+                        for (var c = 0; c < co.children.length; c++)
+                            trigger(co.children[c], show);
+                    }
+                }
+            }
+
+            // trigger on hide before hiding
+            if (!this.value) {
+                trigger(this.component, false);
+            }
+
+            // change visibility
+            this.component.element.style.display = this.value ? "inline" : "none";
+
+            // trigger on show after
+            if (this.value) {
+                trigger(this.component, true);
+            }
+        }
+    };
+};
+
+/**
+ * Position behavior.
+ *
+ * @mixin Sfera.ComponentPresets.Position
+ * @property {string} position - sets the position
+ * @property {string} x - sets the x coordinate
+ * @property {string} y - sets the y coordinate
+ */
+Sfera.ComponentPresets.Position = function() {
+    // extend attributes
+    this.attrDefs.position = {
+        type: "string",
+        update: function() {
+            this.component.element.style.position = this.value == "static" ? "static" : "absolute";
+        }
+    };
+    this.attrDefs.x = {
+        type: "integer",
+        update: function() {
+            this.component.element.style.left = this.value + "px";
+        }
+    };
+    this.attrDefs.y = {
+        type: "integer",
+        update: function() {
+            this.component.element.style.top = this.value + "px";
+        }
+    };
+
+    this.attrDefs.rotation = {
+        type: "integer",
+        update: function() {
+            var s = this.component.element.style;
+            var r = "rotate(" + this.value + "deg)"
+            s.msTransform = /* IE 9 */
+                s.webkitTransform = /* Safari */
+                s.transform = r;
+        }
+    }
+};
+Sfera.ComponentPresets.Size = function() {
+    // extend attributes
+    this.attrDefs.width = {
+        type: "integer",
+        update: function() {
+            this.component.element.style.width = this.value == "auto" ? "auto" : this.value + "px";
+        }
+    };
+    this.attrDefs.height = {
+        type: "integer",
+        update: function() {
+            this.component.element.style.height = this.value == "auto" ? "auto" : this.value + "px";
+        }
+    };
+};
+Sfera.ComponentPresets.Label = function() {
+    // extend attributes
+    this.attrDefs.label = {
+        type: "string",
+        update: function() {
+            this.component.element.innerHTML = this.value;
+        }
+    };
+    this.attrDefs.color = {
+        type: "string",
+        update: function() {
+            this.component.element.style.color = this.value;
+        }
+    };
+    this.attrDefs.fontSize = {
+        type: "integer",
+        update: function() {
+            this.component.element.style.fontSize = this.value + "px";
+        }
+    };
+    this.attrDefs.textAlign = {
+        type: "string",
+        update: function() {
+            this.component.element.style.textAlign = this.value;
+        }
+    };
+
+};
+
+Sfera.ComponentPresets.Style = function() {
+    // extend attributes
+    this.attrDefs.style = {
+        type: "string",
+        default: "default",
+
+        values: function() {
+            var s = Sfera.client.skin.styles[this.component.type];
+            return s ? s : ["default"];
+        },
+        update: function() {
+            if (this.component.updateClass)
+                this.component.updateClass();
+        }
+    };
+};
+
+Sfera.ComponentPresets.Color = function() {
+    // extend attributes
+    this.attrDefs.color = {
+        type: "string",
+        default: "default",
+        
+        values: function() {
+            var c = Sfera.client.skin.colors[this.component.type];
+            return c ? c : ["default"];
+        },
+
+        update: function() {
+            this.component.updateClass();
+        }
+    }
+};
+
+
 /**
  * Sfera.Components singleton that handles components
  *
@@ -628,7 +684,7 @@ Sfera.Components = new(function() {
      * @property {string} componentName - The name of the component.
      */
     this.getClassName = function(componentName) {
-        return componentName[0].toUpperCase() + Sfera.Utils.dashToCamel(componentName).substr(1);
+        return Sfera.Utils.capitalize(Sfera.Utils.dashToCamel(componentName));
     };
 
     /**
@@ -759,11 +815,11 @@ Sfera.Components = new(function() {
             comp.prototype.attrDefs[a] = sup.attrDefs[a];
         }
 
-        // behaviors
-        if (def.behaviors) {
+        // presets
+        if (def.presets) {
             var be;
-            for (var i = 0; i < def.behaviors.length; i++) {
-                be = Sfera.Behaviors[def.behaviors[i]];
+            for (var i = 0; i < def.presets.length; i++) {
+                be = Sfera.ComponentPresets[def.presets[i]];
                 be.call(comp.prototype); // extend prototype
             }
         }
@@ -778,7 +834,7 @@ Sfera.Components = new(function() {
                     if (comp.prototype.attrDefs[attr] == sup.attrDefs[attr]) {
                         comp.prototype.attrDefs[attr] = Object.create(sup.attrDefs[attr]);
                     }
-                    // extend rather than replace (in case it was already defined by extend or behavior)
+                    // extend rather than replace (in case it was already defined by extend or preset)
                     for (var i in def.attributes[attr]) {
                         comp.prototype.attrDefs[attr][i] = def.attributes[attr][i];
                     }
@@ -789,7 +845,7 @@ Sfera.Components = new(function() {
         // the rest
         for (var f in def) {
             // skip, already done
-            if (f == "behaviors" || f == "attributes")
+            if (f == "presets" || f == "attributes")
                 continue;
 
             comp.prototype[f] = def[f];
@@ -865,6 +921,8 @@ Sfera.Client = function(config) {
 
     var self = this;
 
+    this.interface = "";
+    this.skin = null;
 
     var interfaceC;
     /**
@@ -982,6 +1040,7 @@ Sfera.Client = function(config) {
     this.start = function() {
         Sfera.Browser.start();
         interfaceC = this.components.getByType("Interface")[0];
+
         adjustLayout();
 
         // register events
@@ -2718,6 +2777,12 @@ Sfera.UI.Button.prototype = {
 			c += " "+d.state;
 		this.element.className = c;
 	},
+
+    // set class name, used when base class name changes
+    setClassName: function (name) {
+        this.data.pre = name;
+        this.updateClass();
+    },
 
 	disableAndroidLongPress: function (evt,e) {
 		if (Sfera.Device.android) {
@@ -4729,6 +4794,63 @@ Sfera.Device.canPlayVideo = function (type) {
 };
 
 
+
+window.man = function(what) {
+    // component
+    if (Sfera.Components[what]) {
+        var co = new Sfera.Components[what]({});
+
+        var hstr = "* Component " + co.type + " *****************";
+
+        console.log(hstr);
+        var sstr = "";
+        for (var sub in co.subComponents) {
+            var str = " - " + sub + " ";
+            while (str.length < 20) str += " ";
+            str += co.subComponents[sub].type;
+            sstr += str + "\n";
+        }
+        if (str) {
+            console.log("* SubComponents:");
+            console.log(sstr);
+        }
+
+        console.log("* Attributes:");
+        for (var attr in co.attributes) {
+            var a = co.attributes[attr];
+            var str = " - " + attr;
+            while (str.length < 20) str += " ";
+            str += a.type;
+
+            var av = co.attributes[attr].values;
+            if (av) {
+                if (Sfera.Utils.isFunction(av))
+                    av = av();
+                if (Sfera.Utils.isArray(av)) {
+                    while (str.length < 35) str += " ";
+                    str += "<" + av.join("|") + ">";
+                }
+            }
+
+            console.log(str);
+        }
+
+        console.log(hstr);
+    }
+};
+
+
+window.help = function () {
+    var hstr = "* Help *************************\n";
+    hstr += "* man(\"<component name>\")\n";
+    hstr += "* client.setAttribute(\"<component id>\",\"<attribute name>\",\"<value>\")\n";
+    //hstr += "* client.event(\"\")";
+    hstr += "* Help *************************\n";
+
+    console.log(hstr);
+}
+
+
 /**
  * Sfera.Utils singleton
  *
@@ -4744,11 +4866,7 @@ Sfera.Utils = function() {
         c.prototype = Object.create(e.prototype);
         c.prototype.constructor = c;
         c.prototype.ancestor = e.prototype;
-        /*
-        for (var i = 0; i < arguments.length; i++) {
-            alert(arguments[i]);
-        }
-        */
+
     };
 
 
@@ -4827,6 +4945,18 @@ Sfera.Utils = function() {
         return (typeof v === 'string' || v instanceof String);
     };
 
+    this.isFunction = function(obj) {
+        return !!(obj && obj.constructor && obj.call && obj.apply);
+    };
+
+    this.isArray = function(obj) {
+        return obj && Object.prototype.toString.call(obj) === '[object Array]';        
+    };
+
+    this.capitalize = function(str) {
+        return str[0].toUpperCase() + str.substr(1);
+    };
+
     this.camelToDash = function(str) {
         return str.replace(/\W+/g, '-')
             .replace(/([a-z\d])([A-Z])/g, '$1-$2')
@@ -4842,13 +4972,17 @@ Sfera.Utils = function() {
     // get key function from keycode
     this.getKeyFromCode = function(code) {
         switch (code) {
-            case 8: return "del";
-            case 9: return "tab";
-            case 13:return "enter";
-            case 32:return "space";
+            case 8:
+                return "del";
+            case 9:
+                return "tab";
+            case 13:
+                return "enter";
+            case 32:
+                return "space";
             default:
                 var c = String.fromCharCode(code);
-                return c?c.toLowerCase():null;
+                return c ? c.toLowerCase() : null;
         }
     };
 
@@ -4935,39 +5069,6 @@ Array.prototype.equals = function(array, strict) {
     }
     return true;
 }
-
-window.man = function (what) {
-    // component
-    if (Sfera.Components[what]) {
-        var co = new Sfera.Components[what]({});
-
-        var hstr = "* Component "+co.type+" *****************";
-
-        console.log(hstr);
-        var sstr = "";
-        for (var sub in co.subComponents) {
-            var str = " - "+sub+" ";
-            while (str.length < 20) str += " ";
-            str += co.subComponents[sub].type;
-            sstr += str+"\n";
-        }
-        if (str) {
-            console.log("* SubComponents:");
-            console.log(sstr);
-        }
-
-        console.log("* Attributes:");
-        for (var attr in co.attributes) {
-            var a = co.attributes[attr];
-            var str = " - "+attr;
-            while (str.length < 20) str += " ";
-            str += a.type;
-            console.log(str);
-        }
-
-        console.log(hstr);
-    }
-};
 
 
 /**
@@ -5068,7 +5169,7 @@ Sfera.Components.create("_Base", {
  * @constructor
  */
 Sfera.Components.create("_Field", {
-    behaviors: ["Visibility", "Position", "Size"],
+    presets: ["Visibility", "Position", "Size", "Style"],
 
     attributes: {
         value: {}

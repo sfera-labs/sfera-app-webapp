@@ -2,29 +2,18 @@
  * @author       Gionatan Iasio <gionatan@sferalabs.cc>
  * @copyright    2015 SferaLabs
  * @license      {@link https://github.com/sfera-labs/sfera-webapp/license.txt|MIT License}
- * Button.js
  */
 
 /**
- * Input component.
+ * Select component.
  *
- * @class Sfera.Components.Input
+ * @class Sfera.Components.Select
  * @extends Sfera.Components._Field
- * @property {string} type - type of the field
- * @property {string} icon - url of an icon
  */
-Sfera.Components.create("Input", {
+Sfera.Components.create("Select", {
     extends: "_Field",
 
     attributes: {
-        type: {
-            type: "string",
-            default: "input",
-            update: function() {
-                this.component.redraw();
-            }
-        },
-
         height: {
             update: function() {
                 if (this.component.elements.field)
@@ -57,19 +46,26 @@ Sfera.Components.create("Input", {
             }
         },
 
-        eraseButton: {
-            type: "boolean",
-            default: "false",
-            update: function() {
-                var co = this.component;
-                co.elements.erase.style.display = this.value ? "" : "none";
-            }
-        },
-
         value: {
             update: function() {
                 if (this.component.elements.field)
                     this.component.elements.field.value = this.value;
+            }
+        },
+
+        values: {
+            type: "list",
+            update: function() {
+                if (this.component.elements.field)
+                    this.component.redraw();
+            }
+        },
+
+        labels: {
+            type: "list",
+            update: function() {
+                if (this.component.elements.field)
+                    this.component.redraw();
             }
         },
 
@@ -141,10 +137,13 @@ Sfera.Components.create("Input", {
         // fill elements with all nodes that have a name
         this.elements = Sfera.Utils.getComponentElements(this.element, true, this.elements);
 
-        this.eraseButton = new Sfera.UI.Button(this.elements.erase, {
-            onclick: this.onErase.bind(this)
-        });
+        this.redraw();
 
+        /*
+                this.eraseButton = new Sfera.UI.Button(this.elements.erase, {
+                    onclick: this.onErase.bind(this)
+                });
+        */
         /*
         switch (this.getAttribute("type")) {
             case "date":
@@ -164,8 +163,6 @@ Sfera.Components.create("Input", {
         this.elements.field.blur(); // will fire onBlur
     },
 
-
-
     // redraw
     redraw: function() {
         var value = "";
@@ -183,14 +180,27 @@ Sfera.Components.create("Input", {
         var style = ""; // TODO: styling the field
         style = style ? ' style="' + style + '"' : '';
 
-        if (type == "textarea")
-            this.elements.fieldC.innerHTML = '<textarea class="field" ' + style + phText + ' /></textarea>';
-        else
-            this.elements.fieldC.innerHTML = '<input class="field" type="' + type + '"' + style + phText + ' />';
+        var values = this.getAttribute("values");
+        var labels = this.getAttribute("labels");
+
+        var html = '<select class="field" ' + style + phText + ' />';
+
+        if (values)
+            for (var i = 0; i < values.length; i++) {
+                v = values[i];
+                l = (labels && labels[i]) || v;
+                html += '<option value="' + v + '">' + l + '</option>';
+            }
+
+        html += '</select>';
+
+        this.elements.fieldC.innerHTML = html;
 
         this.elements.field = this.elements.fieldC.childNodes[0];
         this.elements.field.value = value;
         this.attributes.height.update();
+
+        //this.elements.field.multiple = true;
 
         if (Sfera.Device.android == "Android") { // android: gets last click on a different page if in same position
             this.elements.field.onfocus = function() {
@@ -201,16 +211,20 @@ Sfera.Components.create("Input", {
             this.elements.field.onfocus = this.onFocus; // skip this.elements.field.focus to avoid loop
         }
         this.elements.field.onblur = this.onBlur;
-        this.elements.field.onselectstart = this.onSelectStart;
+        this.elements.field.onchange = this.onChange;
 
         this.elements.field.controller = this;
     },
 
+    updateOptions: function() {
+        this.redraw();
+    },
 
-    updateClass: function () {
-        this.element.className = "component input" + (this.focused?" focused":"");
+
+    updateClass: function() {
+        this.element.className = "component select" + (this.focused ? " focused" : "");
         var sty = this.getAttribute("style");
-        this.elements.container.className = "container" + (sty?" style_"+sty:"");
+        this.elements.container.className = "container " + (sty?" style_"+sty:"");
     },
 
     //
@@ -335,14 +349,14 @@ Sfera.Components.create("Input", {
     },
 
     onChange: function() {
-        this.onChanged();
+        this.controller.onChanged();
         /*
         var f = this.getAttribute("onClick");
         Sfera.Custom.exec(f);
         */
     },
 
-    onEnter: function () {
+    onEnter: function() {
         var f = this.getAttribute("onEnter");
         if (f) {
             return Sfera.Custom.exec(f);

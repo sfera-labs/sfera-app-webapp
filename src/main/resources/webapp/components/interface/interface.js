@@ -12,9 +12,17 @@
  * @constructor
  */
  Sfera.Components.create("Interface",{
-     behaviors:["Visibility","Size"],
+     presets:["Visibility","Size"],
 
      attributes: {
+
+         skin: {
+            default:"default",
+            update: function () {
+                Sfera.client.skin = new Sfera.Skins[Sfera.Utils.capitalize(this.value)]();
+            }
+         },
+
          zoom: {
              type:"float",
              update: function () {

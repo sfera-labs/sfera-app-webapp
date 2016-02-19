@@ -14,7 +14,7 @@
  * @property {string} source - source url of the image
  */
 Sfera.Components.create("Image", {
-    behaviors: ["Visibility", "Position", "Size"],
+    presets: ["Visibility", "Position", "Size"],
 
     attributes: {
         source: {
@@ -22,7 +22,12 @@ Sfera.Components.create("Image", {
             update: function() {
                 var c = this.component;
                 var e = c.element;
-                if (this.value.indexOf(".svg") == this.value.length - 4) {
+                // no source, hide it
+                if (!this.value) {
+                    e.innerHTML = "";
+                }
+                // svg
+                else if (this.value.indexOf(".svg") == this.value.length - 4) {
                     var req = new Sfera.Net.Request();
                     req.init();
                     req.onLoaded = function() {
@@ -38,7 +43,9 @@ Sfera.Components.create("Image", {
                         delete req;
                     }
                     req.open(this.value);
-                } else {
+                }
+                // normal img
+                else {
                     e.innerHTML = "<img src='" + this.value + "' width='100%' height='100%'>";
                 }
             }

@@ -12,7 +12,7 @@
  * @constructor
  */
 Sfera.Components.create("Label", {
-    behaviors: ["Visibility", "Position", "Size", "Label"],
+    presets: ["Visibility", "Position", "Size", "Label"],
 
     attributes: {
         // change label to text

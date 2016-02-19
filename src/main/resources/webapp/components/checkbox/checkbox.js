@@ -89,8 +89,6 @@ Sfera.Components.create("Checkbox", {
         },
 
         style: {
-            default: "default",
-
             update: function() {
                 var co = this.component;
                 co.redraw();
@@ -139,13 +137,13 @@ Sfera.Components.create("Checkbox", {
 
     // redraw
     redraw: function() {
-        this.elements.container.className = "container " + (this.getAttribute("style")) +
+        var sty = this.getAttribute("style");
+        this.elements.container.className = "container " + (sty?" style_"+sty:"") +
                                             " " + (this.getAttribute("value")?"on":"off");
     },
 
     updateClass: function () {
         this.btObj.setAttribute("focused",this.focused);
-        //this.element.className = "component checkbox" + (this.focused?" focused":"");
     },
 
     //
