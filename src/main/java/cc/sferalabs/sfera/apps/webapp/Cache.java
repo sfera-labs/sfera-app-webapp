@@ -60,7 +60,7 @@ public abstract class Cache {
 		ResourcesUtil.lookForPluginsOverwritingWebapp();
 		buildCache();
 		if (manualRebuild) {
-			Console.setHandler("webapp", WebAppConsoleCommandHandler.INSTANCE);
+			Console.addHandler(WebAppConsoleCommandHandler.INSTANCE);
 		} else {
 			try {
 				FilesWatcher.register(INTERFACES_PATH, Cache::buildInterfacesCache, false);

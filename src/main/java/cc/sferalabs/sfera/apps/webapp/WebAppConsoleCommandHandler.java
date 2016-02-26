@@ -4,6 +4,7 @@
 package cc.sferalabs.sfera.apps.webapp;
 
 import cc.sferalabs.sfera.console.ConsoleCommandHandler;
+import cc.sferalabs.sfera.console.ConsoleSession;
 
 /**
  *
@@ -21,9 +22,14 @@ public class WebAppConsoleCommandHandler implements ConsoleCommandHandler {
 	 */
 	private WebAppConsoleCommandHandler() {
 	}
+	
+	@Override
+	public String getKey() {
+		return "webapp";
+	}
 
 	@Override
-	public String accept(String cmd) {
+	public String accept(String cmd, ConsoleSession session) {
 		switch (cmd) {
 		case "rebuild":
 			Cache.buildCache();
@@ -32,11 +38,6 @@ public class WebAppConsoleCommandHandler implements ConsoleCommandHandler {
 		default:
 			return "Unkown command";
 		}
-	}
-
-	@Override
-	public String[] getHelp() {
-		return new String[] { "rebuild" };
 	}
 
 }
