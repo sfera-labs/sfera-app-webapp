@@ -16,17 +16,13 @@ Sfera.Components.create("Container", {
 
     attributes: {
         width: {
-            update: function() {
-                var a = this.value == "auto";
-                this.component.element.style.width = a ? "auto" : this.value + "px";
-                this.component.element.style.overflow = !a ? "scroll" : "";
+            post: function() {
+                this.component.element.style.overflow = (this.value == "auto") ? "" : "scroll";
             }
         },
         height: {
-            update: function() {
-                var a = this.value == "auto";
-                this.component.element.style.height = a ? "auto" : this.value + "px";
-                this.component.element.style.overflow = !a ? "scroll" : "";
+            post: function() {
+                this.component.element.style.overflow = (this.value == "auto") ? "" : "scroll";
             }
         }
     }

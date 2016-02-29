@@ -20,6 +20,7 @@ Sfera.Components.create("Input", {
         type: {
             type: "string",
             default: "input",
+            values: ["input","textarea","color","date","datetime","email","number","password","tel","time","url"],
             update: function() {
                 this.component.redraw();
             }
@@ -115,20 +116,20 @@ Sfera.Components.create("Input", {
         },
 
         onKeyUp: {
-            type: "string"
+            type: "js"
         },
         onChange: {
-            type: "string",
+            type: "js",
             default: "event(id,value)"
         },
         onEnter: {
-            type: "string"
+            type: "js"
         },
         onFocus: {
-            type: "string"
+            type: "js"
         },
         onBlur: {
-            type: "string"
+            type: "js"
         }
     },
 

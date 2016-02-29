@@ -1,4 +1,4 @@
-/*! sfera-webapp - v0.0.2 - 2016-02-19 */
+/*! sfera-webapp - v0.0.2 - 2016-02-29 */
 
 (function(){
 
@@ -81,7 +81,7 @@ Sfera.Compiler = new(function() {
         return component;
     };
 
-    this.compileXMLNode = function(xmlNode,options) {
+    this.compileXMLNode = function(xmlNode, options) {
         if (xmlNode.nodeType == 1) { // 1 = element
             options = options || {};
             options.index = options.index || true; // default is true
@@ -122,8 +122,8 @@ Sfera.Compiler = new(function() {
     /**
      *
      */
-    this.compileXML = function(xmlDoc,options) {
-        return this.compileXMLNode(xmlDoc.documentElement,options);
+    this.compileXML = function(xmlDoc, options) {
+        return this.compileXMLNode(xmlDoc.documentElement, options);
     };
 
     this.compileString = function(xmlStr) {
@@ -171,7 +171,7 @@ Sfera.Compiler = new(function() {
         }
     };
 
-    this.compileHTML = function (source) {
+    this.compileHTML = function(source) {
         source = source.replace(/\$interface\;/g, Sfera.client.name);
 
         // ...
@@ -244,7 +244,24 @@ Sfera.Compiler = new(function() {
             case "float":
                 value = parseFloat(value);
                 break;
+            case "color":
+                value = value.toLowerCase();
+                names = ['aliceblue', 'antiquewhite', 'aqua', 'aquamarine', 'azure', 'beige', 'bisque', 'black', 'blanchedalmond', 'blue', 'blueviolet', 'brown', 'burlywood', 'cadetblue', 'chartreuse', 'chocolate', 'coral', 'cornflowerblue', 'cornsilk', 'crimson', 'cyan', 'darkblue', 'darkcyan', 'darkgoldenrod', 'darkgray', 'darkgreen', 'darkkhaki', 'darkmagenta', 'darkolivegreen', 'darkorange', 'darkorchid', 'darkred', 'darksalmon', 'darkseagreen', 'darkslateblue', 'darkslategray', 'darkturquoise', 'darkviolet', 'deeppink', 'deepskyblue', 'dimgray', 'dodgerblue', 'firebrick', 'floralwhite', 'forestgreen', 'fuchsia', 'gainsboro', 'ghostwhite', 'gold', 'goldenrod', 'gray', 'green', 'greenyellow', 'honeydew', 'hotpink', 'indianred', 'indigo', 'ivory', 'khaki', 'lavender', 'lavenderblush', 'lawngreen', 'lemonchiffon', 'lightblue', 'lightcoral', 'lightcyan', 'lightgoldenrodyellow', 'lightgreen', 'lightgrey', 'lightpink', 'lightsalmon', 'lightseagreen', 'lightskyblue', 'lightslategray', 'lightsteelblue', 'lightyellow', 'lime', 'limegreen', 'linen', 'magenta', 'maroon', 'mediumaquamarine', 'mediumblue', 'mediumorchid', 'mediumpurple', 'mediumseagreen', 'mediumslateblue', 'mediumspringgreen', 'mediumturquoise', 'mediumvioletred', 'midnightblue', 'mintcream', 'mistyrose', 'moccasin', 'navajowhite', 'navy', 'oldlace', 'olive', 'olivedrab', 'orange', 'orangered', 'orchid', 'palegoldenrod', 'palegreen', 'paleturquoise', 'palevioletred', 'papayawhip', 'peachpuff', 'peru', 'pink', 'plum', 'powderblue', 'purple', 'red', 'rosybrown', 'royalblue', 'saddlebrown', 'salmon', 'sandybrown', 'seagreen', 'seashell', 'sienna', 'silver', 'skyblue', 'slateblue', 'slategray', 'snow', 'springgreen', 'steelblue', 'tan', 'teal', 'thistle', 'tomato', 'turquoise', 'violet', 'wheat', 'white', 'whitesmoke', 'yellow', 'yellowgreen'];
+                /*
+                /^(#[a-f0-9]{6}|#[a-f0-9]{3}|rgb *\( *[0-9]{1,3}%? *, *[0-9]{1,3}%? *, *[0-9]{1,3}%? *\)|rgba *\( *[0-9]{1,3}%? *, *[0-9]{1,3}%? *, *[0-9]{1,3}%? *, *[0-9]{1,3}%? *\)|black|green|silver|gray|olive|white|yellow|maroon|navy|red|blue|purple|teal|fuchsia|aqua)$/i
+                if (names.indexOf(value) == -1) {
+                    if (!(/^#[a-f0-9]{6}$/i).test(value)) {
+                        if (/^[a-f0-9]{6}$/i).test(value) {
+                            value = '#'.value;
+                        } else {
+
+                        }
+                    }
+                }
+                */
+                break;
             case "string":
+            case "js":
                 if (typeof(value) != "string" && value.toString) {
                     var v = value.toString();
                     if (v == "[object Object]")
@@ -258,10 +275,10 @@ Sfera.Compiler = new(function() {
                 break;
             case "regexp":
                 try {
-            		value = new RegExp(value); // add begin and end, it has to match the whole string
-            	} catch (err) {
-            		value = null;
-            	}
+                    value = new RegExp(value); // add begin and end, it has to match the whole string
+                } catch (err) {
+                    value = null;
+                }
                 break;
             case "list":
                 value = value.split(",");
@@ -310,6 +327,7 @@ Sfera.Attribute = function(component, config) {
         case "get":
         case "compile":
         case "update":
+        case "post":
             this[c] = config[c].bind(this);
             break;
         case "values":
@@ -374,7 +392,16 @@ Sfera.Attribute.prototype = {
 
     update: function () {
         // do something with the value
+        // ...
+        // call post update
+        this.post();
+    },
+
+    post: function () {
+
     }
+
+
 };
 
 
@@ -514,6 +541,9 @@ Sfera.ComponentPresets.Visibility = function() {
             if (this.value) {
                 trigger(this.component, true);
             }
+
+            // post update
+            this.post();
         }
     };
 };
@@ -532,18 +562,24 @@ Sfera.ComponentPresets.Position = function() {
         type: "string",
         update: function() {
             this.component.element.style.position = this.value == "static" ? "static" : "absolute";
+            // post update
+            this.post();
         }
     };
     this.attrDefs.x = {
         type: "integer",
         update: function() {
             this.component.element.style.left = this.value + "px";
+            // post update
+            this.post();
         }
     };
     this.attrDefs.y = {
         type: "integer",
         update: function() {
             this.component.element.style.top = this.value + "px";
+            // post update
+            this.post();
         }
     };
 
@@ -555,6 +591,9 @@ Sfera.ComponentPresets.Position = function() {
             s.msTransform = /* IE 9 */
                 s.webkitTransform = /* Safari */
                 s.transform = r;
+
+            // post update
+            this.post();
         }
     }
 };
@@ -564,12 +603,16 @@ Sfera.ComponentPresets.Size = function() {
         type: "integer",
         update: function() {
             this.component.element.style.width = this.value == "auto" ? "auto" : this.value + "px";
+            // post update
+            this.post();
         }
     };
     this.attrDefs.height = {
         type: "integer",
         update: function() {
             this.component.element.style.height = this.value == "auto" ? "auto" : this.value + "px";
+            // post update
+            this.post();
         }
     };
 };
@@ -579,24 +622,32 @@ Sfera.ComponentPresets.Label = function() {
         type: "string",
         update: function() {
             this.component.element.innerHTML = this.value;
+            // post update
+            this.post();
         }
     };
     this.attrDefs.color = {
         type: "string",
         update: function() {
             this.component.element.style.color = this.value;
+            // post update
+            this.post();
         }
     };
     this.attrDefs.fontSize = {
         type: "integer",
         update: function() {
             this.component.element.style.fontSize = this.value + "px";
+            // post update
+            this.post();
         }
     };
     this.attrDefs.textAlign = {
         type: "string",
         update: function() {
             this.component.element.style.textAlign = this.value;
+            // post update
+            this.post();
         }
     };
 
@@ -615,6 +666,8 @@ Sfera.ComponentPresets.Style = function() {
         update: function() {
             if (this.component.updateClass)
                 this.component.updateClass();
+            // post update
+            this.post();
         }
     };
 };
@@ -624,14 +677,17 @@ Sfera.ComponentPresets.Color = function() {
     this.attrDefs.color = {
         type: "string",
         default: "default",
-        
+
         values: function() {
             var c = Sfera.client.skin.colors[this.component.type];
             return c ? c : ["default"];
         },
 
         update: function() {
-            this.component.updateClass();
+            if (this.component.updateClass)
+                this.component.updateClass();
+            // post update
+            this.post();
         }
     }
 };
@@ -2647,6 +2703,9 @@ Sfera.UI.Button.prototype = {
         "error":5
     },
 
+    // linked buttons
+    _linked: null,
+
     initData: function () {
         var colors = [
             "light",
@@ -2727,6 +2786,17 @@ Sfera.UI.Button.prototype = {
 			delete this.element.onmouseup;
 		}
 	}, // clearButtonEvents()
+
+    // link other buttons, so events are shared. call only on one button
+    link: function (button) {
+        if (!this._linked)
+            this._linked = [];
+        if (!button._linked)
+            button._linked = [];
+
+        this._linked.push(button);
+        button._linked.push(this);
+    },
 
 	// set button color
 	setColor: function (c) {
@@ -2871,6 +2941,7 @@ Sfera.UI.Button.prototype = {
 			} else if (Sfera.UI.overEnabled) s = "over"; // over only on manager
 			break;
 		case "mousemove":
+            if (Sfera.UI.overEnabled) s = "over";
 			break;
 		case "mouseout":
 			// if we're still on the same div, do nothing
@@ -2908,6 +2979,15 @@ Sfera.UI.Button.prototype = {
 			if (swi)
 				this.data.attrs[this._attributes["pressed"]] = nswip;
 			this.updateClass();
+
+            if (this._linked) {
+                for (var i=0; i<this._linked.length; i++) {
+                    if (s != this._linked[i].data.state) {
+                        this._linked[i].data.state = s;
+                        this._linked[i].updateClass();
+                    }
+                }
+            }
 		}
 
 		// function
@@ -2916,6 +2996,7 @@ Sfera.UI.Button.prototype = {
 			var func = (typeof(f) == "string")?new Function("event","this.element",f):f;
 			func(event,this.element);
 		}
+
 		// don't prevent default to allow scrolling
 		return false;
 	} // onEvent()
@@ -4797,8 +4878,9 @@ Sfera.Device.canPlayVideo = function (type) {
 
 window.man = function(what) {
     // component
-    if (Sfera.Components[what]) {
-        var co = new Sfera.Components[what]({});
+    var c = Sfera.Utils.capitalize(what);
+    if (Sfera.Components[c]) {
+        var co = new Sfera.Components[c]({});
 
         var hstr = "* Component " + co.type + " *****************";
 
@@ -4928,7 +5010,8 @@ Sfera.Utils = function() {
                 if (name)
                     obj[name] = rootNode.childNodes[i];
             }
-            if (recursive && rootNode.childNodes[i].childNodes) {
+            if (recursive && rootNode.childNodes[i].childNodes && rootNode.childNodes[i].childNodes.length &&
+                !rootNode.childNodes[i].getAttribute("data-controller")) { // skip subComponents
                 obj = this.getComponentElements(rootNode.childNodes[i], recursive, obj);
             }
         }
@@ -4950,7 +5033,7 @@ Sfera.Utils = function() {
     };
 
     this.isArray = function(obj) {
-        return obj && Object.prototype.toString.call(obj) === '[object Array]';        
+        return obj && Object.prototype.toString.call(obj) === '[object Array]';
     };
 
     this.capitalize = function(str) {
@@ -4980,6 +5063,16 @@ Sfera.Utils = function() {
                 return "enter";
             case 32:
                 return "space";
+
+            case 37:
+                return "left";
+            case 38:
+                return "up";
+            case 39:
+                return "right";
+            case 40:
+                return "down";
+
             default:
                 var c = String.fromCharCode(code);
                 return c ? c.toLowerCase() : null;
@@ -5027,6 +5120,59 @@ Sfera.Utils = function() {
         return str;
     };
 
+    // get mouse relative position
+	this.getMouseRelativePosition = function (evt,target) {
+		var ep = this.getElementAbsolutePosition(target);
+		var p = this.getMouseAbsolutePosition(evt,target);
+		return {x:p.x-ep.x,y:p.y-ep.y};
+	} // getMouseRelativePosition()
+
+	// get absolute mouse position, if touch, first touch. target if != evt.target
+	this.getMouseAbsolutePosition = function (evt,target) {
+		var x,y;
+		if (Sfera.Device.touch && evt.touches && evt.touches[0]) {
+			x = evt.touches[0].pageX;
+			y = evt.touches[0].pageY;
+		} else if (evt.pageX != null && evt.pageY != null) {
+			x = evt.pageX;
+			y = evt.pageY;
+		} else {
+			x = (evt.layerX != null)?evt.layerX:evt.offsetX;
+			y = (evt.layerY != null)?evt.layerY:evt.offsetY;
+			var c = target || evt.target || evt.srcElement;
+			var p = this.getElementAbsolutePosition(c);
+			x += p.x;
+			y += p.y;
+		}
+
+		// scale?
+		if (this.scaleDelta && this.scaleDelta != 1) {
+			x *= this.scaleDelta;
+			y *= this.scaleDelta;
+		}
+
+		return {x:x, y:y};
+	} // getMouseAbsolutePosition()
+
+	// get element absolute position
+	this.getElementAbsolutePosition = function (c) {
+		var x = 0;
+		var y = 0;
+		while (c && c.offsetLeft != null && c.offsetTop != null) {
+			x += c.offsetLeft;
+			y += c.offsetTop;
+			c = c.offsetParent || c.parentNode;
+		}
+
+		return {x:x, y:y};
+	} // getElementAbsolutePosition()
+
+    // mouse wheel event
+	this.initMouseWheelEvent = function (e,f) {
+		if (!Sfera.Device.touch)
+			window.addEvent(browser.browser == "Firefox"?"DOMMouseScroll":"mousewheel", e, f);
+	}
+
     if (typeof window.DOMParser != "undefined") {
         this.parseXML = function(xmlStr) {
             return (new window.DOMParser()).parseFromString(xmlStr, "text/xml");
@@ -5068,6 +5214,26 @@ Array.prototype.equals = function(array, strict) {
         }
     }
     return true;
+}
+
+// add event cross browser
+window.addEvent = function (event, target, method, context) {
+	if (target.addEventListener) {
+		target.addEventListener(event, method.bind(context), false);
+	} else if (target.attachEvent) {
+		target.attachEvent("on" + event, method.bind(context));
+	} else {
+		target["on" + event] = method.bind(context);
+	}
+}
+window.removeEvent = function (event, target, method, context) {
+	if (target.removeEventListener) {
+		target.removeEventListener(event, method, false);
+	} else if (target.attachEvent) {
+		target.detachEvent("on" + event, method);
+	} else {
+		target["on" + event] = null;
+	}
 }
 
 

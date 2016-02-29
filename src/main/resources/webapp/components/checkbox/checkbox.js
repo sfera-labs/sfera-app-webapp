@@ -96,20 +96,20 @@ Sfera.Components.create("Checkbox", {
         },
 
         onKeyUp: {
-            type: "string"
+            type: "js"
         },
         onChange: {
-            type: "string",
+            type: "js",
             default: "event(id,value)"
         },
         onEnter: {
-            type: "string"
+            type: "js"
         },
         onFocus: {
-            type: "string"
+            type: "js"
         },
         onBlur: {
-            type: "string"
+            type: "js"
         }
     },
 

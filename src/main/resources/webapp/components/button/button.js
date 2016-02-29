@@ -2,7 +2,6 @@
  * @author       Gionatan Iasio <gionatan@sferalabs.cc>
  * @copyright    2015 SferaLabs
  * @license      {@link https://github.com/sfera-labs/sfera-webapp/license.txt|MIT License}
- * Button.js
  */
 
 /**
@@ -61,24 +60,18 @@ Sfera.Components.create("Button", {
             }
         },
 
-        // event
-        event: {
-            type: "string",
-            compile: function() {
-                this.changed = false;
-                var a = this.source.split("=");
-                this.value = "eid=" + a[0] + "&eval=" + a[1];
-            }
-        },
-
         onClick: {
-            type: "string"
+            type: "js"
         },
 
-        // page
-        page: {
-            type: "string"
+        onDown: {
+            type: "js"
+        },
+
+        onMove: {
+            type:"js"
         }
+
     },
 
     init: function() {
@@ -86,22 +79,37 @@ Sfera.Components.create("Button", {
         // fill elements with all nodes that have a name
         this.elements = Sfera.Utils.getComponentElements(this.element, true, this.elements);
 
-        this.btObj = new Sfera.UI.Button(this.elements.container, {
-            onclick: this.onClick.bind(this)
+        this.button = new Sfera.UI.Button(this.elements.container, {
+            ondown: this.onDown.bind(this),
+            onup: this.onUp.bind(this),
+            onmove: this.onMove.bind(this)
         });
+
+        this.updateClass();
+
         //this.element.onclick = this.onClick.bind(this);
     },
 
     updateClass: function() {
-        var col = this.getAttribute("color");
-        var sty = this.getAttribute("style");
-        this.btObj.setClassName("container" + (sty?" style_"+sty:"") + (col?" color_"+col:""));
+        var col = this.getAttribute("color") || "default";
+        var sty = this.getAttribute("style") || "default";
+        this.button.setClassName("container" + (sty?" style_"+sty:"") + (col?" color_"+col:""));
     },
 
+    onDown: function() {
+        var f = this.getAttribute("onDown");
+        Sfera.Custom.exec(f, this.id);
+    },
 
-    onClick: function() {
+    onMove: function() {
+        var f = this.getAttribute("onMove");
+        Sfera.Custom.exec(f, this.id);
+    },
+
+    onUp: function() {
         var f = this.getAttribute("onClick");
         Sfera.Custom.exec(f, this.id);
     }
+
 
 });
