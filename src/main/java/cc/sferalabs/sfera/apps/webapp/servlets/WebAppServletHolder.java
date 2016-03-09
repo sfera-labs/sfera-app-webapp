@@ -61,7 +61,7 @@ public abstract class WebAppServletHolder extends ServletHolder {
 
 		String basePath = req.getServletPath();
 		String uri = req.getRequestURI();
-		logger.warn("Unauthorized interface request: {}", uri);
+		logger.warn("Unauthorized request: {}", uri);
 		if (uri.equals(basePath) || uri.equals(basePath + "/")) {
 			logger.debug("Redirecting to login...");
 			resp.setStatus(HttpServletResponse.SC_TEMPORARY_REDIRECT);

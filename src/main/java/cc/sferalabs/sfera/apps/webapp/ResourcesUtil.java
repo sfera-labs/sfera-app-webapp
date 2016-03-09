@@ -43,29 +43,32 @@ public abstract class ResourcesUtil {
 
 	private static Path webAppPluginPath;
 	private static Set<Path> pluginsOverwritingWebapp;
+	private static Object pluginsLock = new Object();
 
 	/**
 	 * 
 	 */
 	public static void lookForPluginsOverwritingWebapp() {
-		pluginsOverwritingWebapp = new TreeSet<Path>(PLUGINS_NAME_COMPARATOR);
-		String webAppPluginId = WebApp.class.getPackage().getName();
-		Plugin webAppPlugin = Plugins.get(webAppPluginId);
-		if (webAppPlugin != null) {
-			webAppPluginPath = webAppPlugin.getPath();
-		} else {
-			logger.warn(
-					"WebApp plugin not found. If you are not developing it there is something wrong");
-		}
-		for (Plugin plugin : Plugins.getAll().values()) {
-			if (!plugin.getId().equals(webAppPluginId)) {
-				try (FileSystem pluginFs = FileSystems.newFileSystem(plugin.getPath(), null)) {
-					Path webappDir = pluginFs.getPath("webapp");
-					if (Files.exists(webappDir) && Files.isDirectory(webappDir)) {
-						pluginsOverwritingWebapp.add(plugin.getPath());
+		synchronized (pluginsLock) {
+			pluginsOverwritingWebapp = new TreeSet<Path>(PLUGINS_NAME_COMPARATOR);
+			String webAppPluginId = WebApp.class.getPackage().getName();
+			Plugin webAppPlugin = Plugins.get(webAppPluginId);
+			if (webAppPlugin != null) {
+				webAppPluginPath = webAppPlugin.getPath();
+			} else {
+				logger.warn(
+						"WebApp plugin not found. If you are not developing it there is something wrong");
+			}
+			for (Plugin plugin : Plugins.getAll().values()) {
+				if (!plugin.getId().equals(webAppPluginId)) {
+					try (FileSystem pluginFs = FileSystems.newFileSystem(plugin.getPath(), null)) {
+						Path webappDir = pluginFs.getPath("webapp");
+						if (Files.exists(webappDir) && Files.isDirectory(webappDir)) {
+							pluginsOverwritingWebapp.add(plugin.getPath());
+						}
+					} catch (Exception e) {
+						logger.warn("Error scanning plugin '" + plugin.getId() + "'", e);
 					}
-				} catch (Exception e) {
-					logger.warn("Error scanning plugin '" + plugin.getId() + "'", e);
 				}
 			}
 		}
@@ -82,13 +85,15 @@ public abstract class ResourcesUtil {
 		if (Files.exists(path)) {
 			return path;
 		}
-		for (Path plugin : pluginsOverwritingWebapp) {
-			try {
-				return getPluginResource(plugin, path);
-			} catch (NoSuchFileException nsfe) {
+		synchronized (pluginsLock) {
+			for (Path plugin : pluginsOverwritingWebapp) {
+				try {
+					return getPluginResource(plugin, path);
+				} catch (NoSuchFileException nsfe) {
+				}
 			}
+			return getWebAppResource(path);
 		}
-		return getWebAppResource(path);
 	}
 
 	/**
@@ -153,15 +158,17 @@ public abstract class ResourcesUtil {
 			paths.add(dir);
 		}
 		if (includeJarResources) {
-			for (Path plugin : pluginsOverwritingWebapp) {
+			synchronized (pluginsLock) {
+				for (Path plugin : pluginsOverwritingWebapp) {
+					try {
+						paths.add(getPluginResource(plugin, dir));
+					} catch (NoSuchFileException nsfe) {
+					}
+				}
 				try {
-					paths.add(getPluginResource(plugin, dir));
+					paths.add(getWebAppResource(dir));
 				} catch (NoSuchFileException nsfe) {
 				}
-			}
-			try {
-				paths.add(getWebAppResource(dir));
-			} catch (NoSuchFileException nsfe) {
 			}
 		}
 
@@ -243,17 +250,19 @@ public abstract class ResourcesUtil {
 			throws IOException {
 		Set<Path> list = copyRecursive(source, target);
 		if (includeJarResources) {
-			for (Path plugin : pluginsOverwritingWebapp) {
+			synchronized (pluginsLock) {
+				for (Path plugin : pluginsOverwritingWebapp) {
+					try {
+						Path pSource = getPluginResource(plugin, source);
+						list.addAll(copyRecursive(pSource, target));
+					} catch (NoSuchFileException nsfe) {
+					}
+				}
 				try {
-					Path pSource = getPluginResource(plugin, source);
+					Path pSource = getWebAppResource(source);
 					list.addAll(copyRecursive(pSource, target));
 				} catch (NoSuchFileException nsfe) {
 				}
-			}
-			try {
-				Path pSource = getWebAppResource(source);
-				list.addAll(copyRecursive(pSource, target));
-			} catch (NoSuchFileException nsfe) {
 			}
 		}
 		return list;

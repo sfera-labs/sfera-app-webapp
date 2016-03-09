@@ -64,7 +64,6 @@ public abstract class Cache {
 		} else {
 			try {
 				FilesWatcher.register(INTERFACES_PATH, Cache::buildInterfacesCache, false);
-				FilesWatcher.register(MANAGER_PATH, Cache::buildManagerCache, false);
 			} catch (Exception e) {
 				logger.error("Error registering WebApp files watcher", e);
 			}
@@ -75,6 +74,7 @@ public abstract class Cache {
 			@Subscribe
 			public void buildCache(PluginsEvent event) {
 				if (event == PluginsEvent.RELOAD) {
+					ResourcesUtil.lookForPluginsOverwritingWebapp();
 					Cache.buildCache();
 				}
 			}
@@ -115,14 +115,11 @@ public abstract class Cache {
 	private synchronized static void buildInterfacesCache() {
 		try {
 			if (interfaces != null) {
-				for (String interfaceName : interfaces) {
-					try {
-						HttpServer.removeServlet(AuthInterfaceCacheServletHolder.INSTANCE);
-						HttpServer.removeServlet(InterfaceCacheServletHolder.INSTANCE);
-					} catch (Exception e) {
-						logger.error("Error removing old servlet for interface " + interfaceName,
-								e);
-					}
+				try {
+					HttpServer.removeServlet(AuthInterfaceCacheServletHolder.INSTANCE);
+					HttpServer.removeServlet(InterfaceCacheServletHolder.INSTANCE);
+				} catch (Exception e) {
+					logger.error("Error removing old interfaces servlets", e);
 				}
 			}
 
