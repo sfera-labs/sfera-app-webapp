@@ -1,4 +1,4 @@
-/*! sfera-webapp - v0.0.2 - 2016-02-29 */
+/*! sfera-webapp - v0.0.2 - 2016-03-09 */
 
 (function(){
 
@@ -700,6 +700,10 @@ Sfera.ComponentPresets.Color = function() {
  * @class Sfera.Components
  */
 Sfera.Components = new(function() {
+
+    // components need to be created in order depending on what component they're extending
+    this._createLater = {};
+
     /**
      * Set a component source code
      *
@@ -782,6 +786,14 @@ Sfera.Components = new(function() {
      * @property {string} def - The component's definition.
      */
     this.create = function(name, def) {
+        // extends an existing component?
+        if (def.extends && !Sfera.Components[def.extends]) {
+            if (!this._createLater[def.extends])
+                this._createLater[def.extends] = [];
+            this._createLater[def.extends].push({name:name, def:def});
+            return;
+        }
+
         // constructor
         Sfera.Components[name] = function Component(def) {
             // children, if container
@@ -907,6 +919,15 @@ Sfera.Components = new(function() {
             comp.prototype[f] = def[f];
             if (typeof comp.prototype[f] === "function")
                 comp.prototype[f].displayName = "Sfera.Components." + name + "." + f;
+        }
+
+        // components that extend this one, previously defined
+        if (this._createLater[name]) {
+            for (var i=0; i<this._createLater[name].length; i++) {
+                var c = this._createLater[name][i];
+                this.create(c.name, c.def);
+            }
+            delete this._createLater[name];
         }
     };
 
