@@ -304,7 +304,7 @@ public class InterfaceCacheBuilder {
 			throws IOException {
 		String skin = attributes.get("skin");
 		List<String> files = new ArrayList<>();
-		files.add("code" + sub + "client.js");
+		files.add("code/client.js");
 		files.add("skins/" + skin + "/" + skin + ".js");
 		for (String comp : components) {
 			files.add("components/" + comp + "/" + comp + ".js");
