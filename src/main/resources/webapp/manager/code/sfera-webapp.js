@@ -3380,7 +3380,7 @@ Sfera.Net.Request = function () {
 	this.url = "";
 
 	this.method = "GET";
-	this.formData = null; // in case of POST
+	this.varData = null; // in case of POST
 
 	// custom event handlers
 	this.onLoaded = null; // needed
@@ -3426,10 +3426,17 @@ Sfera.Net.Request = function () {
 	}
 
 	this.addData = function(name, value) {
-		if (!this.formData)
-			this.formData = new FormData();
+		if (!this.varData)
+			this.varData = {};
 
-		this.formData.append(name, value);
+		this.varData[name] = value;
+	}
+
+	this.getData = function() {
+		var str = [];
+		for(var p in this.varData)
+			str.push(encodeURIComponent(p) + "=" + encodeURIComponent(this.varData[p]));
+		return str.join("&");
 	}
 
 	// open url. url optional (no url:repeat). ms optional (ms:delay request)
@@ -3470,7 +3477,7 @@ Sfera.Net.Request = function () {
 		if (self.method == "GET") {
 			req.send();
 		} else {
-			req.send(self.formData);
+			req.send(self.getData());
 		}
 
 		// wait timeout
