@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dictionary>
+<skin>
+ 	<name>Default</name>
+ 	<iconset>default</iconset>
+ </skin>
+<components>
+<button><src><![CDATA[<div class="component comp_button" data-controller="Button">
+    <div name="container" class="container">
+        <div class="cIcon" name="icon">
+        <!--sml
+        <image id="icon" source="" width="auto" position="static" />
+        -->
+        </div>
+        <div class="cLabel" name="label">
+        <!--sml
+        <label id="label" position="static" />
+        -->
+        </div>
+    </div>
+</div>]]></src>
+</button>
+<input><src><![CDATA[<div class="component comp_input" data-controller="Input" data-nogestures="true">
+    <div name="container" class="container">
+        <div class="icon" name="icon">
+        <!--sml
+        <image id="icon" source="" width="20" position="static" />
+        -->
+        </div>
+        <div class="edit" name="fieldC"></div>
+        <div class="erase" name="erase">
+        <!--sml
+        <image id="erase" source="icons/0272-cross.svg" width="12" position="static" />
+        -->
+        </div>
+    </div>
+</div>]]></src>
+</input>
+<image><src><![CDATA[<div class="component comp_image" data-controller="Image">
+</div>]]></src>
+<language><![CDATA[meh=Meh
+uh=Uh]]></language>
+</image>
+<page><src><![CDATA[<div data-controller="Page" class="component comp_page"></div>]]></src>
+</page>
+<label><src><![CDATA[<div class="component comp_label" data-controller="Label"></div>]]></src>
+<language><![CDATA[meh=Meh
+uh=Uh]]></language>
+</label>
+<interface><src><![CDATA[<div class="component interface" data-controller="Interface"></div>]]></src>
+</interface>
+</components>
+</dictionary>
