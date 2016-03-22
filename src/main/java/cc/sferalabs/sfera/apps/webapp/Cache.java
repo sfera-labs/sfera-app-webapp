@@ -16,6 +16,7 @@ import com.google.common.eventbus.Subscribe;
 import cc.sferalabs.sfera.apps.webapp.servlets.AuthInterfaceCacheServletHolder;
 import cc.sferalabs.sfera.apps.webapp.servlets.InterfaceCacheServletHolder;
 import cc.sferalabs.sfera.apps.webapp.servlets.ManagerCacheServletHolder;
+import cc.sferalabs.sfera.apps.webapp.servlets.ManagerLoginCacheServletHolder;
 import cc.sferalabs.sfera.console.Console;
 import cc.sferalabs.sfera.core.events.PluginsEvent;
 import cc.sferalabs.sfera.events.Bus;
@@ -82,6 +83,7 @@ public abstract class Cache {
 
 		try {
 			HttpServer.addServlet(ManagerCacheServletHolder.INSTANCE, "/manager/*");
+			HttpServer.addServlet(ManagerLoginCacheServletHolder.INSTANCE, "/manager/login/*");
 		} catch (HttpServerException e) {
 			logger.error("Error registering servlet for manager", e);
 		}
