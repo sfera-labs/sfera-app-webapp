@@ -1,4 +1,4 @@
-<!-- sfera-webapp - Manager - v0.0.2 - 2016-03-22 -->
+<!-- sfera-webapp - Manager - v0.0.2 - 2016-03-24 -->
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" $manifest;>
@@ -242,10 +242,18 @@
             <img class="icon" src="/manager/images/ticonsave.png">
             <span>save</span>
         </div>
+        <!--div id="te_toolbarSaveBt" class="mToolButton" data-onclick="textEditor._openFile()">
+            <img class="icon" src="/manager/images/ticonsave.png">
+            <span>open</span>
+        </div>
+        <div id="te_toolbarSaveBt" class="mToolButton" data-onclick="textEditor.newFile()">
+            <img class="icon" src="/manager/images/ticonsave.png">
+            <span>new</span>
+        </div>
         <div id="te_toolbarToolsBt" class="mToolButton" data-onclick="manager.showToolbarPopup('te_edit')">
             <img class="icon" src="/manager/images/ticontools.png">
             <span>tools</span>
-        </div>
+        </div-->
         <div id="te_toolbarWarningsBt" class="mToolButton" data-onclick="manager.showToolbarPopup('te_warnings')">
             <img class="icon" src="/manager/images/ticonalert.png">
             <span></span>
@@ -256,16 +264,16 @@
         <div id="te_editorHeader">
             <div id="te_editorHeaderLabel"></div>
             <div style="float:right;">
-                <div class="popupBt mToolButton" data-onclick="fileManager.closeEditor()">
+                <div class="popupBt mToolButton" data-onclick="textEditor.close()">
                     <img src="/manager/images/bticonclose.png">
                 </div>
             </div>
             <div class="mToolSep"></div>
             <div style="float:right;">
-                <div class="popupBt mToolButton" data-onclick="fileManager.setEditFontSize(1)">
+                <div class="popupBt mToolButton" data-onclick="textEditor.setFontSize(1)">
                     <img src="/manager/images/bticonfontb.png">
                 </div>
-                <div class="popupBt mToolButton" data-onclick="fileManager.setEditFontSize(0)">
+                <div class="popupBt mToolButton" data-onclick="textEditor.setFontSize(0)">
                     <img src="/manager/images/bticonfonts.png">
                 </div>
             </div>
@@ -373,14 +381,14 @@
                         </div>
                         <div>File Manager</div>
                     </div>
-                    <div name="peAppBt" class="mAppButton" data-onclick="manager.switchApp('te')">
+                    <!--div name="peAppBt" class="mAppButton" data-onclick="manager.switchApp('te')">
                         <div class="iconContainer">
                             <img class="icon" src="/manager/images/appiconpe.png">
                             <img class="iconDown" src="/manager/images/appiconped.png">
                             <img class="iconOver" src="/manager/images/empty.png">
                         </div>
                         <div>Text Editor</div>
-                    </div>
+                    </div-->
                     <div name="sbAppBt" class="mAppButton" data-onclick="manager.switchApp('sb')">
                         <div class="iconContainer">
                             <img class="icon" src="/manager/images/appiconsb.png">
@@ -388,11 +396,6 @@
                             <img class="iconOver" src="/manager/images/empty.png">
                         </div>
                         <div>Console</div>
-                    </div>
-
-                    <div name="sep1">
-                        <div class="dash" style="clear:both"></div>
-                        <div class="spacer"></div>
                     </div>
 
                     <div name="lvAppBt" class="mAppButton" data-onclick="manager.switchApp('lv')">
@@ -899,9 +902,9 @@
                 <div class="label">Choose file:</div>
                 <div class="spacer"></div>
                 <div class="field" style="overflow:hidden;">
-                    <form id="fm_uploadFileForm" action="" enctype="multipart/form-data" method="post" target="fm_uploadFileFrame">
+                    <!--form id="fm_uploadFileForm" action="" enctype="multipart/form-data" method="post" target="fm_uploadFileFrame"-->
                         <input id="fm_uploadFileInput" style="font-size:12px" class="stdInput" type="file" name="file" size="11" multiple="multiple" onfocus="focusMe(this)" onblur="blurMe(this)">
-                    </form>
+                    <!--/form-->
                     <br style="clear:both">
                 </div>
                 <div class="spacer"></div>
@@ -913,7 +916,7 @@
                     </div>
                     <br style="clear:both">
                 </div>
-                <iframe id="fm_uploadFileFrame" name="fm_uploadFileFrame" style="width:185px; display:none"></iframe>
+                <!--iframe id="fm_uploadFileFrame" name="fm_uploadFileFrame" style="width:185px; display:none"></iframe-->
             </div>
 
             <div class="spacer"></div>
@@ -973,7 +976,7 @@
                         <img src="/manager/images/bticonclose.png">
                         <span>no</span>
                     </div>
-                    <div class="mButton" style="width:80px; margin-right:5px;" data-onclick="fileManager.confirmUpload()">
+                    <div class="mButton" style="width:80px; margin-right:5px;" data-onclick="fileManager.confirmUpload(true)">
                         <img src="/manager/images/bticoncheck.png">
                         <span>yes</span>
                     </div>
@@ -998,11 +1001,11 @@
                 <div class="spacer"></div>
                 <div class="spacer"></div>
                 <div class="field">
-                    <div class="mButton" style="width:80px" data-onclick="fileManager.closeEditor(false)">
+                    <div class="mButton" style="width:80px" data-onclick="textEditor.close(false)">
                         <img src="/manager/images/bticonclose.png">
                         <span>no</span>
                     </div>
-                    <div class="mButton" style="width:80px; margin-right:5px;" data-onclick="fileManager.closeEditor(true)">
+                    <div class="mButton" style="width:80px; margin-right:5px;" data-onclick="textEditor.close(true)">
                         <img src="/manager/images/bticoncheck.png">
                         <span>save</span>
                     </div>

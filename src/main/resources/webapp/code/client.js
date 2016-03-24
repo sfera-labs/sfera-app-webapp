@@ -1,4 +1,4 @@
-/*! sfera-webapp - v0.0.2 - 2016-03-22 */
+/*! sfera-webapp - v0.0.2 - 2016-03-24 */
 
 (function(){
 
@@ -2602,56 +2602,6 @@ Sfera.SignalBinding.prototype = {
 Sfera.SignalBinding.prototype.constructor = Sfera.SignalBinding;
 
 
-var mySingleton = (function () {
-
-  // Instance stores a reference to the Singleton
-  var instance;
-
-  function init() {
-
-    // Singleton
-
-    // Private methods and variables
-    function privateMethod(){
-        consolthis.element.log( "I am private" );
-    }
-
-    var privateVariable = "Im also private";
-
-    return {
-
-      // Public methods and variables
-      publicMethod: function () {
-        consolthis.element.log( "The public can see me!" );
-      },
-
-      publicProperty: "I am also public"
-    };
-
-  };
-
-  return {
-
-    // Get the Singleton instance if one exists
-    // or create one if it doesn't
-    getInstance: function () {
-
-      if ( !instance ) {
-        instance = init();
-      }
-
-      return instance;
-    }
-
-  };
-
-})();
-
-// Usage:
-
-var singleA = mySingleton.getInstance();
-
-
 Sfera.UI = new (function(){
     var pressedBt;
     var lastButton;
@@ -2703,6 +2653,15 @@ Sfera.UI = new (function(){
 			bt.updateClass();
 		}
 	};
+
+    // destroy an array of buttons
+    this.destroyButtons = function (arr) {
+        for (var i=0; i<arr.length; i++) {
+            arr[i].destroy();
+        }
+        arr.length = 0;
+        return arr;
+    }
 
 })();
 
@@ -2808,6 +2767,15 @@ Sfera.UI.Button.prototype = {
 			delete this.element.onmouseup;
 		}
 	}, // clearButtonEvents()
+
+    destroy: function () {
+        var pressedBt = Sfera.UI.getPressedButton();
+        if (pressedBt && pressedBt == this.element) {
+            Sfera.UI.setPressedButton(null);
+            Sfera.UI.updateLastButton();
+        }
+        this.clearEvents();
+    },
 
     // link other buttons, so events are shared. call only on one button
     link: function (button) {
@@ -3371,7 +3339,9 @@ Sfera.Net = Sfera.Net || {};
  * Request class
  * @constructor
  */
-Sfera.Net.Request = function () {
+Sfera.Net.Request = function (options) {
+	options = options || {};
+
 	var req = null; // request
 
 	var status; // -1: aborted, 0: ready, 1:loading, 2:loaded
@@ -3379,8 +3349,8 @@ Sfera.Net.Request = function () {
 	var reqTimeout = null; // trigger timeout
 	this.url = "";
 
-	this.method = "GET";
-	this.varData = null; // in case of POST
+	this.method = options.method || "GET";
+	this.formData = null; // in case of POST
 
 	// custom event handlers
 	this.onLoaded = null; // needed
@@ -3426,17 +3396,10 @@ Sfera.Net.Request = function () {
 	}
 
 	this.addData = function(name, value) {
-		if (!this.varData)
-			this.varData = {};
+		if (!this.formData)
+			this.formData = new FormData();
 
-		this.varData[name] = value;
-	}
-
-	this.getData = function() {
-		var str = [];
-		for(var p in this.varData)
-			str.push(encodeURIComponent(p) + "=" + encodeURIComponent(this.varData[p]));
-		return str.join("&");
+		this.formData.append(name, value);
 	}
 
 	// open url. url optional (no url:repeat). ms optional (ms:delay request)
@@ -3466,7 +3429,6 @@ Sfera.Net.Request = function () {
 			self.onRequest();
 		try {
 			req.open(self.method, self.url, true);
-			req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 		} catch (err) {
 			// If document is not fully active, throw an "InvalidStateError" exception and terminate the overall set of steps.
 			// URL relative to base. If the algorithm returns an error, throw a "SyntaxError" exception and terminate these steps.
@@ -3475,9 +3437,12 @@ Sfera.Net.Request = function () {
 		}
 
 		if (self.method == "GET") {
+			//req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 			req.send();
 		} else {
-			req.send(self.getData());
+			var boundary=Math.random().toString().substr(2);
+			//req.setRequestHeader("content-type", "multipart/form-data; charset=utf-8;");
+			req.send(self.formData);
 		}
 
 		// wait timeout

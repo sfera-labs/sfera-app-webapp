@@ -1,4 +1,4 @@
-/*! sfera-webapp - Manager - v0.0.2 - 2016-03-22 */
+/*! sfera-webapp - Manager - v0.0.2 - 2016-03-24 */
 
 var fileManager;
 var files;
@@ -194,6 +194,7 @@ Sfera.Manager = function(config) {
 		}
 
 		// panel and arrow pos, better fixed position???
+		/*
 		switch (cToolbarPopup) {
 		case "pe_edit":
 			toolbarArrowE.style.left = Math.round(document.getElementById("pe_toolbarToolsBt").offsetLeft+document.getElementById("pe_toolbarToolsBt").offsetWidth/2+192)+"px"; // 192 = 200 (left panel) - 16/2 (arrow width)
@@ -211,6 +212,7 @@ Sfera.Manager = function(config) {
 			toolbarArrowE.style.left = Math.round(document.getElementById("fm_toolbarWarningsBt").offsetLeft+document.getElementById("fm_toolbarWarningsBt").offsetWidth/2-8)+"px";  // -8 = - (16/2) arrow width
 			break;
 		}
+        */
 	} // adjustToolbar()
 
 	// adjust popup if visible
@@ -414,7 +416,11 @@ Sfera.Manager = function(config) {
 	}
 
 	// switch app
-	this.switchApp = function (app) {
+	this.switchApp = function (app, options) {
+        // TODO: for now the text editor is not a stand alone app
+        if (app == "fm" && textEditor.open && !textEditor.closing)
+            app = "te";
+
 		if (app == this.cApp) {
 			this.closePopup();
 			return;
@@ -429,13 +435,8 @@ Sfera.Manager = function(config) {
 		case "":
 			this.hideOtherApps(app);
 			break;
-		case "pe":
-			this.hideOtherApps(app);
-			files.load("www"); // load www
-			this.showLoadingPopup();
-			break;
 		default: // default behaviour
-			getApp(app).start(app); // app is only needed for clientApplication
+			getApp(app).start(options); // app is only needed for clientApplication
 		}
 
 		// update quick apps panel, add current? not currently visible and not a fixed one
@@ -788,10 +789,13 @@ Sfera.Manager = function(config) {
 		else if (show == null)
 			show = (cToolbarPopup != p);
 
+        document.getElementById("fm_toolbarToolsBt").btObj.setAttribute("selected",show == true && p == "fm_edit");
+
 		if (!show && cToolbarPopup != p) // hide: already hidden?
 			return;
 		else if (!show && cToolbarPopup == p) // p becomes the only panel to show, or ""
 			p = "";
+
 
 		// optimization: nothing to change?
 		if (cToolbarPopup == p) return;
@@ -799,9 +803,10 @@ Sfera.Manager = function(config) {
 		toolbarPopupFMEditE.style.display = (p == "fm_edit")?"inline":"none";
 		toolbarPopupTEWarningsE.style.display = (p == "te_warnings")?"inline":"none";
 
+
 		cToolbarPopup = p;
 
-		toolbarArrowE.style.display = (p)?"inline":"none";
+		//toolbarArrowE.style.display = (p)?"inline":"none";
 		this.adjustToolbar();
 	} // showToolbarPopup()
 
@@ -1176,6 +1181,9 @@ Sfera.Manager.FileManager = function() {
 	this.selectedItem = -1; // currently selected item (or last selected item if multiple)
 	this.selectedItems = []; // for multiple selection
 
+    this.itemButtons = [];
+    this.pathButtons = [];
+
 	// multiple file selection
 	var selMode; // null, key, bt
 
@@ -1293,14 +1301,12 @@ Sfera.Manager.FileManager = function() {
 	var uploadBarE = document.getElementById("fm_uploadBar");
 	var uploadProgressE = document.getElementById("fm_uploadProgress");
 	var uploadBytesE = document.getElementById("fm_uploadBytes");
-	var uploadFileFrameE =  document.getElementById("fm_uploadFileFrame");
 
 	var uploadPFileNameE = document.getElementById("fm_uploadPFileName");
 	var uploadPBarE = document.getElementById("fm_uploadPBar");
 	var uploadPProgressE = document.getElementById("fm_uploadPProgress");
 	var uploadPBytesE = document.getElementById("fm_uploadPBytes");
 
-	var uploadFileFormE = document.getElementById("fm_uploadFileForm");
 	var uploadFileInputE = document.getElementById("fm_uploadFileInput");
 
 	var self = this;
@@ -1336,7 +1342,7 @@ Sfera.Manager.FileManager = function() {
 	} // init()
 
 	// start
-	this.start = function () {
+	this.start = function (options) {
 		manager.hideOtherApps("fm");
 
 		this.e.style.display = "inline";
@@ -1348,6 +1354,11 @@ Sfera.Manager.FileManager = function() {
 		if (manager.cPopup && manager.cPopup.id == "loading")
 			manager.closePopup();
         */
+
+        if (options && options.sel) {
+            var p = options.sel.split("/");
+            selectOnRefresh = { name: p.pop(), path:p.join("/") };
+        }
 
 		if (!started) {
 			started = true;
@@ -1362,8 +1373,6 @@ Sfera.Manager.FileManager = function() {
 
 		this.focus();
 		this.open = true;
-
-		// 	timestampChecker started on browse
 	} // start()
 
 	// hide (switching to another app)
@@ -1597,7 +1606,7 @@ Sfera.Manager.FileManager = function() {
 			dirsCE.innerHTML = "";
 			var e,h;
 
-            this.buttons = [];
+            this.itemButtons = [];
 
 			for (var i=0; i<data.sub.length; i++) {
 				// file or dir
@@ -1621,7 +1630,7 @@ Sfera.Manager.FileManager = function() {
 
 				e.className = "fileItem mLineButton"+(ufp==i?" disabled":"")+(o.selectedItems.indexOf(i)!=-1?" selected":"");
 
-                this.buttons.push(new Sfera.UI.Button(e,{onclick:"fileManager.selectItem("+i+")"}));
+                this.itemButtons.push(new Sfera.UI.Button(e,{onclick:"fileManager.selectItem("+i+")"}));
 
 				dirsCE.appendChild(e);
 			}
@@ -1793,8 +1802,8 @@ Sfera.Manager.FileManager = function() {
 
 		var s,t;
 		for (var i=0; i<dirsCE.childNodes.length; i++) {
-			this.buttons[i].setAttribute("selected", (o.selectedItems.indexOf(i)!=-1));
-			this.buttons[i].setAttribute("disabled", (this.uploading && uploadData.index == i));
+			this.itemButtons[i].setAttribute("selected", (o.selectedItems.indexOf(i)!=-1));
+			this.itemButtons[i].setAttribute("disabled", (this.uploading && uploadData.index == i));
 		}
 	} // showFolderSel()
 
@@ -1857,30 +1866,29 @@ Sfera.Manager.FileManager = function() {
 		if (o.rootPath)
 			a.splice(0,o.rootPath.split("/").length); // so we start looping from the rooth
 
+        var i;
 		var txt = "";
 		var fun = ""; // functions
-		var path = o.rootPath;
-		var dir = o.rootPath?o.rootPath:"HSYCO Server";
+		var dir = o.rootPath?o.rootPath:"Sfera Server";
 
-		fun = 'data-onclick="fileManager.browseTo(\''+path+'\')"';
-		txt += " <span class='mTextButton "+((o.currentPath!=o.rootPath)?"checked":"selected")+"' "+fun+">"+dir+"</span>";
+        var paths = [o.rootPath];
+		txt += " <span class='mTextButton "+((o.currentPath!=o.rootPath)?"checked":"selected")+"'>"+dir+"</span>";
 
 		if (o.currentPath) {
-			for (var i=0; i<a.length; i++) {
+			for (i=0; i<a.length; i++) {
 				dir = a[i];
-				path += (path?"/":"")+dir;
-				fun = 'data-onclick="fileManager.browseTo(\''+path+'\')"';
-				txt += "&nbsp;&raquo;&nbsp;<span class='mTextButton "+((i<a.length-1)?"checked":"selected")+"' "+fun+">"+dir+"</span>";
+                paths.push((o.rootPath?"/":"")+dir);
+				txt += "&nbsp;&raquo;&nbsp;<span class='mTextButton "+((i<a.length-1)?"checked":"selected")+"'>"+dir+"</span>";
 			}
 		}
 
-		if (!this.popupMode) {
-			pathE.innerHTML = txt;
-			//browser.initEvents(pathE);
-		} else {
-			pathPE.innerHTML = txt;
-			//browser.initEvents(pathPE);
-		}
+        var o = (!this.popupMode)?pathE:pathPE;
+        o.innerHTML = txt;
+        Sfera.UI.destroyButtons(this.pathButtons);
+        var as = o.getElementsByTagName("SPAN");
+        for (i=0; i<as.length; i++) {
+            this.pathButtons.push(new Sfera.UI.Button(as[i],{onclick:"fileManager.browseTo('"+paths[i]+"')"}));
+        }
 	} // updatePath()
 
 	// null (this.currentFile) or directory, file name, path array, file extension
@@ -1950,22 +1958,34 @@ Sfera.Manager.FileManager = function() {
 	// can edit
 	this.canEdit = function (i) {
 		if (this.popupMode) return false; // can't edit if popup
+
 		var n = this.currentFolder.sub[i].name; // name
 		var t = this.currentFolder.sub[i].sub ? "d":"f"; // type
 		if (t=="d") return false; // can't edit folders
+
 		var s = this.currentFolder.sub[i].size; // size
 		var p = this.currentPath+(this.currentPath?"/":"")+n; // full path
 		var a = n.split(".");
 		var e = (a.length>1)?a.pop():""; // extension
-		var ee = (a.length>1)?a.pop():""; // extension
+
+        var unsupported = ["jpg","jpeg","png","apng","gif","bmp","exe","jar"];
+        for (var i=0; i<unsupported.length; i++) {
+            if (e == unsupported[i]) {
+                return false;
+            }
+        }
+
+        return true;
+        /*
 		switch (e) {
 		case "ini": case "hsc": case "hsm": case "sh":
 		case "csv": case "js": case "log":
 		case "java": case "htm": case "html": case "txt": case "xml": case "css":
 			return true;
 		}
+        var ee = (a.length>1)?a.pop():""; // extension
 		if (ee == "log") return true; // .log.1 ..
-		return false;
+        */
 	} // canEdit()
 
 	// select item. if i is null, select again
@@ -2055,13 +2075,11 @@ Sfera.Manager.FileManager = function() {
 		else
 			selMode = selMode?null:"bt"; // toggle
 		// changed?
-		/*
 		if (v != selMode) {
 			// button
-			document.getElementById("selectButton").getElementsByTagName("img")[0].style.display = selMode?"inline":"none";
-			document.getElementById("selectButton").getElementsByTagName("img")[1].style.display = selMode?"none":"inline";
+			document.getElementById("selectButtonFm").getElementsByTagName("img")[0].style.display = selMode?"inline":"none";
+			document.getElementById("selectButtonFm").getElementsByTagName("img")[1].style.display = selMode?"none":"inline";
 		}
-		*/
 	} // toggleSelMode()
 
 	// new folder
@@ -2108,13 +2126,12 @@ Sfera.Manager.FileManager = function() {
 		manager.closePopup(); // close new file popup
 
 		self.currentFile = o.currentPath+(o.currentPath?"/":"")+n;
-		self.openEditor();
+		self.openEditor(true);
 	} // newFile()
 
-    this.openEditor = function () {
-        manager.switchApp("te");
+    this.openEditor = function (isNew) {
         var o = self.popupMode?self.popupData:self;
-        textEditor.openFile(o.currentFile);
+        manager.switchApp("te",{from:"fm", open:o.currentFile, isNew:isNew});
     }
 
 	// rename file
@@ -2149,7 +2166,7 @@ Sfera.Manager.FileManager = function() {
 	this.downloadFile = function () {
 		var o = this.popupMode?this.popupData:this;
 		var ts = "."+(new Date()).getTime();
-		document.getElementById("downloadTarget").src = "/api/files/get?path="+files.encodeFileName(o.currentFile)+"&ts="+ts;
+		document.getElementById("downloadTarget").src = "/api/files/download?path="+files.encodeFileName(o.currentFile)+"&ts="+ts;
 		if (o.currentFolder.sub[o.selectedItem].sub)
 			manager.showNotice("Download requested, please wait...");
 	}
@@ -2157,7 +2174,7 @@ Sfera.Manager.FileManager = function() {
 	// download backup
 	this.downloadBackup = function () {
 		var ts = "."+(new Date()).getTime();
-		document.getElementById("downloadTarget").src = "/x/files?g"+ts+"*.";
+		document.getElementById("downloadTarget").src = "/api/files/download?path=.&ts="+ts;
 		manager.showNotice("Backup requested, please wait...");
 		manager.closeToolbarPopup();
 	}
@@ -2322,19 +2339,18 @@ Sfera.Manager.FileManager = function() {
 		self.confirmUpload();
 	} // initUpload
 
-	// confirm upload (no overwrite or from overwrite popup)
-	this.confirmUpload = function () {
-		// new or old method
-		if (uploadData.data) { // also drag
-			if (!sendUpload()) {
-				self.onUploadProgressError();
-				return;
-			}
-		} else {
-			uploadFileFormE.action = "/x/files?u*"+uploadData.id+"*"+files.encodeFileName(uploadData.path);
-			uploadFileFormE.submit();
+	// confirm upload (true: from overwrite popup)
+	this.confirmUpload = function (force) {
+        if (!uploadData.data) {
+            console.log("ERROR");
+        }
+
+		if (!sendUpload(force)) {
+			self.onUploadProgressError();
+			return;
 		}
 
+        /*
 		self.showUploadProgress(true);
 		self.uploading = true;
 		if (self.uploadDoneTimeout) {
@@ -2345,6 +2361,7 @@ Sfera.Manager.FileManager = function() {
 		if (!uploadData.size)
 			r += "*s";
 		uploadProgressReq.open(r);
+        */
 
 		// popups
 		if (manager.cPopup && manager.cPopup.id == "uploadoverwrite")
@@ -2355,19 +2372,30 @@ Sfera.Manager.FileManager = function() {
 			manager.openPopup("uploadingfile", false);
 	} // confirmUpload()
 
-	// send upload (via xmlhttreq post, new method)
-	function sendUpload() {
+	// send upload
+	function sendUpload(force) {
 	    if (!formDataSupport) return false; // not supported (shouldn't get here)
 	    if (!uploadData.data) return false; // no data?
 
-	    var formData = new FormData();
-		for (var i = 0; i < uploadData.data.length; i++)
-			formData.append("file", uploadData.data[i]);
+        uploadReq = new Sfera.Net.Request({method:"POST"});
+        uploadReq.onError = function (errCode) {
+            if (errCode == uploadReq.ERROR_FORBIDDEN) {
+                var json = this.getResponseJSON();
+                manager.showErrorPopup("Error uploading: "+json.error);
+            }
+        }
+        uploadReq.onLoaded = function () {
+            manager.showNotice("upload finished");
+        }
 
-	    // now post a new XHR request
-	    uploadReq = new XMLHttpRequest();
-	    uploadReq.open("POST", "/x/files?u*"+uploadData.id+"*"+files.encodeFileName(uploadData.path));
-	    uploadReq.send(formData);
+        uploadReq.addData("path",uploadData.path);
+        if (force)
+            uploadReq.addData("force","true");
+
+		for (var i = 0; i < uploadData.data.length; i++)
+			uploadReq.addData("file", uploadData.data[i]);
+
+	    uploadReq.open("/api/files/upload");
 
 	    return true; // done
 	} // sendUpload()
@@ -2540,7 +2568,7 @@ Sfera.Manager.FileManager = function() {
 
 	// stop the upload
 	this.cancelUpload = function () {
-		uploadFileFrameE.src = "about:blank";
+		//uploadFileFrameE.src = "about:blank";
 		this.uploading = false;
 		this.uploadPath = "";
 		uploadData = {};
@@ -2847,540 +2875,6 @@ Sfera.Manager.FileManager = function() {
 
 
 //--------------------------------------------------------------------------------------------------------------------------
-// File Manager ------------------------------------------------------------------------------------------------------------
-//--------------------------------------------------------------------------------------------------------------------------
-
-Sfera.Manager.TextEditor = function() {
-    var started = false; // if already started, will just switch
-	this.open = false; // currently open. set by start, hide
-
-	this.currentFile = ""; // current file, full path
-
-	this.editorFontSize = 12;
-	this.editorChanged = false;
-
-	this.e = document.getElementById("textEditor");
-
-    var toolbarE = document.getElementById("te_toolbar");
-
-	var editorContentE = document.getElementById("te_editorContent");
-	var editorTitleE = document.getElementById("te_editorTitle");
-	var editorPanelE = document.getElementById("te_editorPanel");
-	var editorHeaderLabelE = document.getElementById("te_editorHeaderLabel");
-	var editorTextE = document.getElementById("te_editorText");
-	var editorTextColorContainerE = document.getElementById("te_editorTextColorContainer");
-	var editorTextColorE = document.getElementById("te_editorTextColor");
-
-	var editorLoadingE = document.getElementById("te_editorLoading");
-
-	var toolbarSaveBtE = document.getElementById("te_toolbarSaveBt");
-
-	var editorModeBtE = document.getElementById("te_editorModeBt");
-
-	var self = this;
-
-	// init
-	function init() {
-		//updateToolbarPopupButtons(); TODO:
-	} // init()
-
-	// start
-	this.start = function () {
-		manager.hideOtherApps("te");
-
-		this.e.style.display = "inline";
-
-		this.adjustLayout();
-
-		// loading popup?
-		/*
-		if (manager.cPopup && manager.cPopup.id == "loading")
-			manager.closePopup();
-        toolbarSaveBtE.style.display = "none";
-        */
-
-        this.editor = ace.edit("te_editorText");
-        this.editor.setTheme("ace/theme/monokai");
-        this.editor.setShowPrintMargin(false);
-        this.editor.getSession().setMode("ace/mode/javascript");
-
-		this.focus();
-		this.open = true;
-	} // start()
-
-	// hide (switching to another app)
-	this.hide = function () {
-		this.e.style.display = "none";
-
-		manager.focus();
-
-		this.open = false;
-	} // hide()
-
-	// focus, restore key events
-	this.focus = function () {
-		document.onkeydown = this.onKeyDown;
-		document.onkeyup = this.onKeyUp;
-		if (window.focus) window.focus();
-		//manager.deselect();
-	} // focus()
-
-	// adjust layout. viewport size
-	this.adjustLayout = function () {
-		if (!manager.viewportWidth || !manager.viewportHeight) return;
-
-		var	vw = manager.viewportWidth;
-		var	vh = manager.viewportHeight;
-
-		// tool bar size
-		var tbW = 0; // left one
-		var tbH = 36; // top one
-
-		// editable area size
-		var eW = vw - tbW;
-		var eH = vh - tbH;
-
-		toolbarE.style.left = (tbW-1)+"px"; // +1, attach it to the iconPanel
-		toolbarE.style.width = (eW+1)+"px";
-
-		// panels
-		var bs = 1; // border size
-		var pm = 5+bs; // panel margin: padding + border size
-		var pd = 7; // panel distance from border
-		var pw = Math.round((vw-pd*3-pm*4)/2); //;
-		var ph = vh-tbH-pm*2-pd*2;
-		if (pw<340) pw = 340;
-
-		pw = (vw-pd*3-pm*4) -pw; // fix it: since it's /2, pw could be 1 pixel wider
-
-		var eW = vw-pm*2-pd*2; // full content width
-
-		editorPanelE.style.left = (pd)+"px";
-		editorPanelE.style.top = (tbH+pd)+"px";
-		editorPanelE.style.width = (eW)+"px";
-		editorPanelE.style.height = (ph)+"px";
-
-		editorTextE.style.width = (eW)+"px";
-		editorTextE.style.height = (ph-30)+"px";
-
-		editorLoadingE.style.left = Math.round((eW - 70)/2)+"px";
-
-	} // adjustLayout()
-
-	// update edit toolbar popup buttons
-	function updateToolbarPopupButtons() {
-		document.getElementById("selectButtonFm").style.display = self.editorOpen?"none":"";
-		document.getElementById("downloadBackupButton").style.display = self.editorOpen?"none":"";
-		document.getElementById("toggleCommentButton").style.display = self.editorOpen && getSyntaxType()?"":"none";
-	} // updateToolbarPopupButtons()
-
-	// element, selection start, end
-	function getLinesSelection(txt,ss,se) {
-		var ls = txt.lastIndexOf("\n",ss-1);
-		var le = txt.indexOf("\n",ss<se?se-1:se);
-		if (le == -1) le = txt.length;
-		var pre = txt.slice(0,ls+1); // before this line, including ending \n
-		var sel = txt.slice(ls+1,le);// this line, including ending \n
-		var post = txt.slice(le,txt.length);  // after this line
-		if (ls == -1) ls = 0; // file beginning
-		return {ls:ls, le:le, pre:pre, sel:sel, post:post};
-	} // getLinesSelection()
-
-	// toggle comment, from button
-	this.toggleComment = function () {
-        return; //TODO
-		var ss = editorTextE.selectionStart;
-		var se = editorTextE.selectionEnd;
-		var tab = "\t";
-
-		fileManager.editorChanged = true;
-		updateEditorTitle();
-
-		var s = getLinesSelection(editorTextE.value,ss,se);
-
-		var al = s.sel.split("\n");
-		var cc = 0; // comment count
-
-		var comment = true;
-		// check if we need to comment or uncomment
-		for (var i=0; i<al.length; i++) {
-			if (al[i][0] == "#") {
-				comment = false;
-				break;
-			}
-		}
-
-		// add or remove comment
-		var commLine = false; // comment on line?
-		for (var i=0; i<al.length; i++) {
-			commLine = (al[i][0] == "#");
-			if (comment && !commLine) {
-				al[i] = "#".concat(al[i]);
-				if (i == 0 && s.ls < ss) ss++;
-				se++;
-			} else if (!comment && commLine) {
-				al[i] = al[i].slice(1,al[i].length);
-				if (i == 0 && s.ls < ss) ss--;
-				se--;
-			}
-		}
-
-		// compose
-		editorTextE.value = s.pre.concat(al.join("\n")).concat(s.post);
-
-		// fix selection
-		editorTextE.selectionStart = ss;
-		editorTextE.selectionEnd = se;
-
-		colorEditor();
-	} // toggleComment()
-
-
-    this.onWSMessage = function(json) {
-        console.log(json);
-        if (json && json.files) {
-            var o = this.popupMode?this.popupData:this;
-            var p = o.currentPath;
-            if (p == "") p = ".";
-            for (var f in json.files) {
-                if (f == p) {
-                    files.load("refresh_list",f);
-                    return;
-                }
-            }
-        }
-    }
-
-	// key down
-	this.onKeyDown = function (e) {
-		if (!e) var e = window.event;
-		// code
-		var code;
-		if (e.keyCode) code = e.keyCode;
-		else if (e.which) code = e.which;
-		// target
-		var t;
-		if (e.target) t = e.target;
-		else if (e.srcElement) t = e.srcElement;
-		if (t.nodeType == 3) // defeat Safari bug
-			t = t.parentNode;
-
-		// backspace. prevent only when focused element is not password, text or file
-		if ((code == 8) && !(t && t.tagName && (t.type && /(password)|(text)|(file)/.test(t.type.toLowerCase())) || t.tagName.toLowerCase() == 'textarea')) {
-			browser.preventDefault(e);
-			return false;
-		}
-
-		// color editor. ctrl + shift + c
-		if (e.ctrlKey && e.shiftKey && code == 67) {
-			this.toggleColorMode();
-			manager.hideQuickAppsPanel(true); // quick apps panel opened on ctrl+shift, hide it (true: cancel switching)
-			return false;
-		}
-
-		// ctrl shift, show quick apps panel
-		if (code == 16 && e.ctrlKey)
-			manager.showQuickAppsPanel();
-
-		// esc
-		if (manager.cPopup && manager.cPopup.closeBt && code == 27) {
-			manager.closePopup();
-			browser.preventDefault(e);
-			return;
-		}
-
-		if (manager.cPopup && manager.cPopup.id != "choosefile") {
-			if (code == 13) { // return
-			switch (manager.cPopup.id) {
-				case "newfolder":
-					if (focusedElement == manager.cPopup.data.input["n"])
-						fileManager.newFolder();
-					break;
-				case "newfile":
-					if (focusedElement == manager.cPopup.data.input["n"])
-						fileManager.newFile();
-					break;
-				case "renamefile":
-					if (focusedElement == manager.cPopup.data.input["n"])
-						fileManager.renameFile();
-					break;
-				}
-			}
-			return; // popup open
-		}
-
-		// ctrl/cmd s
-		if (code == 83 && (e.ctrlKey || e.metaKey) && !manager.cPopup) {
-			browser.preventDefault(e);
-			fileManager.saveEditor();
-			return;
-		}
-
-		/*
-        fileManager.editorChanged = true;
-               updateEditorTitle();
-		 */
-	} // onKeyDown()
-
-	// key up
-	this.onKeyUp = function (e) {
-		if (!e) var e = window.event;
-		// code
-		var code;
-		if (e.keyCode) code = e.keyCode;
-		else if (e.which) code = e.which;
-
-		// ctrl a released?
-		if (!e.ctrlKey && manager.hideQuickAppsPanel()) return; // close quick apps panel?
-	} // onKeyUp()
-
-    // open file
-	this.openFile = function (file) {
-        this.currentFile = file;
-        this.showLoading(true);
-		files.load("readfile",file);
-
-
-        //this.editor.getSession().setMode("ace/mode/html");
-
-	} // openFile()
-
-	// update editor title
-	function updateEditorTitle() {
-		editorHeaderLabelE.innerHTML = (self.editorChanged?"* ":"")+self.currentFile;
-	}
-
-	// close editor. save? null to show popup, true or false
-	this.close = function (save) {
-		if (this.editorChanged && save == null) {
-			manager.openPopup("closeeditor",true);
-			return;
-		}
-
-		this.editorOpen = false;
-
-		updateToolbarPopupButtons();
-
-		if (save) { // editorOpen is false, so when we're done saving, we close again
-			this.saveEditor();
-			return;
-		} else if (save == false) { // clicked on no, don't save
-			manager.closePopup();
-		}
-
-		// reset scrolling (otherwise safari would keep the scrolling locked to the last value when reopening)
-		this.editor.setValue(""); // clear
-		colorEditor();
-
-		this.hideWarnings();
-
-		this.editorChanged = false;
-
-		editorTitleE.style.display = "none";
-		dirsPanelE.style.display = "";
-		detailsPanelE.style.display = "";
-		editorPanelE.style.display = "none";
-		toolbarSaveBtE.style.display = "none";
-
-		selectOnRefresh = {path:this.currentPath, name:this.currentFile}; // so we auto select when refreshing
-
-		this.adjustLayout();
-		manager.closeToolbarPopup();
-	} // closeEditor()
-
-	// show editor loading
-	this.showLoading = function (show) {
-		if (show) {
-			editorTextE.style.display = "none";
-			editorLoadingE.style.display = "inline";
-		} else {
-			toolbarSaveBtE.style.display = "inline";
-			editorTextE.style.display = "inline";
-			editorLoadingE.style.display = "none";
-		}
-	} // showLoading()
-
-	// update editor with contents
-	this.onReadFile = function (text) {
-		this.editor.setValue(text);
-
-		this.showLoading(false);
-
-        this.editor.focus();
-        this.editor.clearSelection();
-		//focusElement(editorTextE);
-
-		// warning check
-		/*
-		if (isEventsFile()) {
-			this.startWarningsCheck();
-		}
-        */
-	} // updateEditor()
-
-	// save file
-	this.saveFile = function () {
-		this.editorChanged = false;
-		updateEditorTitle();
-		manager.showSavingPopup();
-		files.load("writefile",[this.currentFile, this.editor.getValue()]);
-	} // saveFile()
-
-	// on editor saved event
-	this.onEditorSaved = function (r) {
-		if (!r.error) {
-			manager.showNotice("<b>"+files.resID+"</b> saved");
-            manager.closePopup(); // close saving popup
-		} else {
-			manager.showNotice("error saving <b>"+files.resID+"</b>");
-			if (!fileManager.editorOpen) { // not saved.. restore?
-				fileManager.editorOpen = true; // still open!
-				manager.closePopup(); // close saving popup
-			}
-		}
-		// focus
-        this.editor.focus();
-	} // onEditorSaved()
-
-	// get syntax type, for highlighting
-	function getSyntaxType() {
-		if (self.currentFile.indexOf(".ini") == self.currentFile.length-4)
-			return "ini";
-		else if (self.currentFile == "systemtopo.txt")
-			return "topo";
-		else if ((self.currentFile.indexOf("events") == 0 &&
-				 self.currentFile.indexOf(".txt") == self.currentFile.length-4) ||
-				 self.currentFile.indexOf("events.txt") == self.currentFile.length-"events.txt".length)
-			return "events";
-		else if (self.currentFile.indexOf(".js") == self.currentFile.length-3) {
-			return "js";
-		}
-		return "";
-	} // getSyntaxType()
-
-
-	init();
-};
-
-
-var tid = 0;
-var p; // bg points
-var k = 0; // num of points
-// get element by id shortcut
-function Z(n) {
-    return document.getElementById(n);
-}
-
-// random
-function r(n) {
-    return Math.floor(Math.random() * n)
-}
-
-function f(p) {
-    var ts = new Date().getTime();
-    var x = p.x,
-        y = p.y;
-
-    if (!p.ls) p.ls = ts;
-    var t = ts - p.ls;
-
-    var d = t * p.s / 100 - p.p;
-    x += Math.sin(d) * p.a;
-    y += Math.sin(d) * p.b;
-
-    return {
-        x: x,
-        y: y
-    };
-}
-
-// distance between two points
-function d(x, y, j, l) {
-    var xs = j - x;
-    var ys = l - y;
-    return Math.sqrt(ys * ys + xs * xs);
-}
-
-// draw background
-function dr() {
-    var w = window.innerWidth,
-        h = window.innerHeight,
-        q = 200, // 1 point every nxn square
-        x, y, j, l, t, i,
-        o, g, c;
-
-    try {
-        g = Z('c');
-        c = g.getContext('2d');
-        o = (typeof g.style.opacity !== 'undefined');
-        if (o) g.style.opacity = .3;
-    } catch (e) {
-        return
-    }
-
-    c.canvas.width = w;
-    c.canvas.height = h;
-
-    if (!p) {
-        p = [];
-        for (x = -1; x <= w / q; x++) {
-            for (y = -1; y <= h / q; y++) {
-                i = {
-                    x: q * x + r(q),
-                    y: q * y + r(q),
-                    r: r(10) + 4,
-                    a: r(13),
-                    b: r(13),
-                    p: r(100),
-                    w: r(10000),
-                    s: r(10) / 100,
-                    l: []
-                };
-                p.push(i);
-                k++;
-            }
-        }
-        for (i = 0; i < k; i++) {
-            x = p[i].x;
-            y = p[i].y;
-            for (t = i + 1; t < k; t++) {
-                j = p[t].x;
-                l = p[t].y;
-                if (d(x, y, j, l) < q * 2)
-                    p[i].l.push(p[t]); // line to..
-            }
-        }
-    }
-    c.strokeStyle =
-        c.fillStyle = o ? '#fff' : '#7194b8'; //'#7998af';
-    for (i = 0; i < k; i++) {
-        x = f(p[i]).x;
-        y = f(p[i]).y;
-        for (t = 0; t < p[i].l.length; t++) {
-            j = f(p[i].l[t]).x;
-            l = f(p[i].l[t]).y;
-            c.moveTo(x, y);
-            c.lineTo(j, l);
-        }
-        c.stroke();
-        c.beginPath();
-        c.arc(x, y, p[i].r, 0, 2 * Math.PI, false);
-        c.fill();
-    }
-}
-
-// call draw on resize, after 100ms
-window.addEventListener("resize", function() {
-    clearTimeout(tid);
-    tid = setTimeout(dr, 100);
-});
-window.addEventListener("load", function() {
-    Z("bg").innerHTML = "<canvas id='c'></canvas>";
-    setInterval(dr, 50);
-});
-
-
-//--------------------------------------------------------------------------------------------------------------------------
 // Files -------------------------------------------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------------------------------------------------
 
@@ -3576,13 +3070,13 @@ Sfera.Manager.Files = function () {
 			break;
 
 		case "readfile":
-			if (!errCode)
-				textEditor.onReadFile(json.content);
+			if (!errCode && manager.cApp == "te")
+				textEditor.onFileRead(json.content);
 			break;
 
 		case "writefile":
-			manager.closePopup();
-			textEditor.onEditorSaved(json);
+			if (!errCode && manager.cApp == "te")
+				textEditor.onFileSaved(json);
 	    	break;
 
 		case "newfolder":
@@ -3688,5 +3182,580 @@ Sfera.Manager.Files = function () {
 
 	init();
 } // Files()
+
+
+//--------------------------------------------------------------------------------------------------------------------------
+// File Manager ------------------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------------------------------
+
+Sfera.Manager.TextEditor = function() {
+    var started = false; // if already started, will just switch
+	this.open = false; // currently open. set by start, hide
+    this.closing = false; // TODO: used now because te is not stand alone
+
+	this.currentFile = ""; // current file, full path
+
+	this.fontSize = 12;
+	this.changed = false;
+
+    this.returnToFM = false; // if opened from filemanager, on close return to file manager
+
+	this.e = document.getElementById("textEditor");
+
+    var toolbarE = document.getElementById("te_toolbar");
+
+	var editorContentE = document.getElementById("te_editorContent");
+	var editorTitleE = document.getElementById("te_editorTitle");
+	var editorPanelE = document.getElementById("te_editorPanel");
+	var editorHeaderLabelE = document.getElementById("te_editorHeaderLabel");
+	var editorTextE = document.getElementById("te_editorText");
+	var editorTextColorContainerE = document.getElementById("te_editorTextColorContainer");
+	var editorTextColorE = document.getElementById("te_editorTextColor");
+
+	var editorLoadingE = document.getElementById("te_editorLoading");
+
+	var toolbarSaveBtE = document.getElementById("te_toolbarSaveBt");
+
+	var editorModeBtE = document.getElementById("te_editorModeBt");
+
+	var self = this;
+
+    var closeOnSave = false;
+
+	// init
+	function init() {
+        editorModeBtE.style.display = "none";
+		//updateToolbarPopupButtons(); TODO:
+        self.editor = ace.edit("te_editorText");
+        self.editor.setTheme("ace/theme/monokai");
+        self.editor.setShowPrintMargin(false);
+        self.editor.getSession().setMode("ace/mode/javascript");
+        self.editor.getSession().on('change', function(e) {
+            // e.type, etc
+            self.changed = true;
+            updateTitle();
+        });
+        //this.editor.getSession().setMode("ace/mode/html");
+	} // init()
+
+	// start
+	this.start = function (options) {
+		manager.hideOtherApps("te");
+
+		this.e.style.display = "inline";
+
+		this.adjustLayout();
+
+		// loading popup?
+		/*
+		if (manager.cPopup && manager.cPopup.id == "loading")
+			manager.closePopup();
+        toolbarSaveBtE.style.display = "none";
+        */
+        this.showLoading(false);
+
+		this.focus();
+		this.open = true;
+        this.closing = false;
+
+        if (options) {
+            if (options.from == "fm")
+                this.returnToFM = true;
+            if (options.open) {
+                if (options.isNew)
+                    this.newFile(options.open);
+                else
+                    this.openFile(options.open);
+            }
+        }
+	} // start()
+
+	// hide (switching to another app)
+	this.hide = function () {
+		this.e.style.display = "none";
+
+		manager.focus();
+
+		this.open = false;
+	} // hide()
+
+	// focus, restore key events
+	this.focus = function () {
+		document.onkeydown = this.onKeyDown;
+		document.onkeyup = this.onKeyUp;
+		if (window.focus) window.focus();
+		//manager.deselect();
+	} // focus()
+
+	// adjust layout. viewport size
+	this.adjustLayout = function () {
+		if (!manager.viewportWidth || !manager.viewportHeight) return;
+
+		var	vw = manager.viewportWidth;
+		var	vh = manager.viewportHeight;
+
+		// tool bar size
+		var tbW = 0; // left one
+		var tbH = 36; // top one
+
+		// editable area size
+		var eW = vw - tbW;
+		var eH = vh - tbH;
+
+		toolbarE.style.left = (tbW-1)+"px"; // +1, attach it to the iconPanel
+		toolbarE.style.width = (eW+1)+"px";
+
+		// panels
+		var bs = 1; // border size
+		var pm = 5+bs; // panel margin: padding + border size
+		var pd = 7; // panel distance from border
+		var pw = Math.round((vw-pd*3-pm*4)/2); //;
+		var ph = vh-tbH-pm*2-pd*2;
+		if (pw<340) pw = 340;
+
+		pw = (vw-pd*3-pm*4) -pw; // fix it: since it's /2, pw could be 1 pixel wider
+
+		var eW = vw-pm*2-pd*2; // full content width
+
+		editorPanelE.style.left = (pd)+"px";
+		editorPanelE.style.top = (tbH+pd)+"px";
+		editorPanelE.style.width = (eW)+"px";
+		editorPanelE.style.height = (ph)+"px";
+
+		editorTextE.style.width = (eW)+"px";
+		editorTextE.style.height = (ph-30)+"px";
+
+		editorLoadingE.style.left = Math.round((eW - 70)/2)+"px";
+
+	} // adjustLayout()
+
+	// update edit toolbar popup buttons
+	function updateToolbarPopupButtons() {
+        // TODO
+		document.getElementById("selectButtonFm").style.display = self.editorOpen?"none":"";
+		document.getElementById("downloadBackupButton").style.display = self.editorOpen?"none":"";
+		document.getElementById("toggleCommentButton").style.display = self.editorOpen && getSyntaxType()?"":"none";
+	} // updateToolbarPopupButtons()
+
+	// element, selection start, end
+	function getLinesSelection(txt,ss,se) {
+		var ls = txt.lastIndexOf("\n",ss-1);
+		var le = txt.indexOf("\n",ss<se?se-1:se);
+		if (le == -1) le = txt.length;
+		var pre = txt.slice(0,ls+1); // before this line, including ending \n
+		var sel = txt.slice(ls+1,le);// this line, including ending \n
+		var post = txt.slice(le,txt.length);  // after this line
+		if (ls == -1) ls = 0; // file beginning
+		return {ls:ls, le:le, pre:pre, sel:sel, post:post};
+	} // getLinesSelection()
+
+	// toggle comment, from button
+	this.toggleComment = function () {
+        return; //TODO
+		var ss = editorTextE.selectionStart;
+		var se = editorTextE.selectionEnd;
+		var tab = "\t";
+
+		this.changed = true;
+		updateTitle();
+
+		var s = getLinesSelection(editorTextE.value,ss,se);
+
+		var al = s.sel.split("\n");
+		var cc = 0; // comment count
+
+		var comment = true;
+		// check if we need to comment or uncomment
+		for (var i=0; i<al.length; i++) {
+			if (al[i][0] == "#") {
+				comment = false;
+				break;
+			}
+		}
+
+		// add or remove comment
+		var commLine = false; // comment on line?
+		for (var i=0; i<al.length; i++) {
+			commLine = (al[i][0] == "#");
+			if (comment && !commLine) {
+				al[i] = "#".concat(al[i]);
+				if (i == 0 && s.ls < ss) ss++;
+				se++;
+			} else if (!comment && commLine) {
+				al[i] = al[i].slice(1,al[i].length);
+				if (i == 0 && s.ls < ss) ss--;
+				se--;
+			}
+		}
+
+		// compose
+		editorTextE.value = s.pre.concat(al.join("\n")).concat(s.post);
+
+		// fix selection
+		editorTextE.selectionStart = ss;
+		editorTextE.selectionEnd = se;
+
+	} // toggleComment()
+
+    // set edit font size
+	this.setFontSize = function (a) {
+		if (a) this.fontSize++; else this.fontSize--;
+		editorTextE.style.fontSize = this.fontSize+"px";
+		//editorTextE.style.lineHeight = Math.round(this.editorFontSize + this.editorFontSize/2)+"px";
+	} // setEditFontSize()
+
+    this.onWSMessage = function(json) {
+        console.log(json);
+        if (json && json.files) {
+            var o = this.popupMode?this.popupData:this;
+            var p = o.currentPath;
+            if (p == "") p = ".";
+            for (var f in json.files) {
+                if (f == p) {
+                    files.load("refresh_list",f);
+                    return;
+                }
+            }
+        }
+    }
+
+	// key down
+	this.onKeyDown = function (e) {
+		if (!e) var e = window.event;
+		// code
+		var code;
+		if (e.keyCode) code = e.keyCode;
+		else if (e.which) code = e.which;
+		// target
+		var t;
+		if (e.target) t = e.target;
+		else if (e.srcElement) t = e.srcElement;
+		if (t.nodeType == 3) // defeat Safari bug
+			t = t.parentNode;
+
+		// backspace. prevent only when focused element is not password, text or file
+		if ((code == 8) && !(t && t.tagName && (t.type && /(password)|(text)|(file)/.test(t.type.toLowerCase())) || t.tagName.toLowerCase() == 'textarea')) {
+			browser.preventDefault(e);
+			return false;
+		}
+
+		// color editor. ctrl + shift + c
+		if (e.ctrlKey && e.shiftKey && code == 67) {
+			this.toggleColorMode();
+			manager.hideQuickAppsPanel(true); // quick apps panel opened on ctrl+shift, hide it (true: cancel switching)
+			return false;
+		}
+
+		// ctrl shift, show quick apps panel
+		if (code == 16 && e.ctrlKey)
+			manager.showQuickAppsPanel();
+
+		// esc
+		if (manager.cPopup && manager.cPopup.closeBt && code == 27) {
+			manager.closePopup();
+			browser.preventDefault(e);
+			return;
+		}
+
+		if (manager.cPopup && manager.cPopup.id != "choosefile") {
+			if (code == 13) { // return
+			switch (manager.cPopup.id) {
+				case "newfolder":
+					if (focusedElement ==  manager.cPopup.data.input["n"])
+						fileManager.newFolder();
+					break;
+				case "newfile":
+					if (focusedElement == manager.cPopup.data.input["n"])
+						fileManager.newFile();
+					break;
+				case "renamefile":
+					if (focusedElement == manager.cPopup.data.input["n"])
+						fileManager.renameFile();
+					break;
+				}
+			}
+			return; // popup open
+		}
+
+		// ctrl/cmd s
+		if (code == 83 && (e.ctrlKey || e.metaKey) && !manager.cPopup) {
+			browser.preventDefault(e);
+			textEditor.save();
+			return;
+		}
+
+		/*
+        fileManager.changed = true;
+               updateTitle();
+		 */
+	} // onKeyDown()
+
+	// key up
+	this.onKeyUp = function (e) {
+		if (!e) var e = window.event;
+		// code
+		var code;
+		if (e.keyCode) code = e.keyCode;
+		else if (e.which) code = e.which;
+
+		// ctrl a released?
+		if (!e.ctrlKey && manager.hideQuickAppsPanel()) return; // close quick apps panel?
+	} // onKeyUp()
+
+    // open file
+	this.openFile = function (file) {
+        this.currentFile = file;
+        this.showLoading(true);
+		files.load("readfile",file);
+	} // openFile()
+
+    // new file
+    this.newFile = function (file) {
+        this.currentFile = file;
+        this.changed = true;
+        this.updateEditor("");
+    }
+
+	// update editor title
+	function updateTitle() {
+		editorHeaderLabelE.innerHTML = (self.changed?"* ":"")+self.currentFile;
+	}
+
+	// close editor. save? null to show popup, true or false
+	this.close = function (save) {
+		if (this.changed && save == null) {
+			manager.openPopup("closeeditor",true);
+			return;
+		}
+
+		updateToolbarPopupButtons();
+
+		if (save) { // editorOpen is false, so when we're done saving, we close again
+			this.saveFile(true); // true: close
+            return;
+		} else if (save == false) { // clicked on no, don't save
+
+		}
+        manager.closePopup();
+
+        this.editor.setValue(""); // clear
+        this.editor.resize(true);
+
+        //this.hideWarnings();
+
+        /*
+        this.adjustLayout();
+        manager.closeToolbarPopup();
+        */
+
+        if (true || this.returnToFM) { // TODO: close current file
+            this.returnToFM = false;
+            this.closing = true;
+            manager.switchApp("fm",{sel:this.currentFile});
+        }
+
+        this.changed = false;
+        this.currentFile = "";
+        updateTitle();
+	} // closeEditor()
+
+	// show editor loading
+	this.showLoading = function (show) {
+		if (show) {
+			editorTextE.style.display = "none";
+			editorLoadingE.style.display = "inline";
+		} else {
+			toolbarSaveBtE.style.display = "inline";
+			editorTextE.style.display = "inline";
+			editorLoadingE.style.display = "none";
+		}
+	} // showLoading()
+
+    this.updateEditor = function (text) {
+		this.showLoading(false);
+        this.editor.setValue(text);
+        this.editor.clearSelection();
+        this.editor.moveCursorTo(0,0);
+        this.editor.getSession().setScrollTop(0);
+        this.editor.focus();
+        updateTitle();
+    }
+
+	// update editor with contents
+	this.onFileRead = function (text) {
+		this.updateEditor(text);
+        this.changed = false;
+        updateTitle();
+		//focusElement(editorTextE);
+
+		// warning check
+		/*
+		if (isEventsFile()) {
+			this.startWarningsCheck();
+		}
+        */
+	} // updateEditor()
+
+    this.onFileSaved = function (text) {
+        this.changed = false;
+		updateTitle();
+        manager.closePopup(); // save popup
+        if (!r.error) {
+            manager.showNotice("<b>"+files.resID+"</b> saved");
+            manager.closePopup(); // close saving popup
+        } else {
+            manager.showNotice("error saving <b>"+files.resID+"</b>");
+        }
+        // focus
+        this.editor.focus();
+        if (closeOnSave) {
+            closeOnSave = false;
+            this.close();
+        }
+    }
+
+	// save file
+	this.saveFile = function (close) {
+		manager.showSavingPopup();
+		files.load("writefile",[this.currentFile, this.editor.getValue()]);
+        closeOnSave = close;
+	} // saveFile()
+
+	// get syntax type, for highlighting
+	function getSyntaxType() {
+		if (self.currentFile.indexOf(".ini") == self.currentFile.length-4)
+			return "ini";
+		else if (self.currentFile == "systemtopo.txt")
+			return "topo";
+		else if ((self.currentFile.indexOf("events") == 0 &&
+				 self.currentFile.indexOf(".txt") == self.currentFile.length-4) ||
+				 self.currentFile.indexOf("events.txt") == self.currentFile.length-"events.txt".length)
+			return "events";
+		else if (self.currentFile.indexOf(".js") == self.currentFile.length-3) {
+			return "js";
+		}
+		return "";
+	} // getSyntaxType()
+
+
+	init();
+};
+
+
+var tid = 0;
+var p; // bg points
+var k = 0; // num of points
+// get element by id shortcut
+function Z(n) {
+    return document.getElementById(n);
+}
+
+// random
+function r(n) {
+    return Math.floor(Math.random() * n)
+}
+
+function f(p) {
+    var ts = new Date().getTime();
+    var x = p.x,
+        y = p.y;
+
+    if (!p.ls) p.ls = ts;
+    var t = ts - p.ls;
+
+    var d = t * p.s / 100 - p.p;
+    x += Math.sin(d) * p.a;
+    y += Math.sin(d) * p.b;
+
+    return {
+        x: x,
+        y: y
+    };
+}
+
+// distance between two points
+function d(x, y, j, l) {
+    var xs = j - x;
+    var ys = l - y;
+    return Math.sqrt(ys * ys + xs * xs);
+}
+
+// draw background
+function dr() {
+    var w = window.innerWidth,
+        h = window.innerHeight,
+        q = 200, // 1 point every nxn square
+        x, y, j, l, t, i,
+        o, g, c;
+
+    try {
+        g = Z('c');
+        c = g.getContext('2d');
+        o = (typeof g.style.opacity !== 'undefined');
+        if (o) g.style.opacity = .3;
+    } catch (e) {
+        return
+    }
+
+    c.canvas.width = w;
+    c.canvas.height = h;
+
+    if (!p) {
+        p = [];
+        for (x = -1; x <= w / q; x++) {
+            for (y = -1; y <= h / q; y++) {
+                i = {
+                    x: q * x + r(q),
+                    y: q * y + r(q),
+                    r: r(10) + 4,
+                    a: r(13),
+                    b: r(13),
+                    p: r(100),
+                    w: r(10000),
+                    s: r(10) / 100,
+                    l: []
+                };
+                p.push(i);
+                k++;
+            }
+        }
+        for (i = 0; i < k; i++) {
+            x = p[i].x;
+            y = p[i].y;
+            for (t = i + 1; t < k; t++) {
+                j = p[t].x;
+                l = p[t].y;
+                if (d(x, y, j, l) < q * 2)
+                    p[i].l.push(p[t]); // line to..
+            }
+        }
+    }
+    c.strokeStyle =
+        c.fillStyle = o ? '#fff' : '#7194b8'; //'#7998af';
+    for (i = 0; i < k; i++) {
+        x = f(p[i]).x;
+        y = f(p[i]).y;
+        for (t = 0; t < p[i].l.length; t++) {
+            j = f(p[i].l[t]).x;
+            l = f(p[i].l[t]).y;
+            c.moveTo(x, y);
+            c.lineTo(j, l);
+        }
+        c.stroke();
+        c.beginPath();
+        c.arc(x, y, p[i].r, 0, 2 * Math.PI, false);
+        c.fill();
+    }
+}
+
+// call draw on resize, after 100ms
+window.addEventListener("resize", function() {
+    clearTimeout(tid);
+    tid = setTimeout(dr, 100);
+});
+window.addEventListener("load", function() {
+    Z("bg").innerHTML = "<canvas id='c'></canvas>";
+    setInterval(dr, 50);
+});
 
 //# sourceMappingURL=manager.js.map
