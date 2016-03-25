@@ -1,8 +1,9 @@
-/*! sfera-webapp - Manager - v0.0.2 - 2016-03-24 */
+/*! sfera-webapp - Manager - v0.0.2 - 2016-03-25 */
 
-var fileManager;
 var files;
+var fileManager;
 var textEditor;
+var systemConsole;
 
 var focusedElement; // currently focused element
 
@@ -38,10 +39,9 @@ Sfera.Manager = function(config) {
     var noticeStatus = 0;
 
     this.cApp = ""; // current application
+    this.apps = {};
 
     this.reloading = false; // manually reloading (so we don't fire the onBeforeUnload)
-
-    var apps
 
     var self = this;
 
@@ -54,6 +54,10 @@ Sfera.Manager = function(config) {
         cId:-1, // current highlighted app index (-1 also means the panel is not visible)
     }
 
+    function addApp(app) {
+        self.apps[app.id] = app;
+        return app;
+    }
 
     this.boot = function () {
         // apps panel
@@ -71,9 +75,11 @@ Sfera.Manager = function(config) {
         // files
         files = new Sfera.Manager.Files();
         // file manager
-        fileManager = new Sfera.Manager.FileManager();
+        fileManager = addApp(new Sfera.Manager.FileManager());
         // text editor
-        textEditor = new Sfera.Manager.TextEditor();
+        textEditor = addApp(new Sfera.Manager.TextEditor());
+        // system console
+        systemConsole = addApp(new Sfera.Manager.SystemConsole());
 
         window.onresize = this.onResize.bind(this);
         /*
@@ -91,12 +97,18 @@ Sfera.Manager = function(config) {
     }
 
     function onWSMessage(json) {
-
-        // manager.showNotice("hsyco.jar updated");
-
-        fileManager.onWSMessage(JSON.parse(json));
+        json = JSON.parse(json);
+        switch (json.type) {
+            case "console":
+                systemConsole.output(json.output);
+                break;
+            case "event":
+                // manager.showNotice("hsyco.jar updated");
+                if (json.file)
+                    fileManager.onWSMessage(JSON.parse(json));
+                break;
+        }
     }
-
 
     // focus, restore key events
 	this.focus = function () {
@@ -148,11 +160,8 @@ Sfera.Manager = function(config) {
 		}
 
 		// app specific adjust layout
-		switch (this.cApp) {
-        case "te": textEditor.adjustLayout(); break;
-		case "fm": fileManager.adjustLayout(); break;
-		case "lv": logViewer.adjustLayout(); break;
-		}
+		if (this.cApp)
+            this.apps[this.cApp].adjustLayout();
 
 		this.adjustPopup();
 		this.adjustToolbar();
@@ -403,18 +412,6 @@ Sfera.Manager = function(config) {
 		return {w:w, h:h};
 	} // getDivSize()
 
-	// get app object given the id
-	function getApp(id) {
-		switch (id) {
-		case "fm": return fileManager;
-        case "te": return textEditor;
-		case "sb": return statusBrowser;
-
-		case "lv": return logViewer;
-		case "sm": return systemMonitor;
-		}
-	}
-
 	// switch app
 	this.switchApp = function (app, options) {
         // TODO: for now the text editor is not a stand alone app
@@ -431,13 +428,11 @@ Sfera.Manager = function(config) {
 
 		this.cApp = app;
 
-		switch(app) {
-		case "":
-			this.hideOtherApps(app);
-			break;
-		default: // default behaviour
-			getApp(app).start(options); // app is only needed for clientApplication
-		}
+		if (app) {
+            this.apps[app].start(options); // app is only needed for clientApplication
+        } else {
+            this.hideOtherApps();
+        }
 
 		// update quick apps panel, add current? not currently visible and not a fixed one
 		if (quickAppsPanel.buttonsIds.indexOf(this.cApp)==-1 && quickAppsPanel.fixedAppsIds.indexOf(this.cApp)==-1) {
@@ -467,13 +462,13 @@ Sfera.Manager = function(config) {
 
 	// hide the other apps, (this app)
 	this.hideOtherApps = function (app) {
-		if (textEditor.open && app != "te") textEditor.hide();
-		if (fileManager.open && app != "fm") fileManager.hide();
-        /*
-		if (logViewer.open && app != "lv") logViewer.hide();
-		if (systemMonitor.open && app != "sm") systemMonitor.hide();
-        */
-	} // hideOtherApps()
+        var a;
+        for (var id in this.apps) {
+            a = this.apps[id];
+            if (a.open && a != app)
+                a.hide();
+        }
+	}
 
 	// restart server
 	this.restartServer = function (confirm) {
@@ -1156,13 +1151,441 @@ function Animations() {
 } // Animation Class
 
 //--------------------------------------------------------------------------------------------------------------------------
+// Files -------------------------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------------------------------
+
+Sfera.Manager.Files = function () {
+	var req = new Sfera.Net.Request();
+
+	// name and type of resource currently loading
+	this.resID = "";
+	this.resType = "";
+
+	var foo = this;
+
+	// init
+	function init() {
+		req.onLoaded = onResourceLoaded;
+		req.onError = onResourceError;
+		// req.onAuthenticate = showPin; TODO
+		//req.onNoAccess = function () {manager.showErrorPopup("No access");}; TODO
+	} // init()
+
+	// encode file name
+	this.encodeFileName = function (n) {
+		if (n=="") n=".";
+		n = encodeURIComponent(n);
+		return n.replace(/\*/g,"%2A"); //.replace(/\./g,"%2E");
+	} // encodeFileName()
+
+	// save a project
+	this.saveProject = function (name, content) {
+		var file = this.encodeFileName("www/"+name+"/index.hsm");
+		var ts = "."+(new Date()).getTime();
+		var url = "/x/files?u"+ts;
+		url += "*"+file+"*"+encodeURI(content).replace(/#/g,"%23").replace(/\+/g,"%2B");
+		this.resType = "saveproj";
+		this.resID = name;
+		req.open(url,10); // default 10 msec timeout
+	} // saveProject()
+
+	// duplicate a project
+	this.duplicateProject = function (name, newName) {
+		var ts = "."+(new Date()).getTime();
+		url = "/x/files?dup"+ts+"*"+this.encodeFileName("www/"+name)+"*"+this.encodeFileName("www/"+newName);
+		this.resType = "dupproj";
+		this.resID = name;
+		req.open(url,10); // default 10 msec timeout
+	} // saveProject()
+
+	// save editor file
+	this.saveEditorFile = function (file, content) {
+		var ts = "."+(new Date()).getTime();
+		var url = "/api/files?u"+ts;
+		url += "*"+this.encodeFileName(file)+"*"+encodeURI(content).replace(/#/g,"%23").replace(/\+/g,"%2B");
+		this.resType = "saveeditor";
+		this.resID = file;
+		req.open(url,10); // default 10 msec timeout
+	} // save()
+
+	// load a file. type, value, wait msec?
+	this.load = function (type, value, msec) {
+		if (!msec) msec = 10; // default 10 msec timeout
+		var url = "";
+		var ts = (new Date()).getTime();
+		var resID = value;
+
+		req.method = "GET";
+		switch (type) {
+		// file manager
+		case "list":
+		case "refresh_list":
+            url = "/api/files/ls?path="+this.encodeFileName(value);
+            url += "&depth=0";
+			break;
+		case "readfile":
+            url = "/api/files/read?path="+this.encodeFileName(value);
+			break;
+		case "writefile":
+			resID = value[0];
+			url = "/api/files/write";
+			req.addData("path",value[0]);
+			req.addData("content",value[1]);
+			req.method = "POST";
+			break;
+		case "newfolder":
+			url = "/api/files/mkdir?path="+this.encodeFileName(value);
+			break;
+		case "deletefile":
+			url = "/api/files/rm?";
+			url += "path="+this.encodeFileName(value[0]); // first one
+			break;
+		case "renamefile":
+		case "movefiles":
+		case "movefilesoverwrite":
+			url = "/api/files/mv?";
+			url += "source="+this.encodeFileName(value[0]);
+			url += "&target="+this.encodeFileName(value[1]);
+			if (type == "movefilesoverwrite")
+				url += "&force=true";
+			break;
+			/*
+			url = "/x/files?mvo"+ts;
+			for (var i=0; i<value.length; i++)
+				url += "*"+this.encodeFileName(value[i]);
+			*/
+			break;
+		case "duplicatefile":
+		case "copyfiles":
+		case "copyfilesoverwrite":
+			url = "/api/files/cp?";
+			url += "source="+this.encodeFileName(value[0]);
+			url += "&target="+this.encodeFileName(value[1]);
+			if (type == "copyfilesoverwrite")
+				url += "&force=true";
+			break;
+			/*
+			url = "/x/files?cpo"+ts;
+			for (var i=0; i<value.length; i++)
+				url += "*"+this.encodeFileName(value[i]);
+			*/
+			break;
+		case "gettextpreview":
+			url = "/api/files/read?path="+this.encodeFileName(value);
+			url += "&lines=9";
+			break;
+		}
+
+		// avoid caching
+		if (req.method == "GET")
+			url += "&ts="+ts;
+
+		this.resType = type;
+		this.resID = resID;
+
+		req.open(url,msec);
+	} // load()
+
+	// delete a file
+	this.del = function (name) {
+		var ts = "."+(new Date()).getTime();
+		var url = "/x/files?dr"+ts;
+		url += "*"+this.encodeFileName(name);
+		this.resType = "delproj";
+		this.resID = name;
+		req.open(url);
+	} // del()
+
+	// on resource loaded event
+	function onResourceLoaded() {
+		var json;
+		if (foo.resType == "readfile" || foo.resType == "gettextpreview")
+			json = {content:this.getResponseText()};
+		else
+        	json = this.getResponseJSON();
+
+		onResource(json, 0);
+	}
+
+	// error
+	function onResourceError(errCode) {
+		var json = this.getResponseJSON();
+		onResource(json, errCode)
+	}
+
+	function onResource(json, errCode) {
+		var noticeTxt = "";
+		var errorText = "";
+		var errorDescr = "";
+
+		if (errCode) {
+			// close popups?
+		    if (manager.cPopup && (manager.cPopup.id == "saving" || manager.cPopup.id == "loading"))
+		    	manager.closePopup();
+			// error
+			manager.clearNotice();
+
+			errorDescr = json ? json.error : "";
+			if (errorDescr)
+				errorDescr = errorDescr[0].toLowerCase() + errorDescr.substr(1);
+			errorText = "Error loading "+files.resType;
+			if (files.resID) errorText += ", "+files.resID;
+		}
+
+		var w = 100; // wait before next request (prevents hanging?)
+	    switch(foo.resType) {
+	    // file manager
+	    case "list":
+			if (!errCode)
+				fileManager.onList(json.result);
+	    	break;
+
+		case "refresh_list":
+			if (!errCode)
+				fileManager.refreshFolder(json.result);
+			break;
+
+		case "readfile":
+			if (!errCode && manager.cApp == "te")
+				textEditor.onFileRead(json.content);
+			break;
+
+		case "writefile":
+			if (!errCode && manager.cApp == "te")
+				textEditor.onFileSaved(json);
+	    	break;
+
+		case "newfolder":
+			manager.closePopup();
+			var name = foo.resID.split("/").pop();
+			if (!errCode)
+				noticeTxt = "new folder (<b>"+name+"</b>) created";
+			else
+				noticeTxt = "error creating new folder: "+err;
+			var o = fileManager.popupMode?fileManager.popupData:fileManager;
+			fileManager.browseTo(o.currentPath);
+			break;
+
+		case "deletefile":
+			manager.closePopup();
+			var n = foo.resID.length;
+			var fs = "file"+(foo.resID.length>1?"s":""); // file string
+			if (errCode)
+				noticeTxt = "error deleting "+fs+": "+json.error;
+			else
+				noticeTxt = n+" "+fs+" deleted";
+			var o = fileManager.popupMode?fileManager.popupData:fileManager;
+			fileManager.browseTo(o.currentPath);
+			break;
+
+		case "renamefile":
+		case "duplicatefile":
+			var s1 = (foo.resType == "renamefile")?"renaming":"duplicating";
+			var s2 = (foo.resType == "renamefile")?"renamed":"duplicated";
+
+			var name = foo.resID[0].split("/").pop();
+			if (errCode) {
+				noticeTxt = "error "+s1+" <b>"+name+"</b>: "+json.error;
+			} else {
+				noticeTxt = "<b>"+name+"</b> "+s2;
+				// select the new file
+				var o = fileManager.popupMode?fileManager.popupData:fileManager;
+				fileManager.selectItem(-1);
+				fileManager.browseTo(o.currentPath);
+			}
+			break;
+
+		case "movefiles":
+		case "movefilesoverwrite":
+		case "copyfiles":
+		case "copyfilesoverwrite":
+			var n = foo.resID.length-1; // last param is target folder
+			var fs = "file"+(n>1?"s":""); // file string
+			var m = (foo.resType == "movefiles" || foo.resType == "movefilesoverwrite");
+			var as1 = m?"moved":"copied"; // action string 1
+			var as2 = m?"moving":"copying"; // 2
+
+			if (errCode)
+				noticeTxt = "error "+as2+" "+fs+": "+errorDescr;
+			else
+				noticeTxt = n+" "+fs+" "+as1+" to <b>"+foo.resID.last()+"</b>";
+
+			if (errorDescr == "target file already exists") {
+				manager.openPopup("overwritefiles",true);
+			}
+
+			/*
+			switch (this.getResponseText()) {
+			case "ack":			noticeTxt = n+" "+fs+" "+as1+" to <b>"+foo.resID.last()+"</b>"; break; // mv, mvo
+			case "error":		noticeTxt = "error "+as2+" "+fs; break; // mv, mvo
+			case "error:size":	noticeTxt = "error "+as2+" "+fs+": total size exceeds the limit"; break; // mv, mvo
+			case "error:same":	noticeTxt = "error "+as2+" "+fs+": source and destination folders are the same"; break;
+			case "error:exists":
+				break;  // mv
+			}
+			*/
+
+			break;
+
+		case "gettextpreview":
+			fileManager.updateTextPreview(json.content);
+			break;
+
+	    }
+
+
+		// show a notice
+		if (noticeTxt) {
+			manager.showNotice(noticeTxt);
+			errorText = "";
+		}
+
+		// still an error to show?
+		if (errorText) {
+			var str = errorText + ": "+errorDescr+" ("+errCode+")";
+			manager.showErrorPopup(str);
+		}
+	} // onResourceLoaded()
+
+	// get skin from source
+	this.getSkin = function (txt) {
+		var p = txt.indexOf("(#skin ");
+		var b = p+7;
+		var e = txt.indexOf(")",b);
+		// TODO:errors
+		return txt.substr(b,e-b);
+	} // getSkin
+
+	init();
+} // Files()
+
+
+var tid = 0;
+var p; // bg points
+var k = 0; // num of points
+// get element by id shortcut
+function Z(n) {
+    return document.getElementById(n);
+}
+
+// random
+function r(n) {
+    return Math.floor(Math.random() * n)
+}
+
+function f(p) {
+    var ts = new Date().getTime();
+    var x = p.x,
+        y = p.y;
+
+    if (!p.ls) p.ls = ts;
+    var t = ts - p.ls;
+
+    var d = t * p.s / 100 - p.p;
+    x += Math.sin(d) * p.a;
+    y += Math.sin(d) * p.b;
+
+    return {
+        x: x,
+        y: y
+    };
+}
+
+// distance between two points
+function d(x, y, j, l) {
+    var xs = j - x;
+    var ys = l - y;
+    return Math.sqrt(ys * ys + xs * xs);
+}
+
+// draw background
+function dr() {
+    var w = window.innerWidth,
+        h = window.innerHeight,
+        q = 200, // 1 point every nxn square
+        x, y, j, l, t, i,
+        o, g, c;
+
+    try {
+        g = Z('c');
+        c = g.getContext('2d');
+        o = (typeof g.style.opacity !== 'undefined');
+        if (o) g.style.opacity = .3;
+    } catch (e) {
+        return
+    }
+
+    c.canvas.width = w;
+    c.canvas.height = h;
+
+    if (!p) {
+        p = [];
+        for (x = -1; x <= w / q; x++) {
+            for (y = -1; y <= h / q; y++) {
+                i = {
+                    x: q * x + r(q),
+                    y: q * y + r(q),
+                    r: r(10) + 4,
+                    a: r(13),
+                    b: r(13),
+                    p: r(100),
+                    w: r(10000),
+                    s: r(10) / 100,
+                    l: []
+                };
+                p.push(i);
+                k++;
+            }
+        }
+        for (i = 0; i < k; i++) {
+            x = p[i].x;
+            y = p[i].y;
+            for (t = i + 1; t < k; t++) {
+                j = p[t].x;
+                l = p[t].y;
+                if (d(x, y, j, l) < q * 2)
+                    p[i].l.push(p[t]); // line to..
+            }
+        }
+    }
+    c.strokeStyle =
+        c.fillStyle = o ? '#fff' : '#7194b8'; //'#7998af';
+    for (i = 0; i < k; i++) {
+        x = f(p[i]).x;
+        y = f(p[i]).y;
+        for (t = 0; t < p[i].l.length; t++) {
+            j = f(p[i].l[t]).x;
+            l = f(p[i].l[t]).y;
+            c.moveTo(x, y);
+            c.lineTo(j, l);
+        }
+        c.stroke();
+        c.beginPath();
+        c.arc(x, y, p[i].r, 0, 2 * Math.PI, false);
+        c.fill();
+    }
+}
+
+// call draw on resize, after 100ms
+window.addEventListener("resize", function() {
+    clearTimeout(tid);
+    tid = setTimeout(dr, 100);
+});
+window.addEventListener("load", function() {
+    Z("bg").innerHTML = "<canvas id='c'></canvas>";
+    setInterval(dr, 50);
+});
+
+
+//--------------------------------------------------------------------------------------------------------------------------
 // File Manager ------------------------------------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------------------------------------------------
 
 Sfera.Manager.FileManager = function() {
-    var started = false; // if already started, will just switch
+    this.id = "fm";
 	this.open = false; // currently open. set by start, hide
 
+    var started = false; // if already started, will just switch
 
 	// upload progress
 	var uploadProgressReq = new Sfera.Net.Request();
@@ -1343,7 +1766,7 @@ Sfera.Manager.FileManager = function() {
 
 	// start
 	this.start = function (options) {
-		manager.hideOtherApps("fm");
+		manager.hideOtherApps(this);
 
 		this.e.style.display = "inline";
 
@@ -2875,313 +3298,282 @@ Sfera.Manager.FileManager = function() {
 
 
 //--------------------------------------------------------------------------------------------------------------------------
-// Files -------------------------------------------------------------------------------------------------------------------
+// System Console ----------------------------------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------------------------------------------------
 
-Sfera.Manager.Files = function () {
-	var req = new Sfera.Net.Request();
+Sfera.Manager.SystemConsole = function() {
+    this.id = "sc";
+	this.open = false; // currently open. set by start, hide
 
-	// name and type of resource currently loading
-	this.resID = "";
-	this.resType = "";
+    var started = false; // if already started, will just switch
 
-	var foo = this;
+	this.fontSize = 12;
+	this.changed = false;
+
+	this.e = document.getElementById("systemConsole");
+
+    var toolbarE = document.getElementById("sc_toolbar");
+
+    var inputE = document.getElementById("sc_input");
+
+    var outputPanelE = document.getElementById("sc_outputPanel");
+    var inputPanelE = document.getElementById("sc_inputPanel");
+	var loadingE = document.getElementById("sc_loading");
+
+	var self = this;
+
+    var history = [];
 
 	// init
 	function init() {
-		req.onLoaded = onResourceLoaded;
-		req.onError = onResourceError;
-		// req.onAuthenticate = showPin; TODO
-		//req.onNoAccess = function () {manager.showErrorPopup("No access");}; TODO
+        self.editor = ace.edit("sc_consoleText");
+        self.editor.setShowPrintMargin(false);
+        self.editor.setReadOnly(true);
+        self.editor.renderer.setShowGutter(false);
+        //self.editor.getSession().setMode("ace/mode/javascript");
+        /*
+        self.editor.getSession().on('change', function(e) {
+            // e.type, etc
+            self.changed = true;
+            updateTitle();
+        });
+        */
 	} // init()
+    var focusInterval;
 
-	// encode file name
-	this.encodeFileName = function (n) {
-		if (n=="") n=".";
-		n = encodeURIComponent(n);
-		return n.replace(/\*/g,"%2A"); //.replace(/\./g,"%2E");
-	} // encodeFileName()
+	// start
+	this.start = function (options) {
+		manager.hideOtherApps(this);
 
-	// save a project
-	this.saveProject = function (name, content) {
-		var file = this.encodeFileName("www/"+name+"/index.hsm");
-		var ts = "."+(new Date()).getTime();
-		var url = "/x/files?u"+ts;
-		url += "*"+file+"*"+encodeURI(content).replace(/#/g,"%23").replace(/\+/g,"%2B");
-		this.resType = "saveproj";
-		this.resID = name;
-		req.open(url,10); // default 10 msec timeout
-	} // saveProject()
+		this.e.style.display = "inline";
 
-	// duplicate a project
-	this.duplicateProject = function (name, newName) {
-		var ts = "."+(new Date()).getTime();
-		url = "/x/files?dup"+ts+"*"+this.encodeFileName("www/"+name)+"*"+this.encodeFileName("www/"+newName);
-		this.resType = "dupproj";
-		this.resID = name;
-		req.open(url,10); // default 10 msec timeout
-	} // saveProject()
+		this.adjustLayout();
 
-	// save editor file
-	this.saveEditorFile = function (file, content) {
-		var ts = "."+(new Date()).getTime();
-		var url = "/api/files?u"+ts;
-		url += "*"+this.encodeFileName(file)+"*"+encodeURI(content).replace(/#/g,"%23").replace(/\+/g,"%2B");
-		this.resType = "saveeditor";
-		this.resID = file;
-		req.open(url,10); // default 10 msec timeout
-	} // save()
+		this.focus();
+		this.open = true;
+        //inputE.onblur = function(){inputE.focus()};
 
-	// load a file. type, value, wait msec?
-	this.load = function (type, value, msec) {
-		if (!msec) msec = 10; // default 10 msec timeout
-		var url = "";
-		var ts = (new Date()).getTime();
-		var resID = value;
+//                clearInterval(focusInterval)
+	} // start()
 
-		req.method = "GET";
-		switch (type) {
-		// file manager
-		case "list":
-		case "refresh_list":
-            url = "/api/files/ls?path="+this.encodeFileName(value);
-            url += "&depth=0";
-			break;
-		case "readfile":
-            url = "/api/files/read?path="+this.encodeFileName(value);
-			break;
-		case "writefile":
-			resID = value[0];
-			url = "/api/files/write";
-			req.addData("path",value[0]);
-			req.addData("content",value[1]);
-			req.method = "POST";
-			break;
-		case "newfolder":
-			url = "/api/files/mkdir?path="+this.encodeFileName(value);
-			break;
-		case "deletefile":
-			url = "/api/files/rm?";
-			url += "path="+this.encodeFileName(value[0]); // first one
-			break;
-		case "renamefile":
-		case "movefiles":
-		case "movefilesoverwrite":
-			url = "/api/files/mv?";
-			url += "source="+this.encodeFileName(value[0]);
-			url += "&target="+this.encodeFileName(value[1]);
-			if (type == "movefilesoverwrite")
-				url += "&force=true";
-			break;
-			/*
-			url = "/x/files?mvo"+ts;
-			for (var i=0; i<value.length; i++)
-				url += "*"+this.encodeFileName(value[i]);
-			*/
-			break;
-		case "duplicatefile":
-		case "copyfiles":
-		case "copyfilesoverwrite":
-			url = "/api/files/cp?";
-			url += "source="+this.encodeFileName(value[0]);
-			url += "&target="+this.encodeFileName(value[1]);
-			if (type == "copyfilesoverwrite")
-				url += "&force=true";
-			break;
-			/*
-			url = "/x/files?cpo"+ts;
-			for (var i=0; i<value.length; i++)
-				url += "*"+this.encodeFileName(value[i]);
-			*/
-			break;
-		case "gettextpreview":
-			url = "/api/files/read?path="+this.encodeFileName(value);
-			url += "&lines=9";
-			break;
+	// hide (switching to another app)
+	this.hide = function () {
+		this.e.style.display = "none";
+
+		manager.focus();
+
+		this.open = false;
+	} // hide()
+
+	// focus, restore key events
+	this.focus = function () {
+		document.onkeydown = this.onKeyDown;
+		document.onkeyup = this.onKeyUp;
+		if (window.focus) window.focus();
+		inputE.focus();
+	} // focus()
+
+	// adjust layout. viewport size
+	this.adjustLayout = function () {
+		if (!manager.viewportWidth || !manager.viewportHeight) return;
+
+		var	vw = manager.viewportWidth;
+		var	vh = manager.viewportHeight;
+
+		// tool bar size
+		var tbW = 0; // left one
+		var tbH = 36; // top one
+
+		// editable area size
+		var eW = vw - tbW;
+		var eH = vh - tbH;
+
+		toolbarE.style.left = (tbW-1)+"px"; // +1, attach it to the iconPanel
+		toolbarE.style.width = (eW+1)+"px";
+
+		// panels
+		var bs = 1; // border size
+		var pm = 5+bs; // panel margin: padding + border size
+		var pd = 7; // panel distance from border
+		var pw = Math.round((vw-pd*3-pm*4)/2); //;
+		var ph = vh-tbH-pm*2-pd*2;
+		if (pw<340) pw = 340;
+
+		pw = (vw-pd*3-pm*4) -pw; // fix it: since it's /2, pw could be 1 pixel wider
+
+        var ih = 30;
+		var oW = vw-pm*2-pd*2; // full content width
+        var oH = ph - pd*2 - ih;
+
+
+		outputPanelE.style.left = (pd)+"px";
+		outputPanelE.style.top = (tbH+pd)+"px";
+		outputPanelE.style.width = (oW)+"px";
+		outputPanelE.style.height = (oH)+"px";
+
+        inputPanelE.style.width = (oW)+"px";
+        inputPanelE.style.height = (ih)+"px";
+        inputPanelE.style.left = (pd)+"px";
+        inputPanelE.style.bottom = (pd)+"px";
+
+        inputE.style.width = (eW-125)+"px";
+
+		loadingE.style.left = Math.round((eW - 70)/2)+"px";
+
+	} // adjustLayout()
+
+    this.send = function () {
+        v = inputE.value;
+
+        if (v == "clear") {
+            this.editor.setValue("");
+        } else {
+            Sfera.Net.sendConsole({command:v});
+        }
+        history.push(v);
+        historyPos = history.length;
+        inputE.value = "";
+
+        if (v != "clear")
+            this.output("> "+v);
+    }
+
+    this.output = function (text) {
+        var session = this.editor.session
+        session.insert({
+           row: session.getLength(),
+           column: 0
+       }, "\n" + text);
+
+       this.editor.gotoLine(session.getLength());
+    }
+
+    // set edit font size
+	this.setFontSize = function (a) {
+		if (a) this.fontSize++; else this.fontSize--;
+		editorTextE.style.fontSize = this.fontSize+"px";
+		//editorTextE.style.lineHeight = Math.round(this.editorFontSize + this.editorFontSize/2)+"px";
+	} // setEditFontSize()
+
+    this.onWSMessage = function(json) {
+        console.log(json);
+        if (json && json.files) {
+            var o = this.popupMode?this.popupData:this;
+            var p = o.currentPath;
+            if (p == "") p = ".";
+            for (var f in json.files) {
+                if (f == p) {
+                    files.load("refresh_list",f);
+                    return;
+                }
+            }
+        }
+    }
+
+	// key down
+	this.onKeyDown = function (e) {
+		if (!e) var e = window.event;
+		// code
+		var code;
+		if (e.keyCode) code = e.keyCode;
+		else if (e.which) code = e.which;
+		// target
+		var t;
+		if (e.target) t = e.target;
+		else if (e.srcElement) t = e.srcElement;
+		if (t.nodeType == 3) // defeat Safari bug
+			t = t.parentNode;
+
+		// backspace. prevent only when focused element is not password, text or file
+		if ((code == 8) && !(t && t.tagName && (t.type && /(password)|(text)|(file)/.test(t.type.toLowerCase())) || t.tagName.toLowerCase() == 'textarea')) {
+			browser.preventDefault(e);
+			return false;
 		}
 
-		// avoid caching
-		if (req.method == "GET")
-			url += "&ts="+ts;
-
-		this.resType = type;
-		this.resID = resID;
-
-		req.open(url,msec);
-	} // load()
-
-	// delete a file
-	this.del = function (name) {
-		var ts = "."+(new Date()).getTime();
-		var url = "/x/files?dr"+ts;
-		url += "*"+this.encodeFileName(name);
-		this.resType = "delproj";
-		this.resID = name;
-		req.open(url);
-	} // del()
-
-	// on resource loaded event
-	function onResourceLoaded() {
-		var json;
-		if (foo.resType == "readfile" || foo.resType == "gettextpreview")
-			json = {content:this.getResponseText()};
-		else
-        	json = this.getResponseJSON();
-
-		onResource(json, 0);
-	}
-
-	// error
-	function onResourceError(errCode) {
-		var json = this.getResponseJSON();
-		onResource(json, errCode)
-	}
-
-	function onResource(json, errCode) {
-		var noticeTxt = "";
-		var errorText = "";
-		var errorDescr = "";
-
-		if (errCode) {
-			// close popups?
-		    if (manager.cPopup && (manager.cPopup.id == "saving" || manager.cPopup.id == "loading"))
-		    	manager.closePopup();
-			// error
-			manager.clearNotice();
-
-			errorDescr = json ? json.error : "";
-			if (errorDescr)
-				errorDescr = errorDescr[0].toLowerCase() + errorDescr.substr(1);
-			errorText = "Error loading "+files.resType;
-			if (files.resID) errorText += ", "+files.resID;
+		// color editor. ctrl + shift + c
+		if (e.ctrlKey && e.shiftKey && code == 67) {
+			this.toggleColorMode();
+			manager.hideQuickAppsPanel(true); // quick apps panel opened on ctrl+shift, hide it (true: cancel switching)
+			return false;
 		}
 
-		var w = 100; // wait before next request (prevents hanging?)
-	    switch(foo.resType) {
-	    // file manager
-	    case "list":
-			if (!errCode)
-				fileManager.onList(json.result);
-	    	break;
+		// ctrl shift, show quick apps panel
+		if (code == 16 && e.ctrlKey)
+			manager.showQuickAppsPanel();
 
-		case "refresh_list":
-			if (!errCode)
-				fileManager.refreshFolder(json.result);
-			break;
+        if (code == 13 && !e.ctrlKey && !e.shiftKey) {
+            self.send();
+            return;
+        }
 
-		case "readfile":
-			if (!errCode && manager.cApp == "te")
-				textEditor.onFileRead(json.content);
-			break;
+        if (code == 38 || code == 40) {
+            if (code == 38) { // up
+                historyPos--;
+            } else if (code == 40) { // down
+                historyPos++;
+            }
 
-		case "writefile":
-			if (!errCode && manager.cApp == "te")
-				textEditor.onFileSaved(json);
-	    	break;
+            if (historyPos < 0)
+                historyPos = 0;
+            if (historyPos > history.length)
+                historyPos = history.length;
 
-		case "newfolder":
+            var v = "";
+            if (historyPos < history.length)
+                v = history[historyPos];
+
+            inputE.focus();
+            inputE.value = v;
+            inputE.selectionStart = inputE.selectionEnd = v.length;
+        }
+
+		// esc
+		if (manager.cPopup && manager.cPopup.closeBt && code == 27) {
 			manager.closePopup();
-			var name = foo.resID.split("/").pop();
-			if (!errCode)
-				noticeTxt = "new folder (<b>"+name+"</b>) created";
-			else
-				noticeTxt = "error creating new folder: "+err;
-			var o = fileManager.popupMode?fileManager.popupData:fileManager;
-			fileManager.browseTo(o.currentPath);
-			break;
-
-		case "deletefile":
-			manager.closePopup();
-			var n = foo.resID.length;
-			var fs = "file"+(foo.resID.length>1?"s":""); // file string
-			if (errCode)
-				noticeTxt = "error deleting "+fs+": "+json.error;
-			else
-				noticeTxt = n+" "+fs+" deleted";
-			var o = fileManager.popupMode?fileManager.popupData:fileManager;
-			fileManager.browseTo(o.currentPath);
-			break;
-
-		case "renamefile":
-		case "duplicatefile":
-			var s1 = (foo.resType == "renamefile")?"renaming":"duplicating";
-			var s2 = (foo.resType == "renamefile")?"renamed":"duplicated";
-
-			var name = foo.resID[0].split("/").pop();
-			if (errCode) {
-				noticeTxt = "error "+s1+" <b>"+name+"</b>: "+json.error;
-			} else {
-				noticeTxt = "<b>"+name+"</b> "+s2;
-				// select the new file
-				var o = fileManager.popupMode?fileManager.popupData:fileManager;
-				fileManager.selectItem(-1);
-				fileManager.browseTo(o.currentPath);
-			}
-			break;
-
-		case "movefiles":
-		case "movefilesoverwrite":
-		case "copyfiles":
-		case "copyfilesoverwrite":
-			var n = foo.resID.length-1; // last param is target folder
-			var fs = "file"+(n>1?"s":""); // file string
-			var m = (foo.resType == "movefiles" || foo.resType == "movefilesoverwrite");
-			var as1 = m?"moved":"copied"; // action string 1
-			var as2 = m?"moving":"copying"; // 2
-
-			if (errCode)
-				noticeTxt = "error "+as2+" "+fs+": "+errorDescr;
-			else
-				noticeTxt = n+" "+fs+" "+as1+" to <b>"+foo.resID.last()+"</b>";
-
-			if (errorDescr == "target file already exists") {
-				manager.openPopup("overwritefiles",true);
-			}
-
-			/*
-			switch (this.getResponseText()) {
-			case "ack":			noticeTxt = n+" "+fs+" "+as1+" to <b>"+foo.resID.last()+"</b>"; break; // mv, mvo
-			case "error":		noticeTxt = "error "+as2+" "+fs; break; // mv, mvo
-			case "error:size":	noticeTxt = "error "+as2+" "+fs+": total size exceeds the limit"; break; // mv, mvo
-			case "error:same":	noticeTxt = "error "+as2+" "+fs+": source and destination folders are the same"; break;
-			case "error:exists":
-				break;  // mv
-			}
-			*/
-
-			break;
-
-		case "gettextpreview":
-			fileManager.updateTextPreview(json.content);
-			break;
-
-	    }
-
-
-		// show a notice
-		if (noticeTxt) {
-			manager.showNotice(noticeTxt);
-			errorText = "";
+			browser.preventDefault(e);
+			return;
 		}
+	} // onKeyDown()
 
-		// still an error to show?
-		if (errorText) {
-			var str = errorText + ": "+errorDescr+" ("+errCode+")";
-			manager.showErrorPopup(str);
+	// key up
+	this.onKeyUp = function (e) {
+		if (!e) var e = window.event;
+		// code
+		var code;
+		if (e.keyCode) code = e.keyCode;
+		else if (e.which) code = e.which;
+
+		// ctrl a released?
+		if (!e.ctrlKey && manager.hideQuickAppsPanel()) return; // close quick apps panel?
+	} // onKeyUp()
+
+
+	// show editor loading
+	this.showLoading = function (show) {
+		if (show) {
+			editorTextE.style.display = "none";
+			editorLoadingE.style.display = "inline";
+		} else {
+			toolbarSaveBtE.style.display = "inline";
+			editorTextE.style.display = "inline";
+			editorLoadingE.style.display = "none";
 		}
-	} // onResourceLoaded()
+	} // showLoading()
 
-	// get skin from source
-	this.getSkin = function (txt) {
-		var p = txt.indexOf("(#skin ");
-		var b = p+7;
-		var e = txt.indexOf(")",b);
-		// TODO:errors
-		return txt.substr(b,e-b);
-	} // getSkin
+    this.updateEditor = function (text) {
+		this.showLoading(false);
+        this.editor.setValue(text);
+        this.editor.clearSelection();
+        this.editor.moveCursorTo(0,0);
+        this.editor.getSession().setScrollTop(0);
+        this.editor.focus();
+        updateTitle();
+    }
+
+
 
 	init();
-} // Files()
+};
 
 
 //--------------------------------------------------------------------------------------------------------------------------
@@ -3189,9 +3581,11 @@ Sfera.Manager.Files = function () {
 //--------------------------------------------------------------------------------------------------------------------------
 
 Sfera.Manager.TextEditor = function() {
-    var started = false; // if already started, will just switch
+    this.id = "te";
 	this.open = false; // currently open. set by start, hide
     this.closing = false; // TODO: used now because te is not stand alone
+
+    var started = false; // if already started, will just switch
 
 	this.currentFile = ""; // current file, full path
 
@@ -3204,19 +3598,15 @@ Sfera.Manager.TextEditor = function() {
 
     var toolbarE = document.getElementById("te_toolbar");
 
-	var editorContentE = document.getElementById("te_editorContent");
-	var editorTitleE = document.getElementById("te_editorTitle");
-	var editorPanelE = document.getElementById("te_editorPanel");
-	var editorHeaderLabelE = document.getElementById("te_editorHeaderLabel");
-	var editorTextE = document.getElementById("te_editorText");
-	var editorTextColorContainerE = document.getElementById("te_editorTextColorContainer");
-	var editorTextColorE = document.getElementById("te_editorTextColor");
+	var panelE = document.getElementById("te_editorPanel");
+	var headerLabelE = document.getElementById("te_editorHeaderLabel");
+	var editorE = document.getElementById("te_editorText");
 
-	var editorLoadingE = document.getElementById("te_editorLoading");
+	var loadingE = document.getElementById("te_editorLoading");
 
 	var toolbarSaveBtE = document.getElementById("te_toolbarSaveBt");
 
-	var editorModeBtE = document.getElementById("te_editorModeBt");
+	var modeBtE = document.getElementById("te_editorModeBt");
 
 	var self = this;
 
@@ -3224,10 +3614,10 @@ Sfera.Manager.TextEditor = function() {
 
 	// init
 	function init() {
-        editorModeBtE.style.display = "none";
+        modeBtE.style.display = "none";
 		//updateToolbarPopupButtons(); TODO:
         self.editor = ace.edit("te_editorText");
-        self.editor.setTheme("ace/theme/monokai");
+        //self.editor.setTheme("ace/theme/monokai");
         self.editor.setShowPrintMargin(false);
         self.editor.getSession().setMode("ace/mode/javascript");
         self.editor.getSession().on('change', function(e) {
@@ -3240,7 +3630,7 @@ Sfera.Manager.TextEditor = function() {
 
 	// start
 	this.start = function (options) {
-		manager.hideOtherApps("te");
+		manager.hideOtherApps(this);
 
 		this.e.style.display = "inline";
 
@@ -3317,15 +3707,15 @@ Sfera.Manager.TextEditor = function() {
 
 		var eW = vw-pm*2-pd*2; // full content width
 
-		editorPanelE.style.left = (pd)+"px";
-		editorPanelE.style.top = (tbH+pd)+"px";
-		editorPanelE.style.width = (eW)+"px";
-		editorPanelE.style.height = (ph)+"px";
+		panelE.style.left = (pd)+"px";
+		panelE.style.top = (tbH+pd)+"px";
+		panelE.style.width = (eW)+"px";
+		panelE.style.height = (ph)+"px";
 
-		editorTextE.style.width = (eW)+"px";
-		editorTextE.style.height = (ph-30)+"px";
+		editorE.style.width = (eW)+"px";
+		editorE.style.height = (ph-30)+"px";
 
-		editorLoadingE.style.left = Math.round((eW - 70)/2)+"px";
+		loadingE.style.left = Math.round((eW - 70)/2)+"px";
 
 	} // adjustLayout()
 
@@ -3352,14 +3742,14 @@ Sfera.Manager.TextEditor = function() {
 	// toggle comment, from button
 	this.toggleComment = function () {
         return; //TODO
-		var ss = editorTextE.selectionStart;
-		var se = editorTextE.selectionEnd;
+		var ss = editorE.selectionStart;
+		var se = editorE.selectionEnd;
 		var tab = "\t";
 
 		this.changed = true;
 		updateTitle();
 
-		var s = getLinesSelection(editorTextE.value,ss,se);
+		var s = getLinesSelection(editorE.value,ss,se);
 
 		var al = s.sel.split("\n");
 		var cc = 0; // comment count
@@ -3389,19 +3779,19 @@ Sfera.Manager.TextEditor = function() {
 		}
 
 		// compose
-		editorTextE.value = s.pre.concat(al.join("\n")).concat(s.post);
+		editorE.value = s.pre.concat(al.join("\n")).concat(s.post);
 
 		// fix selection
-		editorTextE.selectionStart = ss;
-		editorTextE.selectionEnd = se;
+		editorE.selectionStart = ss;
+		editorE.selectionEnd = se;
 
 	} // toggleComment()
 
     // set edit font size
 	this.setFontSize = function (a) {
 		if (a) this.fontSize++; else this.fontSize--;
-		editorTextE.style.fontSize = this.fontSize+"px";
-		//editorTextE.style.lineHeight = Math.round(this.editorFontSize + this.editorFontSize/2)+"px";
+		editorE.style.fontSize = this.fontSize+"px";
+		//editorE.style.lineHeight = Math.round(this.editorFontSize + this.editorFontSize/2)+"px";
 	} // setEditFontSize()
 
     this.onWSMessage = function(json) {
@@ -3518,7 +3908,7 @@ Sfera.Manager.TextEditor = function() {
 
 	// update editor title
 	function updateTitle() {
-		editorHeaderLabelE.innerHTML = (self.changed?"* ":"")+self.currentFile;
+		headerLabelE.innerHTML = (self.changed?"* ":"")+self.currentFile;
 	}
 
 	// close editor. save? null to show popup, true or false
@@ -3562,12 +3952,12 @@ Sfera.Manager.TextEditor = function() {
 	// show editor loading
 	this.showLoading = function (show) {
 		if (show) {
-			editorTextE.style.display = "none";
-			editorLoadingE.style.display = "inline";
+			editorE.style.display = "none";
+			loadingE.style.display = "inline";
 		} else {
 			toolbarSaveBtE.style.display = "inline";
-			editorTextE.style.display = "inline";
-			editorLoadingE.style.display = "none";
+			editorE.style.display = "inline";
+			loadingE.style.display = "none";
 		}
 	} // showLoading()
 
@@ -3586,7 +3976,7 @@ Sfera.Manager.TextEditor = function() {
 		this.updateEditor(text);
         this.changed = false;
         updateTitle();
-		//focusElement(editorTextE);
+		//focusElement(editorE);
 
 		// warning check
 		/*
@@ -3640,122 +4030,5 @@ Sfera.Manager.TextEditor = function() {
 
 	init();
 };
-
-
-var tid = 0;
-var p; // bg points
-var k = 0; // num of points
-// get element by id shortcut
-function Z(n) {
-    return document.getElementById(n);
-}
-
-// random
-function r(n) {
-    return Math.floor(Math.random() * n)
-}
-
-function f(p) {
-    var ts = new Date().getTime();
-    var x = p.x,
-        y = p.y;
-
-    if (!p.ls) p.ls = ts;
-    var t = ts - p.ls;
-
-    var d = t * p.s / 100 - p.p;
-    x += Math.sin(d) * p.a;
-    y += Math.sin(d) * p.b;
-
-    return {
-        x: x,
-        y: y
-    };
-}
-
-// distance between two points
-function d(x, y, j, l) {
-    var xs = j - x;
-    var ys = l - y;
-    return Math.sqrt(ys * ys + xs * xs);
-}
-
-// draw background
-function dr() {
-    var w = window.innerWidth,
-        h = window.innerHeight,
-        q = 200, // 1 point every nxn square
-        x, y, j, l, t, i,
-        o, g, c;
-
-    try {
-        g = Z('c');
-        c = g.getContext('2d');
-        o = (typeof g.style.opacity !== 'undefined');
-        if (o) g.style.opacity = .3;
-    } catch (e) {
-        return
-    }
-
-    c.canvas.width = w;
-    c.canvas.height = h;
-
-    if (!p) {
-        p = [];
-        for (x = -1; x <= w / q; x++) {
-            for (y = -1; y <= h / q; y++) {
-                i = {
-                    x: q * x + r(q),
-                    y: q * y + r(q),
-                    r: r(10) + 4,
-                    a: r(13),
-                    b: r(13),
-                    p: r(100),
-                    w: r(10000),
-                    s: r(10) / 100,
-                    l: []
-                };
-                p.push(i);
-                k++;
-            }
-        }
-        for (i = 0; i < k; i++) {
-            x = p[i].x;
-            y = p[i].y;
-            for (t = i + 1; t < k; t++) {
-                j = p[t].x;
-                l = p[t].y;
-                if (d(x, y, j, l) < q * 2)
-                    p[i].l.push(p[t]); // line to..
-            }
-        }
-    }
-    c.strokeStyle =
-        c.fillStyle = o ? '#fff' : '#7194b8'; //'#7998af';
-    for (i = 0; i < k; i++) {
-        x = f(p[i]).x;
-        y = f(p[i]).y;
-        for (t = 0; t < p[i].l.length; t++) {
-            j = f(p[i].l[t]).x;
-            l = f(p[i].l[t]).y;
-            c.moveTo(x, y);
-            c.lineTo(j, l);
-        }
-        c.stroke();
-        c.beginPath();
-        c.arc(x, y, p[i].r, 0, 2 * Math.PI, false);
-        c.fill();
-    }
-}
-
-// call draw on resize, after 100ms
-window.addEventListener("resize", function() {
-    clearTimeout(tid);
-    tid = setTimeout(dr, 100);
-});
-window.addEventListener("load", function() {
-    Z("bg").innerHTML = "<canvas id='c'></canvas>";
-    setInterval(dr, 50);
-});
 
 //# sourceMappingURL=manager.js.map

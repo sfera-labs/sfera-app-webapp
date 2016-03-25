@@ -1,4 +1,4 @@
-/*! sfera-webapp - v0.0.2 - 2016-03-24 */
+/*! sfera-webapp - v0.0.2 - 2016-03-25 */
 
 (function(){
 
@@ -3005,48 +3005,29 @@ Sfera.Net = new (function() {
     	switch (name) {
     	case "dictionary":  return Sfera.client.name+(Sfera.client.isLogin?"/login":"")+"/dictionary.xml";
     	case "index" :      return Sfera.client.name+(Sfera.client.isLogin?"/login":"")+"/index.xml";
-    	case "subscribe" :  return "subscribe?id="+(Sfera.Net.subscribeId?Sfera.Net.subscribeId:"");
-    	case "state" :      return "state/"+Sfera.Net.subscribeId+"?ts="+Sfera.client.stateTs;
-        case "command":     return "command";
-        case "event":       return "event";
+
+        case "connect" :    return apiBaseUrl+"connect";
+    	case "subscribe" :  return apiBaseUrl+"subscribe?cid="+(Sfera.Net.connectionId?Sfera.Net.connectionId:"");
+    	case "state" :      return apiBaseUrl+"state/"+Sfera.Net.connectionId+"?ts="+Sfera.client.stateTs;
+        case "command":     return apiBaseUrl+"command";
+        case "event":       return apiBaseUrl+"event";
+
         case "websocket":   return (Sfera.Browser.getLocation().protocol == "https:" ? "wss:" : "ws:")+
-                                    "//"+Sfera.Browser.getLocation().host+"/api/websocket";
+                                    "//"+Sfera.Browser.getLocation().host+"/"+apiBaseUrl+"websocket";
         }
 	};
-
-    var _defaultConfig = {
-        //name: Sfera.Browser.getLocation().interface,
-
-        /** Whether this instance should log debug messages. */
-        enableDebug: true,
-
-        /** Whether or not the websocket should attempt to connect immediately upon instantiation. */
-        automaticOpen: true,
-
-        /** The number of milliseconds to delay before attempting to reconnect. */
-        reconnectInterval: 1000,
-        /** The maximum number of milliseconds to delay a reconnection attempt. */
-        maxReconnectInterval: 30000,
-        /** The rate of increase of the reconnect delay. Allows reconnect attempts to back off when problems persist. */
-        reconnectDecay: 1.5,
-
-        /** The maximum time in milliseconds to wait for a connection to succeed before closing and retrying. */
-        timeoutInterval: 2000,
-
-        /** The maximum number of reconnection attempts to make. Unlimited if null. */
-        maxReconnectAttempts: null
-    };
-
 
     var req;
 
     var webSocket;
     var wsConnected = false;
 
+    var httpConnected = false;
+
     var self = this;
     var httpBaseUrl = "/";
+    var apiBaseUrl = "api/";
 
-    var connectionId;
     var pingInterval;
     var responseTimeout;
     var connCheckTimeoutId;
@@ -3055,6 +3036,7 @@ Sfera.Net = new (function() {
 
     var self = this;
 
+    this.connectionId = null;
     this.stateTs = -1;
     this.subscribed = false; // change this
 
@@ -3073,6 +3055,7 @@ Sfera.Net = new (function() {
     this.onMessage = new Sfera.Signal();
     this.onEvent = new Sfera.Signal();
     this.onReply = new Sfera.Signal();
+    this.onConsole = new Sfera.Signal();
     this.onUpdateDictionary = new Sfera.Signal();
     this.onUpdateIndex = new Sfera.Signal();
 
@@ -3107,7 +3090,7 @@ Sfera.Net = new (function() {
                     self.onReply.dispatch(json);
                     break;
                 case "connection":
-                    connectionId = json.connectionId;
+                    self.connectionId = json.connectionId;
                     pingInterval = parseInt(json.pingInterval);
                     responseTimeout = parseInt(json.responseTimeout);
 
@@ -3121,6 +3104,9 @@ Sfera.Net = new (function() {
 
                     self.wsSend(JSON.stringify(r));
                     wsConnected = true;
+                    break;
+                case "console":
+                    self.onConsole.dispatch(json);
                     break;
                 case "event":
                     self.onEvent.dispatch(json);
@@ -3188,8 +3174,8 @@ Sfera.Net = new (function() {
             return;
         }
         // create a new instance of the websocket
-        if (connectionId != null)
-            url += "?cid="+connectionId;
+        if (this.connectionId != null)
+            url += "?cid="+this.connectionId;
         webSocket = new WebSocket(url);
 
         // associate events
@@ -3217,7 +3203,7 @@ Sfera.Net = new (function() {
     }
 
     // connect
-    this.connect = function() {
+    this.connect = function(options) {
         if (!req) {
             req = new Sfera.Net.Request()
             req.onLoaded = onReqLoaded;
@@ -3243,15 +3229,21 @@ Sfera.Net = new (function() {
             return;
         }
 
+        if (!this.connectionId) {
+            cSync = "connect";
+            req.open(httpBaseUrl + self.getURL("connect"));
+            return;
+        }
+
         if (!this.subscribed) {
             cSync = "subscribe";
 
-            req.open(urls.get("subscribe"));
+            req.open(httpBaseUrl + self.getURL("subscribe")+"&nodes=*");
             return;
         }
 
         cSync = "state";
-        req.open(httpBaseUrl + urls.get("state"));
+        req.open(httpBaseUrl + self.getURL("state"));
     };
 
     function onReqLoaded() {
@@ -3271,6 +3263,10 @@ Sfera.Net = new (function() {
             case "index":
                 console.log("loaded index");
                 self.onUpdateIndex.dispatch(req.getResponseXML());
+                break;
+
+            case "connect":
+                self.connectionId = req.getResponseJSON().cid;
                 break;
 
             case "subscribe":
@@ -3308,24 +3304,30 @@ Sfera.Net = new (function() {
     };
 
     this.sendCommand = function(req) {
-        //this.wsSend(self.getURL("command")+"?id="+id+"&"+command);
-
         var r = {
             action: "command",
             cmd: req.command,
-            tag: req.tag
+            tag: req.tag || (new Date()).getTime()
         };
         this.wsSend(JSON.stringify(r));
     };
 
     this.sendEvent = function(req) {
-        //    this.wsSend(self.getURL("event")+"?id="+id+"&"+event);
-
         var r = {
             action: "event",
             id: req.id,
             value: req.value,
-            tag: req.tag
+            tag: req.tag || (new Date()).getTime()
+        };
+        this.wsSend(JSON.stringify(r));
+
+    };
+
+    this.sendConsole = function(req) {
+        var r = {
+            action: "console",
+            cmd: req.command,
+            tag: req.tag || (new Date()).getTime()
         };
         this.wsSend(JSON.stringify(r));
 
@@ -3341,6 +3343,21 @@ Sfera.Net = Sfera.Net || {};
  */
 Sfera.Net.Request = function (options) {
 	options = options || {};
+
+	/*
+	// The number of milliseconds to delay before attempting to reconnect.
+	reconnectInterval: 1000,
+	// The maximum number of milliseconds to delay a reconnection attempt.
+	maxReconnectInterval: 30000,
+	// The rate of increase of the reconnect delay. Allows reconnect attempts to back off when problems persist.
+	reconnectDecay: 1.5,
+
+	// The maximum time in milliseconds to wait for a connection to succeed before closing and retrying.
+	timeoutInterval: 2000,
+
+	// The maximum number of reconnection attempts to make. Unlimited if null.
+	maxReconnectAttempts: null
+	*/
 
 	var req = null; // request
 

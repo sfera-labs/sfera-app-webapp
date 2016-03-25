@@ -1,4 +1,4 @@
-<!-- sfera-webapp - Manager - v0.0.2 - 2016-03-24 -->
+<!-- sfera-webapp - Manager - v0.0.2 - 2016-03-25 -->
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" $manifest;>
@@ -74,8 +74,6 @@
     <div id="manager">
 
 
-
-
 <!-- File Manager -->
 <div id="fileManager">
 
@@ -94,7 +92,7 @@
         </div>
     </div>
 
-    <div id="fm_dirsPanel">
+    <div id="fm_dirsPanel" class="appPanel">
         <div id="fm_dirsPath" class="fm_dirsPath"></div>
         <div id="fm_dirsOptions" class="fm_dirsOptions">
             <div id="fm_dirsParentBt" style="float:left; display:none;" class="mButton" data-onclick="fileManager.parentFolder()">
@@ -131,7 +129,7 @@
         </div>
     </div>
 
-    <div id="fm_detailsPanel" class="transparentPanel">
+    <div id="fm_detailsPanel"  class="appPanel transparent">
         <div id="fm_detailsContent">
             <div class="icon">
                 <img id="fm_detailsDirIcon" class="abso" src="/manager/images/fmicondir.png">
@@ -210,7 +208,7 @@
         </div>
     </div>
 
-    <div id="fm_uploadProgressPanel">
+    <div id="fm_uploadProgressPanel" class="appPanel">
         <div id="fm_uploadContent">
             <div id="fm_uploadFileName">Uploading: this is a text file.png</div>
             <div id="fm_uploadBarContainer" class="m_barContainer">
@@ -226,6 +224,33 @@
 </div>
 
 
+
+
+<div id="systemConsole">
+    <div id="sc_toolbar" class="toolbar">
+        <div class="toolbarAppIcon">
+            <img src="/manager/images/appiconsbs.png">
+        </div>
+        <div id="sc_toolbarHeader" class="toolbarHeader" onselectstart="return false;">Console</div>
+        <div id="sc_toolbarAppsBt" class="mToolButton" data-onclick="manager.showAppsPopup(true)">
+            <img class="icon" src="/manager/images/ticonapps.png">
+        </div>
+    </div>
+
+    <div id="sc_outputPanel" class="appPanel">
+        <div id="sc_consoleText"></div>
+
+        <div id="sc_loading">
+            <img style="float:left; margin-right:4px;" src="/manager/images/loader.gif">&nbsp;Loading
+        </div>
+    </div>
+
+    <div id="sc_inputPanel" class="appPanel">
+        <div class="pre">&gt;</div>
+        <input id="sc_input">
+        <div class="mButton" data-onclick="systemConsole.send()">Send</div>
+    </div>
+</div>
 
 
 <div id="textEditor">
@@ -260,7 +285,7 @@
         </div>
     </div>
 
-    <div id="te_editorPanel">
+    <div id="te_editorPanel" class="appPanel">
         <div id="te_editorHeader">
             <div id="te_editorHeaderLabel"></div>
             <div style="float:right;">
@@ -389,7 +414,7 @@
                         </div>
                         <div>Text Editor</div>
                     </div-->
-                    <div name="sbAppBt" class="mAppButton" data-onclick="manager.switchApp('sb')">
+                    <div name="sbAppBt" class="mAppButton" data-onclick="manager.switchApp('sc')">
                         <div class="iconContainer">
                             <img class="icon" src="/manager/images/appiconsb.png">
                             <img class="iconDown" src="/manager/images/appiconsbd.png">
