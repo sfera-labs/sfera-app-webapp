@@ -64,7 +64,8 @@ public abstract class Cache {
 			Console.addHandler(WebAppConsoleCommandHandler.INSTANCE);
 		} else {
 			try {
-				FilesWatcher.register(INTERFACES_PATH, Cache::buildInterfacesCache, false);
+				FilesWatcher.register(INTERFACES_PATH, "WebApp cache builder",
+						Cache::buildInterfacesCache, false, true);
 			} catch (Exception e) {
 				logger.error("Error registering WebApp files watcher", e);
 			}
