@@ -22,7 +22,7 @@ public class WebAppConsoleCommandHandler implements ConsoleCommandHandler {
 	 */
 	private WebAppConsoleCommandHandler() {
 	}
-	
+
 	@Override
 	public String getKey() {
 		return "webapp";

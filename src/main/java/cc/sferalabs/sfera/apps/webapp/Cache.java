@@ -44,20 +44,12 @@ public abstract class Cache {
 
 	private static Set<String> interfaces;
 
-	static boolean useApplicationCache;
-	static boolean useJSBuilder;
-
 	/**
 	 * 
-	 * @param useApplicationCache
 	 * @param manualRebuild
-	 * @param useJSBuilder
 	 * @throws Exception
 	 */
-	public synchronized static void init(boolean useApplicationCache, boolean manualRebuild,
-			boolean useJSBuilder) throws Exception {
-		Cache.useApplicationCache = useApplicationCache;
-		Cache.useJSBuilder = useJSBuilder;
+	public synchronized static void init(boolean manualRebuild) throws Exception {
 		ResourcesUtil.lookForPluginsOverwritingWebapp();
 		buildCache();
 		if (manualRebuild) {
@@ -117,6 +109,9 @@ public abstract class Cache {
 	 */
 	private synchronized static void buildInterfacesCache() {
 		try {
+			// TODO use HttpServer.removeServlet(String pathSpec) to remove only
+			// the no longer existing interfaces
+
 			if (interfaces != null) {
 				try {
 					HttpServer.removeServlet(AuthInterfaceCacheServletHolder.INSTANCE);
@@ -135,7 +130,7 @@ public abstract class Cache {
 					try {
 						logger.debug("Building cache for interface '{}'...", interfaceName);
 						InterfaceCacheBuilder icb = new InterfaceCacheBuilder(interfaceName,
-								useJSBuilder);
+								WebApp.useJSBuilder);
 						icb.build();
 						interfaces.add(interfaceName);
 						logger.info("Interface '{}' built", interfaceName);

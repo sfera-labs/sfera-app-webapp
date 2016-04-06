@@ -21,13 +21,18 @@ public class WebApp extends Application {
 	static final Path ROOT = Paths.get("webapp/");
 	private static final String EVENTS_PREFIX = "webapp.ui.";
 
+	static boolean useApplicationCache;
+	static boolean useJSBuilder;
+	static int idleTimeout;
+
 	@Override
 	public void onEnable(Configuration config) {
-		boolean useApplicationCache = config.get("application_cache", true);
+		useApplicationCache = config.get("application_cache", true);
+		useJSBuilder = config.get("js_builder", false);
+		idleTimeout = config.get("idle_timeout", 600);
 		boolean manualRebuild = config.get("manual_rebuild", false);
-		boolean useJSBuilder = config.get("js_builder", false);
 		try {
-			Cache.init(useApplicationCache, manualRebuild, useJSBuilder);
+			Cache.init(manualRebuild);
 		} catch (Exception e) {
 			log.error("Error creating cache", e);
 		}

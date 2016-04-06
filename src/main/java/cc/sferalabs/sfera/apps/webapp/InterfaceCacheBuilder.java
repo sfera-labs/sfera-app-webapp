@@ -127,7 +127,7 @@ public class InterfaceCacheBuilder {
 		createHTML("html" + sub + "index.html", sub + "index.html", sub + CACHE_MANIFEST_NAME);
 		createCode(sub, components, attributes);
 		createCSS(sub, components, attributes);
-		if (Cache.useApplicationCache) {
+		if (WebApp.useApplicationCache) {
 			resources.add(interfaceCacheRoot.resolve("." + sub + "style.css"));
 			resources.add(interfaceCacheRoot.resolve("." + sub + "code.js"));
 			createManifest(sub + CACHE_MANIFEST_NAME, resources);
@@ -376,9 +376,10 @@ public class InterfaceCacheBuilder {
 		try (BufferedReader reader = Files.newBufferedReader(indexPath, StandardCharsets.UTF_8)) {
 			boolean manifestReplaced = false;
 			boolean tsReplaced = false;
+			boolean idleTimeoutReplaced = false;
 			boolean appCacheEnabledReplaced = false;
 			String manifestReplacement;
-			if (Cache.useApplicationCache) {
+			if (WebApp.useApplicationCache) {
 				manifestReplacement = "manifest=\"/" + interfaceName + manifestPath + "\"";
 			} else {
 				manifestReplacement = "";
@@ -386,7 +387,7 @@ public class InterfaceCacheBuilder {
 			String line = null;
 			while ((line = reader.readLine()) != null) {
 				if (!appCacheEnabledReplaced && line.contains("$appCacheEnabled;")) {
-					line = line.replace("$appCacheEnabled;", "" + Cache.useApplicationCache);
+					line = line.replace("$appCacheEnabled;", "" + WebApp.useApplicationCache);
 					appCacheEnabledReplaced = true;
 				}
 				if (!manifestReplaced && line.contains("$manifest;")) {
@@ -396,6 +397,10 @@ public class InterfaceCacheBuilder {
 				if (!tsReplaced && line.contains("$timestamp;")) {
 					line = line.replace("$timestamp;", "" + timestamp);
 					tsReplaced = true;
+				}
+				if (!idleTimeoutReplaced && line.contains("$idleTimeout;")) {
+					line = line.replace("$idleTimeout;", "" + WebApp.idleTimeout);
+					idleTimeoutReplaced = true;
 				}
 				if (line.contains("$interface;")) {
 					line = line.replace("$interface;", interfaceName);
@@ -434,8 +439,7 @@ public class InterfaceCacheBuilder {
 		for (String c : components) {
 			resources.addAll(ResourcesUtil.copyRecursive(
 					WebApp.ROOT.resolve("components/" + c + "/images/" + iconSet + "/"),
-					interfaceCacheRoot.resolve("." + sub + "images/components/" + c + "/"),
-					true));
+					interfaceCacheRoot.resolve("." + sub + "images/components/" + c + "/"), true));
 		}
 
 		resources.addAll(ResourcesUtil.copyRecursive(WebApp.ROOT.resolve("icons/" + iconSet + "/"),
@@ -451,8 +455,8 @@ public class InterfaceCacheBuilder {
 	 * @throws IOException
 	 */
 	private void createManifest(String path, Set<Path> resources) throws IOException {
-		try (BufferedWriter writer = Files.newBufferedWriter(
-				interfaceCacheRoot.resolve("." + path), StandardCharsets.UTF_8)) {
+		try (BufferedWriter writer = Files.newBufferedWriter(interfaceCacheRoot.resolve("." + path),
+				StandardCharsets.UTF_8)) {
 			writer.write("CACHE MANIFEST\r\n\r\n# ");
 			writer.write(DATE_FORMAT.format(new Date()));
 			writer.write("\r\n\r\nCACHE:\r\n");
@@ -484,8 +488,7 @@ public class InterfaceCacheBuilder {
 			Map<String, String> attributes) throws IOException, XMLStreamException {
 		XMLEventWriter eventWriter = null;
 		try (BufferedWriter out = Files.newBufferedWriter(
-				interfaceCacheRoot.resolve("." + sub + "dictionary.xml"),
-				StandardCharsets.UTF_8)) {
+				interfaceCacheRoot.resolve("." + sub + "dictionary.xml"), StandardCharsets.UTF_8)) {
 			eventWriter = OUTPUT_FACTORY.createXMLEventWriter(out);
 
 			StartDocument startDocument = EVENT_FACTORY.createStartDocument();
