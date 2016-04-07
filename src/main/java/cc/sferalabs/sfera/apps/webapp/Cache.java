@@ -21,10 +21,10 @@ import cc.sferalabs.sfera.apps.webapp.servlets.ManagerLoginCacheServletHolder;
 import cc.sferalabs.sfera.console.Console;
 import cc.sferalabs.sfera.core.events.PluginsEvent;
 import cc.sferalabs.sfera.events.Bus;
-import cc.sferalabs.sfera.http.HttpServer;
-import cc.sferalabs.sfera.http.HttpServerException;
 import cc.sferalabs.sfera.util.files.FilesUtil;
 import cc.sferalabs.sfera.util.files.FilesWatcher;
+import cc.sferalabs.sfera.web.WebServer;
+import cc.sferalabs.sfera.web.WebServerException;
 
 /**
  *
@@ -77,9 +77,9 @@ public abstract class Cache {
 		});
 
 		try {
-			HttpServer.addServlet(ManagerCacheServletHolder.INSTANCE, "/manager/*");
-			HttpServer.addServlet(ManagerLoginCacheServletHolder.INSTANCE, "/manager/login/*");
-		} catch (HttpServerException e) {
+			WebServer.addServlet(ManagerCacheServletHolder.INSTANCE, "/manager/*");
+			WebServer.addServlet(ManagerLoginCacheServletHolder.INSTANCE, "/manager/login/*");
+		} catch (WebServerException e) {
 			logger.error("Error registering servlet for manager", e);
 		}
 	}
@@ -138,8 +138,8 @@ public abstract class Cache {
 			for (String interfaceName : oldInterfaces) {
 				if (!interfaces.contains(interfaceName)) {
 					try {
-						HttpServer.removeServlet("/" + interfaceName + "/*");
-						HttpServer.removeServlet("/" + interfaceName + "/login/*");
+						WebServer.removeServlet("/" + interfaceName + "/*");
+						WebServer.removeServlet("/" + interfaceName + "/login/*");
 					} catch (Exception e) {
 						logger.error(
 								"Error removing servlet for old interface '" + interfaceName + "'",
@@ -152,9 +152,9 @@ public abstract class Cache {
 			for (String interfaceName : interfaces) {
 				if (!oldInterfaces.contains(interfaceName)) {
 					try {
-						HttpServer.addServlet(AuthInterfaceCacheServletHolder.INSTANCE,
+						WebServer.addServlet(AuthInterfaceCacheServletHolder.INSTANCE,
 								"/" + interfaceName + "/*");
-						HttpServer.addServlet(InterfaceCacheServletHolder.INSTANCE,
+						WebServer.addServlet(InterfaceCacheServletHolder.INSTANCE,
 								"/" + interfaceName + "/login/*");
 					} catch (Exception e) {
 						logger.error("Error adding servlet for interface '" + interfaceName + "'",

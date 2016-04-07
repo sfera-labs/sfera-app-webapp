@@ -13,9 +13,9 @@ import cc.sferalabs.sfera.apps.webapp.servlets.InterfaceCacheServletHolder;
 import cc.sferalabs.sfera.apps.webapp.servlets.ManagerCacheServletHolder;
 import cc.sferalabs.sfera.core.Configuration;
 import cc.sferalabs.sfera.events.Bus;
-import cc.sferalabs.sfera.http.HttpServer;
-import cc.sferalabs.sfera.http.HttpServerException;
-import cc.sferalabs.sfera.http.api.RemoteApiEvent;
+import cc.sferalabs.sfera.web.WebServer;
+import cc.sferalabs.sfera.web.WebServerException;
+import cc.sferalabs.sfera.web.api.WebApiEvent;
 
 public class WebApp extends Application {
 
@@ -42,16 +42,16 @@ public class WebApp extends Application {
 	@Override
 	public void onDisable() {
 		try {
-			HttpServer.removeServlet(AuthInterfaceCacheServletHolder.INSTANCE);
-			HttpServer.removeServlet(InterfaceCacheServletHolder.INSTANCE);
-			HttpServer.removeServlet(ManagerCacheServletHolder.INSTANCE);
-		} catch (HttpServerException e) {
+			WebServer.removeServlet(AuthInterfaceCacheServletHolder.INSTANCE);
+			WebServer.removeServlet(InterfaceCacheServletHolder.INSTANCE);
+			WebServer.removeServlet(ManagerCacheServletHolder.INSTANCE);
+		} catch (WebServerException e) {
 			log.error("Error removing servlet", e);
 		}
 	}
 
 	@Subscribe
-	public void handleHttpEvent(RemoteApiEvent event) {
+	public void handleHttpEvent(WebApiEvent event) {
 		String id = event.getSubId();
 		if (id.startsWith(UI_EVENTS_PREFIX)) {
 			Bus.post(new WebAppUIEvent(id.substring(UI_EVENTS_PREFIX.length()), event));
