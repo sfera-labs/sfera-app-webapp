@@ -15,7 +15,7 @@ import cc.sferalabs.sfera.ui.UIEvent;
  * @version 1.0.0
  *
  */
-public class WebUIEvent extends UIEvent {
+public class WebAppUIEvent extends UIEvent {
 
 	private final RemoteApiEvent httpEvent;
 
@@ -24,7 +24,7 @@ public class WebUIEvent extends UIEvent {
 	 * @param id
 	 * @param httpEvent
 	 */
-	public WebUIEvent(String id, RemoteApiEvent httpEvent) {
+	public WebAppUIEvent(String id, RemoteApiEvent httpEvent) {
 		super(id, httpEvent.getValue(), httpEvent.getConnectionId());
 		this.httpEvent = httpEvent;
 	}

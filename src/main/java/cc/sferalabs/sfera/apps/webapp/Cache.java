@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.eventbus.Subscribe;
 
+import cc.sferalabs.sfera.apps.webapp.events.InterfaceUpdateEvent;
 import cc.sferalabs.sfera.apps.webapp.servlets.AuthInterfaceCacheServletHolder;
 import cc.sferalabs.sfera.apps.webapp.servlets.InterfaceCacheServletHolder;
 import cc.sferalabs.sfera.apps.webapp.servlets.ManagerCacheServletHolder;
@@ -22,6 +23,7 @@ import cc.sferalabs.sfera.core.events.PluginsEvent;
 import cc.sferalabs.sfera.events.Bus;
 import cc.sferalabs.sfera.http.HttpServer;
 import cc.sferalabs.sfera.http.HttpServerException;
+import cc.sferalabs.sfera.util.files.FilesUtil;
 import cc.sferalabs.sfera.util.files.FilesWatcher;
 
 /**
@@ -42,7 +44,7 @@ public abstract class Cache {
 	public static final Path INTERFACES_CACHE_ROOT = CACHE_ROOT.resolve("interfaces/");
 	public static final Path MANAGER_CACHE_ROOT = CACHE_ROOT.resolve("manager/");
 
-	private static Set<String> interfaces;
+	private static Set<String> interfaces = new HashSet<String>();
 
 	/**
 	 * 
@@ -95,7 +97,7 @@ public abstract class Cache {
 	 */
 	private synchronized static void buildManagerCache() {
 		try {
-			ResourcesUtil.deleteRecursive(MANAGER_CACHE_ROOT);
+			FilesUtil.delete(MANAGER_CACHE_ROOT);
 			logger.debug("Building cache for manager...");
 			ResourcesUtil.copyRecursive(MANAGER_PATH, MANAGER_CACHE_ROOT, true);
 			logger.info("WebApp manager built");
@@ -109,28 +111,18 @@ public abstract class Cache {
 	 */
 	private synchronized static void buildInterfacesCache() {
 		try {
-			// TODO use HttpServer.removeServlet(String pathSpec) to remove only
-			// the no longer existing interfaces
-
-			if (interfaces != null) {
-				try {
-					HttpServer.removeServlet(AuthInterfaceCacheServletHolder.INSTANCE);
-					HttpServer.removeServlet(InterfaceCacheServletHolder.INSTANCE);
-				} catch (Exception e) {
-					logger.error("Error removing old interfaces servlets", e);
-				}
-			}
-
+			Set<String> oldInterfaces = interfaces;
 			interfaces = new HashSet<String>();
-			ResourcesUtil.deleteRecursive(INTERFACES_CACHE_ROOT);
+
 			Files.createDirectories(INTERFACES_CACHE_ROOT);
+			long timestamp = System.currentTimeMillis();
 			try {
 				for (String interfaceName : ResourcesUtil.listDirectoriesNamesIn(INTERFACES_PATH,
 						true)) {
 					try {
 						logger.debug("Building cache for interface '{}'...", interfaceName);
 						InterfaceCacheBuilder icb = new InterfaceCacheBuilder(interfaceName,
-								WebApp.useJSBuilder);
+								timestamp);
 						icb.build();
 						interfaces.add(interfaceName);
 						logger.info("Interface '{}' built", interfaceName);
@@ -143,15 +135,33 @@ public abstract class Cache {
 				// No interface found
 			}
 
-			for (String interfaceName : interfaces) {
-				try {
-					HttpServer.addServlet(AuthInterfaceCacheServletHolder.INSTANCE,
-							"/" + interfaceName + "/*");
-					HttpServer.addServlet(InterfaceCacheServletHolder.INSTANCE,
-							"/" + interfaceName + "/login/*");
-				} catch (Exception e) {
-					logger.error("Error registering servlet for interface " + interfaceName, e);
+			for (String interfaceName : oldInterfaces) {
+				if (!interfaces.contains(interfaceName)) {
+					try {
+						HttpServer.removeServlet("/" + interfaceName + "/*");
+						HttpServer.removeServlet("/" + interfaceName + "/login/*");
+					} catch (Exception e) {
+						logger.error(
+								"Error removing servlet for old interface '" + interfaceName + "'",
+								e);
+					}
+					Bus.post(new InterfaceUpdateEvent(interfaceName, timestamp));
 				}
+			}
+
+			for (String interfaceName : interfaces) {
+				if (!oldInterfaces.contains(interfaceName)) {
+					try {
+						HttpServer.addServlet(AuthInterfaceCacheServletHolder.INSTANCE,
+								"/" + interfaceName + "/*");
+						HttpServer.addServlet(InterfaceCacheServletHolder.INSTANCE,
+								"/" + interfaceName + "/login/*");
+					} catch (Exception e) {
+						logger.error("Error adding servlet for interface '" + interfaceName + "'",
+								e);
+					}
+				}
+				Bus.post(new InterfaceUpdateEvent(interfaceName, timestamp));
 			}
 		} catch (IOException e) {
 			logger.error("Error creating interfaces cache", e);

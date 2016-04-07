@@ -36,8 +36,7 @@ import org.apache.http.client.utils.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import cc.sferalabs.sfera.apps.webapp.events.InterfaceUpdateEvent;
-import cc.sferalabs.sfera.events.Bus;
+import cc.sferalabs.sfera.util.files.FilesUtil;
 
 /**
  *
@@ -62,20 +61,20 @@ public class InterfaceCacheBuilder {
 			DateUtils.PATTERN_RFC1123);
 
 	private final String interfaceName;
-	private final boolean useJSBuilder;
+	private final long timestamp;
 	private final Path interfaceCacheRoot;
-
-	private long timestamp;
+	private final Path interfaceTmpCacheRoot;
 
 	/**
 	 * 
 	 * @param interfaceName
-	 * @param useJSBuilder
+	 * @param timestamp
 	 * @throws IOException
 	 */
-	InterfaceCacheBuilder(String interfaceName, boolean useJSBuilder) throws IOException {
+	InterfaceCacheBuilder(String interfaceName, long timestamp) throws IOException {
 		this.interfaceName = interfaceName;
-		this.useJSBuilder = useJSBuilder;
+		this.timestamp = timestamp;
+		this.interfaceTmpCacheRoot = Files.createTempDirectory(getClass().getName());
 		this.interfaceCacheRoot = Cache.INTERFACES_CACHE_ROOT.resolve(interfaceName + "/");
 	}
 
@@ -86,15 +85,22 @@ public class InterfaceCacheBuilder {
 	 */
 	void build() throws IOException, XMLStreamException {
 		try {
-			timestamp = System.currentTimeMillis();
-			Files.createDirectories(interfaceCacheRoot.resolve("login"));
+			Files.createDirectories(interfaceTmpCacheRoot.resolve("login"));
 			Map<String, String> attributes = new HashMap<>();
 			attributes.put("language", null);
 			attributes.put("skin", null);
 			createCache("/", attributes);
 			createCache("/login/", attributes);
-			Bus.post(new InterfaceUpdateEvent(interfaceName, timestamp));
+			try {
+				FilesUtil.delete(interfaceCacheRoot);
+			} catch (NoSuchFileException e) {
+			}
+			FilesUtil.move(interfaceTmpCacheRoot, interfaceCacheRoot);
 		} finally {
+			try {
+				FilesUtil.delete(interfaceTmpCacheRoot);
+			} catch (Exception e) {
+			}
 			ResourcesUtil.release();
 		}
 	}
@@ -128,8 +134,8 @@ public class InterfaceCacheBuilder {
 		createCode(sub, components, attributes);
 		createCSS(sub, components, attributes);
 		if (WebApp.useApplicationCache) {
-			resources.add(interfaceCacheRoot.resolve("." + sub + "style.css"));
-			resources.add(interfaceCacheRoot.resolve("." + sub + "code.js"));
+			resources.add(interfaceTmpCacheRoot.resolve("." + sub + "style.css"));
+			resources.add(interfaceTmpCacheRoot.resolve("." + sub + "code.js"));
 			createManifest(sub + CACHE_MANIFEST_NAME, resources);
 		}
 	}
@@ -215,7 +221,7 @@ public class InterfaceCacheBuilder {
 	 */
 	private Path copyToCache(String source, String target) throws IOException {
 		Path s = ResourcesUtil.getResource(WebApp.ROOT.resolve(source));
-		Path t = interfaceCacheRoot.resolve("." + target);
+		Path t = interfaceTmpCacheRoot.resolve("." + target);
 		return Files.copy(s, t);
 	}
 
@@ -270,7 +276,7 @@ public class InterfaceCacheBuilder {
 	private void createCSS(String sub, Set<String> components, Map<String, String> attributes)
 			throws IOException {
 		try (BufferedWriter writer = Files.newBufferedWriter(
-				interfaceCacheRoot.resolve("." + sub + "style.css"), StandardCharsets.UTF_8)) {
+				interfaceTmpCacheRoot.resolve("." + sub + "style.css"), StandardCharsets.UTF_8)) {
 			String skin = attributes.get("skin");
 			writeContentFrom("skins/" + skin + "/" + skin + ".css", writer);
 			for (String comp : components) {
@@ -316,9 +322,9 @@ public class InterfaceCacheBuilder {
 		}
 		files.add("code/client.custom_outro.js");
 
-		if (useJSBuilder) {
+		if (WebApp.useJSBuilder) {
 			try {
-				JavaScriptBuilder.build(files, interfaceCacheRoot.resolve("." + sub));
+				JavaScriptBuilder.build(files, interfaceTmpCacheRoot.resolve("." + sub));
 				return;
 			} catch (Exception e) {
 				logger.warn("Error building cache for interface '" + interfaceName
@@ -327,7 +333,7 @@ public class InterfaceCacheBuilder {
 		}
 
 		try (BufferedWriter writer = Files.newBufferedWriter(
-				interfaceCacheRoot.resolve("." + sub + "code.js"), StandardCharsets.UTF_8)) {
+				interfaceTmpCacheRoot.resolve("." + sub + "code.js"), StandardCharsets.UTF_8)) {
 			for (String file : files) {
 				writeContentFrom(file, writer);
 			}
@@ -409,7 +415,7 @@ public class InterfaceCacheBuilder {
 			}
 		}
 
-		Files.write(interfaceCacheRoot.resolve("." + target), lines, StandardCharsets.UTF_8);
+		Files.write(interfaceTmpCacheRoot.resolve("." + target), lines, StandardCharsets.UTF_8);
 
 		return imgs;
 	}
@@ -427,23 +433,24 @@ public class InterfaceCacheBuilder {
 		Set<Path> resources = new HashSet<Path>();
 		resources.addAll(ResourcesUtil.copyRecursive(
 				WebApp.ROOT.resolve("interfaces/" + interfaceName + sub + "assets/"),
-				interfaceCacheRoot.resolve("." + sub + "assets/"), true));
+				interfaceTmpCacheRoot.resolve("." + sub + "assets/"), true));
 
-		Files.createDirectories(interfaceCacheRoot.resolve("." + sub + "images/components/"));
+		Files.createDirectories(interfaceTmpCacheRoot.resolve("." + sub + "images/components/"));
 
 		resources.addAll(ResourcesUtil.copyRecursive(
 				WebApp.ROOT.resolve("skins/" + attributes.get("skin") + sub + "images/"),
-				interfaceCacheRoot.resolve("." + sub + "images/skin/"), true));
+				interfaceTmpCacheRoot.resolve("." + sub + "images/skin/"), true));
 
 		String iconSet = attributes.get("iconSet");
 		for (String c : components) {
 			resources.addAll(ResourcesUtil.copyRecursive(
 					WebApp.ROOT.resolve("components/" + c + "/images/" + iconSet + "/"),
-					interfaceCacheRoot.resolve("." + sub + "images/components/" + c + "/"), true));
+					interfaceTmpCacheRoot.resolve("." + sub + "images/components/" + c + "/"),
+					true));
 		}
 
 		resources.addAll(ResourcesUtil.copyRecursive(WebApp.ROOT.resolve("icons/" + iconSet + "/"),
-				interfaceCacheRoot.resolve("." + sub + "icons/"), true));
+				interfaceTmpCacheRoot.resolve("." + sub + "icons/"), true));
 
 		return resources;
 	}
@@ -455,17 +462,17 @@ public class InterfaceCacheBuilder {
 	 * @throws IOException
 	 */
 	private void createManifest(String path, Set<Path> resources) throws IOException {
-		try (BufferedWriter writer = Files.newBufferedWriter(interfaceCacheRoot.resolve("." + path),
-				StandardCharsets.UTF_8)) {
+		try (BufferedWriter writer = Files.newBufferedWriter(
+				interfaceTmpCacheRoot.resolve("." + path), StandardCharsets.UTF_8)) {
 			writer.write("CACHE MANIFEST\r\n\r\n# ");
 			writer.write(DATE_FORMAT.format(new Date()));
 			writer.write("\r\n\r\nCACHE:\r\n");
 
 			for (Path r : resources) {
 				if (Files.isRegularFile(r)) {
-					if (!r.startsWith(interfaceCacheRoot.resolve("assets/no-cache/"))) {
+					if (!r.startsWith(interfaceTmpCacheRoot.resolve("assets/no-cache/"))) {
 						writer.write("/" + interfaceName + "/"
-								+ interfaceCacheRoot.relativize(r).toString());
+								+ interfaceTmpCacheRoot.relativize(r).toString());
 						writer.write("\r\n");
 					}
 				}
@@ -488,7 +495,8 @@ public class InterfaceCacheBuilder {
 			Map<String, String> attributes) throws IOException, XMLStreamException {
 		XMLEventWriter eventWriter = null;
 		try (BufferedWriter out = Files.newBufferedWriter(
-				interfaceCacheRoot.resolve("." + sub + "dictionary.xml"), StandardCharsets.UTF_8)) {
+				interfaceTmpCacheRoot.resolve("." + sub + "dictionary.xml"),
+				StandardCharsets.UTF_8)) {
 			eventWriter = OUTPUT_FACTORY.createXMLEventWriter(out);
 
 			StartDocument startDocument = EVENT_FACTORY.createStartDocument();

@@ -6,7 +6,8 @@ import java.nio.file.Paths;
 import com.google.common.eventbus.Subscribe;
 
 import cc.sferalabs.sfera.apps.Application;
-import cc.sferalabs.sfera.apps.webapp.events.WebUIEvent;
+import cc.sferalabs.sfera.apps.webapp.events.WebAppNode;
+import cc.sferalabs.sfera.apps.webapp.events.WebAppUIEvent;
 import cc.sferalabs.sfera.apps.webapp.servlets.AuthInterfaceCacheServletHolder;
 import cc.sferalabs.sfera.apps.webapp.servlets.InterfaceCacheServletHolder;
 import cc.sferalabs.sfera.apps.webapp.servlets.ManagerCacheServletHolder;
@@ -19,7 +20,7 @@ import cc.sferalabs.sfera.http.api.RemoteApiEvent;
 public class WebApp extends Application {
 
 	static final Path ROOT = Paths.get("webapp/");
-	private static final String EVENTS_PREFIX = "webapp.ui.";
+	private static final String UI_EVENTS_PREFIX = WebAppNode.INSTANCE.getId() + ".ui.";
 
 	static boolean useApplicationCache;
 	static boolean useJSBuilder;
@@ -52,8 +53,8 @@ public class WebApp extends Application {
 	@Subscribe
 	public void handleHttpEvent(RemoteApiEvent event) {
 		String id = event.getSubId();
-		if (id.startsWith(EVENTS_PREFIX)) {
-			Bus.post(new WebUIEvent(id.substring(EVENTS_PREFIX.length()), event));
+		if (id.startsWith(UI_EVENTS_PREFIX)) {
+			Bus.post(new WebAppUIEvent(id.substring(UI_EVENTS_PREFIX.length()), event));
 		}
 	}
 

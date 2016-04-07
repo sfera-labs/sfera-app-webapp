@@ -296,24 +296,6 @@ public abstract class ResourcesUtil {
 
 	/**
 	 * 
-	 * @param dir
-	 * @throws IOException
-	 */
-	public static void deleteRecursive(Path dir) throws IOException {
-		if (Files.exists(dir)) {
-			if (Files.isDirectory(dir)) {
-				try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir)) {
-					for (Path file : stream) {
-						deleteRecursive(file);
-					}
-				}
-			}
-			Files.delete(dir);
-		}
-	}
-
-	/**
-	 * 
 	 */
 	public static void release() {
 		synchronized (OPEN_RESOURCES) {

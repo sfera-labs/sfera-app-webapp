@@ -14,7 +14,7 @@ import cc.sferalabs.sfera.events.Node;
  */
 public class WebAppNode extends Node {
 
-	static final WebAppNode INSTANCE = new WebAppNode();
+	public static final WebAppNode INSTANCE = new WebAppNode();
 
 	/**
 	 * 
