@@ -11,6 +11,7 @@ import cc.sferalabs.sfera.apps.webapp.events.WebAppUIEvent;
 import cc.sferalabs.sfera.apps.webapp.servlets.AuthInterfaceCacheServletHolder;
 import cc.sferalabs.sfera.apps.webapp.servlets.InterfaceCacheServletHolder;
 import cc.sferalabs.sfera.apps.webapp.servlets.ManagerCacheServletHolder;
+import cc.sferalabs.sfera.apps.webapp.servlets.ManagerLoginCacheServletHolder;
 import cc.sferalabs.sfera.core.Configuration;
 import cc.sferalabs.sfera.events.Bus;
 import cc.sferalabs.sfera.web.WebServer;
@@ -24,12 +25,14 @@ public class WebApp extends Application {
 
 	static boolean useApplicationCache;
 	static boolean useJSBuilder;
+	static boolean useJSMin;
 	static int idleTimeout;
 
 	@Override
 	public void onEnable(Configuration config) {
 		useApplicationCache = config.get("application_cache", true);
 		useJSBuilder = config.get("js_builder", false);
+		useJSMin = config.get("js_use_min", true);
 		idleTimeout = config.get("idle_timeout", 600);
 		boolean manualRebuild = config.get("manual_rebuild", false);
 		try {
@@ -45,6 +48,7 @@ public class WebApp extends Application {
 			WebServer.removeServlet(AuthInterfaceCacheServletHolder.INSTANCE);
 			WebServer.removeServlet(InterfaceCacheServletHolder.INSTANCE);
 			WebServer.removeServlet(ManagerCacheServletHolder.INSTANCE);
+			WebServer.removeServlet(ManagerLoginCacheServletHolder.INSTANCE);
 		} catch (WebServerException e) {
 			log.error("Error removing servlet", e);
 		}

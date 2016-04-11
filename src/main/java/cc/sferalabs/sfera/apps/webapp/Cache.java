@@ -44,7 +44,7 @@ public abstract class Cache {
 	public static final Path INTERFACES_CACHE_ROOT = CACHE_ROOT.resolve("interfaces/");
 	public static final Path MANAGER_CACHE_ROOT = CACHE_ROOT.resolve("manager/");
 
-	private static Set<String> interfaces = new HashSet<String>();
+	private static Set<String> interfaces;
 
 	/**
 	 * 
@@ -53,6 +53,7 @@ public abstract class Cache {
 	 */
 	public synchronized static void init(boolean manualRebuild) throws Exception {
 		ResourcesUtil.lookForPluginsOverwritingWebapp();
+		interfaces = new HashSet<String>();
 		buildCache();
 		if (manualRebuild) {
 			Console.addHandler(WebAppConsoleCommandHandler.INSTANCE);

@@ -354,12 +354,16 @@ public class InterfaceCacheBuilder {
 	 */
 	private static void writeContentFrom(String file, BufferedWriter writer)
 			throws IOException, NoSuchFileException {
-		int extSep = file.lastIndexOf('.');
-		String minFile = file.substring(0, extSep) + ".min" + file.substring(extSep);
-		Path filePath;
-		try {
-			filePath = ResourcesUtil.getResource(WebApp.ROOT.resolve(minFile));
-		} catch (NoSuchFileException nsfe) {
+		Path filePath = null;
+		if (WebApp.useJSMin) {
+			int extSep = file.lastIndexOf('.');
+			String minFile = file.substring(0, extSep) + ".min" + file.substring(extSep);
+			try {
+				filePath = ResourcesUtil.getResource(WebApp.ROOT.resolve(minFile));
+			} catch (NoSuchFileException nsfe) {
+			}
+		}
+		if (filePath == null) {
 			filePath = ResourcesUtil.getResource(WebApp.ROOT.resolve(file));
 		}
 		try (BufferedReader reader = Files.newBufferedReader(filePath, StandardCharsets.UTF_8)) {
