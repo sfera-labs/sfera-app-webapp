@@ -65,7 +65,8 @@ public class JavaScriptBuilder {
 		for (String name : fileNames) {
 			JsFile jsFile;
 			if (customJs == null) {
-				if (name.endsWith("client.custom_intro.js")) {
+				if (name.startsWith("custom_intro.js")) {
+					// custom_intro.js or custom_intro.js.min
 					jsFile = new JsFile("custom.js");
 					customJs = jsFile;
 				} else {
@@ -73,7 +74,6 @@ public class JavaScriptBuilder {
 				}
 				jsFile.addContentFrom(name);
 				files.add(jsFile);
-
 			} else {
 				customJs.addContentFrom(name);
 			}
@@ -81,13 +81,16 @@ public class JavaScriptBuilder {
 
 		Map<String, String> res;
 		try {
-			res = (Map<String, String>) invocable.invokeFunction("compile", "code.js", files, null);
+			res = (Map<String, String>) invocable.invokeFunction("compile", "interface.js", files,
+					null);
 		} catch (NoSuchMethodException e) {
 			throw new RuntimeException(e);
 		}
 
-		Files.write(dir.resolve("code.js"), res.get("output").getBytes(StandardCharsets.UTF_8));
-		Files.write(dir.resolve("code.js.map"), res.get("map").getBytes(StandardCharsets.UTF_8));
+		Files.write(dir.resolve("interface.js"),
+				res.get("output").getBytes(StandardCharsets.UTF_8));
+		Files.write(dir.resolve("interface.js.map"),
+				res.get("map").getBytes(StandardCharsets.UTF_8));
 	}
 
 	/**

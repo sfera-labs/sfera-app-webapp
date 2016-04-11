@@ -130,7 +130,7 @@ public class InterfaceCacheBuilder {
 		addSubComponents(components);
 		createDictionaryAndExtractSkinIconSet(sub, components, attributes);
 		Set<Path> resources = copyResources(sub, components, attributes);
-		createHTML("html" + sub + "index.html", sub + "index.html", sub + CACHE_MANIFEST_NAME);
+		createHTML(sub + "index.html", sub + CACHE_MANIFEST_NAME);
 		createCode(sub, components, attributes);
 		createCSS(sub, components, attributes);
 		if (WebApp.useApplicationCache) {
@@ -301,14 +301,18 @@ public class InterfaceCacheBuilder {
 	 */
 	private void createCode(String sub, Set<String> components, Map<String, String> attributes)
 			throws IOException {
+		try (BufferedWriter writer = Files.newBufferedWriter(
+				interfaceTmpCacheRoot.resolve("." + sub + "client.js"), StandardCharsets.UTF_8)) {
+			writeContentFrom("code/client.js", writer);
+		}
+
 		String skin = attributes.get("skin");
 		List<String> files = new ArrayList<>();
-		files.add("code/client.js");
 		files.add("skins/" + skin + "/" + skin + ".js");
 		for (String comp : components) {
 			files.add("components/" + comp + "/" + comp + ".js");
 		}
-		files.add("code/client.custom_intro.js");
+		files.add("code/custom_intro.js");
 		String interfacePath = "interfaces/" + interfaceName + sub;
 		try {
 			Set<String> customJsFiles = ResourcesUtil
@@ -320,7 +324,7 @@ public class InterfaceCacheBuilder {
 			}
 		} catch (NoSuchFileException e) {
 		}
-		files.add("code/client.custom_outro.js");
+		files.add("code/custom_outro.js");
 
 		if (WebApp.useJSBuilder) {
 			try {
@@ -333,7 +337,8 @@ public class InterfaceCacheBuilder {
 		}
 
 		try (BufferedWriter writer = Files.newBufferedWriter(
-				interfaceTmpCacheRoot.resolve("." + sub + "code.js"), StandardCharsets.UTF_8)) {
+				interfaceTmpCacheRoot.resolve("." + sub + "interface.js"),
+				StandardCharsets.UTF_8)) {
 			for (String file : files) {
 				writeContentFrom(file, writer);
 			}
@@ -368,18 +373,17 @@ public class InterfaceCacheBuilder {
 
 	/**
 	 * 
-	 * @param source
 	 * @param target
 	 * @param manifestPath
 	 * @return
 	 * @throws IOException
 	 */
-	private Set<String> createHTML(String source, String target, String manifestPath)
-			throws IOException {
-		Path indexPath = ResourcesUtil.getResource(WebApp.ROOT.resolve(source));
+	private Set<String> createHTML(String target, String manifestPath) throws IOException {
+		Path indexPath = ResourcesUtil.getResource(WebApp.ROOT.resolve("html/index.html"));
 		Set<String> imgs = new HashSet<String>();
 		List<String> lines = new ArrayList<String>();
 		try (BufferedReader reader = Files.newBufferedReader(indexPath, StandardCharsets.UTF_8)) {
+			boolean interfaceReplaced = false;
 			boolean manifestReplaced = false;
 			boolean tsReplaced = false;
 			boolean idleTimeoutReplaced = false;
@@ -392,13 +396,13 @@ public class InterfaceCacheBuilder {
 			}
 			String line = null;
 			while ((line = reader.readLine()) != null) {
-				if (!appCacheEnabledReplaced && line.contains("$appCacheEnabled;")) {
-					line = line.replace("$appCacheEnabled;", "" + WebApp.useApplicationCache);
-					appCacheEnabledReplaced = true;
-				}
 				if (!manifestReplaced && line.contains("$manifest;")) {
 					line = line.replace("$manifest;", manifestReplacement);
 					manifestReplaced = true;
+				}
+				if (!appCacheEnabledReplaced && line.contains("$appCacheEnabled;")) {
+					line = line.replace("$appCacheEnabled;", "" + WebApp.useApplicationCache);
+					appCacheEnabledReplaced = true;
 				}
 				if (!tsReplaced && line.contains("$timestamp;")) {
 					line = line.replace("$timestamp;", "" + timestamp);
@@ -408,8 +412,9 @@ public class InterfaceCacheBuilder {
 					line = line.replace("$idleTimeout;", "" + WebApp.idleTimeout);
 					idleTimeoutReplaced = true;
 				}
-				if (line.contains("$interface;")) {
+				if (!interfaceReplaced && line.contains("$interface;")) {
 					line = line.replace("$interface;", interfaceName);
+					interfaceReplaced = true;
 				}
 				lines.add(line);
 			}
