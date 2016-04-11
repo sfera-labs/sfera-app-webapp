@@ -1,4 +1,4 @@
-/*! sfera-webapp - v0.0.2 - 2016-03-25 */
+/*! sfera-webapp - v0.0.2 - 2016-04-11 */
 
 (function(){
 
@@ -1044,10 +1044,14 @@ Sfera.Client = function(config) {
         Sfera.Debug.showHeader();
 
         // configure Sfera.Net
+        Sfera.Net.boot();
+        
         Sfera.Net.onReply.add(onReply);
         Sfera.Net.onEvent.add(onEvent);
         Sfera.Net.onUpdateDictionary.add(onUpdateDictionary);
         Sfera.Net.onUpdateIndex.add(onUpdateIndex);
+        Sfera.Net.onConnection.add(onConnection);
+
         Sfera.Net.connect();
 
         window.onresize = adjustLayout;
@@ -1088,8 +1092,16 @@ Sfera.Client = function(config) {
         // ???
     };
 
-
     // Net callbacks
+
+    function onConnection() {
+        if (self.isLogin) {
+            Sfera.Login.gotoInterface();
+        } else {
+            Sfera.Net.nodeSubscribe("*");
+        }
+    }
+
     function onReply(json) {
         if (json.result && json.result.uiSet) {
             for (var u in json.result.uiSet) {
@@ -1150,7 +1162,9 @@ Sfera.Client = function(config) {
         if (p) {
             p.setAttribute("visible", true);
             this.cPage = p;
-            Sfera.Browser.updateUrl(id, p.getAttribute("title"));
+            var i = interfaceC.getAttribute("title");
+            var t = p.getAttribute("title");
+            Sfera.Browser.updateUrl(id, (i?i:'Sfera') + (t?" - "+t:''));
         } else {
             console.log("page not found: " + id);
         }
@@ -1455,73 +1469,57 @@ Sfera.Client = function(config) {
 /**
  * Debug obj
  *
- * @class Sfera.Client
+ * @class Sfera.Debug
  * @constructor
  */
 Sfera.Debug = new(function() {
     var self = this;
-    var logE,
-        debugE;
 
-    // this needs to be done on Device?
-    //
-    document.addEventListener("keydown", keyDown, false);
-
-    this.visible = false;
+    this.verbose = false;
 
     this.boot = function() {
-        logE = document.getElementById("debugLog");
-        debugE = document.getElementById("debug");
-        show(false);
     };
 
-    this.toggle = function() {
-        this.visible = !this.visible;
-        show(this.visible);
-    };
+    function log(type, txt, msg, data) {
+        // head
+        var h = Sfera.Utils.getDate("hisu")+" - ";
 
-    function show(v) {
-        debugE.style.display = v ? "block" : "none";
-        if (v)
-            self.initPane();
-    };
+        if (Sfera.Device.chrome) {
+            var a = [""]; // arguments
 
-    function keyDown(e) {
-        var keyCode = e.keyCode;
-        if (keyCode == 13) {
-            // enter key
-        } else if (event.altKey && event.keyCode >= 65 && event.keyCode <= 90) { // if a letter pressed
-            switch (String.fromCharCode(event.keyCode)) {
-                case "D":
-                    self.toggle();
-                    break;
+            a[0] += "%c"+h;
+            a.push("color:#999");
+            a[0] += "%c"+txt;
+            switch (type) {
+                case "msg": a.push("color:#000"); break;
+                case "err": a.push("color:#e11"); break;
+                case "not": a.push("color:#e8e"); break;
             }
-        } else {
 
+            if (msg) {
+                a[0] += " %c"+msg;
+                a.push("color:#5a5");
+            }
+            if (this.verbose) {
+                a[0] += " %c"+data;
+                a.push("color:#55a");
+            }
+
+            console.log.apply(console, a);
+        } else {
+            console.log(h+txt,msg,data);
         }
-        return true;
     }
 
-    var logCounter = 0;
-    this.log = function(level, title, txt) {
-        if (!logE) return;
-        logCounter++;
-
-        var ds = Sfera.Utils.getDate();
-        title = ds + " - " + title;
-
-        var src =
-            '<label class="menu_label" for="debugEntry' + logCounter + '">' +
-            title +
-            '</label>' +
-            '<input type="checkbox" id="debugEntry' + logCounter + '" /><div class="arrow"></div>' +
-            '<ol><li><textarea style="width:500px; height:200px">' +
-            txt +
-            '</textarea></li></ol>';
-
-        var e = document.createElement("div");
-        e.innerHTML = src;
-        logE.appendChild(e);
+    this.log = function(txt, msg, data) {
+        log("msg",txt,msg,data);
+    };
+    this.logError = function(txt, msg, data) {
+        log("err",txt,msg,data);
+    };
+    this.logNotice = function(txt, msg, data) {
+        if (this.verbose)
+            log("not",txt,msg,data);
     };
 
     /**
@@ -1534,12 +1532,11 @@ Sfera.Debug = new(function() {
 
         var v = Sfera.VERSION;
 
-        var c = 2;
         var a = "hello";
 
         if (Sfera.Device.chrome) {
-            var args = [
-                '%c %c %c Sfera v' + v + ' | ' + a + '  %c %c ' + '%c http://sfera.cc %c\u2665%c\u2665%c\u2665',
+            var a = [
+                '%c %c %c Sfera v' + v + ' | ' + a + '  %c %c ' + '%c http://sfera.cc', // %c\u2665%c\u2665%c\u2665',
                 'background: #9854d8',
                 'background: #6c2ca7',
                 'color: #ffffff; background: #450f78;',
@@ -1548,15 +1545,18 @@ Sfera.Debug = new(function() {
                 'background: #ffffff'
             ];
 
+            /*
+            var c = 2;
             for (var i = 0; i < 3; i++) {
                 if (i < c) {
-                    args.push('color: #ff2424; background: #fff');
+                    a.push('color: #ff2424; background: #fff');
                 } else {
-                    args.push('color: #959595; background: #fff');
+                    a.push('color: #959595; background: #fff');
                 }
             }
+            */
 
-            console.log.apply(console, args);
+            console.log.apply(console, a);
         } else if (window.console) {
             console.log('Sfera v' + v + ' | ' + a + ' | http://sferalabs.cc');
         }
@@ -1566,287 +1566,6 @@ Sfera.Debug = new(function() {
 
 
 })();
-
-
-
-
-/////////////////////
-Sfera.Debug.initPane = function() {
-    /*
-     * @author https://twitter.com/blurspline / https://github.com/zz85
-     * See post @ http://www.lab4games.net/zz85/blog/2014/11/15/resizing-moving-snapping-windows-with-js-css/
-     */
-
-    // Minimum resizable area
-    var minWidth = 60;
-    var minHeight = 40;
-
-    // Thresholds
-    var FULLSCREEN_MARGINS = -10;
-    var MARGINS = 10;
-
-    // End of what's configurable.
-    var clicked = null;
-    var onRightEdge, onBottomEdge, onLeftEdge, onTopEdge;
-
-    var rightScreenEdge, bottomScreenEdge;
-
-    var preSnapped;
-
-    var b, x, y;
-
-    var redraw = false;
-
-    var pane = document.getElementById('debugPane');
-    var paneTitle = document.getElementById('debugTitle');
-    var ghostpane = document.getElementById('debugGhost');
-
-    paneTitle.style.width = pane.style.width;
-
-    function setBounds(element, x, y, w, h) {
-        element.style.left = x + 'px';
-        element.style.top = y + 'px';
-        element.style.width = w + 'px';
-        element.style.height = h + 'px';
-    }
-
-    function hintHide() {
-        setBounds(ghostpane, b.left, b.top, b.width, b.height);
-        ghostpane.style.opacity = 0;
-
-        // var b = ghostpane.getBoundingClientRect();
-        // ghostpane.style.top = b.top + b.height / 2;
-        // ghostpane.style.left = b.left + b.width / 2;
-        // ghostpane.style.width = 0;
-        // ghostpane.style.height = 0;
-    }
-
-
-    // Mouse events
-    pane.addEventListener('mousedown', onMouseDown);
-    document.addEventListener('mousemove', onMove);
-    document.addEventListener('mouseup', onUp);
-
-    // Touch events
-    pane.addEventListener('touchstart', onTouchDown);
-    document.addEventListener('touchmove', onTouchMove);
-    document.addEventListener('touchend', onTouchEnd);
-
-
-    function onTouchDown(e) {
-        onDown(e.touches[0]);
-        e.preventDefault();
-    }
-
-    function onTouchMove(e) {
-        onMove(e.touches[0]);
-    }
-
-    function onTouchEnd(e) {
-        if (e.touches.length == 0) onUp(e.changedTouches[0]);
-    }
-
-    function onMouseDown(e) {
-        onDown(e);
-        e.preventDefault();
-    }
-
-    function onDown(e) {
-        calc(e);
-
-        var isResizing = onRightEdge || onBottomEdge || onTopEdge || onLeftEdge;
-
-        clicked = {
-            x: x,
-            y: y,
-            cx: e.clientX,
-            cy: e.clientY,
-            w: b.width,
-            h: b.height,
-            isResizing: isResizing,
-            isMoving: !isResizing && canMove(),
-            onTopEdge: onTopEdge,
-            onLeftEdge: onLeftEdge,
-            onRightEdge: onRightEdge,
-            onBottomEdge: onBottomEdge
-        };
-    }
-
-    function canMove() {
-        return x > 0 && x < b.width && y > 0 && y < b.height && y < 30;
-    }
-
-    function calc(e) {
-        b = pane.getBoundingClientRect();
-        x = e.clientX - b.left;
-        y = e.clientY - b.top;
-
-        onTopEdge = y < MARGINS;
-        onLeftEdge = x < MARGINS;
-        onRightEdge = x >= b.width - MARGINS;
-        onBottomEdge = y >= b.height - MARGINS;
-
-        rightScreenEdge = window.innerWidth - MARGINS;
-        bottomScreenEdge = window.innerHeight - MARGINS;
-    }
-
-    var e;
-
-    function onMove(ee) {
-        calc(ee);
-
-        e = ee;
-
-        redraw = true;
-
-    }
-
-    function animate() {
-
-        requestAnimationFrame(animate);
-
-        if (!redraw) return;
-
-        redraw = false;
-
-        if (clicked && clicked.isResizing) {
-
-            if (clicked.onRightEdge) pane.style.width = Math.max(x, minWidth) + 'px';
-            if (clicked.onBottomEdge) pane.style.height = Math.max(y, minHeight) + 'px';
-
-            if (clicked.onLeftEdge) {
-                var currentWidth = Math.max(clicked.cx - e.clientX + clicked.w, minWidth);
-                if (currentWidth > minWidth) {
-                    pane.style.width = currentWidth + 'px';
-                    pane.style.left = e.clientX + 'px';
-                }
-            }
-
-            if (clicked.onTopEdge) {
-                var currentHeight = Math.max(clicked.cy - e.clientY + clicked.h, minHeight);
-                if (currentHeight > minHeight) {
-                    pane.style.height = currentHeight + 'px';
-                    pane.style.top = e.clientY + 'px';
-                }
-            }
-
-            hintHide();
-
-            paneTitle.style.width = pane.style.width;
-
-            return;
-        }
-
-        if (clicked && clicked.isMoving) {
-
-            if (b.top < FULLSCREEN_MARGINS || b.left < FULLSCREEN_MARGINS || b.right > window.innerWidth - FULLSCREEN_MARGINS || b.bottom > window.innerHeight - FULLSCREEN_MARGINS) {
-                // hintFull();
-                setBounds(ghostpane, 0, 0, window.innerWidth, window.innerHeight);
-                ghostpane.style.opacity = 0.2;
-            } else if (b.top < MARGINS) {
-                // hintTop();
-                setBounds(ghostpane, 0, 0, window.innerWidth, window.innerHeight / 2);
-                ghostpane.style.opacity = 0.2;
-            } else if (b.left < MARGINS) {
-                // hintLeft();
-                setBounds(ghostpane, 0, 0, window.innerWidth / 2, window.innerHeight);
-                ghostpane.style.opacity = 0.2;
-            } else if (b.right > rightScreenEdge) {
-                // hintRight();
-                setBounds(ghostpane, window.innerWidth / 2, 0, window.innerWidth / 2, window.innerHeight);
-                ghostpane.style.opacity = 0.2;
-            } else if (b.bottom > bottomScreenEdge) {
-                // hintBottom();
-                setBounds(ghostpane, 0, window.innerHeight / 2, window.innerWidth, window.innerWidth / 2);
-                ghostpane.style.opacity = 0.2;
-            } else {
-                hintHide();
-            }
-
-            if (preSnapped) {
-                setBounds(pane,
-                    e.clientX - preSnapped.width / 2,
-                    e.clientY - Math.min(clicked.y, preSnapped.height),
-                    preSnapped.width,
-                    preSnapped.height
-                );
-
-                paneTitle.style.width = pane.style.width;
-
-                return;
-            }
-
-            // moving
-            pane.style.top = (e.clientY - clicked.y) + 'px';
-            pane.style.left = (e.clientX - clicked.x) + 'px';
-
-            paneTitle.style.width = pane.style.width;
-
-            return;
-        }
-
-        // This code executes when mouse moves without clicking
-
-        // style cursor
-        if (onRightEdge && onBottomEdge || onLeftEdge && onTopEdge) {
-            pane.style.cursor = 'nwse-resize';
-        } else if (onRightEdge && onTopEdge || onBottomEdge && onLeftEdge) {
-            pane.style.cursor = 'nesw-resize';
-        } else if (onRightEdge || onLeftEdge) {
-            pane.style.cursor = 'ew-resize';
-        } else if (onBottomEdge || onTopEdge) {
-            pane.style.cursor = 'ns-resize';
-        } else if (canMove()) {
-            pane.style.cursor = 'move';
-        } else {
-            pane.style.cursor = 'default';
-        }
-    }
-
-    animate();
-
-    function onUp(e) {
-        calc(e);
-
-        if (clicked && clicked.isMoving) {
-            // Snap
-            var snapped = {
-                width: b.width,
-                height: b.height
-            };
-
-            if (b.top < FULLSCREEN_MARGINS || b.left < FULLSCREEN_MARGINS || b.right > window.innerWidth - FULLSCREEN_MARGINS || b.bottom > window.innerHeight - FULLSCREEN_MARGINS) {
-                // hintFull();
-                setBounds(pane, 0, 0, window.innerWidth, window.innerHeight);
-                preSnapped = snapped;
-            } else if (b.top < MARGINS) {
-                // hintTop();
-                setBounds(pane, 0, 0, window.innerWidth, window.innerHeight / 2);
-                preSnapped = snapped;
-            } else if (b.left < MARGINS) {
-                // hintLeft();
-                setBounds(pane, 0, 0, window.innerWidth / 2, window.innerHeight);
-                preSnapped = snapped;
-            } else if (b.right > rightScreenEdge) {
-                // hintRight();
-                setBounds(pane, window.innerWidth / 2, 0, window.innerWidth / 2, window.innerHeight);
-                preSnapped = snapped;
-            } else if (b.bottom > bottomScreenEdge) {
-                // hintBottom();
-                setBounds(pane, 0, window.innerHeight / 2, window.innerWidth, window.innerWidth / 2);
-                preSnapped = snapped;
-            } else {
-                preSnapped = null;
-            }
-
-            hintHide();
-
-        }
-
-        clicked = null;
-
-    }
-};
 
 
 /**
@@ -1891,6 +1610,8 @@ Sfera.Login = new(function() {
 
     var action = "";
 
+    var self = this;
+
     this.login = function (user, password) {
         if (!req)
             initReq();
@@ -1914,6 +1635,14 @@ Sfera.Login = new(function() {
         req.open("/api/logout", 100);
     };
 
+    this.gotoLogin = function() {
+        Sfera.Browser.setLocation("/"+Sfera.client.name+"/login");
+    }
+
+    this.gotoInterface = function() {
+        Sfera.Browser.setLocation("/"+Sfera.client.name);
+    }
+
     function initReq() {
         req = new Sfera.Net.Request();
 
@@ -1922,10 +1651,10 @@ Sfera.Login = new(function() {
 
             switch (action) {
             case "login":
-            	window.location.replace("/"+Sfera.client.name);
+            	self.gotoInterface();
             	break;
             case "logout":
-                window.location.replace("/"+Sfera.client.name+"/login");
+                self.gotoLogin();
                 break;
             }
         }
@@ -3003,8 +2732,8 @@ Sfera.Net = new (function() {
     // getURL function
     this.getURL = function(name) {
     	switch (name) {
-    	case "dictionary":  return Sfera.client.name+(Sfera.client.isLogin?"/login":"")+"/dictionary.xml";
-    	case "index" :      return Sfera.client.name+(Sfera.client.isLogin?"/login":"")+"/index.xml";
+    	case "dictionary":  return location.interface+(location.login?"/login":"")+"/dictionary.xml";
+    	case "index" :      return location.interface+(location.login?"/login":"")+"/index.xml";
 
         case "connect" :    return apiBaseUrl+"connect";
     	case "subscribe" :  return apiBaseUrl+"subscribe?cid="+(Sfera.Net.connectionId?Sfera.Net.connectionId:"");
@@ -3012,8 +2741,8 @@ Sfera.Net = new (function() {
         case "command":     return apiBaseUrl+"command";
         case "event":       return apiBaseUrl+"event";
 
-        case "websocket":   return (Sfera.Browser.getLocation().protocol == "https:" ? "wss:" : "ws:")+
-                                    "//"+Sfera.Browser.getLocation().host+"/"+apiBaseUrl+"websocket";
+        case "websocket":   return (location.protocol == "https:" ? "wss:" : "ws:")+
+                                    "//"+location.host+"/"+apiBaseUrl+"websocket";
         }
 	};
 
@@ -3036,6 +2765,19 @@ Sfera.Net = new (function() {
 
     var self = this;
 
+    var wsOptions = {
+        // the number of milliseconds to delay before attempting to reconnect.
+    	reconnectInterval: 50,
+    	// the maximum number of milliseconds to delay a reconnection attempt.
+    	maxReconnectInterval: 5000,
+    	// the rate of increase of the reconnect delay. Allows reconnect attempts to back off when problems persist.
+    	reconnectDecay: 1.25,
+    };
+    var wsConnectTimeout;
+    var wsTimeoutMs; // current timeout in ms
+
+    var location = {};
+
     this.connectionId = null;
     this.stateTs = -1;
     this.subscribed = false; // change this
@@ -3052,6 +2794,9 @@ Sfera.Net = new (function() {
     };
 
     // signals
+    this.onOpen = new Sfera.Signal();
+    this.onClose = new Sfera.Signal();
+    this.onConnection = new Sfera.Signal();
     this.onMessage = new Sfera.Signal();
     this.onEvent = new Sfera.Signal();
     this.onReply = new Sfera.Signal();
@@ -3059,29 +2804,27 @@ Sfera.Net = new (function() {
     this.onUpdateDictionary = new Sfera.Signal();
     this.onUpdateIndex = new Sfera.Signal();
 
+    this.boot = function () {
+        location = Sfera.Browser ? Sfera.Browser.getLocation() : {};
+    };
+
     function onWsOpen(event) {
-        // For reasons I can't determine, onopen gets called twice
-        // and the first time event.data is undefined.
-        // Leave a comment if you know the answer.
+        // onopen gets called twice and the first time event.data is undefined. TODO:check
         if (event.data === undefined)
             return;
 
-        Sfera.Debug.log(Sfera.Utils.getDate("hisu") + " - websocket: open, sending subscribe", event.data);
-
-        //self.wsSend("hello");
-        self.wsSend(self.getURL("subscribe")+"&nodes=*");
+        self.onOpen.dispatch(event.data);
+        Sfera.Debug.log("ws open", event.data);
     }
 
     function onWsMessage(event) {
-        console.log(Sfera.Utils.getDate("hisu") + " - received: " + event.data);
-
-        // ping
         if (event.data == "&") {
+            Sfera.Debug.logNotice("ws ping");
             resetConnCheckTimeout();
             self.wsSend("&");
         } else {
             self.onMessage.dispatch(event.data);
-            Sfera.Debug.log("websocket: onmessage", event.data);
+            Sfera.Debug.log("ws msg", event.data);
             json = JSON.parse(event.data);
 
             // {"type":"event","events":{"remote.myvalue":"5","system.plugins":"reload","remote.":"undefined","system.state":"ready"}}
@@ -3090,20 +2833,18 @@ Sfera.Net = new (function() {
                     self.onReply.dispatch(json);
                     break;
                 case "connection":
-                    self.connectionId = json.connectionId;
-                    pingInterval = parseInt(json.pingInterval);
-                    responseTimeout = parseInt(json.responseTimeout);
+                    if (!json.errors) {
+                        // connection valid: reset timeout
+                        clearTimeout(wsConnectTimeout);
+                        wsTimeoutMs = null;
 
-                    resetConnCheckTimeout();
-                    var tag = (new Date()).getTime(); // request id
-                    var r = {
-                        action: "subscribe",
-                        nodes: "*",
-                        tag: tag
-                    };
-
-                    self.wsSend(JSON.stringify(r));
-                    wsConnected = true;
+                        self.onConnection.dispatch(json);
+                        self.connectionId = json.connectionId;
+                        pingInterval = parseInt(json.pingInterval);
+                        responseTimeout = parseInt(json.responseTimeout);
+                        resetConnCheckTimeout();
+                        wsConnected = true;
+                    }
                     break;
                 case "console":
                     self.onConsole.dispatch(json);
@@ -3116,8 +2857,7 @@ Sfera.Net = new (function() {
     }
 
     function onWsError(event) {
-        console.log("here", event);
-        self.wsOpen (); // reopen
+        self.wsOpen (wsTimeoutMs); // reopen
     }
 
     function getWsCloseReason(code) {
@@ -3154,23 +2894,38 @@ Sfera.Net = new (function() {
     }
 
     function onWsClose(event) {
-        var reason;
-
         wsConnected = false;
-        self.wsOpen (); // reopen
 
-        reason = event.code + " - " + getWsCloseReason(event.code);
-        Sfera.Debug.log(Sfera.Utils.getDate("hisu") + " - web socket: connection closed", reason);
+        if (event.code != 1000) // normal closure
+            Sfera.Debug.logError("ws closed", event.reason, event.code);
+        else
+            Sfera.Debug.log("ws closed", event.reason, event.code);
+
+        //var reason = event.code + " - " + getWsCloseReason(event.code);
+
+        self.onClose.dispatch(event.code,event.reason);
+
+        if (event.reason == "Unauthorized" && Sfera.Login && !location.login) { //code 1008
+            Sfera.Login.gotoLogin();
+        } else {
+            self.wsOpen (wsTimeoutMs); // reopen
+        }
     }
 
     // public methods
-    this.wsOpen  = function() {
+    this.wsOpen  = function(wait) {
+        if (wait) {
+            clearTimeout(wsConnectTimeout);
+            wsConnectTimeout = setTimeout(this.wsOpen.bind(this), wait);
+            return;
+        }
+
         var url = self.getURL("websocket");
 
-        console.log(Sfera.Utils.getDate("hisu") + " - opening socket on " + url);
+        Sfera.Debug.log("ws opening on " + url);
         // ensure only one connection is open at a time
         if (webSocket !== undefined && webSocket.readyState !== WebSocket.CLOSED) {
-            Sfera.Debug.log(Sfera.Utils.getDate() + " - websocket: is already opened.");
+            Sfera.Debug.logError("websocket: is already opened");
             return;
         }
         // create a new instance of the websocket
@@ -3183,15 +2938,30 @@ Sfera.Net = new (function() {
         webSocket.onmessage = onWsMessage;
         webSocket.onclose = onWsClose;
         webSocket.onerror = onWsError;
+
+        // wsTimeout
+        updateWSTimeout();
     }
     this.wsSend = function(txt) {
-        console.log(Sfera.Utils.getDate("hisu") + " - sending:  " + txt);
+        if (txt == "&")
+            Sfera.Debug.logNotice("ws pong");
+        else
+            Sfera.Debug.log("ws send", txt);
         webSocket.send(txt);
     }
     this.wsClose = function() {
         webSocket.close();
     }
 
+    function updateWSTimeout() {
+        if (!wsTimeoutMs) {
+            wsTimeoutMs = wsOptions.reconnectInterval;
+        } else {
+            wsTimeoutMs *= wsOptions.reconnectDecay;
+            if (wsTimeoutMs > wsOptions.maxReconnectInterval)
+                wsTimeoutMs = wsOptions.maxReconnectInterval;
+        }
+    }
 
     function resetConnCheckTimeout() {
         clearTimeout(connCheckTimeoutId);
@@ -3247,8 +3017,7 @@ Sfera.Net = new (function() {
     };
 
     function onReqLoaded() {
-        console.log(cSync + " loaded");
-        Sfera.Debug.log("xmlreq: loaded", req.getResponseText());
+        Sfera.Debug.log(cSync + " loaded", "", req.getResponseText());
 
         if (self.localTs[cSync] != null)
             self.localTs[cSync] = getTimestamp();
@@ -3257,11 +3026,9 @@ Sfera.Net = new (function() {
 
         switch (cSync) {
             case "dictionary":
-                console.log("loaded dictionary");
                 self.onUpdateDictionary.dispatch(req.getResponseXML())
                 break;
             case "index":
-                console.log("loaded index");
                 self.onUpdateIndex.dispatch(req.getResponseXML());
                 break;
 
@@ -3283,10 +3050,21 @@ Sfera.Net = new (function() {
     }
 
     function onReqError() {
-        console.log("error");
+        Sfera.Debug.logError("request error");
         //var e = document.getElementById("output");
         //e.innerHTML += "<br><br>Error.<br><br>";
     }
+
+    this.nodeSubscribe = function (nodes) {
+        var tag = (new Date()).getTime(); // request id
+        var r = {
+            action: "subscribe",
+            nodes: nodes,
+            tag: tag
+        };
+
+        this.wsSend(JSON.stringify(r));
+    };
 
     /**
      * Returns the hostname given by the browser.
@@ -3649,7 +3427,11 @@ Sfera.Browser = new (function() {
     this.reload = function() {
         window.location.reload();
     };
-    
+
+    this.setLocation = function(url) {
+        window.location.replace(url);
+    };
+
     // prevent default event
 	this.preventDefault = function (evt) {
 		if (evt.returnValue)

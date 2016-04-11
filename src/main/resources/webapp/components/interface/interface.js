@@ -15,6 +15,9 @@
      presets:["Visibility","Size"],
 
      attributes: {
+         title: {
+             type:"string",
+         },
 
          skin: {
             default:"default",

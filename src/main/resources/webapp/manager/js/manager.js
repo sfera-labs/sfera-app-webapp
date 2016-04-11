@@ -1,4 +1,4 @@
-/*! sfera-webapp - Manager - v0.0.2 - 2016-03-25 */
+/*! sfera-webapp - Manager - v0.0.2 - 2016-04-11 */
 
 var files;
 var fileManager;
@@ -92,20 +92,21 @@ Sfera.Manager = function(config) {
 
        this.showAppsPopup();
 
+       Sfera.Net.boot();
        Sfera.Net.wsOpen();
        Sfera.Net.onMessage.add(onWSMessage);
     }
 
-    function onWSMessage(json) {
-        json = JSON.parse(json);
+    function onWSMessage(jsonStr) {
+        json = JSON.parse(jsonStr);
         switch (json.type) {
             case "console":
                 systemConsole.output(json.output);
                 break;
             case "event":
                 // manager.showNotice("hsyco.jar updated");
-                if (json.file)
-                    fileManager.onWSMessage(JSON.parse(json));
+                if (json.files)
+                    fileManager.onWSMessage(json);
                 break;
         }
     }
@@ -1178,36 +1179,6 @@ Sfera.Manager.Files = function () {
 		return n.replace(/\*/g,"%2A"); //.replace(/\./g,"%2E");
 	} // encodeFileName()
 
-	// save a project
-	this.saveProject = function (name, content) {
-		var file = this.encodeFileName("www/"+name+"/index.hsm");
-		var ts = "."+(new Date()).getTime();
-		var url = "/x/files?u"+ts;
-		url += "*"+file+"*"+encodeURI(content).replace(/#/g,"%23").replace(/\+/g,"%2B");
-		this.resType = "saveproj";
-		this.resID = name;
-		req.open(url,10); // default 10 msec timeout
-	} // saveProject()
-
-	// duplicate a project
-	this.duplicateProject = function (name, newName) {
-		var ts = "."+(new Date()).getTime();
-		url = "/x/files?dup"+ts+"*"+this.encodeFileName("www/"+name)+"*"+this.encodeFileName("www/"+newName);
-		this.resType = "dupproj";
-		this.resID = name;
-		req.open(url,10); // default 10 msec timeout
-	} // saveProject()
-
-	// save editor file
-	this.saveEditorFile = function (file, content) {
-		var ts = "."+(new Date()).getTime();
-		var url = "/api/files?u"+ts;
-		url += "*"+this.encodeFileName(file)+"*"+encodeURI(content).replace(/#/g,"%23").replace(/\+/g,"%2B");
-		this.resType = "saveeditor";
-		this.resID = file;
-		req.open(url,10); // default 10 msec timeout
-	} // save()
-
 	// load a file. type, value, wait msec?
 	this.load = function (type, value, msec) {
 		if (!msec) msec = 10; // default 10 msec timeout
@@ -1238,37 +1209,28 @@ Sfera.Manager.Files = function () {
 			break;
 		case "deletefile":
 			url = "/api/files/rm?";
-			url += "path="+this.encodeFileName(value[0]); // first one
+			for (var i=0; i<value.length; i++)
+				url += (i?"&":"")+"path="+this.encodeFileName(value[i]);
 			break;
 		case "renamefile":
 		case "movefiles":
 		case "movefilesoverwrite":
 			url = "/api/files/mv?";
-			url += "source="+this.encodeFileName(value[0]);
-			url += "&target="+this.encodeFileName(value[1]);
+			for (var i=0; i<value.length-1; i++)
+				url += "source="+this.encodeFileName(value[i]);
+			url += "&target="+this.encodeFileName(value.last());
 			if (type == "movefilesoverwrite")
 				url += "&force=true";
-			break;
-			/*
-			url = "/x/files?mvo"+ts;
-			for (var i=0; i<value.length; i++)
-				url += "*"+this.encodeFileName(value[i]);
-			*/
 			break;
 		case "duplicatefile":
 		case "copyfiles":
 		case "copyfilesoverwrite":
 			url = "/api/files/cp?";
-			url += "source="+this.encodeFileName(value[0]);
-			url += "&target="+this.encodeFileName(value[1]);
+			for (var i=0; i<value.length-1; i++)
+				url += "source="+this.encodeFileName(value[i]);
+			url += "&target="+this.encodeFileName(value.last());
 			if (type == "copyfilesoverwrite")
 				url += "&force=true";
-			break;
-			/*
-			url = "/x/files?cpo"+ts;
-			for (var i=0; i<value.length; i++)
-				url += "*"+this.encodeFileName(value[i]);
-			*/
 			break;
 		case "gettextpreview":
 			url = "/api/files/read?path="+this.encodeFileName(value);
@@ -3172,7 +3134,6 @@ Sfera.Manager.FileManager = function() {
             tag: (new Date()).getTime() // request id
         };
         Sfera.Net.wsSend(JSON.stringify(r));
-		//timestampChecker.start(); // restart, we stop it on browse TODO
 	} // onList()
 
 	// key down

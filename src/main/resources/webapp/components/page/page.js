@@ -16,7 +16,7 @@
 
      attributes: {
          title: {
-             type:"string"
+             type:"string",
          },
 
          visible: {

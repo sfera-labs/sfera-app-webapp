@@ -32,7 +32,8 @@ Sfera.Components.create("Button", {
                     //label.setAttribute("visible",false);
                 }
                 //this.component.element.innerHTML = "<div class='inner'>" + this.value + "</div>";
-            }
+            },
+
         },
 
         icon: {
@@ -49,7 +50,8 @@ Sfera.Components.create("Button", {
                     co.elements.icon.style.display = "none";
                     //icon.setAttribute("visible",false);
                 }
-            }
+            },
+
         },
 
         fontSize: {
@@ -57,19 +59,20 @@ Sfera.Components.create("Button", {
                 var co = this.component;
                 var label = co.subComponents.label;
                 label.setAttribute("fontSize", this.value);
-            }
+            },
+
         },
 
         onClick: {
-            type: "js"
+            type: "js",
         },
 
         onDown: {
-            type: "js"
+            type: "js",
         },
 
         onMove: {
-            type:"js"
+            type:"js",
         }
 
     },

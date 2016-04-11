@@ -10,13 +10,13 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 
-    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/$interface;/images/skin/apple-touch-icon-144x144.png" />
-    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="/$interface;/images/skin/apple-touch-icon-152x152.png" />
-    <link rel="icon" type="image/png" href="/$interface;/images/skin/favicon-32x32.png" sizes="32x32" />
-    <link rel="icon" type="image/png" href="/$interface;/images/skin/favicon-16x16.png" sizes="16x16" />
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="images/skin/apple-touch-icon-144x144.png" />
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="images/skin/apple-touch-icon-152x152.png" />
+    <link rel="icon" type="image/png" href="images/skin/favicon-32x32.png" sizes="32x32" />
+    <link rel="icon" type="image/png" href="images/skin/favicon-16x16.png" sizes="16x16" />
     <meta name="application-name" content="Sfera"/>
     <meta name="msapplication-TileColor" content="#FFFFFF" />
-    <meta name="msapplication-TileImage" content="/$interface;/images/skin/mstile-144x144.png" />
+    <meta name="msapplication-TileImage" content="images/skin/mstile-144x144.png" />
     <title>Sfera</title>
     <script type="text/javascript" src="code.js"></script>
     <link rel="stylesheet" href="style.css">
@@ -27,6 +27,7 @@
         var client;
         var config = {
             timestamp: $timestamp;,
+            idleTimeout:$idleTimeout;,
             appCacheEnabled: $appCacheEnabled;,
             interface: "$interface;"
         };
@@ -39,27 +40,6 @@
     <div id="bg"></div>
     <div id="sfera"></div>
 
-    <div id="debug">
-        <div id="debugPane">
-            <div id="debugTitle">Debug</div>
-            <div id="debugContent">
-                <div id="debugSend">
-                    <div>
-                        <input type="text" id="messageinput" />
-                    </div>
-                    <div>
-                        <button type="button" onclick="Sfera.client.net.wsOpen();">Open</button>
-                        <button type="button" onclick="Sfera.client.net.wsSend(document.getElementById('messageinput').value);">Send</button>
-                        <button type="button" onclick="Sfera.client.net.wsClose();">Close</button>
-                    </div>
-                </div>
-                <div id="debugLog">
-
-                </div>
-            </div>
-        </div>
-        <div id="debugGhost"></div>
-    </div>
 </body>
 
 </html>

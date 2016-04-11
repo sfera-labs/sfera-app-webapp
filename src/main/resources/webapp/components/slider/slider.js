@@ -182,14 +182,16 @@ function down() {
     },
     onDown: function(event) {
         this.isDown = true;
+        this._onUp = this.onUp.bind(this);
+        this._onMove = this.onMove.bind(this);
 
         // add up, move events
         if (Sfera.Device.touch) {
-            window.addEvent("touchend", document.body, this.onUp, this);
-            window.addEvent("touchmove", document.body, this.onMove, this);
+            window.addEvent("touchend", document.body, this._onUp);
+            window.addEvent("touchmove", document.body, this._onMove);
         } else {
-            window.addEvent("mouseup", document.body, this.onUp, this);
-            window.addEvent("mousemove", document.body, this.onMove, this);
+            window.addEvent("mouseup", document.body, this._onUp);
+            window.addEvent("mousemove", document.body, this._onMove);
         }
 
         // find absolute bar coords, so we don't have to get them again on mouse move
@@ -202,11 +204,11 @@ function down() {
 
         // add up, move events
 		if (Sfera.Device.touch) {
-			window.removeEvent("touchend", document.body, this.onUp, this);
-			window.removeEvent("touchmove", document.body, this.onMove, this);
+			window.removeEvent("touchend", document.body, this._onUp);
+			window.removeEvent("touchmove", document.body, this._onMove);
 		} else {
-			window.removeEvent("mouseup", document.body, this.onUp, this);
-			window.removeEvent("mousemove", document.body, this.onMove, this);
+			window.removeEvent("mouseup", document.body, this._onUp);
+			window.removeEvent("mousemove", document.body, this._onMove);
 		}
     },
 
