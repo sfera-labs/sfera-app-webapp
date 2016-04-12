@@ -1,4 +1,4 @@
-<!-- sfera-webapp - Manager - v0.0.2 - 2016-04-11 -->
+<!-- sfera-webapp - Manager - v0.0.2 - 2016-04-12 -->
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" $manifest;>
@@ -327,10 +327,6 @@
 <div id="popupArea">
     <div id="toolbarPopups">
         <div id="fm_editPopup" class="toolbarPopup">
-            <div class="mButton" data-onclick="fileManager.showLogPreview()">
-                <img src="/manager/images/bticonsource.png">
-                <span>log preview</span>
-            </div>
             <div id="downloadBackupButton" class="mButton" data-onclick="fileManager.downloadBackup()">
                 <img src="/manager/images/bticondownload.png">
                 <span>download root backup</span>
@@ -339,10 +335,6 @@
                 <img class="icon" src="/manager/images/bticoncheck.png">
                 <img class="icon" style="display:none" src="/manager/images/bticonchecko.png">
                 <span>select</span>
-            </div>
-            <div id="toggleCommentButton" class="mButton" data-onclick="fileManager.toggleComment()">
-                <img src="/manager/images/bticonsource.png">
-                <span>toggle comment</span>
             </div>
         </div>
 
@@ -364,7 +356,7 @@
 
         <!-- app switch -->
 
-        <div id="popup-appswitch" class="popupContent" style="width:370px">
+        <div id="popup-appswitch" class="popupContent" style="width:250px;370px">
             <div class="header">
                 <span>Manager Applications</span>
                 <div name="closeBt" class="popupBt mToolButton" data-onclick="manager.closePopup()">
@@ -424,7 +416,7 @@
                         <div>Console</div>
                     </div>
 
-                    <div name="lvAppBt" class="mAppButton" data-onclick="manager.switchApp('lv')">
+                    <!--div name="lvAppBt" class="mAppButton" data-onclick="manager.switchApp('lv')">
                         <div class="iconContainer">
                             <img class="icon" src="/manager/images/appiconlv.png">
                             <img class="iconDown" src="/manager/images/appiconlvd.png">
@@ -432,7 +424,7 @@
                         </div>
                         <div>Log Viewer</div>
                     </div>
-                    <!--div name="smAppBt" class="mAppButton" data-onclick="manager.switchApp('sm')">
+                    <div name="smAppBt" class="mAppButton" data-onclick="manager.switchApp('sm')">
                                     <div class="iconContainer">
                                         <img class="icon" src="/manager/images/appiconsm.png">
                                         <img class="iconDown" src="/manager/images/appiconsmd.png">

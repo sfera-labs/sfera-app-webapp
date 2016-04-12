@@ -1,4 +1,4 @@
-/*! sfera-webapp - v0.0.2 - 2016-04-11 */
+/*! sfera-webapp - v0.0.2 - 2016-04-12 */
 
 (function(){
 
@@ -3181,8 +3181,14 @@ Sfera.Net.Request = function (options) {
 		if (window.XMLHttpRequest) {
 			req = new XMLHttpRequest();
 			req.onreadystatechange = onReadyStateChange;
-			// branch for IE/Windows ActiveX version
-		} else if (window.ActiveXObject) {
+
+			// progress
+			if (req.upload) {
+				req.upload.addEventListener('progress', onProgress);
+			}
+		}
+		// branch for IE/Windows ActiveX version
+		else if (window.ActiveXObject) {
 			req = new ActiveXObject("Microsoft.XMLHTTP");
 			if (req) {
 				req.onreadystatechange = onReadyStateChange;
@@ -3219,6 +3225,7 @@ Sfera.Net.Request = function (options) {
 			return;
 		}
 		if (!req) self.init();
+
 		status = 1; // loading
 		if (self.onRequest)
 			self.onRequest();
@@ -3328,6 +3335,12 @@ Sfera.Net.Request = function (options) {
 		}
 
 		if (self.onLoaded) self.onLoaded(self);
+	}
+
+	// called when uploading
+	function onProgress(e) {
+		if (self.onProgress)
+			self.onProgress(e);
 	}
 
 	// on error. called for every error (but not on stop > abort)

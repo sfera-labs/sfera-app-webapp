@@ -1,4 +1,4 @@
-/*! sfera-webapp - Manager - v0.0.2 - 2016-04-11 */
+/*! sfera-webapp - Manager - v0.0.2 - 2016-04-12 */
 
 var files;
 var fileManager;
@@ -1597,7 +1597,6 @@ Sfera.Manager.FileManager = function() {
 
 	this.uploading = false; // upload panel will be visible
 	this.uploadProgressVisible = false; // will be visible for a while after uploading is done
-	this.uploadPath = ""; // path where we're uploading, so we refresh it when done
 	var uploadData = {}; // upload data, filename, size
 	this.uploadDoneTimeout = null; // timeout to close the panel when done
 	var formDataSupport = (!!window.FormData); // support for xmlhttpreq upload method
@@ -1703,12 +1702,10 @@ Sfera.Manager.FileManager = function() {
 		uploadProgressReq.onNoAccess = function () {fileManager.onUploadProgressError(); manager.showErrorPopup("No access");};
 		uploadProgressReq.onError = self.onUploadProgressError; // other errors, connection..
 
-        /*
-		if (browser.iDevice) {
+		if (Sfera.Device.iOS) {
 			dirsUploadBtE.style.display = "none";
 			dirsPUploadBtE.style.display = "none";
 		}
-        */
 
 		selMode = "meh"; // force update
 		self.toggleSelMode(""); // off by default
@@ -1955,23 +1952,33 @@ Sfera.Manager.FileManager = function() {
 			dirsCE.innerHTML = '<div class="fileItem mLineButton">Path not found.</div>';
 		} else {
 			// add uploading file?
-			var ufp = -1; // uploaded file position
-			if (this.open && this.uploading && uploadData.name) {
-				if (this.currentPath == this.uploadPath) {
-					for (var i=0; i<data.sub.length; i++) {
-						if (uploadData.name == data.sub[i].name) {
-							ufp = i;
-							data.sub[i].name[i][2]=''; // TODO: what????
-							data.sub[i][3]='-';
-							break;
-						} else if (uploadData.name.toLowerCase()<data.sub[i].name.toLowerCase()) {
-							ufp = i;
-							data.sub.splice(i,0,[uploadData.name,'f','','-']);
-							break;
-						}
-					}
+			if (this.open && this.uploading && uploadData.files && uploadData.files.length) {
+				if (this.currentPath == uploadData.path) {
+                    var file, n, i, f, fData;
+                    for (f=0; f<uploadData.files.length; f++) {
+                        ufp = -1;
+                        file = uploadData.files[f];
+                        n = file.name;
+                        fData = {name:file.name, size:file.size, lastModified:"-", upload:true};
+    					for (i=0; i<data.sub.length; i++) {
+    						if (n == data.sub[i].name) {
+                                ufp = i;
+    							data.sub[i] = fData;
+    							break;
+    						} else if (n.toLowerCase()<data.sub[i].name.toLowerCase()) {
+                                ufp = i;
+                                data.sub.splice(i,0,fData);
+    							break;
+    						}
+    					}
+                        if (ufp == -1) {
+                            ufp = 0;
+                            data.sub.push(fData);
+                        }
+
+                        file.index = ufp; // used on selectItem
+                    }
 				}
-				uploadData.index = ufp; // used on selectItem
 			}
 
 			// filter, remove unwanted files
@@ -2000,7 +2007,7 @@ Sfera.Manager.FileManager = function() {
 					h  = '<div class="icon"><img src="/manager/images/'+icon+'.png" width="16" height="16" onmousedown="return false;"></div>';
 					h += '<div class="name"></div>'; // set on adjustFileNames
 					if (!this.popupMode)
-						h += '<div class="modified">'+manager.formatDate(data.sub[i].lastModified)+'</div>';
+						h += '<div class="modified">'+(data.sub[i].upload?"-":manager.formatDate(data.sub[i].lastModified))+'</div>';
 					h += '<div class="size">'+manager.formatFS(data.sub[i].size)+'</div>';
 				} else {
 					h  = '<div class="icon"><img src="/manager/images/bticonfolder.png" width="16" height="16" onmousedown="return false;"></div>';
@@ -2013,7 +2020,7 @@ Sfera.Manager.FileManager = function() {
 				e = document.createElement('div');
 				e.innerHTML = h;
 
-				e.className = "fileItem mLineButton"+(ufp==i?" disabled":"")+(o.selectedItems.indexOf(i)!=-1?" selected":"");
+				e.className = "fileItem mLineButton"+(data.sub[i].upload?" disabled":"")+(o.selectedItems.indexOf(i)!=-1?" selected":"");
 
                 this.itemButtons.push(new Sfera.UI.Button(e,{onclick:"fileManager.selectItem("+i+")"}));
 
@@ -2735,18 +2742,12 @@ Sfera.Manager.FileManager = function() {
 			return;
 		}
 
-        /*
 		self.showUploadProgress(true);
 		self.uploading = true;
 		if (self.uploadDoneTimeout) {
 			clearTimeout(self.uploadDoneTimeout);
 			self.uploadDoneTimeout = null;
 		}
-		var r = "/x/files?cu*"+uploadData.id;
-		if (!uploadData.size)
-			r += "*s";
-		uploadProgressReq.open(r);
-        */
 
 		// popups
 		if (manager.cPopup && manager.cPopup.id == "uploadoverwrite")
@@ -2764,14 +2765,17 @@ Sfera.Manager.FileManager = function() {
 
         uploadReq = new Sfera.Net.Request({method:"POST"});
         uploadReq.onError = function (errCode) {
+            self.onUploadProgressError();
+
             if (errCode == uploadReq.ERROR_FORBIDDEN) {
                 var json = this.getResponseJSON();
                 manager.showErrorPopup("Error uploading: "+json.error);
             }
-        }
+        };
         uploadReq.onLoaded = function () {
             manager.showNotice("upload finished");
-        }
+        };
+        uploadReq.onProgress = onUploadProgressUpdate;
 
         uploadReq.addData("path",uploadData.path);
         if (force)
@@ -2817,12 +2821,11 @@ Sfera.Manager.FileManager = function() {
 	} // showUploadProgress()
 
 	// upload progress update
-	function onUploadProgressUpdate() {
-		var a = this.getResponseText().split(" ");
+	function onUploadProgressUpdate(e) {
 		// do it just the first time
-		if (self.uploading && a.length>1) { // not canceled and size
-			uploadData.size = parseInt(a[1]);
-			if (self.open && self.currentPath == self.uploadPath) {
+		if (self.uploading && !uploadData.started) { // not canceled and size
+            uploadData.started = true;
+			if (self.open && self.currentPath == uploadData.path) {
 				if (self.popupMode) {
 					self.popupMode = false;
 					self.showFolder();
@@ -2832,42 +2835,17 @@ Sfera.Manager.FileManager = function() {
 				}
 			}
 		}
-		var v = a[0];
 
-		// error?
-		if (v == "error") {
-			// if progress has been set at least once, it's a valid error
-			if (uploadData.progress != null) {
-				self.onUploadProgressError();
-				return;
-			}
-			// if it's error before a valid value, maybe the server hasn't started the upload yet
-			if (!uploadData.errorCount)
-				uploadData.errorCount = 1;
-			else
-				uploadData.errorCount++;
-			// 10 errors, upload start didn't work
-			if (uploadData.errorCount == 10) {
-				self.onUploadProgressError();
-				return;
-			}
-		} else {
-			uploadData.progress = v;
-		}
+        uploadData.progress = e.loaded;
+		var v = (e.loaded/e.total) * 100;
 
-		if (v == "null") v = "0";
 		var fs = uploadData.size; // total size
-		if (v!="100") {
-			if (!self.popupMode && self.currentPath == self.uploadPath &&
+		if (v != 100) {
+			if (!self.popupMode && self.currentPath == uploadData.path &&
 				uploadData.index!=-1 &&
 				dirsContentE.childNodes[uploadData.index]) {
 				dirsContentE.childNodes[uploadData.index].childNodes[3].innerHTML =
 					fs?manager.formatFS(Math.round(fs*v/100)):"";
-			}
-			if (self.uploading) { // not canceled?
-				var r = "/x/files?cu*"+uploadData.id;
-				if (!fs) r+="*s"; // check if received size, otherwise ask again
-				uploadProgressReq.open(r,250);
 			}
 		} else if (self.uploading) { // not canceled?
 			self.uploading = false;
@@ -2875,36 +2853,35 @@ Sfera.Manager.FileManager = function() {
 			manager.showNotice("upload finished");
 			self.uploadDoneTimeout = setTimeout(self.showUploadProgress,5000);
 
-			if (!self.popupMode && self.open && self.currentPath == self.uploadPath) {
-				self.browseTo(self.uploadPath);
+			if (!self.popupMode && self.open && self.currentPath == uploadData.path) {
+				self.browseTo(uploadData.path);
 			} else if (self.popupMode) {
-				selectOnRefresh = {path:self.uploadPath, name:uploadData.name}; // so we auto select when refreshing
-				self.browseTo(self.uploadPath); // popup mode, so we must be in the same dir
+				selectOnRefresh = {path:uploadData.path, name:uploadData.name}; // so we auto select when refreshing
+				self.browseTo(uploadData.path); // popup mode, so we must be in the same dir
 				// we update fileManager too
-				if (self.currentPath == self.uploadPath && self.open) {
+				if (self.currentPath == uploadData.path && self.open) {
 					self.popupMode = false;
 					self.browseTo(self.currentPath);
 					self.popupMode = true; // restore
 				}
 			}
 
-			self.uploadPath = "";
 			manager.closePopup();
 		}
 		// show progress
-		if (v!="0" && v!="error") {
+		if (v != 0) {
 			uploadBarE.style.display = "";
 			uploadPBarE.style.display = "";
 			uploadBarE.style.width = Math.round(238*v/100)+"px";
 			uploadPBarE.style.width = Math.round(174*v/100)+"px";
 		}
 		uploadProgressE.innerHTML =
-		uploadPProgressE.innerHTML = (v!="error"?v+"%":"");
+		uploadPProgressE.innerHTML = (Math.round(v*100)/100)+"%"; //(v!="error"?v+"%":"");
 		var cs = (v!="error")?Math.round(fs*v/100):0; // current size of uploaded data
 		uploadBytesE.innerHTML =
 		uploadPBytesE.innerHTML = fs?(manager.formatFS(cs)+"/"+ manager.formatFS(fs)):"";
 		// show file name if multiple
-		if (v!="0" && uploadData.files.length>1) {
+		if (v != 0 && uploadData.files.length>1) {
 			// find out which one
 			var t = 0; // current size
 			for (var i=0; i<uploadData.files.length; i++) {
@@ -2934,19 +2911,18 @@ Sfera.Manager.FileManager = function() {
 		manager.showNotice("error uploading "+fs);
 		self.uploadDoneTimeout = setTimeout(self.showUploadProgress,5000);
 
-		if (!self.popupMode && self.open && self.currentPath == self.uploadPath) {
-			self.browseTo(self.uploadPath);
+		if (!self.popupMode && self.open && self.currentPath == uploadData.path) {
+			self.browseTo(uploadData.path);
 		} else if (self.popupMode) {
-			self.browseTo(self.uploadPath); // popup mode, so we must be in the same dir
+			self.browseTo(uploadData.path); // popup mode, so we must be in the same dir
 			// we update fileManager too
-			if (self.currentPath == self.uploadPath && self.open) {
+			if (self.currentPath == uploadData.path && self.open) {
 				self.popupMode = false;
 				self.browseTo(self.currentPath);
 				self.popupMode = true; // restore
 			}
 		}
 
-		self.uploadPath = "";
 		self.uploading = false;
 		manager.closePopup();
 	} // onUploadProgressError()
@@ -2955,12 +2931,11 @@ Sfera.Manager.FileManager = function() {
 	this.cancelUpload = function () {
 		//uploadFileFrameE.src = "about:blank";
 		this.uploading = false;
-		this.uploadPath = "";
-		uploadData = {};
 		uploadProgressReq.stop();
 		this.showUploadProgress(false);
-		if (!this.popupMode && this.currentPath == this.uploadPath)
+		if (!this.popupMode && this.currentPath == uploadData.path)
 			this.browseTo(this.currentPath);
+        uploadData = {};
 		manager.showNotice("upload canceled");
 		manager.closePopup();
 	}
