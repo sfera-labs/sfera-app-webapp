@@ -98,8 +98,12 @@ public abstract class Cache {
 	 */
 	private synchronized static void buildManagerCache() {
 		try {
-			FilesUtil.delete(MANAGER_CACHE_ROOT);
+			try {
+				FilesUtil.delete(MANAGER_CACHE_ROOT);
+			} catch (NoSuchFileException e) {
+			}
 			logger.debug("Building cache for manager...");
+			Files.createDirectories(MANAGER_CACHE_ROOT);
 			ResourcesUtil.copyRecursive(MANAGER_PATH, MANAGER_CACHE_ROOT, true);
 			logger.info("WebApp manager built");
 		} catch (IOException e) {
@@ -115,6 +119,10 @@ public abstract class Cache {
 			Set<String> oldInterfaces = interfaces;
 			interfaces = new HashSet<String>();
 
+			try {
+				FilesUtil.delete(INTERFACES_CACHE_ROOT);
+			} catch (NoSuchFileException e) {
+			}
 			Files.createDirectories(INTERFACES_CACHE_ROOT);
 			long timestamp = System.currentTimeMillis();
 			try {

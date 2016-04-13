@@ -48,7 +48,7 @@ public abstract class ResourcesUtil {
 	/**
 	 * 
 	 */
-	public static void lookForPluginsOverwritingWebapp() {
+	static void lookForPluginsOverwritingWebapp() {
 		synchronized (pluginsLock) {
 			pluginsOverwritingWebapp = new TreeSet<Path>(PLUGINS_NAME_COMPARATOR);
 			String webAppPluginId = WebApp.class.getPackage().getName();
@@ -81,7 +81,7 @@ public abstract class ResourcesUtil {
 	 * @throws NoSuchFileException
 	 * @throws IOException
 	 */
-	public static Path getResource(Path path) throws NoSuchFileException, IOException {
+	static Path getResource(Path path) throws NoSuchFileException, IOException {
 		if (Files.exists(path)) {
 			return path;
 		}
@@ -183,7 +183,7 @@ public abstract class ResourcesUtil {
 	 * @throws NoSuchFileException
 	 * @throws IOException
 	 */
-	public static Set<String> listDirectoriesNamesIn(Path dir, boolean includeJarResources)
+	static Set<String> listDirectoriesNamesIn(Path dir, boolean includeJarResources)
 			throws NoSuchFileException, IOException {
 		List<Path> paths = getResources(dir, includeJarResources);
 		Set<String> list = new HashSet<String>();
@@ -217,7 +217,7 @@ public abstract class ResourcesUtil {
 	 * @throws NoSuchFileException
 	 * @throws IOException
 	 */
-	public static Set<String> listRegularFilesNamesIn(Path dir, boolean includeJarResources)
+	static Set<String> listRegularFilesNamesIn(Path dir, boolean includeJarResources)
 			throws NoSuchFileException, IOException {
 		List<Path> paths = getResources(dir, includeJarResources);
 		Set<String> list = new HashSet<String>();
@@ -246,7 +246,7 @@ public abstract class ResourcesUtil {
 	 * @return
 	 * @throws IOException
 	 */
-	public static Set<Path> copyRecursive(Path source, Path target, boolean includeJarResources)
+	static Set<Path> copyRecursive(Path source, Path target, boolean includeJarResources)
 			throws IOException {
 		Set<Path> list = copyRecursive(source, target);
 		if (includeJarResources) {
@@ -297,7 +297,7 @@ public abstract class ResourcesUtil {
 	/**
 	 * 
 	 */
-	public static void release() {
+	static void release() {
 		synchronized (OPEN_RESOURCES) {
 			for (Iterator<Closeable> it = OPEN_RESOURCES.iterator(); it.hasNext();) {
 				try {
