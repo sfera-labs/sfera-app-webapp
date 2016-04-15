@@ -51,7 +51,6 @@ Sfera.Components.create("Button", {
                     //icon.setAttribute("visible",false);
                 }
             },
-
         },
 
         fontSize: {
@@ -60,7 +59,6 @@ Sfera.Components.create("Button", {
                 var label = co.subComponents.label;
                 label.setAttribute("fontSize", this.value);
             },
-
         },
 
         onClick: {

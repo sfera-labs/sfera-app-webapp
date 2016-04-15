@@ -5,20 +5,21 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta http-equiv="cache-control" content="no-cache">
 
-    <meta id="viewport" name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width, user-scalable=no, minimal-ui">
+    <meta id="viewport" name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width, user-scalable=no, shrink-to-fit=no, minimal-ui">
     <meta name="format-detection" content="telephone=no">
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 
-    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/new/login/images/skin/apple-touch-icon-144x144.png" />
-    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="/new/login/images/skin/apple-touch-icon-152x152.png" />
-    <link rel="icon" type="image/png" href="/new/login/images/skin/favicon-32x32.png" sizes="32x32" />
-    <link rel="icon" type="image/png" href="/new/login/images/skin/favicon-16x16.png" sizes="16x16" />
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="images/skin/apple-touch-icon-144x144.png" />
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="images/skin/apple-touch-icon-152x152.png" />
+    <link rel="icon" type="image/png" href="images/skin/favicon-32x32.png" sizes="32x32" />
+    <link rel="icon" type="image/png" href="images/skin/favicon-16x16.png" sizes="16x16" />
     <meta name="application-name" content="Sfera"/>
     <meta name="msapplication-TileColor" content="#FFFFFF" />
-    <meta name="msapplication-TileImage" content="/new/login/images/skin/mstile-144x144.png" />
+    <meta name="msapplication-TileImage" content="images/skin/mstile-144x144.png" />
     <title>Sfera</title>
-    <script type="text/javascript" src="code.js"></script>
+    <script type="text/javascript" src="sfera-client.js"></script>
+    <script type="text/javascript" src="interface.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -27,6 +28,7 @@
         var client;
         var config = {
             timestamp: 0,
+            idleTimeout:600,
             appCacheEnabled: false,
             interface: "manager"
         };
@@ -39,27 +41,6 @@
     <div id="bg"></div>
     <div id="sfera"></div>
 
-    <div id="debug">
-        <div id="debugPane">
-            <div id="debugTitle">Debug</div>
-            <div id="debugContent">
-                <div id="debugSend">
-                    <div>
-                        <input type="text" id="messageinput" />
-                    </div>
-                    <div>
-                        <button type="button" onclick="Sfera.client.net.wsOpen();">Open</button>
-                        <button type="button" onclick="Sfera.client.net.wsSend(document.getElementById('messageinput').value);">Send</button>
-                        <button type="button" onclick="Sfera.client.net.wsClose();">Close</button>
-                    </div>
-                </div>
-                <div id="debugLog">
-
-                </div>
-            </div>
-        </div>
-        <div id="debugGhost"></div>
-    </div>
 </body>
 
 </html>

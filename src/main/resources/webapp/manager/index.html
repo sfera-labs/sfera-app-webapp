@@ -1,4 +1,4 @@
-<!-- sfera-webapp - Manager - v0.0.2 - 2016-04-12 -->
+<!-- sfera-webapp - Manager - v0.0.2 - 2016-04-15 -->
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" $manifest;>
@@ -20,11 +20,11 @@
     <meta name="msapplication-TileColor" content="#FFFFFF" />
     <meta name="msapplication-TileImage" content="/manager/images/favicon/mstile-144x144.png" />
     <title>Sfera</title>
-    <script type="text/javascript" src="js/sfera-webapp.js"></script>
-    <script type="text/javascript" src="js/manager.js"></script>
-    <script type="text/javascript" src="js/components.js"></script>
-    <script type="text/javascript" src="js/lib/ace.js"></script>
+    <script type="text/javascript" src="js/sfera-client.js"></script>
+    <script type="text/javascript" src="js/sfera-manager.js"></script>
+    <script type="text/javascript" src="js/sfera-components.js"></script>
 
+    <script type="text/javascript" src="js/lib/ace.js"></script>
     <script type="text/javascript" src="js/lib/mode-css.js"></script>
     <script type="text/javascript" src="js/lib/mode-ini.js"></script>
     <script type="text/javascript" src="js/lib/mode-javascript.js"></script>
@@ -73,6 +73,22 @@
     <iframe id="downloadTarget" style="display:none"></iframe>
 
     <div id="manager">
+
+
+<div id="docViewer">
+    <div id="dv_toolbar" class="toolbar">
+        <div class="toolbarAppIcon">
+            <img src="/manager/images/appiconfms.png">
+        </div>
+        <div id="dv_toolbarHeader" class="toolbarHeader" onselectstart="return false;">Documentation</div>
+        <div id="dv_toolbarAppsBt" class="mToolButton" data-onclick="manager.showAppsPopup(true)">
+            <img class="icon" src="/manager/images/ticonapps.png">
+        </div>
+    </div>
+
+    <div id="dv_docPanel" class="appPanel">
+    </div>
+</div>
 
 
 <!-- File Manager -->
@@ -172,7 +188,7 @@
                     <img src="/manager/images/bticondel.png">
                     <span>delete</span>
                 </div>
-                <div id="fm_detailsBtDownload" class="mButton" data-onclick="fileManager.downloadFile()">
+                <div id="fm_detailsBtDownload" class="mButton" data-onclick="fileManager.downloadFiles()">
                     <img src="/manager/images/bticondownload.png">
                     <span>download</span>
                 </div>

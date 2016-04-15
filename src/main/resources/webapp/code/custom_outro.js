@@ -2,16 +2,12 @@
 * @author       Gionatan Iasio <gionatan@sferalabs.cc>
 * @copyright    2015 SferaLabs
 * @license      {@link https://github.com/sfera-labs/sfera-webapp/license.txt|MIT License}
-* Custom.Outro.js
 */
 
     // bridge functions
-    this.startupEvent = (typeof(StartupEvent) === 'function') ? function () {StartupEvent();} : null;
-    this.commandEvent = (typeof(commandEvent) === 'function') ? function (id, value) {return commandEvent(id, value);} : null;
-    this.uiEvent = (typeof(uiEvent) === 'function') ? function (id, attr, value) {return uiEvent(id, attr, value);} : null;
-    this.pageOpenEvent = (typeof(pageOpenEvent) === 'function') ? function (name) {return pageOpenEvent(name);} : null;
-    this.pageCloseEvent = (typeof(pageCloseEvent) === 'function') ? function (name) {return pageCloseEvent(name);} : null;
-    this.pageBackEvent = (typeof(pageBackEvent) === 'function') ? function (name) {return pageBackEvent(name);} : null;
+    this.onStartup = (typeof(onStartup) === 'function') ? function () {onStartup();} : null;
+    this.onEvent = (typeof(onEvent) === 'function') ? function (node, json) {return onEvent(node, json);} : null;
+    this.onPage = (typeof(onPage) === 'function') ? function (name) {return onPage(name);} : null;
 
     // context functions
     function page(id) {
@@ -32,6 +28,10 @@
 
     function login(username, password) {
         Sfera.Login.login(username, password);
+    }
+
+    function setAttribute(id, name, value) {
+        Sfera.client.setAttribute(id, name, value);
     }
 
     // exec custom code. optional: id of the component calling, value to be sent

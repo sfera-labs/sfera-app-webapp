@@ -1,4 +1,4 @@
-/*! sfera-webapp - v0.0.2 - 2016-04-12 */
+/*! sfera-webapp - v0.0.2 - 2016-04-15 */
 
 (function(){
 
@@ -207,25 +207,6 @@ Sfera.Compiler = new(function() {
         var str;
         var MUSTACHE = /\{\{([^}]*)\}\}/g;
 
-        /*/
-        function myRep(match, capture) {
-            switch (capture) {
-                case "one":
-                    return "1";
-                    break;
-                case "two":
-                    return "2";
-                    break;
-            }
-
-            return "";
-        }
-        //str = '<div class="hr"></div> <p class="tags hidden-mobile"><a href="http://www.rockpapershotgun.com/tag/arkane-studios/" rel="tag">Arkane Studios</a>, <a href="http://www.rockpapershotgun.com/tag/bethesda/" rel="tag">Bethesda</a>, <a href="http://www.rockpapershotgun.com/tag/dishonored/" rel="tag">Dishonored</a>, <a href="http://www.rockpapershotgun.com/tag/dishonored-2/" rel="tag">Dishonored 2</a>.</p> <p class="comments"><a href="http://www.rockpapershotgun.com/2015/09/17/dishonored-2-karnaca/#comments" title="Comment on Southland Tales: Dishonored 2&#8217;s Sun-Scorched Bloodflies">21 Comments &#187;</a></p> </footer> </div> </div> <div id="post-314999" class="block featured-block"> <p class="featured-block-title"> <a class="featured-block__text featured-block__text--feature" href="http://www.rockpapershotgun.com/category/featured-articles">RPS Feature</a> It's a number one. </p> <div class="post-inner"> <h2><a href="http://www.rockpapershotgun.com/2015/09/17/is-this-gamings-greatest-toilet-the-toilet-publishers-dont-want-you-to-see/" rel="bookmark" title="Permanent Link to Is This Gaming&#8217;s Greatest Toilet? The Toilet Publishers Don&#8217;t Want You To See">Is This Gaming&#8217;s Greatest Toilet? The Toilet Publishers Don&#8217;t Want You To See</a></h2> <div class="entry"> <div class="top-matter hidden-mobile"> <aside class="byline"> <p>By <a href="/cdn-cgi/l/email-protection#472d61647676767c2f61647676777c616471737c352861647e7e7c61647677707c61647676757c61647e707c61647676757c2261647676737c61647676727c616476X04;ot&#103;un.c&#111;&#109;">John Walker</a> on September 17th, 2015 at 5:00 pm.</p> </aside> <div class="social-buttons"> <h4>Share this:</h4> <ul class="social-icons"> <li><a class="social-facebook icon-facebook" href="http://www.facebook.com/sharer.php?u=http://www.rockpapershotgun.com/2015/09/17/is-this-gamings-greatest-toilet-the-toilet-publishers-dont-want-you-to-see//"><span>Facebook</span></a></li> <li><a class="social-twitter icon-twitter" href="http://twitter.com/intent/tweet?text=Is This Gaming&#8217;s Greatest Toilet? The Toilet Publishers Don&#8217;t Want You To See http://www.rockpapershotgun.com/2015/09/17/is-this-gamings-greatest-toilet-the-toilet-publishers-dont-want-you-to-see/"><span>Twitter</span></a></li> <li><a class="social-reddit icon-reddit" href="http://www.reddit.com/submit?url=http://www.rockpapershotgun.com/2015/09/17/is-this-gamings-greatest-toilet-the-toilet-publishers-dont-want-you-to-see//"><span>Reddit</span></a></li> </ul> </div> </div> <p><a href="http://www.rockpapershotgun.com/images/15/sep/albt1b.jpg" rel="lightbox[314999]"><img src="http://www.rockpapershotgun.com/images/15/sep/albt1.jpg" alt=""/></a></p> <p><em>I&#8217;m really getting the hang of these headlines, I think. In <a href="http://www.rockpapershotgun.com/2015/09/15/albino-lullaby-review/">my review of Albino Lullaby</a> this week, I included a throwaway line that I then didn&#8217;t justify in pictorial form. I wrote that it features, &#822#8220;the best toilet in gaming history.&#8221; You can&#8217;t just say a thing like that and expect not to be required to prove it. I think the image above has already done that, but there are more, just in case &#8211; click on them to appreciate them fully.</em></p> <p> <a href="http://www.rockpapershotgun.com/2015/09/17/is-this-gamings-greatest-toilet-the-toilet-publishers-dont-want-you-to-see/#more-314999" class="more-link">Read the rest of this entry &raquo;</a></p> </div> <footer class="article-footer"> <div class="hr"></div> <p class="tags hidden-mobile"><a href="http://www.rockpapershotgun.com/tag/albino-lullaby/" rel="tag">Albino Lullaby</a>, <a href="http://www.rockpapershotgun.com/tag/ape-law/" rel="tag">Ape Law</a>, <a href="http://www.rockpapershotgun.com/tag/feature/" rel="tag">feature</a>, <a href="http://www.rockpapershotgun.com/tag/toilets-in-games/" rel="tag">toilets-in-games</a>.</p> <p class="comments"><a href="http://www.rockpapershotgun.com/2015/09/17/is-this-gamings-greatest-toilet-the-toilet-publishers-dont-want-you-to-see/#comments" title="Comment on Is This Gaming&#8217;s Greatest Toilet? The Toilet Publishers Don&#8217;t Want You To See">20 Comments &#187;</a></p> </footer> </div> </div> <div id="post-315221" class="block featured-block"> <div class="post-inner"> <h2><a href="http://www.rockpapershotgun.com/2015/09/17/warhammer-40k-deathwatch-pc/" rel="bookmark" title="Permanent Link to Warhammer 40,000: Deathwatch Crusading Onto PC">Warhammer 40,000: Deathwatch Crusading Onto PC</a></h2> <div class="entry"> <div class="top-matter hidden-mobile"> <aside class="byline"> <p>By <a href="/cdn-cgi/l/email-protection#e584c3c6d4d5ddde8cc3c6dcdcde80c3c6d3d1dec3c6d4d4d1dec3c6d4d4d4de86c3c6d4d5d2dec3c6d4d4d7de8495c3c6d4d5d4de97c3c6d4d4d0dec3c6d4d5d1deXo&#116;gu&#110;&#46;&#99;o&#109;">Alice O'Connor</a> on September 17th, 2015 at 4:11 pm.</p> </aside> <div class="social-buttons"> <h4>Share this:</h4> <ul class="social-icons"> <li><a class="social-facebook icon-facebook" href="http://www.facebook.com/sharer.php?u=http://www.rockpapershotgun.com/2015/09/17/warhammer-40k-deathwatch-pc//"><span>Facebook</span></a></li> <li><a class="social-twitter icon-twitter" href="http://twitter.com/intent/tweet?text=Warhammer 40,000: Deathwatch Crusading Onto PC http://www.rockpapershotgun.com/2015/09/17/warhammer-40k-deathwatch-pc/"><span>Twitter</span></a></li> <li><a class="social-reddit icon-reddit" href="http://www.reddit.com/submit?url=http://www.rockpapershotgun.com/2015/09/17/warhammer-40k-deathwatch-pc//"><span>Reddit</span></a></li> </ul> </div> </div> <p><img src="http://www.rockpapershotgun.com/images/15/sep/17wh40kdeathwatch.jpg" title="Aye, a can of Raid won't solve this one."/></p> <p>The Warhammer 40,000 game I&#8217;d really like is still <a href="http://www.rockpapershotgun.com/2015/07/14/dawn-of-war-3-rumours/">Dawn of War 3</a>, but in the meantime I shall need to investigate other opportunities to wear a big ole skull on my crotch.</p> <p>Rodeo Games, the folks behind <a href="http://www.rockpapershotgun.com/tag/warhammer-quest/">Warhammer Quest</a>, have announced that they&#8217;re bringing another mobile doodad over to PC a little fancied up, and this one has all the crotchskulls I demand &#8211; Warhammer 40,000: Deathwatch [<a href="http://rodeogames.co.uk/deathwatch">official site</a>]. It&#8217;s a turn-based tactical affair about hunting down and squishing those naughty Tyranids, from cities to the guts of bio-ships, while expanding, levelling up, and equipping your Deathwatch Kill Team.</p> <p> <a href="http://www.rockpapershotgun.com/2015/09/17/warhammer-40k-deathwatch-pc/#more-315221" class="more-link">Read the rest of this entry &raquo;</a></p> </div> <footer class="article-footer"> <div class="hr"></div> <p class="tags hidden-mobile"><a href="http://www.rockpapershotgun.com/tag/rodeo-games/" rel="tag">Rodeo Games</a>, <a href="http://www.rockpapershotgun.com/tag/warhammer-40000/" rel="tag">Warhammer 40000</a>, <a href="http://www.rockpapershotgun.com/tag/warhammer-40000-deathwatch/" rel="tag">Warhammer 40000: Deathwatch</a>, <a href="http://www.rockpapershotgun.com/tag/warhammer-40000-deathwatch-enhanced-edition/" rel="tag">Warhammer 40000: Deathwatch - Enhanced Edition</a>.</p> <p class="comments"><a href="http://www.rockpapershotgun.{{that is}}com/2015/09/17/warhammer-40k-deathwatch-pc/#comments" title="Comment on Warhammer 40,000: Deathwatch Crusading Onto PC">10 Comments &#187;</a></p> </footer> </div> </div> <div id="post-299851" class="block featured-block"> <div class="post-inner"> <h2><a href="http://www.rockpapershotgun.com/2015/09/17/have-you-played-kyrandia-2-hand-of-fate/" rel="bookmark" title="Permanent Link to Have You Played&#8230; Kyrandia 2: Hand Of Fate?">Have You Played&#8230; Kyrandia 2: Hand Of Fate?</a></h2> <div class="entry"> <div class="top-matter hidden-mobile"> <aside class="byline"> <p>By <a href="/cdn-cgi/l/email-protection#91b7b2a0a0a5aab7b2a0a1a4aab7b2a8a8aab7b2a0a1a5aaf0b7b2a0a0a5aaf5b7b2a7a5aae3feb7b2a8a8aafab7b2a0a0a3aaf0b7b2a0a0a3aab7b2a0a1a0aab7b2X114;&#115;hot&#103;un.&#99;&#111;&#109;">Richard Cobbett</a> on September 17th, 2015 at 3:00 pm.</p> </aside> <div class="social-buttons"> <h4>Share this:</h4> <ul class="social-icons"> <li><a class="social-facebook icon-facebook" href="http://www.facebook.com/sharer.php?u=http://www.rockpapershotgun.com/2015/09/17/have-you-played-kyrandia-2-hand-of-fate//"><span>Facebook</span></a></li> <li><a class="social-twitter icon-twitter" href="http://twitter.com/intent/tweet?text=Have You Played&#8230; Kyrandia 2: Hand Of Fate? http://www.rockpapershotgun.com/2015/09/17/have-you-played-kyrandia-2-hand-of-fate/"><span>{{this is}}</span></a></li> <li><a class="social-reddit icon-reddit" href="http://www.reddit.com/submit?url=http://www.rockpapershotgun.com/2015/09/17/have-you-played-kyrandia-2-hand-of-fate//"><span>Reddit</span></a></li> </ul> </div> </div>';
-        //str = '<div><!--sfera><--!></div><p></p><br /><div>{{two}}</div>';
-        str = '<div>{{one}}</div><p></p><br /><div>{{two}}</div>';
-        str = str.replace(MUSTACHE, myRep); // return 'gold ' + capture + '|' + match; "gold ring|string"
-        /**/
-
         var value = source || attr.source;
 
         // mustache
@@ -321,6 +302,7 @@ Sfera.Attribute = function(component, config) {
         case "source":
         case "value":
         case "default":
+        case "doc":
             this[c] = config[c];
             break;
         case "set":
@@ -494,204 +476,6 @@ Sfera.ComponentPresets = {
 
 };
 
-/**
- * Visibility behavior.
- *
- * @mixin Sfera.ComponentPresets.Visibility
- * @property {boolean} visible - sets the visibility
- */
-Sfera.ComponentPresets.Visibility = function() {
-    // extend attributes
-    this.attrDefs.visible = {
-        type: "boolean",
-        compile: function() {
-            var value = !(!this.source || this.source == "false");
-            if (value !== this.value) {
-                this.changed = false;
-                this.value = value;
-                this.update();
-            }
-        },
-        update: function() {
-            // trigger event. component, show/hide, is it a child? (also check if its visibility is changing before triggering)
-            function trigger(co, show, child) {
-                if (!child || co.getAttribute("visible")) { // trigger?
-                    if (show && co.onShow) {
-                        co.onShow();
-                    } else if (!show && co.onHide) {
-                        co.onHide();
-                    }
-
-                    if (co.children) {
-                        for (var c = 0; c < co.children.length; c++)
-                            trigger(co.children[c], show);
-                    }
-                }
-            }
-
-            // trigger on hide before hiding
-            if (!this.value) {
-                trigger(this.component, false);
-            }
-
-            // change visibility
-            this.component.element.style.display = this.value ? "inline" : "none";
-
-            // trigger on show after
-            if (this.value) {
-                trigger(this.component, true);
-            }
-
-            // post update
-            this.post();
-        }
-    };
-};
-
-/**
- * Position behavior.
- *
- * @mixin Sfera.ComponentPresets.Position
- * @property {string} position - sets the position
- * @property {string} x - sets the x coordinate
- * @property {string} y - sets the y coordinate
- */
-Sfera.ComponentPresets.Position = function() {
-    // extend attributes
-    this.attrDefs.position = {
-        type: "string",
-        update: function() {
-            this.component.element.style.position = this.value == "static" ? "static" : "absolute";
-            // post update
-            this.post();
-        }
-    };
-    this.attrDefs.x = {
-        type: "integer",
-        update: function() {
-            this.component.element.style.left = this.value + "px";
-            // post update
-            this.post();
-        }
-    };
-    this.attrDefs.y = {
-        type: "integer",
-        update: function() {
-            this.component.element.style.top = this.value + "px";
-            // post update
-            this.post();
-        }
-    };
-
-    this.attrDefs.rotation = {
-        type: "integer",
-        update: function() {
-            var s = this.component.element.style;
-            var r = "rotate(" + this.value + "deg)"
-            s.msTransform = /* IE 9 */
-                s.webkitTransform = /* Safari */
-                s.transform = r;
-
-            // post update
-            this.post();
-        }
-    }
-};
-Sfera.ComponentPresets.Size = function() {
-    // extend attributes
-    this.attrDefs.width = {
-        type: "integer",
-        update: function() {
-            this.component.element.style.width = this.value == "auto" ? "auto" : this.value + "px";
-            // post update
-            this.post();
-        }
-    };
-    this.attrDefs.height = {
-        type: "integer",
-        update: function() {
-            this.component.element.style.height = this.value == "auto" ? "auto" : this.value + "px";
-            // post update
-            this.post();
-        }
-    };
-};
-Sfera.ComponentPresets.Label = function() {
-    // extend attributes
-    this.attrDefs.label = {
-        type: "string",
-        update: function() {
-            this.component.element.innerHTML = this.value;
-            // post update
-            this.post();
-        }
-    };
-    this.attrDefs.color = {
-        type: "string",
-        update: function() {
-            this.component.element.style.color = this.value;
-            // post update
-            this.post();
-        }
-    };
-    this.attrDefs.fontSize = {
-        type: "integer",
-        update: function() {
-            this.component.element.style.fontSize = this.value + "px";
-            // post update
-            this.post();
-        }
-    };
-    this.attrDefs.textAlign = {
-        type: "string",
-        update: function() {
-            this.component.element.style.textAlign = this.value;
-            // post update
-            this.post();
-        }
-    };
-
-};
-
-Sfera.ComponentPresets.Style = function() {
-    // extend attributes
-    this.attrDefs.style = {
-        type: "string",
-        default: "default",
-
-        values: function() {
-            var s = Sfera.client.skin.styles[this.component.type];
-            return s ? s : ["default"];
-        },
-        update: function() {
-            if (this.component.updateClass)
-                this.component.updateClass();
-            // post update
-            this.post();
-        }
-    };
-};
-
-Sfera.ComponentPresets.Color = function() {
-    // extend attributes
-    this.attrDefs.color = {
-        type: "string",
-        default: "default",
-
-        values: function() {
-            var c = Sfera.client.skin.colors[this.component.type];
-            return c ? c : ["default"];
-        },
-
-        update: function() {
-            if (this.component.updateClass)
-                this.component.updateClass();
-            // post update
-            this.post();
-        }
-    }
-};
-
 
 /**
  * Sfera.Components singleton that handles components
@@ -703,6 +487,9 @@ Sfera.Components = new(function() {
 
     // components need to be created in order depending on what component they're extending
     this._createLater = {};
+
+    // all the classes
+    this.Classes = {};
 
     /**
      * Set a component source code
@@ -753,7 +540,7 @@ Sfera.Components = new(function() {
      * @method Sfera.Components#getClass
      */
     this.getClass = function(componentName) {
-        return Sfera.Components[this.getClassName(componentName)];
+        return Sfera.Components.Classes[this.getClassName(componentName)];
     };
 
     /**
@@ -787,7 +574,7 @@ Sfera.Components = new(function() {
      */
     this.create = function(name, def) {
         // extends an existing component?
-        if (def.extends && !Sfera.Components[def.extends]) {
+        if (def.extends && !Sfera.Components.Classes[def.extends]) {
             if (!this._createLater[def.extends])
                 this._createLater[def.extends] = [];
             this._createLater[def.extends].push({name:name, def:def});
@@ -795,7 +582,7 @@ Sfera.Components = new(function() {
         }
 
         // constructor
-        Sfera.Components[name] = function Component(def) {
+        Sfera.Components.Classes[name] = function Component(def) {
             // children, if container
             this.children = [];
 
@@ -847,20 +634,22 @@ Sfera.Components = new(function() {
 
             // init
             this.super("_Base", "init");
-            this.init();
+            if (!def.doc) {
+                this.init();
 
-            // attribute values
-            for (var attr in this.attributes) {
-                if (def.attributes && def.attributes[attr] != null)
-                    this.setAttribute(attr, def.attributes[attr]);
-                else if (this.attributes[attr].default != null)
-                    this.setAttribute(attr, this.attributes[attr].default);
+                // attribute values
+                for (var attr in this.attributes) {
+                    if (def.attributes && def.attributes[attr] != null)
+                        this.setAttribute(attr, def.attributes[attr]);
+                    else if (this.attributes[attr].default != null)
+                        this.setAttribute(attr, this.attributes[attr].default);
+                }
             }
         };
-        var comp = Sfera.Components[name];
+        var comp = Sfera.Components.Classes[name];
 
         // non standard, allows developer tools to display object class names correctly
-        comp.displayName = "Sfera.Component." + name;
+        comp.displayName = "Sfera.Component.Classes." + name;
         /*
         Object.defineProperty(Sfera.Components[name], 'name', {
           value: "Sfera.Component."+name
@@ -871,11 +660,19 @@ Sfera.Components = new(function() {
         if (!def.extends)
             def.extends = "_Base";
 
-        var sup = Sfera.Components[def.extends].prototype;
+        var sup = Sfera.Components.Classes[def.extends].prototype;
 
         comp.prototype = Object.create(sup);
         comp.prototype.constructor = comp;
         comp.prototype.type = name;
+
+        // doc?
+        var cDoc;
+        if (Sfera.Doc) {
+            cDoc = Sfera.Doc.get.component(name);
+            if (cDoc && cDoc.doc)
+                comp.prototype.doc = cDoc.doc;
+        }
 
         // copy attributes
         comp.prototype.attrDefs = {};
@@ -889,8 +686,29 @@ Sfera.Components = new(function() {
             for (var i = 0; i < def.presets.length; i++) {
                 be = Sfera.ComponentPresets[def.presets[i]];
                 be.call(comp.prototype); // extend prototype
+
+                if (Sfera.Doc) {
+                    var pDoc = Sfera.Doc.get.preset(def.presets[i]);
+                    if (pDoc) {
+                        for (var a in pDoc) {
+                            if (!comp.prototype.attrDefs[a])
+                                comp.prototype.attrDefs[a] = {};
+                            comp.prototype.attrDefs[a].doc = pDoc[a];
+                        }
+                    }
+                }
             }
         }
+
+        // doc
+        if (cDoc && cDoc.attr[a]) {
+            for (var a in cDoc.attrs[a]) {
+                if (!comp.prototype.attrDefs[a])
+                    comp.prototype.attrDefs[a] = {};
+                comp.prototype.attrDefs[a].doc = cDoc.attrs[a];
+            }
+        }
+
 
         // attributes
         if (def.attributes) {
@@ -918,7 +736,7 @@ Sfera.Components = new(function() {
 
             comp.prototype[f] = def[f];
             if (typeof comp.prototype[f] === "function")
-                comp.prototype[f].displayName = "Sfera.Components." + name + "." + f;
+                comp.prototype[f].displayName = "Sfera.Components.Classes." + name + "." + f;
         }
 
         // components that extend this one, previously defined
@@ -1045,7 +863,7 @@ Sfera.Client = function(config) {
 
         // configure Sfera.Net
         Sfera.Net.boot();
-        
+
         Sfera.Net.onReply.add(onReply);
         Sfera.Net.onEvent.add(onEvent);
         Sfera.Net.onUpdateDictionary.add(onUpdateDictionary);
@@ -1132,9 +950,9 @@ Sfera.Client = function(config) {
 
         adjustLayout();
 
-        // register events
-
-    }
+        if (Sfera.Custom.onStartup)
+            Sfera.Custom.onStartup();
+    };
 
     this.indexComponent = function(component) {
         this.components.index(component);
@@ -1154,6 +972,10 @@ Sfera.Client = function(config) {
     this.showPage = function(id) {
         if (id.indexOf(":") == -1)
             id = "page:" + id;
+
+        // custom?
+        if (Sfera.Custom.onPage && Sfera.Custom.onPage(id) === false)
+            return; // false, skip
 
         if (this.cPage)
             this.cPage.setAttribute("visible", false);
@@ -1204,12 +1026,14 @@ Sfera.Client = function(config) {
 
     this.getNodeValue = function(node) {
         return nodeValues[node] ? nodeValues[node] : "";
-    }
+    };
 
     function onEvent(json) {
-        // {"type":"event","events":{"remote.myvalue":"5","system.plugins":"reload","remote.":"undefined","system.state":"ready"}}
-        // {"type":"event","events":{"gui.button_link1.label":"changed"}}
         for (var e in json.nodes) {
+            // custom?
+            if (Sfera.Custom.onEvent && Sfera.Custom.onEvent(e, json.nodes[e]) === false)
+                continue; // false, skip
+
             var n = e.split(".");
             switch (n[0]) {
                 case "ui":
@@ -1636,11 +1460,11 @@ Sfera.Login = new(function() {
     };
 
     this.gotoLogin = function() {
-        Sfera.Browser.setLocation("/"+Sfera.client.name+"/login");
+        Sfera.Browser.setLocation("/"+Sfera.Browser.getLocation().interface+"/login");
     }
 
     this.gotoInterface = function() {
-        Sfera.Browser.setLocation("/"+Sfera.client.name);
+        Sfera.Browser.setLocation("/"+Sfera.Browser.getLocation().interface);
     }
 
     function initReq() {
@@ -4682,12 +4506,17 @@ Sfera.Device.canPlayVideo = function (type) {
 window.man = function(what) {
     // component
     var c = Sfera.Utils.capitalize(what);
-    if (Sfera.Components[c]) {
-        var co = new Sfera.Components[c]({});
+    var cc = Sfera.Components.getClass(c);
+    if (cc) {
+        var co = new cc({doc:true});
 
         var hstr = "* Component " + co.type + " *****************";
 
         console.log(hstr);
+
+        console.log(co.doc);
+        console.log("***********************************");
+
         var sstr = "";
         for (var sub in co.subComponents) {
             var str = " - " + sub + " ";
@@ -4709,12 +4538,22 @@ window.man = function(what) {
 
             var av = co.attributes[attr].values;
             if (av) {
-                if (Sfera.Utils.isFunction(av))
-                    av = av();
+                if (Sfera.Utils.isFunction(av)) {
+                    try {
+                        av = av();
+                    } catch (e) {
+
+                    }
+                }
                 if (Sfera.Utils.isArray(av)) {
                     while (str.length < 35) str += " ";
                     str += "<" + av.join("|") + ">";
                 }
+            }
+
+            if (a.doc) {
+                while (str.length < 45) str += " ";
+                str += a.doc;
             }
 
             console.log(str);
@@ -5180,6 +5019,200 @@ JSON.parse = JSON.parse || function (str) {
 */
 
 
+Sfera.ComponentPresets.Color = function() {
+    // extend attributes
+    this.attrDefs.color = {
+        type: "string",
+        default: "default",
+
+        values: function() {
+            var c = Sfera.client.skin.colors[this.component.type];
+            return c ? c : ["default"];
+        },
+
+        update: function() {
+            if (this.component.updateClass)
+                this.component.updateClass();
+            // post update
+            this.post();
+        }
+    }
+};
+
+
+Sfera.ComponentPresets.Label = function() {
+    // extend attributes
+    this.attrDefs.label = {
+        type: "string",
+        update: function() {
+            this.component.element.innerHTML = this.value;
+            // post update
+            this.post();
+        }
+    };
+    this.attrDefs.color = {
+        type: "string",
+        update: function() {
+            this.component.element.style.color = this.value;
+            // post update
+            this.post();
+        }
+    };
+    this.attrDefs.fontSize = {
+        type: "integer",
+        update: function() {
+            this.component.element.style.fontSize = this.value + "px";
+            // post update
+            this.post();
+        }
+    };
+    this.attrDefs.textAlign = {
+        type: "string",
+        update: function() {
+            this.component.element.style.textAlign = this.value;
+            // post update
+            this.post();
+        }
+    };
+
+};
+
+
+Sfera.ComponentPresets.Position = function() {
+    // extend attributes
+    this.attrDefs.position = {
+        type: "string",
+        update: function() {
+            this.component.element.style.position = this.value == "static" ? "static" : "absolute";
+            // post update
+            this.post();
+        },
+    };
+    this.attrDefs.x = {
+        type: "integer",
+        update: function() {
+            this.component.element.style.left = this.value + "px";
+            // post update
+            this.post();
+        },
+    };
+    this.attrDefs.y = {
+        type: "integer",
+        update: function() {
+            this.component.element.style.top = this.value + "px";
+            // post update
+            this.post();
+        },
+    };
+
+    this.attrDefs.rotation = {
+        type: "integer",
+        update: function() {
+            var s = this.component.element.style;
+            var r = "rotate(" + this.value + "deg)"
+            s.msTransform = /* IE 9 */
+                s.webkitTransform = /* Safari */
+                s.transform = r;
+
+            // post update
+            this.post();
+        },
+    }
+};
+
+
+Sfera.ComponentPresets.Size = function() {
+    // extend attributes
+    this.attrDefs.width = {
+        type: "integer",
+        update: function() {
+            this.component.element.style.width = this.value == "auto" ? "auto" : this.value + "px";
+            // post update
+            this.post();
+        },
+    };
+    this.attrDefs.height = {
+        type: "integer",
+        update: function() {
+            this.component.element.style.height = this.value == "auto" ? "auto" : this.value + "px";
+            // post update
+            this.post();
+        },
+    };
+};
+
+
+Sfera.ComponentPresets.Style = function() {
+    // extend attributes
+    this.attrDefs.style = {
+        type: "string",
+        default: "default",
+
+        values: function() {
+            var s;
+            if (Sfera.client && Sfera.client.skin)
+                s = Sfera.client.skin.styles[this.component.type];
+            return s ? s : ["default"];
+        },
+        update: function() {
+            if (this.component.updateClass)
+                this.component.updateClass();
+            // post update
+            this.post();
+        }
+    };
+};
+
+
+Sfera.ComponentPresets.Visibility = function() {
+    // extend attributes
+    this.attrDefs.visible = {
+        type: "boolean",
+        compile: function() {
+            var value = !(!this.source || this.source == "false");
+            if (value !== this.value) {
+                this.changed = false;
+                this.value = value;
+                this.update();
+            }
+        },
+        update: function() {
+            // trigger event. component, show/hide, is it a child? (also check if its visibility is changing before triggering)
+            function trigger(co, show, child) {
+                if (!child || co.getAttribute("visible")) { // trigger?
+                    if (show && co.onShow) {
+                        co.onShow();
+                    } else if (!show && co.onHide) {
+                        co.onHide();
+                    }
+
+                    if (co.children) {
+                        for (var c = 0; c < co.children.length; c++)
+                            trigger(co.children[c], show);
+                    }
+                }
+            }
+
+            // trigger on hide before hiding
+            if (!this.value) {
+                trigger(this.component, false);
+            }
+
+            // change visibility
+            this.component.element.style.display = this.value ? "inline" : "none";
+
+            // trigger on show after
+            if (this.value) {
+                trigger(this.component, true);
+            }
+
+            // post update
+            this.post();
+        },
+    };
+};
+
+
 /**
  * Sfera._Base component base class
  *
@@ -5202,8 +5235,8 @@ Sfera.Components.create("_Base", {
             },
             get: function() {
                 return this.attributeValues.id;
-            }
-        }
+            },
+        },
     },
 
     init: function() {
@@ -5229,7 +5262,7 @@ Sfera.Components.create("_Base", {
 
     // super
     super: function(superClassName, methodName) {
-        Sfera.Components[superClassName].prototype[methodName].call(this);
+        Sfera.Components.Classes[superClassName].prototype[methodName].call(this);
     },
 
     /**
@@ -5315,4 +5348,4 @@ if (typeof exports !== 'undefined') {
 * ""
 */
 
-//# sourceMappingURL=sfera-webapp.js.map
+//# sourceMappingURL=sfera-client.js.map

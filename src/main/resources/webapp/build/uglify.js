@@ -3247,7 +3247,7 @@
                   case "do":
                     return new AST_Do({
                         body: in_loop(statement),
-                        condition: (expect_token("keyword", "while"), tmp = parenthesised(), semicolon(), 
+                        condition: (expect_token("keyword", "while"), tmp = parenthesised(), semicolon(),
                         tmp)
                     });
 
@@ -3269,7 +3269,7 @@
                   case "return":
                     if (S.in_function == 0 && !options.bare_returns) croak("'return' outside of function");
                     return new AST_Return({
-                        value: is("punc", ";") ? (next(), null) : can_insert_semicolon() ? null : (tmp = expression(true), 
+                        value: is("punc", ";") ? (next(), null) : can_insert_semicolon() ? null : (tmp = expression(true),
                         semicolon(), tmp)
                     });
 
@@ -5938,7 +5938,7 @@
                     seq = [];
                 }
                 statements.forEach(function(stat) {
-                    if (stat instanceof AST_SimpleStatement && seq.length < 2e3) seq.push(stat.body); else push_seq(), 
+                    if (stat instanceof AST_SimpleStatement && seq.length < 2e3) seq.push(stat.body); else push_seq(),
                     ret.push(stat);
                 });
                 push_seq();
@@ -8490,8 +8490,12 @@ function ti() {
 var t = T();
 
 function compile(filename, files, options) {
+    var h = "";
+    for (var i=0; i<32; i++) h += " ";
+    h += "| ";
+
+
     t = T();
-    print("start " + ti() + "!!");
     options = options || {};
     var opts = {
         beautify: false,
@@ -8547,10 +8551,8 @@ function compile(filename, files, options) {
         side_effects: true,
         warnings: true
     };
-    print("set " + ti());
     if (opts.source_map) {
         var toplevelSourceMap = UglifyJS.SourceMap();
-        print("sourcemap " + ti());
     }
     var ast = null;
     for (var i = 0; i < files.length; i++) {
@@ -8562,24 +8564,24 @@ function compile(filename, files, options) {
             toplevelSourceMap.get().setSourceContent(files[i].name, files[i].content);
         }
     }
-    print("ast " + ti());
+    print(h+"ast " + ti());
     if (opts.lint || opts.compress) {
         ast.figure_out_scope();
-        print("scope " + ti());
+        print(h+"scope " + ti());
     }
     if (opts.lint) {
         ast.scope_warnings();
-        print("warnings " + ti());
+        print(h+"warnings " + ti());
     }
     if (opts.compress) {
         ast = ast.transform(UglifyJS.Compressor(compressor_options));
-        print("compress " + ti());
+        print(h+"compress " + ti());
     }
     if (opts.mangle) {
         ast.figure_out_scope();
         ast.compute_char_frequency();
         ast.mangle_names();
-        print("mangle " + ti());
+        print(h+"mangle " + ti());
     }
     var codegen = Object.makeDeepCopy(beautifier_options);
     if (opts.source_map) codegen.source_map = toplevelSourceMap;
@@ -8587,11 +8589,11 @@ function compile(filename, files, options) {
         codegen.beautify = true;
     }
     res.output = ast.print_to_string(codegen);
-    print("code to str " + ti());
+    print(h+"code to str " + ti());
     if (opts.source_map) {
         res.output += "\n" + "//# sourceMappingURL=" + res.map_filename;
         res.map = toplevelSourceMap.toString();
-        print("map to str " + ti());
+        print(h+"map to str " + ti());
     }
     return res;
 }

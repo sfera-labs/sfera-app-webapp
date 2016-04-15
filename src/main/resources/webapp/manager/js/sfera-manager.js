@@ -1,9 +1,10 @@
-/*! sfera-webapp - Manager - v0.0.2 - 2016-04-12 */
+/*! sfera-webapp - Manager - v0.0.2 - 2016-04-15 */
 
 var files;
 var fileManager;
 var textEditor;
 var systemConsole;
+var docViewer;
 
 var focusedElement; // currently focused element
 
@@ -75,11 +76,13 @@ Sfera.Manager = function(config) {
         // files
         files = new Sfera.Manager.Files();
         // file manager
-        fileManager = addApp(new Sfera.Manager.FileManager());
+        fileManager = addApp(new Sfera.Manager.Apps.FileManager());
         // text editor
-        textEditor = addApp(new Sfera.Manager.TextEditor());
+        textEditor = addApp(new Sfera.Manager.Apps.TextEditor());
         // system console
-        systemConsole = addApp(new Sfera.Manager.SystemConsole());
+        systemConsole = addApp(new Sfera.Manager.Apps.SystemConsole());
+        // doc viewer
+        docViewer = addApp(new Sfera.Manager.Apps.DocViewer());
 
         window.onresize = this.onResize.bind(this);
         /*
@@ -843,6 +846,8 @@ Sfera.Manager = function(config) {
 
 };
 
+Sfera.Manager.Apps = {};
+
 // focus element
 function focusElement(e) {
 	focusedElement = e;
@@ -1217,7 +1222,7 @@ Sfera.Manager.Files = function () {
 		case "movefilesoverwrite":
 			url = "/api/files/mv?";
 			for (var i=0; i<value.length-1; i++)
-				url += "source="+this.encodeFileName(value[i]);
+				url += (i?"&":"")+"source="+this.encodeFileName(value[i]);
 			url += "&target="+this.encodeFileName(value.last());
 			if (type == "movefilesoverwrite")
 				url += "&force=true";
@@ -1227,7 +1232,7 @@ Sfera.Manager.Files = function () {
 		case "copyfilesoverwrite":
 			url = "/api/files/cp?";
 			for (var i=0; i<value.length-1; i++)
-				url += "source="+this.encodeFileName(value[i]);
+				url += (i?"&":"")+"source="+this.encodeFileName(value[i]);
 			url += "&target="+this.encodeFileName(value.last());
 			if (type == "copyfilesoverwrite")
 				url += "&force=true";
@@ -1540,10 +1545,225 @@ window.addEventListener("load", function() {
 
 
 //--------------------------------------------------------------------------------------------------------------------------
+// Documentation Viewer ----------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------------------------------
+
+Sfera.Manager.Apps.DocViewer = function() {
+    this.id = "dv";
+	this.open = false; // currently open. set by start, hide
+
+    var started = false; // if already started, will just switch
+
+	this.fontSize = 12;
+
+	this.e = document.getElementById("docViewer");
+
+    var toolbarE = document.getElementById("dv_toolbar");
+
+	var panelE = document.getElementById("dv_docPanel");
+	var headerLabelE = document.getElementById("dv_editorHeaderLabel");
+
+	var self = this;
+
+	// init
+	function init() {
+	} // init()
+
+	// start
+	this.start = function (options) {
+		manager.hideOtherApps(this);
+
+		this.e.style.display = "inline";
+
+        generate();
+
+		this.adjustLayout();
+	} // start()
+
+	// hide (switching to another app)
+	this.hide = function () {
+		this.e.style.display = "none";
+
+		manager.focus();
+
+		this.open = false;
+	} // hide()
+
+	// adjust layout. viewport size
+	this.adjustLayout = function () {
+		if (!manager.viewportWidth || !manager.viewportHeight) return;
+
+		var	vw = manager.viewportWidth;
+		var	vh = manager.viewportHeight;
+
+		// tool bar size
+		var tbW = 0; // left one
+		var tbH = 36; // top one
+
+		// editable area size
+		var eW = vw - tbW;
+		var eH = vh - tbH;
+
+		toolbarE.style.left = (tbW-1)+"px"; // +1, attach it to the iconPanel
+		toolbarE.style.width = (eW+1)+"px";
+
+		// panels
+		var bs = 1; // border size
+		var pm = 5+bs; // panel margin: padding + border size
+		var pd = 7; // panel distance from border
+		var pw = Math.round((vw-pd*3-pm*4)/2); //;
+		var ph = vh-tbH-pm*2-pd*2;
+		if (pw<340) pw = 340;
+
+		pw = (vw-pd*3-pm*4) -pw; // fix it: since it's /2, pw could be 1 pixel wider
+
+		var eW = vw-pm*2-pd*2; // full content width
+
+		panelE.style.left = (pd)+"px";
+		panelE.style.top = (tbH+pd)+"px";
+		panelE.style.width = (eW)+"px";
+		panelE.style.height = (ph)+"px";
+	} // adjustLayout()
+
+    // set edit font size
+	this.setFontSize = function (a) {
+		if (a) this.fontSize++; else this.fontSize--;
+		editorE.style.fontSize = this.fontSize+"px";
+		//editorE.style.lineHeight = Math.round(this.editorFontSize + this.editorFontSize/2)+"px";
+	} // setEditFontSize()
+
+
+
+    function generate() {
+        var html = "";
+
+        panelE.innerHTML = "<iframe>"+html+"</iframe>";
+        var iframeDoc = panelE.childNodes[0].contentWindow.document;
+
+        for (var c in Sfera.Components.Classes) {
+            if (c[0] == "_")
+                continue;
+
+            html += getComponentHTML(Sfera.Components.Classes[c]);
+        }
+
+        iframeDoc.open();
+        iframeDoc.write(html);
+        iframeDoc.close();
+    }
+
+    function getComponentHTML(cc) {
+        var res = "";
+        function $(txt) {
+            res += txt;
+        }
+        function _br() {
+            return '<br />';
+        }
+        function _s() {
+            return '&nbsp;';
+        }
+        function _b(txt) {
+            return '<b>'+txt+'</b>';
+        }
+        function _a(txt,link) {
+            return '<a href="' + link + '">' + txt + '</a>';
+        }
+        function _h(l,name) {
+            return '<h' + l + '>' + name + '</h' + l + '>';
+        }
+        function _ta(e,c) {
+            return (e?"</":"<") + "table" + (e || !c?">":" class='"+c+"'");
+        }
+        function _r(e) {
+            return (e?"</":"<") + "tr>"
+        }
+        function _c(text) {
+            return "<td>" + text + "</td>";
+        }
+        function _ch(text) {
+            return "<th>" + text + "</th>";
+        }
+
+        var co = new cc({doc:true});
+
+        // title
+        $(_h(1,_a(co.type,"#"+co.type)));
+
+        try {
+            $(co.doc);
+        } catch (e) {
+            console.log(e);
+        }
+
+        for (sub in co.subComponents) {
+            $(_h(2,"Sub components"));
+            break;
+        }
+        for (var sub in co.subComponents) {
+            var t = co.subComponents[sub].type;
+            $(_sub + _s());
+            $(_a("["+t+"]", "#"+t));
+            $(_br());
+        }
+
+        $(_h(2, "Attributes"));
+        $(_ta(0,"docTable"));
+        
+        $(_r());
+        $(_ch("Name"));
+        $(_ch("Type"));
+        $(_ch("Values"));
+        $(_ch("Description"));
+        $(_r(1));
+
+        for (var attr in co.attributes) {
+            $(_r());
+
+            var a = co.attributes[attr];
+
+            $(_c(_b(attr)));
+
+            $(_c(a.type));
+
+            var str = "";
+            var av = co.attributes[attr].values;
+            if (av) {
+                if (Sfera.Utils.isFunction(av)) {
+                    try {
+                        av = av();
+                    } catch (e) {
+                        av = [];
+                    }
+                }
+                if (Sfera.Utils.isArray(av)) {
+                    while (str.length < 35) str += " ";
+                    str += "<" + av.join("|") + ">";
+                }
+            }
+
+            $(_c(str));
+
+            $(_c(a.doc?a.doc:""));
+
+            $(_r(1));
+        }
+        $(_ta(1));
+
+        $('<link rel="stylesheet" href="css/style.css">');
+
+        return res;
+    }
+
+	init();
+};
+
+
+//--------------------------------------------------------------------------------------------------------------------------
 // File Manager ------------------------------------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------------------------------------------------
 
-Sfera.Manager.FileManager = function() {
+Sfera.Manager.Apps.FileManager = function() {
     this.id = "fm";
 	this.open = false; // currently open. set by start, hide
 
@@ -2144,7 +2364,7 @@ Sfera.Manager.FileManager = function() {
 				detailsBtMoveE.style.display = (special)?"none":"inline";
 				detailsBtDuplicateE.style.display = (!multi)?"inline":"none";
 				detailsBtRenameE.style.display = (multi || special)?"none":"inline";
-				detailsBtDownloadE.style.display = (!multi)?"inline":"none";
+				detailsBtDownloadE.style.display = "inline";
 			}
 		}
 		detailsCE.style.visibility = (o.selectedItem >= 0)?"visible":"hidden";
@@ -2555,10 +2775,20 @@ Sfera.Manager.FileManager = function() {
 	} // updateTextPreview()
 
 	// download
-	this.downloadFile = function () {
+	this.downloadFiles = function () {
 		var o = this.popupMode?this.popupData:this;
 		var ts = "."+(new Date()).getTime();
-		document.getElementById("downloadTarget").src = "/api/files/download?path="+files.encodeFileName(o.currentFile)+"&ts="+ts;
+        var url = "/api/files/download?";
+
+        for (var i=0; i<this.selectedItems.length; i++) {
+			k = this.selectedItems[i];
+			n = this.currentFolder.sub[k].name;
+			if (this.currentPath) n = self.currentPath+"/"+n; // add path
+			url += (i?"&":"")+"path="+this.encodeFileName(n);
+		}
+
+        url += "&ts="+ts;
+		document.getElementById("downloadTarget").src = url;
 		if (o.currentFolder.sub[o.selectedItem].sub)
 			manager.showNotice("Download requested, please wait...");
 	}
@@ -3237,7 +3467,7 @@ Sfera.Manager.FileManager = function() {
 // System Console ----------------------------------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------------------------------------------------
 
-Sfera.Manager.SystemConsole = function() {
+Sfera.Manager.Apps.SystemConsole = function() {
     this.id = "sc";
 	this.open = false; // currently open. set by start, hide
 
@@ -3516,7 +3746,7 @@ Sfera.Manager.SystemConsole = function() {
 // File Manager ------------------------------------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------------------------------------------------
 
-Sfera.Manager.TextEditor = function() {
+Sfera.Manager.Apps.TextEditor = function() {
     this.id = "te";
 	this.open = false; // currently open. set by start, hide
     this.closing = false; // TODO: used now because te is not stand alone
@@ -3658,22 +3888,11 @@ Sfera.Manager.TextEditor = function() {
 	// update edit toolbar popup buttons
 	function updateToolbarPopupButtons() {
         // TODO
+        return;
 		document.getElementById("selectButtonFm").style.display = self.editorOpen?"none":"";
 		document.getElementById("downloadBackupButton").style.display = self.editorOpen?"none":"";
 		document.getElementById("toggleCommentButton").style.display = self.editorOpen && getSyntaxType()?"":"none";
 	} // updateToolbarPopupButtons()
-
-	// element, selection start, end
-	function getLinesSelection(txt,ss,se) {
-		var ls = txt.lastIndexOf("\n",ss-1);
-		var le = txt.indexOf("\n",ss<se?se-1:se);
-		if (le == -1) le = txt.length;
-		var pre = txt.slice(0,ls+1); // before this line, including ending \n
-		var sel = txt.slice(ls+1,le);// this line, including ending \n
-		var post = txt.slice(le,txt.length);  // after this line
-		if (ls == -1) ls = 0; // file beginning
-		return {ls:ls, le:le, pre:pre, sel:sel, post:post};
-	} // getLinesSelection()
 
 	// toggle comment, from button
 	this.toggleComment = function () {
@@ -3967,4 +4186,4 @@ Sfera.Manager.TextEditor = function() {
 	init();
 };
 
-//# sourceMappingURL=manager.js.map
+//# sourceMappingURL=sfera-manager.js.map

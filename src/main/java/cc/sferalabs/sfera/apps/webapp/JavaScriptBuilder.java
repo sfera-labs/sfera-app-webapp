@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package cc.sferalabs.sfera.apps.webapp;
 
@@ -47,7 +47,7 @@ public class JavaScriptBuilder {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param fileNames
 	 * @param dir
 	 * @throws ScriptException
@@ -65,8 +65,7 @@ public class JavaScriptBuilder {
 		for (String name : fileNames) {
 			JsFile jsFile;
 			if (customJs == null) {
-				if (name.startsWith("custom_intro.js")) {
-					// custom_intro.js or custom_intro.js.min
+				if (name.endsWith("custom_intro.js")) { // code/custom_intro.js
 					jsFile = new JsFile("custom.js");
 					customJs = jsFile;
 				} else {
@@ -94,7 +93,7 @@ public class JavaScriptBuilder {
 	}
 
 	/**
-	 * 
+	 *
 	 * @throws ScriptException
 	 * @throws IOException
 	 */
@@ -105,7 +104,7 @@ public class JavaScriptBuilder {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param engine
 	 * @param script
 	 * @throws ScriptException

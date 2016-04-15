@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package cc.sferalabs.sfera.apps.webapp;
 
@@ -66,7 +66,7 @@ public class InterfaceCacheBuilder {
 	private final Path interfaceTmpCacheRoot;
 
 	/**
-	 * 
+	 *
 	 * @param interfaceName
 	 * @param timestamp
 	 * @throws IOException
@@ -79,7 +79,7 @@ public class InterfaceCacheBuilder {
 	}
 
 	/**
-	 * 
+	 *
 	 * @throws IOException
 	 * @throws XMLStreamException
 	 */
@@ -106,7 +106,7 @@ public class InterfaceCacheBuilder {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param sub
 	 * @param attributes
 	 * @throws IOException
@@ -213,7 +213,7 @@ public class InterfaceCacheBuilder {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param source
 	 * @param target
 	 * @return
@@ -226,7 +226,7 @@ public class InterfaceCacheBuilder {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param file
 	 * @param components
 	 * @param attributes
@@ -267,7 +267,7 @@ public class InterfaceCacheBuilder {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param sub
 	 * @param components
 	 * @param attributes
@@ -293,7 +293,7 @@ public class InterfaceCacheBuilder {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param sub
 	 * @param components
 	 * @param attributes
@@ -302,8 +302,15 @@ public class InterfaceCacheBuilder {
 	private void createCode(String sub, Set<String> components, Map<String, String> attributes)
 			throws IOException {
 		try (BufferedWriter writer = Files.newBufferedWriter(
-				interfaceTmpCacheRoot.resolve("." + sub + "client.js"), StandardCharsets.UTF_8)) {
-			writeContentFrom("code/client.js", writer);
+				interfaceTmpCacheRoot.resolve("." + sub + "sfera-client.js"), StandardCharsets.UTF_8)) {
+			writeContentFrom("code/sfera-client.js", writer);
+		}
+
+		if (!WebApp.useJSMin) {
+			try (BufferedWriter writer = Files.newBufferedWriter(
+					interfaceTmpCacheRoot.resolve("." + sub + "sfera-client.js.map"), StandardCharsets.UTF_8)) {
+				writeContentFrom("code/sfera-client.js.map", writer);
+			}
 		}
 
 		String skin = attributes.get("skin");
@@ -346,7 +353,7 @@ public class InterfaceCacheBuilder {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param file
 	 * @param writer
 	 * @throws IOException
@@ -376,7 +383,7 @@ public class InterfaceCacheBuilder {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param target
 	 * @param manifestPath
 	 * @return
@@ -430,7 +437,7 @@ public class InterfaceCacheBuilder {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param sub
 	 * @param components
 	 * @param attributes
@@ -465,7 +472,7 @@ public class InterfaceCacheBuilder {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param path
 	 * @param resources
 	 * @throws IOException
@@ -493,7 +500,7 @@ public class InterfaceCacheBuilder {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param sub
 	 * @param components
 	 * @param attributes
@@ -534,7 +541,7 @@ public class InterfaceCacheBuilder {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param eventWriter
 	 * @param attributes
 	 * @throws IOException
@@ -575,7 +582,7 @@ public class InterfaceCacheBuilder {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param eventWriter
 	 * @param components
 	 * @param attributes
@@ -613,7 +620,7 @@ public class InterfaceCacheBuilder {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param file
 	 * @param elementLocalName
 	 * @param eventWriter

@@ -1,4 +1,4 @@
-/*! sfera-webapp - v0.0.2 - 2016-04-12 */
+/*! sfera-webapp - v0.0.2 - 2016-04-15 */
 
 /**
  * Button component.
@@ -30,7 +30,6 @@ Sfera.Components.create("Button", {
                 //this.component.element.innerHTML = "<div class='inner'>" + this.value + "</div>";
             },
 
-            doc: "Sets the label's text"
         },
 
         icon: {
@@ -48,8 +47,6 @@ Sfera.Components.create("Button", {
                     //icon.setAttribute("visible",false);
                 }
             },
-
-            doc: "Sets the icons"
         },
 
         fontSize: {
@@ -58,23 +55,18 @@ Sfera.Components.create("Button", {
                 var label = co.subComponents.label;
                 label.setAttribute("fontSize", this.value);
             },
-
-            doc: "Sets the label's font size"
         },
 
         onClick: {
             type: "js",
-            doc: "Mouse click/touch end event"
         },
 
         onDown: {
             type: "js",
-            doc: "Mouse down/touch start event"
         },
 
         onMove: {
             type:"js",
-            doc: "Mouse/touch move event"
         }
 
     },
@@ -868,7 +860,9 @@ Sfera.Components.create("Input", {
      attributes: {
          title: {
              type:"string",
+             // @ifdef DOC
              doc:"Title visible in the browser's title bar"
+             // @endif
          },
 
          skin: {
@@ -940,7 +934,9 @@ Sfera.Components.create("Label", {
      attributes: {
          title: {
              type:"string",
+             // @ifdef DOC
              doc:"Title visible in the browser's title bar"
+             // @endif
          },
 
          visible: {
@@ -1940,4 +1936,4 @@ function down() {
 
 });
 
-//# sourceMappingURL=components.js.map
+//# sourceMappingURL=sfera-components.js.map
