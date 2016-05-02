@@ -8492,7 +8492,7 @@ var t = T();
 function compile(filename, files, options) {
     var h = "";
     for (var i=0; i<32; i++) h += " ";
-    h += "| ";
+    h += "| c.s.s.a.w.JavaScriptBuilder - ";
 
 
     t = T();
@@ -8564,24 +8564,24 @@ function compile(filename, files, options) {
             toplevelSourceMap.get().setSourceContent(files[i].name, files[i].content);
         }
     }
-    print(h+"ast " + ti());
+    print(h+"Parsing " + ti() +"ms");
     if (opts.lint || opts.compress) {
         ast.figure_out_scope();
-        print(h+"scope " + ti());
+        //print(h+"scope " + ti());
     }
     if (opts.lint) {
         ast.scope_warnings();
-        print(h+"warnings " + ti());
+        //print(h+"warnings " + ti());
     }
     if (opts.compress) {
         ast = ast.transform(UglifyJS.Compressor(compressor_options));
-        print(h+"compress " + ti());
+        //print(h+"compress " + ti());
     }
     if (opts.mangle) {
         ast.figure_out_scope();
         ast.compute_char_frequency();
         ast.mangle_names();
-        print(h+"mangle " + ti());
+        //print(h+"mangle " + ti());
     }
     var codegen = Object.makeDeepCopy(beautifier_options);
     if (opts.source_map) codegen.source_map = toplevelSourceMap;
@@ -8589,11 +8589,11 @@ function compile(filename, files, options) {
         codegen.beautify = true;
     }
     res.output = ast.print_to_string(codegen);
-    print(h+"code to str " + ti());
+    print(h+"Generating code " + ti()+"ms");
     if (opts.source_map) {
         res.output += "\n" + "//# sourceMappingURL=" + res.map_filename;
         res.map = toplevelSourceMap.toString();
-        print(h+"map to str " + ti());
+        print(h+"Writing source map " + ti()+"ms");
     }
     return res;
 }

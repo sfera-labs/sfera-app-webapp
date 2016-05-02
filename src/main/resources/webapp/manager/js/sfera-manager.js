@@ -1,4 +1,4 @@
-/*! sfera-webapp - Manager - v0.0.2 - 2016-04-15 */
+/*! sfera-webapp - Manager - v0.0.2 - 2016-05-02 */
 
 var files;
 var fileManager;
@@ -1167,6 +1167,8 @@ Sfera.Manager.Files = function () {
 	this.resID = "";
 	this.resType = "";
 
+	var _onLoaded;
+
 	var foo = this;
 
 	// init
@@ -1185,8 +1187,9 @@ Sfera.Manager.Files = function () {
 	} // encodeFileName()
 
 	// load a file. type, value, wait msec?
-	this.load = function (type, value, msec) {
+	this.load = function (type, value, msec, onLoaded) {
 		if (!msec) msec = 10; // default 10 msec timeout
+		_onLoaded = onLoaded;
 		var url = "";
 		var ts = (new Date()).getTime();
 		var resID = value;
@@ -1297,6 +1300,12 @@ Sfera.Manager.Files = function () {
 				errorDescr = errorDescr[0].toLowerCase() + errorDescr.substr(1);
 			errorText = "Error loading "+files.resType;
 			if (files.resID) errorText += ", "+files.resID;
+		}
+
+		// custom on loaded event
+		if (_onLoaded) {
+			_onLoaded(json, errCode?{code:errCode, descr:errorDescr}:null);
+			return;
 		}
 
 		var w = 100; // wait before next request (prevents hanging?)
@@ -1550,212 +1559,344 @@ window.addEventListener("load", function() {
 
 Sfera.Manager.Apps.DocViewer = function() {
     this.id = "dv";
-	this.open = false; // currently open. set by start, hide
+    this.open = false; // currently open. set by start, hide
 
     var started = false; // if already started, will just switch
 
-	this.fontSize = 12;
+    this.fontSize = 12;
 
-	this.e = document.getElementById("docViewer");
+    this.e = document.getElementById("docViewer");
 
     var toolbarE = document.getElementById("dv_toolbar");
 
-	var panelE = document.getElementById("dv_docPanel");
-	var headerLabelE = document.getElementById("dv_editorHeaderLabel");
+    var panelE = document.getElementById("dv_docPanel");
+    var headerLabelE = document.getElementById("dv_editorHeaderLabel");
+    var iframeE;
 
-	var self = this;
+    var lQueue = []; // queue of files to load
+    var wQueue = []; // queue of files to write
 
-	// init
-	function init() {
-	} // init()
+    var self = this;
 
-	// start
-	this.start = function (options) {
-		manager.hideOtherApps(this);
+    var templates = {};
 
-		this.e.style.display = "inline";
+    var req;
 
-        generate();
+    // init
+    function init() {
+        /*
+        req = new Sfera.Net.Request();
+        req.onLoaded = onDictionaryLoaded;
+        req.open('/' + Sfera.Net.getURL("dictionary"), 20);
+        */
+        Sfera.Components.boot(); // init component classes
 
-		this.adjustLayout();
-	} // start()
+        lQueue.push({name:"index", path:"index.html"});
+        lQueue.push({name:"index_item", path:"index_item.html"});
+        lQueue.push({name:"component", path:"component.html"});
+        processLoadQueue();
+    } // init()
 
-	// hide (switching to another app)
-	this.hide = function () {
-		this.e.style.display = "none";
+    function onDictionaryLoaded() {
+        Sfera.Compiler.compileDictionary(req.getResponseXML());
+    }
 
-		manager.focus();
+    // start
+    this.start = function(options) {
+            manager.hideOtherApps(this);
 
-		this.open = false;
-	} // hide()
+            this.e.style.display = "inline";
 
-	// adjust layout. viewport size
-	this.adjustLayout = function () {
-		if (!manager.viewportWidth || !manager.viewportHeight) return;
+            generate();
 
-		var	vw = manager.viewportWidth;
-		var	vh = manager.viewportHeight;
+            this.open = true;
 
-		// tool bar size
-		var tbW = 0; // left one
-		var tbH = 36; // top one
+            this.adjustLayout();
+        } // start()
 
-		// editable area size
-		var eW = vw - tbW;
-		var eH = vh - tbH;
+    // hide (switching to another app)
+    this.hide = function() {
+            this.e.style.display = "none";
 
-		toolbarE.style.left = (tbW-1)+"px"; // +1, attach it to the iconPanel
-		toolbarE.style.width = (eW+1)+"px";
+            manager.focus();
 
-		// panels
-		var bs = 1; // border size
-		var pm = 5+bs; // panel margin: padding + border size
-		var pd = 7; // panel distance from border
-		var pw = Math.round((vw-pd*3-pm*4)/2); //;
-		var ph = vh-tbH-pm*2-pd*2;
-		if (pw<340) pw = 340;
+            this.open = false;
+        } // hide()
 
-		pw = (vw-pd*3-pm*4) -pw; // fix it: since it's /2, pw could be 1 pixel wider
+    // adjust layout. viewport size
+    this.adjustLayout = function() {
+            if (!manager.viewportWidth || !manager.viewportHeight) return;
 
-		var eW = vw-pm*2-pd*2; // full content width
+            var vw = manager.viewportWidth;
+            var vh = manager.viewportHeight;
 
-		panelE.style.left = (pd)+"px";
-		panelE.style.top = (tbH+pd)+"px";
-		panelE.style.width = (eW)+"px";
-		panelE.style.height = (ph)+"px";
-	} // adjustLayout()
+            // tool bar size
+            var tbW = 0; // left one
+            var tbH = 36; // top one
+
+            // editable area size
+            var eW = vw - tbW;
+            var eH = vh - tbH;
+
+            toolbarE.style.left = (tbW - 1) + "px"; // +1, attach it to the iconPanel
+            toolbarE.style.width = (eW + 1) + "px";
+
+            // panels
+            var bs = 1; // border size
+            var pm = 5 + bs; // panel margin: padding + border size
+            var pd = 7; // panel distance from border
+            var pw = Math.round((vw - pd * 3 - pm * 4) / 2); //;
+            var ph = vh - tbH - pm * 2 - pd * 2;
+            if (pw < 340) pw = 340;
+
+            pw = (vw - pd * 3 - pm * 4) - pw; // fix it: since it's /2, pw could be 1 pixel wider
+
+            var eW = vw - pm * 2 - pd * 2; // full content width
+
+            panelE.style.left = (pd) + "px";
+            panelE.style.top = (tbH + pd) + "px";
+            panelE.style.width = (eW) + "px";
+            panelE.style.height = (ph) + "px";
+        } // adjustLayout()
 
     // set edit font size
-	this.setFontSize = function (a) {
-		if (a) this.fontSize++; else this.fontSize--;
-		editorE.style.fontSize = this.fontSize+"px";
-		//editorE.style.lineHeight = Math.round(this.editorFontSize + this.editorFontSize/2)+"px";
-	} // setEditFontSize()
+    this.setFontSize = function(a) {
+            if (a) this.fontSize++;
+            else this.fontSize--;
+            editorE.style.fontSize = this.fontSize + "px";
+            //editorE.style.lineHeight = Math.round(this.editorFontSize + this.editorFontSize/2)+"px";
+        } // setEditFontSize()
 
 
 
     function generate() {
         var html = "";
+        var tocHtml, cHtml;
+        var ac = []; // array of component names
 
-        panelE.innerHTML = "<iframe>"+html+"</iframe>";
-        var iframeDoc = panelE.childNodes[0].contentWindow.document;
-
-        for (var c in Sfera.Components.Classes) {
-            if (c[0] == "_")
-                continue;
-
-            html += getComponentHTML(Sfera.Components.Classes[c]);
+        var addC;
+        if (!Sfera.client) {
+            addC = true;
+            Sfera.client = {
+                skin: new Sfera.Skins.Default()
+            };
         }
 
+        wQueue = [];
+        for (var c in Sfera.Components.Classes) {
+            cHtml = genHTML.component(Sfera.Components.Classes[c]);
+            if (cHtml) {
+                ac.push(c);
+                wQueue.push({
+                    path: "components/" + c + ".html",
+                    content: templates.component.replace("%component", cHtml)
+                });
+                html += cHtml;
+            }
+        }
+
+        html = templates.index.replace("%toc", genHTML.toc(ac));
+        wQueue.push({
+            path: "index.html",
+            content: html
+        });
+
+        panelE.innerHTML = "<iframe></iframe>";
+        iframeE = panelE.childNodes[0];
+        /*
+        var iframeDoc = panelE.childNodes[0].contentWindow.document;
         iframeDoc.open();
         iframeDoc.write(html);
         iframeDoc.close();
+        */
+
+        processWriteQueue();
+
+        if (addC)
+            delete Sfera.client;
+
+        /////////////////////
+        var node = document.getElementById('bg');
+
+        /*
+        domtoimage.toPng(node)
+            .then(function(dataUrl) {
+                var img = new Image();
+                img.src = dataUrl;
+                document.body.appendChild(img);
+            })
+            .catch(function(error) {
+                console.error('oops, something went wrong!', error);
+            });
+
+        domtoimage.toBlob(node)
+            .then(function(blob) {
+                window.saveAs(blob, 'my-node.png');
+            });
+            */
+
     }
 
-    function getComponentHTML(cc) {
+    function onTemplateLoaded(json, err) {
+        var f = lQueue.pop();
+        templates[f.name] = json.content;
+        processLoadQueue();
+    }
+
+    function processLoadQueue() {
+        // done?
+        if (!lQueue.length) {
+            //generate();
+        } else {
+            var f = lQueue.last(); // pop in onFileLoaded
+            // /src/main/javadoc/webapp/
+            files.load("readfile", ["/webapp/manager/doc/_templates/" + f.path], 10, onTemplateLoaded);
+        }
+    }
+
+    function processWriteQueue() {
+        // done?
+        if (!wQueue.length) {
+            iframeE.src = 'doc/index.html';
+        } else {
+            var f = wQueue.pop();
+            // /src/main/javadoc/webapp/
+            files.load("writefile", ["/webapp/manager/doc/" + f.path, f.content], 10, processWriteQueue);
+        }
+    }
+
+    var genHTML = new function() {
         var res = "";
+
         function $(txt) {
             res += txt;
         }
+
         function _br() {
             return '<br />';
         }
+
         function _s() {
             return '&nbsp;';
         }
+
         function _b(txt) {
-            return '<b>'+txt+'</b>';
+            return '<b>' + txt + '</b>';
         }
-        function _a(txt,link) {
-            return '<a href="' + link + '">' + txt + '</a>';
+
+        function _a(txt, link, target) {
+            target = target?' target="'+target+'"':'';
+            return '<a href="' + link + '"'+target+'>' + txt + '</a>';
         }
-        function _h(l,name) {
+
+        function _h(l, name) {
             return '<h' + l + '>' + name + '</h' + l + '>';
         }
-        function _ta(e,c) {
-            return (e?"</":"<") + "table" + (e || !c?">":" class='"+c+"'");
+
+        function _ta(e, c) {
+            return (e ? "</" : "<") + "table" + (e || !c ? ">" : " class='" + c + "'");
         }
+
         function _r(e) {
-            return (e?"</":"<") + "tr>"
+            return (e ? "</" : "<") + "tr>"
         }
+
         function _c(text) {
             return "<td>" + text + "</td>";
         }
+
         function _ch(text) {
             return "<th>" + text + "</th>";
         }
 
-        var co = new cc({doc:true});
+        this.toc = function(ac) {
+            res = "";
 
-        // title
-        $(_h(1,_a(co.type,"#"+co.type)));
-
-        try {
-            $(co.doc);
-        } catch (e) {
-            console.log(e);
-        }
-
-        for (sub in co.subComponents) {
-            $(_h(2,"Sub components"));
-            break;
-        }
-        for (var sub in co.subComponents) {
-            var t = co.subComponents[sub].type;
-            $(_sub + _s());
-            $(_a("["+t+"]", "#"+t));
-            $(_br());
-        }
-
-        $(_h(2, "Attributes"));
-        $(_ta(0,"docTable"));
-        
-        $(_r());
-        $(_ch("Name"));
-        $(_ch("Type"));
-        $(_ch("Values"));
-        $(_ch("Description"));
-        $(_r(1));
-
-        for (var attr in co.attributes) {
-            $(_r());
-
-            var a = co.attributes[attr];
-
-            $(_c(_b(attr)));
-
-            $(_c(a.type));
-
-            var str = "";
-            var av = co.attributes[attr].values;
-            if (av) {
-                if (Sfera.Utils.isFunction(av)) {
-                    try {
-                        av = av();
-                    } catch (e) {
-                        av = [];
-                    }
-                }
-                if (Sfera.Utils.isArray(av)) {
-                    while (str.length < 35) str += " ";
-                    str += "<" + av.join("|") + ">";
-                }
+            for (var i = 0; i < ac.length; i++) {
+                $(templates.index_item.replace("%item", ac[i]).replace("%url",'components/' + ac[i] + '.html'));
+                //$(_a(ac[i], 'components/' + ac[i] + '.html', 'contentFrame'));
             }
 
-            $(_c(str));
-
-            $(_c(a.doc?a.doc:""));
-
-            $(_r(1));
+            return res;
         }
-        $(_ta(1));
 
-        $('<link rel="stylesheet" href="css/style.css">');
+        this.component = function(cc) {
+            res = "";
 
-        return res;
-    }
+            var co = new cc({
+                doc: true
+            });
 
-	init();
+            if (co.doc && co.doc.hidden)
+                return "";
+
+            // title
+            $(_h(1, co.type)); //_a(co.type, "#" + co.type)));
+
+            if (co.doc && co.doc.descr)
+                $(co.doc.descr);
+
+            for (sub in co.subComponents) {
+                $(_h(2, "Sub components"));
+                break;
+            }
+            for (var sub in co.subComponents) {
+                var t = co.subComponents[sub].type;
+                $(_sub + _s());
+                $(_a("[" + t + "]", "#" + t));
+                $(_br());
+            }
+
+            $(_h(2, "Attributes"));
+            $(_ta(0, "docTable"));
+
+            $(_r());
+            $(_ch("Name"));
+            $(_ch("Type"));
+            $(_ch("Value"));
+            $(_ch("Default"));
+            $(_ch("Description"));
+            $(_r(1));
+
+            for (var attr in co.attributes) {
+                $(_r());
+
+                var a = co.attributes[attr];
+
+                $(_c(_b(attr)));
+
+                $(_c(a.type));
+
+                var str = "";
+                var av = co.attributes[attr].values;
+                if (av) {
+                    if (Sfera.Utils.isFunction(av)) {
+                        try {
+                            av = av();
+                        } catch (e) {
+                            av = [];
+                        }
+                    }
+                    if (Sfera.Utils.isArray(av)) {
+                        str += av.join(", ");
+                    }
+                }
+
+                $(_c(co.attributes[attr].default))
+
+                $(_c(str));
+
+                $(_c(a.doc && a.doc.descr ? a.doc.descr : ""));
+
+                $(_r(1));
+            }
+            $(_ta(1));
+
+            return res;
+        }
+    };
+
+    init();
 };
 
 

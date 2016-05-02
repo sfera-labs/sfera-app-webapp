@@ -1,4 +1,4 @@
-/*! sfera-webapp - v0.0.2 - 2016-04-15 */
+/*! sfera-webapp - v0.0.2 - 2016-05-02 */
 
 /**
  * Button component.
@@ -10,10 +10,6 @@ Sfera.Components.create("Button", {
     presets: ["Visibility", "Position", "Size", "Style", "Color"],
 
     attributes: {
-        // command
-        command: {
-            type: "string"
-        },
 
         label: {
             update: function() {
@@ -29,7 +25,6 @@ Sfera.Components.create("Button", {
                 }
                 //this.component.element.innerHTML = "<div class='inner'>" + this.value + "</div>";
             },
-
         },
 
         icon: {
@@ -122,14 +117,6 @@ Sfera.Components.create("Checkbox", {
     extends: "_Field",
 
     attributes: {
-        type: {
-            type: "string",
-            default: "input",
-            update: function() {
-                this.component.redraw();
-            }
-        },
-
         width: {
             update: function () {
                 if (this.component.elements.button)
@@ -209,7 +196,7 @@ Sfera.Components.create("Checkbox", {
             type: "js",
             default: "event(id,value)"
         },
-        onEnter: {
+        onEnterKey: {
             type: "js"
         },
         onFocus: {
@@ -308,24 +295,22 @@ Sfera.Components.create("Checkbox", {
         var code = event.keyCode;
         var c = Sfera.Utils.getKeyFromCode(code);
 
-        var type = this.getAttribute("type");
-
         // trigger on enter event
         if (c == "enter" && !this.onEnter()) {
             c = ""; // onEnter prevented, don't focus next
         }
 
-        if (c == "enter" || c == "tab") {
+        if (c == "tab") {
             this.onChangedTimeout(); // send now
 
             Sfera.client.focusNext(event.shiftKey);
-            if (c == "enter" && type != "textarea")
+            if (c == "enter")
                 this.blur(); // still focused? (no next object)
 
             return false; // done, prevent
         } else {
             // space, flip
-            if (c == "space") {
+            if (c == "space" || c == "enter") {
                 this.flip();
             }
 
@@ -364,8 +349,8 @@ Sfera.Components.create("Checkbox", {
         }
     },
 
-    onEnter: function () {
-        var f = this.getAttribute("onEnter");
+    onEnterKey: function () {
+        var f = this.getAttribute("onEnterKey");
         if (f) {
             return Sfera.Custom.exec(f);
         } else {
@@ -591,7 +576,7 @@ Sfera.Components.create("Input", {
             type: "js",
             default: "event(id,value)"
         },
-        onEnter: {
+        onEnterKey: {
             type: "js"
         },
         onFocus: {
@@ -740,8 +725,8 @@ Sfera.Components.create("Input", {
         var type = this.getAttribute("type");
 
         // trigger on enter event
-        if (c == "enter" && !this.onEnter()) {
-            c = ""; // onEnter prevented, don't focus next
+        if (c == "enter" && !this.onEnterKey()) {
+            c = ""; // onEnterKey prevented, don't focus next
         }
 
         if ((c == "enter" && type != "textarea") || c == "tab") {
@@ -812,8 +797,8 @@ Sfera.Components.create("Input", {
         */
     },
 
-    onEnter: function () {
-        var f = this.getAttribute("onEnter");
+    onEnterKey: function () {
+        var f = this.getAttribute("onEnterKey");
         if (f) {
             return Sfera.Custom.exec(f);
         } else {
@@ -1076,21 +1061,6 @@ Sfera.Components.create("Select", {
             default: "1000" // msec to wait before noticing a change
         },
 
-        // regular expression used to validate keydown
-        keyRegex: {
-            type: "regexp"
-        },
-
-        // regular expression used to validate value before submitting
-        valueRegex: {
-            type: "regexp",
-
-            compile: function() {
-                this.value = Sfera.Compiler.compileAttributeValue(this, "^(" + this.source + ")$"); // add begin and end, it has to match the whole string
-                // do nothing else, since there's no update needed
-            }
-        },
-
         fontSize: {
             type: "integer",
 
@@ -1108,10 +1078,6 @@ Sfera.Components.create("Select", {
             }
         },
 
-        maxLength: {
-            type: "integer"
-        },
-
         onKeyUp: {
             type: "js"
         },
@@ -1119,7 +1085,7 @@ Sfera.Components.create("Select", {
             type: "js",
             default: "event(id,value)"
         },
-        onEnter: {
+        onEnterKey: {
             type: "js"
         },
         onFocus: {
@@ -1358,8 +1324,8 @@ Sfera.Components.create("Select", {
         */
     },
 
-    onEnter: function() {
-        var f = this.getAttribute("onEnter");
+    onEnterKey: function() {
+        var f = this.getAttribute("onEnterKey");
         if (f) {
             return Sfera.Custom.exec(f);
         } else {
@@ -1400,6 +1366,10 @@ Sfera.Components.create("Select", {
  * @class Sfera.Components.SferaBg
  */
 Sfera.Components.create("SferaBg", {
+    doc: {
+        hidden:true
+    },
+
     init: function() {
         var tid = 0;
         var p; // bg points
@@ -1611,7 +1581,7 @@ Sfera.Components.create("Slider", {
             type: "js",
             default: "event(id,value)"
         },
-        onEnter: {
+        onEnterKey: {
             type: "js"
         },
         onFocus: {
@@ -1903,8 +1873,8 @@ function down() {
         this.onChanged();
     },
 
-    onEnter: function() {
-        var f = this.getAttribute("onEnter");
+    onEnterKey: function() {
+        var f = this.getAttribute("onEnterKey");
         if (f) {
             return Sfera.Custom.exec(f);
         } else {

@@ -1,4 +1,4 @@
-/*! sfera-webapp - v0.0.2 - 2016-04-15 */
+/*! sfera-webapp - v0.0.2 - 2016-05-02 */
 
 (function(){
 
@@ -485,6 +485,8 @@ Sfera.ComponentPresets = {
  */
 Sfera.Components = new(function() {
 
+    // component definitions
+    this._componentDefs = {};
     // components need to be created in order depending on what component they're extending
     this._createLater = {};
 
@@ -573,6 +575,18 @@ Sfera.Components = new(function() {
      * @property {string} def - The component's definition.
      */
     this.create = function(name, def) {
+        this._componentDefs[name] = def; // create all on boot
+    };
+
+    this.boot = function() {
+        // create all
+        for (var c in this._componentDefs)
+            this.createClass(c, this._componentDefs[c]);
+        this._componentDefs = {};
+    };
+
+    // create a component class now
+    this.createClass = function(name, def) {
         // extends an existing component?
         if (def.extends && !Sfera.Components.Classes[def.extends]) {
             if (!this._createLater[def.extends])
@@ -623,7 +637,6 @@ Sfera.Components = new(function() {
                         }
                     }
                 }
-
             }
 
             // attributes
@@ -650,21 +663,21 @@ Sfera.Components = new(function() {
 
         // non standard, allows developer tools to display object class names correctly
         comp.displayName = "Sfera.Component.Classes." + name;
-        /*
-        Object.defineProperty(Sfera.Components[name], 'name', {
-          value: "Sfera.Component."+name
-        });
-        */
 
         // extends
-        if (!def.extends)
+        if (!def.extends && name != "_Base")
             def.extends = "_Base";
 
-        var sup = Sfera.Components.Classes[def.extends].prototype;
+        var sup;
+        if (def.extends) {
+            sup = Sfera.Components.Classes[def.extends].prototype;
 
-        comp.prototype = Object.create(sup);
-        comp.prototype.constructor = comp;
-        comp.prototype.type = name;
+            comp.prototype = Object.create(sup);
+            comp.prototype.constructor = comp;
+            comp.prototype.type = name;
+        } else {
+            sup = { attrDefs:{} };
+        }
 
         // doc?
         var cDoc;
@@ -672,12 +685,22 @@ Sfera.Components = new(function() {
             cDoc = Sfera.Doc.get.component(name);
             if (cDoc && cDoc.doc)
                 comp.prototype.doc = cDoc.doc;
+            if (!cDoc || !cDoc.doc)
+                cDoc = {doc:{}};
+            comp.prototype.doc = cDoc.doc;
         }
 
         // copy attributes
         comp.prototype.attrDefs = {};
+        var sDoc;
+        if (Sfera.Doc)
+            sDoc = Sfera.Doc.get.component(def.extends);
         for (var a in sup.attrDefs) {
             comp.prototype.attrDefs[a] = sup.attrDefs[a];
+            // attribute doc
+            if (sDoc && sDoc.attr && sDoc.attr[a] && !sup.attrDefs[a].doc) {
+                comp.prototype.attrDefs[a].doc = sDoc.attr[a];
+            }
         }
 
         // presets
@@ -700,31 +723,35 @@ Sfera.Components = new(function() {
             }
         }
 
-        // doc
-        if (cDoc && cDoc.attr[a]) {
-            for (var a in cDoc.attrs[a]) {
-                if (!comp.prototype.attrDefs[a])
-                    comp.prototype.attrDefs[a] = {};
-                comp.prototype.attrDefs[a].doc = cDoc.attrs[a];
-            }
-        }
-
-
         // attributes
         if (def.attributes) {
             for (var attr in def.attributes) {
                 if (!comp.prototype.attrDefs[attr]) {
                     comp.prototype.attrDefs[attr] = def.attributes[attr];
                 } else {
-                    // instance
+                    // clone from super class
                     if (comp.prototype.attrDefs[attr] == sup.attrDefs[attr]) {
-                        comp.prototype.attrDefs[attr] = Object.create(sup.attrDefs[attr]);
+                        comp.prototype.attrDefs[attr] = {};
+                        for (var i in sup.attrDefs[attr])
+                            comp.prototype.attrDefs[attr][i] = sup.attrDefs[attr][i];
                     }
                     // extend rather than replace (in case it was already defined by extend or preset)
                     for (var i in def.attributes[attr]) {
                         comp.prototype.attrDefs[attr][i] = def.attributes[attr][i];
                     }
                 }
+            }
+        }
+
+        // attribute doc
+        if (cDoc && cDoc.attr) {
+            for (var a in cDoc.attr) {
+                /*
+                if (!comp.prototype.attrDefs[a])
+                    comp.prototype.attrDefs[a] = {};
+                */
+                if (comp.prototype.attrDefs[a])
+                    comp.prototype.attrDefs[a].doc = cDoc.attr[a];
             }
         }
 
@@ -842,6 +869,8 @@ Sfera.Client = function(config) {
 
 
         this.isBooted = true;
+
+        Sfera.Components.boot(); // init component classes
 
         this.components = new Sfera.ComponentManager(this);
 
@@ -2935,6 +2964,7 @@ Sfera.Net = new (function() {
 
     };
 
+
 })();
 
 
@@ -5026,7 +5056,9 @@ Sfera.ComponentPresets.Color = function() {
         default: "default",
 
         values: function() {
-            var c = Sfera.client.skin.colors[this.component.type];
+            var c;
+            if (Sfera.client && Sfera.client.skin)
+                c = Sfera.client.skin.colors[this.component.type];
             return c ? c : ["default"];
         },
 
@@ -5154,6 +5186,7 @@ Sfera.ComponentPresets.Style = function() {
                 s = Sfera.client.skin.styles[this.component.type];
             return s ? s : ["default"];
         },
+        
         update: function() {
             if (this.component.updateClass)
                 this.component.updateClass();
@@ -5224,6 +5257,10 @@ Sfera.Components.create("_Base", {
 
     // require update: null, true/ {}
     requireUpdate: null,
+
+    doc: {
+        hidden:true
+    },
 
     attributes: {
         id: {
@@ -5312,6 +5349,10 @@ Sfera.Components.create("_Base", {
  */
 Sfera.Components.create("_Field", {
     presets: ["Visibility", "Position", "Size", "Style"],
+
+    doc: {
+        hidden:true
+    },
 
     attributes: {
         value: {}

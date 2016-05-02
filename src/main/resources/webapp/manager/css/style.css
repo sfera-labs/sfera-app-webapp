@@ -1473,20 +1473,4 @@ span {
     width: 100%;
     height: 100%; }
 
-.docTable {
-  border: 1px solid #ccc;
-  border-collapse: collapse;
-  border-spacing: 0; }
-  .docTable th {
-    font-weight: bold;
-    text-align: left; }
-  .docTable td, .docTable th {
-    padding: 8px; }
-  .docTable tr {
-    border-bottom: 1px solid #ddd; }
-  .docTable tr:nth-child(odd) {
-    background-color: #fff; }
-  .docTable tr:nth-child(even) {
-    background-color: #f1f1f1; }
-
 /*# sourceMappingURL=style.css.map */

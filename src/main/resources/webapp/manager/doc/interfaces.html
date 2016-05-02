@@ -1,0 +1,158 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" $manifest;>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="cache-control" content="no-cache">
+
+    <meta id="viewport" name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width, user-scalable=no, shrink-to-fit=no, minimal-ui">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <title>Sfera Webapp Documentation</title>
+
+    <style>
+    </style>
+
+</head>
+<body>
+    <h1>Interfaces</h1>
+
+    Interfaces in Sfera are the main way for the end user to access the system's functionalities through any browser (last two main versions supported). They are defined by the following elements:
+
+    - index.xml: an xml file describing the interface
+    - index.js: an optional javascript file containing custom logic
+    - an assets folder containing all the assets used (images...)
+
+    The interface index.xml
+
+    The interface index file is a standard XML file where each node represents a component.
+    Each component can have attributes that defines its appearance and behavior.
+
+    The root component is always <interface> and it contains one or more <page> components.
+
+    Each component can have an id attribute that allows it to be reached.
+    Attribute values can be set dynamically (through either custom js code or through events from the server).
+
+    An interface has a skin attribute that defines the look and feel, but can also be customized in various way:
+    customizing components through attribute
+    creating a custom css file to specify changes
+    creating a custom skin
+
+    <h1>Components</h1>
+
+    Most components (excluding <interface> and <page>) have position attributes that specify their placement on the page in pixels (attributes x and y). Some have attributes for size as well, width and height.
+    Ex.:
+    <textarea>
+     <image x="175" y="270" width="350" height="50" source="assets/sferalabs_logo.png"  />
+    </textarea>
+
+    Attributes can contain mustache variables, written as {{<node>}}. The node value will be parsed in real time.
+    Ex.:
+    <textarea>
+    <label text="{{webapp.interface.new.update}}" width="400" height="50" />
+    </textarea>
+
+    <h1>Interface inline script</h1>
+
+    Some components, like buttons for example, have events that can have javascript code associated. While any javascript code will work, there are some predefined functions for the most common operations:
+
+    page(id): navigates to a page with the specified id
+    ex.: page(“page:homepage”)
+
+    event(id, value): sends an event with <id> and <value> to the server
+    ex.: event(“myEvent”,”7”)
+
+    command(command, callback): sends a command to the server. A callback function can be specified, detailed in index.js.
+    ex.: command(“myCommand”,myCallback)
+
+    	in index.js:
+    	function myCallback(command) {
+    		if (command=”hi”)
+    			Sfera.Debug.log(“command executed”);
+    	}
+    logout(): logs the user out
+    login(username, password): logs the user in
+    setAttribute(id, name, value): set a component's attribute
+
+<textarea>
+    Ex.
+
+    	<button label="home" width="50" height="50" on-click="page('page:homepage')" />
+</textarea>
+
+
+    <h1>Interface custom script</h1>
+
+    The interface's logic can be extended by writing custom javascript code in an index.js file.
+    Any function declared here can be called by a component inline script.
+    The same functions used in inline script can be used here as well (page, event, command...).
+    The following callbacks can be defined:
+
+    function onStartup()
+    called when the interface is ready
+
+    function onEvent(node, json)
+    	called when a ui event is received. If the return value is false, the event is canceled
+
+    function onPage(name)
+    called when a page is shown. If the return value is false, the page is not shown.
+
+
+    <h1>Directory structure</h1>
+
+    <textarea>
+    /webapp/
+    	<interface>/	name of the interface url
+    		index.xml	the xml defining the interface
+    		index.js	optional js with the interface's script
+    		asset/		directory with all the interface's assets
+    			no-cache/	directory with the assets that are not included in the HTML5 cache
+    </textarea>
+
+
+    <h1>Examples</h1>
+
+    Examples
+
+    Navigation
+
+    In this example we have two pages. On page 1 (the homepage) we have two buttons:
+    - bt_1: in the on-click attribute we use the page function to navigate to the second page
+    - bt_logout: in the on-click attribute we use the logout function to log the user out
+    On page 2 we have another button that navigates back to the first page.
+
+    <textarea>
+
+    <interface id="ex1" skin="default" title="Example 1" width="420" height="270" >
+        <page id="page:homepage" title="Homepage">
+            <button id="bt_1" x="130" y="40" width="160" height="60" label="Page 2" on-click="page('page:page2')" />
+            <button id="bt_logout" x="130" y="150" width="160" height="60" label="Logout" on-click="logout()" />
+    	</page>
+        <page id="page:page2" title="Page 2">
+            <button id="bt_2" x="130" y="40" width="160" height="60" label="Home page" on-click="page('page:homepage')" />
+    	</page>
+    </interface>
+
+    </textarea>
+
+
+    <h1>Slider</h1>
+    In this example we have a slider and two buttons.
+    Each button uses the setAttribute to set the slider's value.
+    When a change is detected in the slider's value a “web.webapp.ui.slider_1” event is generated and sent to the server.
+
+    <textarea>
+
+    <interface id="ex2" skin="default" title="Example 2" width="420" height="270" >
+        <page id="page:homepage" title="Homepage">
+            <slider id="slider_1" x="70" y="30" width="40" height="210" bar-color="#5550f0" />
+            <button id="bt_1" x="190" y="50" width="160" height="60" label="max" on-click="setAttribute('slider_1','value','100')" />
+            <button id="bt_2" x="190" y="150" width="160" height="60" label="min" on-click="setAttribute('slider_1','value','0')" />
+    	</page>
+    </interface>
+
+    </textarea>
+</body>
+</html>

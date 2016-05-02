@@ -14,10 +14,6 @@ Sfera.Components.create("Button", {
     presets: ["Visibility", "Position", "Size", "Style", "Color"],
 
     attributes: {
-        // command
-        command: {
-            type: "string"
-        },
 
         label: {
             update: function() {
@@ -33,7 +29,6 @@ Sfera.Components.create("Button", {
                 }
                 //this.component.element.innerHTML = "<div class='inner'>" + this.value + "</div>";
             },
-
         },
 
         icon: {

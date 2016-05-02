@@ -94,7 +94,7 @@ Sfera.Components.create("Slider", {
             type: "js",
             default: "event(id,value)"
         },
-        onEnter: {
+        onEnterKey: {
             type: "js"
         },
         onFocus: {
@@ -386,8 +386,8 @@ function down() {
         this.onChanged();
     },
 
-    onEnter: function() {
-        var f = this.getAttribute("onEnter");
+    onEnterKey: function() {
+        var f = this.getAttribute("onEnterKey");
         if (f) {
             return Sfera.Custom.exec(f);
         } else {

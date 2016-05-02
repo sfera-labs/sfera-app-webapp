@@ -2,7 +2,6 @@
  * @author       Gionatan Iasio <gionatan@sferalabs.cc>
  * @copyright    2015 SferaLabs
  * @license      {@link https://github.com/sfera-labs/sfera-webapp/license.txt|MIT License}
- * Checkbox.js
  */
 
 /**
@@ -15,14 +14,6 @@ Sfera.Components.create("Checkbox", {
     extends: "_Field",
 
     attributes: {
-        type: {
-            type: "string",
-            default: "input",
-            update: function() {
-                this.component.redraw();
-            }
-        },
-
         width: {
             update: function () {
                 if (this.component.elements.button)
@@ -102,7 +93,7 @@ Sfera.Components.create("Checkbox", {
             type: "js",
             default: "event(id,value)"
         },
-        onEnter: {
+        onEnterKey: {
             type: "js"
         },
         onFocus: {
@@ -201,24 +192,22 @@ Sfera.Components.create("Checkbox", {
         var code = event.keyCode;
         var c = Sfera.Utils.getKeyFromCode(code);
 
-        var type = this.getAttribute("type");
-
         // trigger on enter event
         if (c == "enter" && !this.onEnter()) {
             c = ""; // onEnter prevented, don't focus next
         }
 
-        if (c == "enter" || c == "tab") {
+        if (c == "tab") {
             this.onChangedTimeout(); // send now
 
             Sfera.client.focusNext(event.shiftKey);
-            if (c == "enter" && type != "textarea")
+            if (c == "enter")
                 this.blur(); // still focused? (no next object)
 
             return false; // done, prevent
         } else {
             // space, flip
-            if (c == "space") {
+            if (c == "space" || c == "enter") {
                 this.flip();
             }
 
@@ -257,8 +246,8 @@ Sfera.Components.create("Checkbox", {
         }
     },
 
-    onEnter: function () {
-        var f = this.getAttribute("onEnter");
+    onEnterKey: function () {
+        var f = this.getAttribute("onEnterKey");
         if (f) {
             return Sfera.Custom.exec(f);
         } else {

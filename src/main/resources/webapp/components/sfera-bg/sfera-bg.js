@@ -11,6 +11,10 @@
  * @class Sfera.Components.SferaBg
  */
 Sfera.Components.create("SferaBg", {
+    doc: {
+        hidden:true
+    },
+
     init: function() {
         var tid = 0;
         var p; // bg points

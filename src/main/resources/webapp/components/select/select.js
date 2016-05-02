@@ -74,21 +74,6 @@ Sfera.Components.create("Select", {
             default: "1000" // msec to wait before noticing a change
         },
 
-        // regular expression used to validate keydown
-        keyRegex: {
-            type: "regexp"
-        },
-
-        // regular expression used to validate value before submitting
-        valueRegex: {
-            type: "regexp",
-
-            compile: function() {
-                this.value = Sfera.Compiler.compileAttributeValue(this, "^(" + this.source + ")$"); // add begin and end, it has to match the whole string
-                // do nothing else, since there's no update needed
-            }
-        },
-
         fontSize: {
             type: "integer",
 
@@ -106,10 +91,6 @@ Sfera.Components.create("Select", {
             }
         },
 
-        maxLength: {
-            type: "integer"
-        },
-
         onKeyUp: {
             type: "js"
         },
@@ -117,7 +98,7 @@ Sfera.Components.create("Select", {
             type: "js",
             default: "event(id,value)"
         },
-        onEnter: {
+        onEnterKey: {
             type: "js"
         },
         onFocus: {
@@ -356,8 +337,8 @@ Sfera.Components.create("Select", {
         */
     },
 
-    onEnter: function() {
-        var f = this.getAttribute("onEnter");
+    onEnterKey: function() {
+        var f = this.getAttribute("onEnterKey");
         if (f) {
             return Sfera.Custom.exec(f);
         } else {

@@ -1,4 +1,4 @@
-<!-- sfera-webapp - Manager - v0.0.2 - 2016-04-15 -->
+<!-- sfera-webapp - Manager - v0.0.2 - 2016-05-02 -->
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" $manifest;>
@@ -22,7 +22,11 @@
     <title>Sfera</title>
     <script type="text/javascript" src="js/sfera-client.js"></script>
     <script type="text/javascript" src="js/sfera-manager.js"></script>
+    <script type="text/javascript" src="js/sfera-doc.js"></script>
     <script type="text/javascript" src="js/sfera-components.js"></script>
+    <script type="text/javascript" src="js/default/default.js"></script>
+
+    <script type="text/javascript" src="js/lib/dom-to-image.min.js"></script>
 
     <script type="text/javascript" src="js/lib/ace.js"></script>
     <script type="text/javascript" src="js/lib/mode-css.js"></script>
@@ -481,6 +485,9 @@
 
                 <div class="mToolButton" data-onclick="manager.openPopup('about')" style="float:left">
                     <span>about</span>
+                </div>
+                <div class="mToolButton" data-onclick="manager.switchApp('dv')" style="float:left">
+                    <span>doc</span>
                 </div>
                 <div class="mToolButton" data-onclick="Sfera.Login.logout()">
                     <img class="icon" src="/manager/images/ticonlogout.png">

@@ -122,7 +122,7 @@ Sfera.Components.create("Input", {
             type: "js",
             default: "event(id,value)"
         },
-        onEnter: {
+        onEnterKey: {
             type: "js"
         },
         onFocus: {
@@ -271,8 +271,8 @@ Sfera.Components.create("Input", {
         var type = this.getAttribute("type");
 
         // trigger on enter event
-        if (c == "enter" && !this.onEnter()) {
-            c = ""; // onEnter prevented, don't focus next
+        if (c == "enter" && !this.onEnterKey()) {
+            c = ""; // onEnterKey prevented, don't focus next
         }
 
         if ((c == "enter" && type != "textarea") || c == "tab") {
@@ -343,8 +343,8 @@ Sfera.Components.create("Input", {
         */
     },
 
-    onEnter: function () {
-        var f = this.getAttribute("onEnter");
+    onEnterKey: function () {
+        var f = this.getAttribute("onEnterKey");
         if (f) {
             return Sfera.Custom.exec(f);
         } else {
