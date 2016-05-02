@@ -1750,7 +1750,7 @@ Sfera.Manager.Apps.DocViewer = function() {
         } else {
             var f = lQueue.last(); // pop in onFileLoaded
             // /src/main/javadoc/webapp/
-            files.load("readfile", ["/webapp/manager/doc/_templates/" + f.path], 10, onTemplateLoaded);
+            files.load("readfile", ["/webapp/cache/manager/doc/_templates/" + f.path], 10, onTemplateLoaded);
         }
     }
 
@@ -1761,7 +1761,7 @@ Sfera.Manager.Apps.DocViewer = function() {
         } else {
             var f = wQueue.pop();
             // /src/main/javadoc/webapp/
-            files.load("writefile", ["/webapp/manager/doc/" + f.path, f.content], 10, processWriteQueue);
+            files.load("writefile", ["/webapp/cache/manager/doc/" + f.path, f.content], 10, processWriteQueue);
         }
     }
 
