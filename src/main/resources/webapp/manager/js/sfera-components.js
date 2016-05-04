@@ -1,4 +1,4 @@
-/*! sfera-webapp - v0.0.2 - 2016-05-02 */
+/*! sfera-webapp - v0.0.2 - 2016-05-04 */
 
 /**
  * Button component.
@@ -10,7 +10,6 @@ Sfera.Components.create("Button", {
     presets: ["Visibility", "Position", "Size", "Style", "Color"],
 
     attributes: {
-
         label: {
             update: function() {
                 var co = this.component;

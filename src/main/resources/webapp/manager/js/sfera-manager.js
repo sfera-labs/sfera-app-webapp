@@ -1,4 +1,4 @@
-/*! sfera-webapp - Manager - v0.0.2 - 2016-05-02 */
+/*! sfera-webapp - Manager - v0.0.2 - 2016-05-04 */
 
 var files;
 var fileManager;
