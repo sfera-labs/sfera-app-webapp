@@ -1,0 +1,45 @@
+<project xmlns="http://maven.apache.org/DECORATION/1.6.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/DECORATION/1.6.0 http://maven.apache.org/xsd/decoration-1.6.0.xsd"
+	name="Sfera Web App">
+
+	<skin>
+		<groupId>org.apache.maven.skins</groupId>
+		<artifactId>maven-fluido-skin</artifactId>
+		<version>1.4</version>
+	</skin>
+
+	<poweredBy>
+		<logo name="Sfera Labs" href="http://www.sferalabs.cc/" img="images/sferalabs_logo.png"
+			width="85%" />
+	</poweredBy>
+
+	<body>
+		<links>
+			<item name="Sfera" href="http://www.sferalabs.cc/sfera/" />
+			<item name="Sfera Labs" href="http://www.sferalabs.cc/" />
+		</links>
+
+		<menu name="Sfera Web App">
+			<item name="Introduction" href="index.html" />
+			<item name="Installation" href="installation.html" />
+			<item name="Configuration" href="configuration.html" />
+			<item name="Manager" href="manager.html" />
+			<item name="Interfaces" href="interfaces.html" />
+			<item name="Components" href="components.html" />
+			<item name="Client-side scripting" href="client-scripting.html" />
+			<item name="Server-side programming" href="server-programming.html" />
+		</menu>
+
+		<menu name="Advanced">
+			<item name="Introduction" href="dev-intro.html" />
+			<item name="Workspace setup" href="dev-workspace-setup.html" />
+			<item name="Custom components" href="dev-components.html" />
+			<item name="Custom themes" href="dev-themes.html" />
+			<item name="JavaDocs" href="apidocs/index.html" />
+			<item name="JavascriptDocs" href="jsdocs/index.html" />
+		</menu>
+
+		<menu ref="reports" />
+	</body>
+</project>

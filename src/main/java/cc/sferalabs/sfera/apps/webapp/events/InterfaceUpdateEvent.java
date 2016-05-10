@@ -17,7 +17,9 @@ public class InterfaceUpdateEvent extends NumberEvent {
 	/**
 	 * 
 	 * @param interfaceName
+	 *            interface name
 	 * @param timestamp
+	 *            update timestamp
 	 */
 	public InterfaceUpdateEvent(String interfaceName, long timestamp) {
 		super(WebAppNode.INSTANCE, "interface." + interfaceName + ".update", timestamp);

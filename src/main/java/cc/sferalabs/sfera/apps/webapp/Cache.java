@@ -51,7 +51,7 @@ public abstract class Cache {
 	 * @param manualRebuild
 	 * @throws Exception
 	 */
-	public synchronized static void init(boolean manualRebuild) throws Exception {
+	synchronized static void init(boolean manualRebuild) throws Exception {
 		ResourcesUtil.lookForPluginsOverwritingWebapp();
 		interfaces = new HashSet<String>();
 		buildCache();

@@ -17,16 +17,18 @@ import cc.sferalabs.sfera.web.api.WebApiEvent;
  */
 public class WebAppUIEvent extends UIEvent {
 
-	private final WebApiEvent httpEvent;
+	private final WebApiEvent webApiEvent;
 
 	/**
 	 * 
 	 * @param id
-	 * @param httpEvent
+	 *            event ID
+	 * @param webApiEvent
+	 *            Web API event that triggered this event
 	 */
-	public WebAppUIEvent(String id, WebApiEvent httpEvent) {
-		super(id, httpEvent.getValue(), httpEvent.getConnectionId());
-		this.httpEvent = httpEvent;
+	public WebAppUIEvent(String id, WebApiEvent webApiEvent) {
+		super(id, webApiEvent.getValue(), webApiEvent.getConnectionId());
+		this.webApiEvent = webApiEvent;
 	}
 
 	@Override
@@ -35,10 +37,10 @@ public class WebAppUIEvent extends UIEvent {
 	}
 
 	/**
-	 * @return
+	 * @return the HTTP request associated with this event
 	 */
 	public HttpServletRequest getHttpRequest() {
-		return httpEvent.getHttpRequest();
+		return webApiEvent.getHttpRequest();
 	}
 
 }
