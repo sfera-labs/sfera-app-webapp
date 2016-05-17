@@ -1,4 +1,4 @@
-/*! sfera-webapp - Manager - v0.0.2 - 2016-05-04 */
+/*! sfera-webapp - Manager - v0.0.2 - */
 
 var files;
 var fileManager;
@@ -1582,6 +1582,8 @@ Sfera.Manager.Apps.DocViewer = function() {
 
     var req;
 
+    var ext = "md"; // html
+
     // init
     function init() {
         /*
@@ -1591,9 +1593,9 @@ Sfera.Manager.Apps.DocViewer = function() {
         */
         Sfera.Components.boot(); // init component classes
 
-        lQueue.push({name:"index", path:"index.html"});
-        lQueue.push({name:"index_item", path:"index_item.html"});
-        lQueue.push({name:"component", path:"component.html"});
+        lQueue.push({name:"index", path:"index."+ext});
+        lQueue.push({name:"index_item", path:"index_item."+ext});
+        lQueue.push({name:"component", path:"component."+ext});
         processLoadQueue();
     } // init()
 
@@ -1682,22 +1684,25 @@ Sfera.Manager.Apps.DocViewer = function() {
             };
         }
 
+        // generator
+        var gen = genMD; //genHTML
+
         wQueue = [];
         for (var c in Sfera.Components.Classes) {
-            cHtml = genHTML.component(Sfera.Components.Classes[c]);
+            cHtml = gen.component(Sfera.Components.Classes[c]);
             if (cHtml) {
                 ac.push(c);
                 wQueue.push({
-                    path: "components/" + c + ".html",
+                    path: "components/" + c + "." + ext,
                     content: templates.component.replace("%component", cHtml)
                 });
                 html += cHtml;
             }
         }
 
-        html = templates.index.replace("%toc", genHTML.toc(ac));
+        html = templates.index.replace("%toc", gen.toc(ac));
         wQueue.push({
-            path: "index.html",
+            path: "index."+ext,
             content: html
         });
 
@@ -1757,7 +1762,7 @@ Sfera.Manager.Apps.DocViewer = function() {
     function processWriteQueue() {
         // done?
         if (!wQueue.length) {
-            iframeE.src = 'doc/index.html';
+            iframeE.src = 'doc/index.'+ext;
         } else {
             var f = wQueue.pop();
             // /src/main/javadoc/webapp/
@@ -1884,6 +1889,149 @@ Sfera.Manager.Apps.DocViewer = function() {
 
                 $(_c(co.attributes[attr].default))
 
+                $(_c(str));
+
+                $(_c(a.doc && a.doc.descr ? a.doc.descr : ""));
+
+                $(_r(1));
+            }
+            $(_ta(1));
+
+            return res;
+        }
+    };
+
+
+    var genMD = new function() {
+        var res = "";
+
+        function $(txt) {
+            res += txt;
+        }
+
+        function _br() {
+            return "\n";
+        }
+
+        function _s() {
+            return ' ';//'&nbsp;';
+        }
+
+        function _b(txt) {
+            return '**' + txt + '**';
+        }
+
+        function _a(txt, link, target) {
+            //target = target?' target="'+target+'"':'';
+            return '['+txt+']('+link+')';
+        }
+
+        function _h(l, name) {
+            var h = "\n";
+            for (var i=0; i<l; i++) h+= "#";
+            return h + " " + name + "\n\n";
+        }
+
+        function _ta(e, c) {
+            return ''; //(e ? "</" : "<") + "table" + (e || !c ? ">" : " class='" + c + "'");
+        }
+
+        function _r(e) {
+            var r = (e ? "|\n" : "");
+            if (e && nch) {
+                for (var i=0; i<nch; i++)
+                    r += '|---';
+                r += "|\n";
+                nch = 0;
+            }
+            return r;
+        }
+
+        function _c(text) {
+            return "|" +text;
+        }
+
+        var nch = 0;
+        function _ch(text) {
+            nch++;
+            return "|" +text;
+        }
+
+        this.toc = function(ac) {
+            res = "";
+
+            for (var i = 0; i < ac.length; i++) {
+                $(templates.index_item.replace("%item", ac[i]).replace("%url",'components/' + ac[i] + '.html'));
+                //$(_a(ac[i], 'components/' + ac[i] + '.html', 'contentFrame'));
+            }
+
+            return res;
+        }
+
+        this.component = function(cc) {
+            res = "";
+
+            var co = new cc({
+                doc: true
+            });
+
+            if (co.doc && co.doc.hidden)
+                return "";
+
+            // title
+            $(_h(1, co.type)); //_a(co.type, "#" + co.type)));
+
+            if (co.doc && co.doc.descr)
+                $(co.doc.descr);
+
+            for (sub in co.subComponents) {
+                $(_h(2, "Sub components"));
+                break;
+            }
+            for (var sub in co.subComponents) {
+                var t = co.subComponents[sub].type;
+                $(_sub + _s());
+                $(_a("[" + t + "]", "#" + t));
+                $(_br());
+            }
+
+            $(_h(2, "Attributes"));
+            $(_ta(0, "docTable"));
+
+            $(_r());
+            $(_ch("Name"));
+            $(_ch("Type"));
+            $(_ch("Default"));
+            $(_ch("Values"));
+            $(_ch("Description"));
+            $(_r(1));
+
+            for (var attr in co.attributes) {
+                $(_r());
+
+                var a = co.attributes[attr];
+
+                $(_c(_b(attr)));
+
+                $(_c(a.type));
+
+                var str = co.attributes[attr].default;
+                $(_c(str?str:""));
+
+                str = "";
+                var av = co.attributes[attr].values;
+                if (av && av!="null") {
+                    if (Sfera.Utils.isFunction(av)) {
+                        try {
+                            av = av();
+                        } catch (e) {
+                            av = [];
+                        }
+                    }
+                    if (Sfera.Utils.isArray(av)) {
+                        str += av.join(", ");
+                    }
+                }
                 $(_c(str));
 
                 $(_c(a.doc && a.doc.descr ? a.doc.descr : ""));
@@ -2639,8 +2787,10 @@ Sfera.Manager.Apps.FileManager = function() {
         o.innerHTML = txt;
         Sfera.UI.destroyButtons(this.pathButtons);
         var as = o.getElementsByTagName("SPAN");
+        var p = "";
         for (i=0; i<as.length; i++) {
-            this.pathButtons.push(new Sfera.UI.Button(as[i],{onclick:"fileManager.browseTo('"+paths[i]+"')"}));
+            p += (i?'/':'')+paths[i];
+            this.pathButtons.push(new Sfera.UI.Button(as[i],{onclick:"fileManager.browseTo('"+p+"')"}));
         }
 	} // updatePath()
 

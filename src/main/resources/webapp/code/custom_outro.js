@@ -1,13 +1,8 @@
-/**
-* @author       Gionatan Iasio <gionatan@sferalabs.cc>
-* @copyright    2015 SferaLabs
-* @license      {@link https://github.com/sfera-labs/sfera-webapp/license.txt|MIT License}
-*/
 
     // bridge functions
-    this.onStartup = (typeof(onStartup) === 'function') ? function () {onStartup();} : null;
-    this.onEvent = (typeof(onEvent) === 'function') ? function (node, json) {return onEvent(node, json);} : null;
-    this.onPage = (typeof(onPage) === 'function') ? function (name) {return onPage(name);} : null;
+    this.onReady = (typeof(onReady) === 'function') ? function () {onReady();} : null;
+    this.onEvent = (typeof(onEvent) === 'function') ? function (id, value) {return onEvent(id, value);} : null;
+    this.onPage = (typeof(onPage) === 'function') ? function (name) {return onPage(id);} : null;
 
     // context functions
     function page(id) {

@@ -1,8 +1,7 @@
 /**
  * @author       Gionatan Iasio <gionatan@sferalabs.cc>
- * @copyright    2015 SferaLabs
- * @license      {@link https://github.com/sfera-labs/sfera-webapp/license.txt|MIT License}
- * Button.js
+ * @copyright    2016 SferaLabs
+ * @license      {@link http://sfera.sferalabs.cc/docs/sfera/license.html|LGPL License}
  */
 
 /**
@@ -207,9 +206,9 @@ Sfera.Components.create("Input", {
         this.elements.field.controller = this;
     },
 
-
     updateClass: function () {
-        this.element.className = "component comp_input" + (this.focused?" focused":"");
+        var cl = this.getAttribute("cssClass");
+        this.element.className = "component comp_input" + (cl?" "+cl:"") + (this.focused?" focused":"");
         var sty = this.getAttribute("style");
         this.elements.container.className = "container" + (sty?" style_"+sty:"");
     },
@@ -310,14 +309,18 @@ Sfera.Components.create("Input", {
             return text;
         }
 
-        // check max length
-        if (!c && value && maxLength && value.length >= maxLength && !getSelectedText()) {
-            return false; // prevent
-        }
+        // only if no special key
+        if (c.length == 1) {
+            // check max length
+            if (value && maxLength && value.length >= maxLength && !getSelectedText()) {
+                return false; // prevent
+            }
 
-        // validate? (only if ctrl or meta are not pressed)
-        if (!c && keyRegex && !event.ctrlKey && !event.metaKey && !keyRegex.test(String.fromCharCode(code)))
-            return false; // key validation failed: prevent
+            // validate? only if ctrl or meta are not pressed
+            if (keyRegex && !event.ctrlKey && !event.metaKey && !keyRegex.test(String.fromCharCode(code))) {
+                return false; // key validation failed: prevent
+            }
+        }
 
         this.onChanged();
         return true; // allow

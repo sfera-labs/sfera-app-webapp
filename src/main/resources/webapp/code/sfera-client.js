@@ -1,4 +1,4 @@
-/*! sfera-webapp - v0.0.2 - 2016-05-04 */
+/*! sfera-webapp - v0.0.2 -  */
 
 (function(){
 
@@ -847,6 +847,11 @@ Sfera.Client = function(config) {
     this.skin = null;
 
     var interfaceC;
+
+    // requests waiting for a reply
+    var commandReqs = {};
+    var eventReqs = {};
+
     /**
      * Initialize the client and start it.
      *
@@ -903,8 +908,8 @@ Sfera.Client = function(config) {
 
         window.onresize = adjustLayout;
         window.onkeydown = onKeyDown;
-		window.onkeyup = onKeyUp;
-		window.onkeypress = onKeyPress;
+        window.onkeyup = onKeyUp;
+        window.onkeypress = onKeyPress;
 
         delete config;
     };
@@ -960,6 +965,25 @@ Sfera.Client = function(config) {
                 }
             }
         }
+        switch (json.action) {
+            case "command":
+                if (commandReqs[json.tag]) {
+                    if (commandReqs[json.tag].callback)
+                        commandReqs[json.tag].callback(commandReqs[json.tag].cmd,
+                            json.result);
+                    delete commandReqs[json.tag];
+                }
+                break;
+            case "event":
+                if (eventReqs[json.tag]) {
+                    if (eventReqs[json.tag].callback)
+                        eventReqs[json.tag].callback(eventReqs[json.tag].id,
+                            eventReqs[json.tag].value,
+                            json.result);
+                    delete eventReqs[json.tag];
+                }
+                break;
+        }
     }
 
     function onUpdateDictionary(xmlDoc) {
@@ -979,8 +1003,8 @@ Sfera.Client = function(config) {
 
         adjustLayout();
 
-        if (Sfera.Custom.onStartup)
-            Sfera.Custom.onStartup();
+        if (Sfera.Custom.onReady)
+            Sfera.Custom.onReady();
     };
 
     this.indexComponent = function(component) {
@@ -1015,13 +1039,14 @@ Sfera.Client = function(config) {
             this.cPage = p;
             var i = interfaceC.getAttribute("title");
             var t = p.getAttribute("title");
-            Sfera.Browser.updateUrl(id, (i?i:'Sfera') + (t?" - "+t:''));
+            Sfera.Browser.updateUrl(id, (i ? i : 'Sfera') + (t ? " - " + t : ''));
         } else {
+            if (this.isLogin)
+                this.showPage("page:home");
             console.log("page not found: " + id);
         }
     };
 
-    var commandQueue = [];
     this.sendCommand = function(command, callback) {
         var tag = (new Date()).getTime();
         var req = {
@@ -1029,13 +1054,12 @@ Sfera.Client = function(config) {
             tag: tag,
             callback: callback
         };
-        commandQueue.push(req);
+        commandReqs[tag] = req;
         Sfera.Net.sendCommand(req);
 
         return tag;
     };
 
-    var eventQueue = [];
     this.sendEvent = function(id, value, callback) {
         var tag = (new Date()).getTime(); // request id
         var req = {
@@ -1044,7 +1068,7 @@ Sfera.Client = function(config) {
             tag: tag,
             callback: callback
         };
-        eventQueue.push(req, callback);
+        eventReqs[req] = req;
         Sfera.Net.sendEvent(req);
 
         return tag;
@@ -1147,69 +1171,69 @@ Sfera.Client = function(config) {
 
     // events
     // on key down event
-	function onKeyDown(event) {
-		var evt = event || window.event;
-		var code = evt.charCode || evt.keyCode;
+    function onKeyDown(event) {
+        var evt = event || window.event;
+        var code = evt.charCode || evt.keyCode;
 
-		self.ctrlKey = evt.ctrlKey;
-		self.shiftKey = evt.shiftKey;
+        self.ctrlKey = evt.ctrlKey;
+        self.shiftKey = evt.shiftKey;
 
-		// keyboard listener?
-		if (focusedCo && focusedCo.onKeyDown) {
-			if (!focusedCo.onKeyDown(evt,code)) {
-				// the event won't go through, prevent
-				Sfera.Browser.preventDefault(evt);
-				return false;
-			}
-		} else {
-			if (code == 9) {
-				if (self.cPage.children.length)
-					focusFirst(self.cPage,evt.shiftKey); // get first or last
-				// the event won't go through, prevent
-				Sfera.Browser.preventDefault(evt);
-				return false;
-			}
-		}
+        // keyboard listener?
+        if (focusedCo && focusedCo.onKeyDown) {
+            if (!focusedCo.onKeyDown(evt, code)) {
+                // the event won't go through, prevent
+                Sfera.Browser.preventDefault(evt);
+                return false;
+            }
+        } else {
+            if (code == 9) {
+                if (self.cPage.children.length)
+                    focusFirst(self.cPage, evt.shiftKey); // get first or last
+                // the event won't go through, prevent
+                Sfera.Browser.preventDefault(evt);
+                return false;
+            }
+        }
 
-		return true;
-	} // onKeyDown()
+        return true;
+    } // onKeyDown()
 
-	function onKeyPress(event) {
-		var evt = event || window.event;
-		var code = evt.charCode || evt.keyCode;
+    function onKeyPress(event) {
+        var evt = event || window.event;
+        var code = evt.charCode || evt.keyCode;
 
-		self.ctrlKey = evt.ctrlKey;
-		self.shiftKey = evt.shiftKey;
+        self.ctrlKey = evt.ctrlKey;
+        self.shiftKey = evt.shiftKey;
 
-		// keyboard listener?
-		if (focusedCo && focusedCo.onKeyPress) {
-			if (!focusedCo.onKeyPress(evt,code)) {
-				// the event won't go through, prevent
-				Sfera.Browser.preventDefault(evt);
-				return false;
-			}
-		}
+        // keyboard listener?
+        if (focusedCo && focusedCo.onKeyPress) {
+            if (!focusedCo.onKeyPress(evt, code)) {
+                // the event won't go through, prevent
+                Sfera.Browser.preventDefault(evt);
+                return false;
+            }
+        }
 
-		return true;
-	}
+        return true;
+    }
 
-	// on key up event
-	function onKeyUp(event) {
-		var evt = event || window.event;
-		var code = evt.charCode || evt.keyCode;
+    // on key up event
+    function onKeyUp(event) {
+        var evt = event || window.event;
+        var code = evt.charCode || evt.keyCode;
 
-		self.ctrlKey = evt.ctrlKey;
-		self.shiftKey = evt.shiftKey;
+        self.ctrlKey = evt.ctrlKey;
+        self.shiftKey = evt.shiftKey;
 
-		// keyboard listener?
-		if (focusedCo && focusedCo.onKeyUp) {
-			if (focusedCo.onKeyUp(evt,code)) return true; // the event will go through
-		}
+        // keyboard listener?
+        if (focusedCo && focusedCo.onKeyUp) {
+            if (focusedCo.onKeyUp(evt, code)) return true; // the event will go through
+        }
 
-		// the event won't go through, prevent
-		Sfera.Browser.preventDefault(evt);
-		return false;
-	} // onKeyUp()
+        // the event won't go through, prevent
+        Sfera.Browser.preventDefault(evt);
+        return false;
+    } // onKeyUp()
 
 
     ////////////////////////// focus
@@ -1261,7 +1285,7 @@ Sfera.Client = function(config) {
         return focusNext(co);
     } // focusFirstObj()
 
-    function focusNext(co,dir) {
+    function focusNext(co, dir) {
         var cos = co.parent.children;
         var oi = -1;
         var i;
@@ -1313,7 +1337,7 @@ Sfera.Client = function(config) {
     }
 
     this.focusNext = function(dir) {
-        return focusNext(focusedCo,dir);
+        return focusNext(focusedCo, dir);
     };
 
 };
@@ -3327,7 +3351,7 @@ Sfera.Browser = new (function() {
 
     this.updateUrl = function(pageId, pageTitle) {
         var location = this.getLocation();
-        hash = pageId == "page:homepage"?"":pageId;
+        hash = pageId == "page:home"?"":pageId;
         document.title = pageTitle;
         if (location.hash != hash) {
             lastHash = hash; // so the interval won't detect the change
@@ -3388,10 +3412,10 @@ Sfera.Browser = new (function() {
     this.start = function() {
         setInterval(function() {
             var location = Sfera.Browser.getLocation();
-            var locHash = location.hash == "page:homepage"?"":location.hash
+            var locHash = location.hash == "page:home"?"":location.hash
             if (locHash !== lastHash) {
                 lastHash = locHash;
-                Sfera.client.showPage(location.hash ? location.hash : "homepage");
+                Sfera.client.showPage(location.hash ? location.hash : "home");
                 //alert("User went back or forward to application state represented by " + hash);
             }
         }, 100);
@@ -5274,6 +5298,17 @@ Sfera.Components.create("_Base", {
                 return this.attributeValues.id;
             },
         },
+
+        cssClass: {
+            type: "string",
+            update: function() {
+                var c = this.component;
+                var cl = this.value;
+                if (c.dom && c.dom.className)
+                    cl = c.dom.className + " " + cl;
+                c.element.className = cl;
+            }
+        }
     },
 
     init: function() {
@@ -5373,7 +5408,7 @@ Sfera.Components.create("_Field", {
 });
 
 
-if (typeof exports !== 'undefined') {
+    if (typeof exports !== 'undefined') {
         if (typeof module !== 'undefined' && module.exports) {
             exports = module.exports = Sfera;
         }

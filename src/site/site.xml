@@ -26,7 +26,19 @@
 			<item name="Configuration" href="configuration.html" />
 			<item name="Manager" href="manager.html" />
 			<item name="Interfaces" href="interfaces.html" />
-			<item name="Components" href="components.html" />
+			<item name="Components" href="components.html" collapse="true">
+				<item name="Button" href="components/Button.html"/>
+				<item name="Checkbox" href="components/Checkbox.html"/>
+				<item name="Container" href="components/Container.html"/>
+				<item name="Image" href="components/Image.html"/>
+				<item name="Input" href="components/Input.html"/>
+				<item name="Interface" href="components/Interface.html"/>
+				<item name="Label" href="components/Label.html"/>
+				<item name="Page" href="components/Page.html"/>
+				<item name="Radio" href="components/Radio.html"/>
+				<item name="Select" href="components/Select.html"/>
+				<item name="Slider" href="components/Slider.html"/>
+			</item>
 			<item name="Client-side scripting" href="client-scripting.html" />
 			<item name="Server-side programming" href="server-programming.html" />
 		</menu>
@@ -35,9 +47,9 @@
 			<item name="Introduction" href="dev-intro.html" />
 			<item name="Workspace setup" href="dev-workspace-setup.html" />
 			<item name="Custom components" href="dev-components.html" />
-			<item name="Custom themes" href="dev-themes.html" />
+			<item name="Custom skins" href="dev-skins.html" />
 			<item name="JavaDocs" href="apidocs/index.html" />
-			<item name="JavascriptDocs" href="jsdocs/index.html" />
+			<!--item name="JavascriptDocs" href="jsdocs/index.html" /-->
 		</menu>
 
 		<menu ref="reports" />

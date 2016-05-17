@@ -71,7 +71,7 @@ Sfera.Components.create("Select", {
 
         changeDelay: {
             type: "integer",
-            default: "1000" // msec to wait before noticing a change
+            default: "0" // msec to wait before noticing a change
         },
 
         fontSize: {
@@ -230,10 +230,13 @@ Sfera.Components.create("Select", {
 
             var changeDelay = this.getAttribute("changeDelay");
             var self = this;
-            if (changeDelay) // if 0, disabled
+            if (changeDelay) { // if 0, run immediately
                 this.changeTimeout = setTimeout(function() {
-                self.onChangedTimeout()
-            }, changeDelay);
+                    self.onChangedTimeout()
+                }, changeDelay);
+            } else {
+                self.onChangedTimeout();
+            }
         }
     },
 

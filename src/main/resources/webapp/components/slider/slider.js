@@ -1,7 +1,7 @@
 /**
  * @author       Gionatan Iasio <gionatan@sferalabs.cc>
- * @copyright    2015 SferaLabs
- * @license      {@link https://github.com/sfera-labs/sfera-webapp/license.txt|MIT License}
+ * @copyright    2016 SferaLabs
+ * @license      {@link http://sfera.sferalabs.cc/docs/sfera/license.html|LGPL License}
  */
 
 /**
@@ -84,7 +84,7 @@ Sfera.Components.create("Slider", {
 
         changeDelay: {
             type: "integer",
-            default: "1000" // msec to wait before noticing a change
+            default: "0" // msec to wait before noticing a change
         },
 
         onKeyUp: {
@@ -132,47 +132,47 @@ Sfera.Components.create("Slider", {
 
 
 
-/*
+    /*
 
-// mousewheel?
-browser.initMouseWheelEvent(e,onWheel);
+    // mousewheel?
+    browser.initMouseWheelEvent(e,onWheel);
 
 
-// on mouse wheel
-function onWheel(event) {
-    foo.focus();
-    var evt = event || window.event;
-    var d = evt.detail?evt.detail:evt.wheelDelta/120; // wheelDelta is 120,240,-120,-240 > -2 .. 2
-    (d>0)?up():down();
-    if (d>1 || d<-1)
+    // on mouse wheel
+    function onWheel(event) {
+        foo.focus();
+        var evt = event || window.event;
+        var d = evt.detail?evt.detail:evt.wheelDelta/120; // wheelDelta is 120,240,-120,-240 > -2 .. 2
         (d>0)?up():down();
-} // onWheel()
+        if (d>1 || d<-1)
+            (d>0)?up():down();
+    } // onWheel()
 
-// get on wheel event to use it externally (mouse wheel over a list, calls slider's mousewheel
-this.getOnWheel = function () {
-    return onWheel;
-}
+    // get on wheel event to use it externally (mouse wheel over a list, calls slider's mousewheel
+    this.getOnWheel = function () {
+        return onWheel;
+    }
 
-// up delta
-function up() {
-    var k = bs>20?20:bs; // at least 1 px movement
-    var d = (max-min)/k;
-    var v = _value + d;
-    if (v<min) v = min;
-    if (v>max) v = max;
-    if (v != _value) updateValue(v);
-}
-// down delta
-function down() {
-    var k = bs>20?20:bs; // at least 1 px movement
-    var d = (max-min)/k;
-    var v = _value - d;
-    if (v<min) v = min;
-    if (v>max) v = max;
-    if (v != _value) updateValue(v);
-}
+    // up delta
+    function up() {
+        var k = bs>20?20:bs; // at least 1 px movement
+        var d = (max-min)/k;
+        var v = _value + d;
+        if (v<min) v = min;
+        if (v>max) v = max;
+        if (v != _value) updateValue(v);
+    }
+    // down delta
+    function down() {
+        var k = bs>20?20:bs; // at least 1 px movement
+        var d = (max-min)/k;
+        var v = _value - d;
+        if (v<min) v = min;
+        if (v>max) v = max;
+        if (v != _value) updateValue(v);
+    }
 
-//*/
+    //*/
 
     onOver: function() {
 
@@ -203,13 +203,13 @@ function down() {
         this.isDown = false;
 
         // add up, move events
-		if (Sfera.Device.touch) {
-			window.removeEvent("touchend", document.body, this._onUp);
-			window.removeEvent("touchmove", document.body, this._onMove);
-		} else {
-			window.removeEvent("mouseup", document.body, this._onUp);
-			window.removeEvent("mousemove", document.body, this._onMove);
-		}
+        if (Sfera.Device.touch) {
+            window.removeEvent("touchend", document.body, this._onUp);
+            window.removeEvent("touchmove", document.body, this._onMove);
+        } else {
+            window.removeEvent("mouseup", document.body, this._onUp);
+            window.removeEvent("mousemove", document.body, this._onMove);
+        }
     },
 
     onMove: function(event) {
@@ -220,14 +220,14 @@ function down() {
             var v = h > w;
             var s = this.getAttribute("cursorSize");
 
-            var p = v ? ((mp.y-this._bp.y-s/2) / (h-s)) : ((mp.x-this._bp.x-s/2) / (w-s)); //
+            var p = v ? ((mp.y - this._bp.y - s / 2) / (h - s)) : ((mp.x - this._bp.x - s / 2) / (w - s)); //
             if (v)
                 p = 1 - p;
 
             var min = this.getAttribute("min");
             var max = this.getAttribute("max");
             var p = p * (max - min) + min; // min-max
-            p = (p<min?min:(p>max?max:p));
+            p = (p < min ? min : (p > max ? max : p));
 
             this.setAttribute("value", p);
             this.onChange();
@@ -309,10 +309,13 @@ function down() {
 
             var changeDelay = this.getAttribute("changeDelay");
             var self = this;
-            if (changeDelay) // if 0, disabled
+            if (changeDelay) { // if 0, run immediately
                 this.changeTimeout = setTimeout(function() {
-                self.onChangedTimeout()
-            }, changeDelay);
+                    self.onChangedTimeout()
+                }, changeDelay);
+            } else {
+                self.onChangedTimeout();
+            }
         }
     },
 

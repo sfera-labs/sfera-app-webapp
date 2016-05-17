@@ -1,4 +1,4 @@
-/*! sfera-webapp - v0.0.2 - 2016-05-04 */
+/*! sfera-webapp - v0.0.2 -  */
 
 /**
  * Sfera.Doc
@@ -32,6 +32,9 @@ Sfera.Doc.add.component("_Base", {
     attr:{
         id: {
             descr: "Component identifier"
+        },
+        cssClass: {
+            descr: "Defines a custom css class that is applied to the component's html element"
         }
     }
 });
