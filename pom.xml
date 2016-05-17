@@ -4,7 +4,7 @@
 
 	<groupId>cc.sferalabs.sfera.apps</groupId>
 	<artifactId>webapp</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0</version>
 
 	<name>Sfera Web App</name>
 	<description>Sfera Web App</description>
