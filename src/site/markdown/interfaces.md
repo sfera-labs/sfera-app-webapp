@@ -6,13 +6,13 @@ It can be accessed through the webserver from the url <span style="white-space:n
 
 ## The interface index.xml
 
-The interface index file is a standard XML fle where each node represents a component. Each component can have attributes that defines its appearance and behavior.
+The interface index file is a standard XML fle where each node represents a [component](components.html). Each component can have attributes that defines its appearance and behavior.
 Here's a simple example:
 
 **_/webapp/interfaces/ex\_helloworld/index.xml_**
 
     <interface skin="default" title="Hello" width="420" height="270" >
-        <page id="page:homepage" title="Homepage">
+        <page id="page:home" title="Homepage">
             <button x="130" y="40" width="160" height="60" label="Hello" on-click="alert('hello world')" />
         </page>
     </interface>
@@ -53,8 +53,10 @@ Since navigating to a page will also change the browser's URL (while not refresh
         </page>
     </interface>
 
-Here we can see how each button calls the predefined function "page" passing the target page's id as parameter.     
+Here we can see how each button calls the predefined function "page" passing the target page's id as parameter. 
 On the first page we also have a button that logs the user out.    
+
+See [Client-side scripting](client-scripting.html) for a description of all the predefined functions and how to use them.
 
 ![interface-navigation-1](images/interfaces/ex_navi_1.png)
 

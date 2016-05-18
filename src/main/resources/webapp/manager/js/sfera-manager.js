@@ -1,4 +1,4 @@
-/*! sfera-webapp - Manager - v0.0.2 - */
+/*! sfera-webapp - v0.0.2 */
 
 var files;
 var fileManager;
@@ -2789,7 +2789,7 @@ Sfera.Manager.Apps.FileManager = function() {
         var as = o.getElementsByTagName("SPAN");
         var p = "";
         for (i=0; i<as.length; i++) {
-            p += (i?'/':'')+paths[i];
+            p += (p?'/':'')+paths[i];
             this.pathButtons.push(new Sfera.UI.Button(as[i],{onclick:"fileManager.browseTo('"+p+"')"}));
         }
 	} // updatePath()

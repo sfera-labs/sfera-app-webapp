@@ -24,7 +24,11 @@
 			<item name="Introduction" href="index.html" />
 			<item name="Installation" href="installation.html" />
 			<item name="Configuration" href="configuration.html" />
-			<item name="Manager" href="manager.html" />
+			<item name="Manager" href="manager.html">			
+				<item name="File Manager" href="manager/file-manager.html"/>
+				<item name="Editor" href="manager/editor.html"/>
+				<item name="Console" href="manager/console.html"/>
+			</item>
 			<item name="Interfaces" href="interfaces.html" />
 			<item name="Components" href="components.html" collapse="true">
 				<item name="Button" href="components/Button.html"/>

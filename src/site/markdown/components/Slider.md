@@ -19,10 +19,10 @@ Slider component
 |**color**|string|default|default, light, stable, positive, calm, balanced, energized, assertive, royal, dark|Specifies the color|
 |**cursorSize**|integer|30||Specifies the label's text|
 |**barColor**|color|transparent||Specifies the color of the bar|
-|**min**|integer|0||Specifies the minumum value|
-|**max**|integer|100||Specifies the maximum value|
+|**min**|float|0||Specifies the minumum value|
+|**max**|float|100||Specifies the maximum value|
 |**focus**|boolean|||If true, gives the component focus|
-|**value**|string|||Specifies the value of the slider|
+|**value**|float|||Specifies the value of the slider|
 |**changeDelay**|integer|0||Speficies the delay in milliseconds before a value's change is detected|
 |**onKeyUp**|js|||Script to be run on key up event|
 |**onChange**|js|event(id,value)||Script to be run when a change in value is detected|

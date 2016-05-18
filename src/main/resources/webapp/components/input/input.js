@@ -155,7 +155,6 @@ Sfera.Components.create("Input", {
         */
     },
 
-
     focus: function() {
         this.elements.field.focus(); // will fire onFocus
     },
@@ -163,8 +162,6 @@ Sfera.Components.create("Input", {
     blur: function() {
         this.elements.field.blur(); // will fire onBlur
     },
-
-
 
     // redraw
     redraw: function() {
@@ -186,7 +183,7 @@ Sfera.Components.create("Input", {
         if (type == "textarea")
             this.elements.fieldC.innerHTML = '<textarea class="field" ' + style + phText + ' /></textarea>';
         else
-            this.elements.fieldC.innerHTML = '<input class="field" type="' + type + '"' + style + phText + ' />';
+            this.elements.fieldC.innerHTML = '<input class="field" type="' + type + '"' + style + phText + ' autocorrect="off" autocapitalize="off" />';
 
         this.elements.field = this.elements.fieldC.childNodes[0];
         this.elements.field.value = value;

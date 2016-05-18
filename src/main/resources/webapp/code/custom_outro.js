@@ -9,12 +9,12 @@
         Sfera.client.showPage(id);
     }
 
-    function event(id, value) {
-        Sfera.client.sendEvent(id, value, this);
+    function event(id, value, callback) {
+        Sfera.client.sendEvent(id, value, callback);
     }
 
     function command(command, callback)  {
-        Sfera.client.sendCommand(command, this);
+        Sfera.client.sendCommand(command, callback);
     }
 
     function logout() {

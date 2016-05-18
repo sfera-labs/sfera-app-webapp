@@ -1,4 +1,4 @@
-/*! sfera-webapp - v0.0.2 -  */
+/*! sfera-webapp - v0.0.2 */
 
 (function(){
 
@@ -322,7 +322,10 @@ Sfera.Attribute = function(component, config) {
     }
 };
 Sfera.Attribute.prototype = {
-    set: function(value, manualUpdate) {
+    // options:
+    //  manualUpdate: don't call update
+    //  silent: don't raise events
+    set: function(value, options) {
         if (this.source === value) return; // no changes
 
         this.changed = true; // if true, we need to call compile
@@ -340,15 +343,15 @@ Sfera.Attribute.prototype = {
             for (var i=0; i<this.mustache.vars.length; i++)
                 Sfera.client.bindAttrObserver(this.mustache.vars[i], this);
         }
-        if (!manualUpdate)
-            this.compile();
+        if (!options || !options.manualUpdate)
+            this.compile(options);
     },
 
     get: function() {
         return this.value;
     },
 
-    compile: function () {
+    compile: function (options) {
         var value = Sfera.Compiler.compileAttributeValue(this);
 
         // check if value list
@@ -368,18 +371,18 @@ Sfera.Attribute.prototype = {
         if (value !== this.value) {
             this.changed = false;
             this.value = value;
-            this.update();
+            this.update(options);
         }
     },
 
-    update: function () {
+    update: function (options) {
         // do something with the value
         // ...
         // call post update
-        this.post();
+        this.post(options);
     },
 
-    post: function () {
+    post: function (options) {
 
     }
 
@@ -1011,10 +1014,10 @@ Sfera.Client = function(config) {
         this.components.index(component);
     };
 
-    this.setAttribute = function(id, name, value) {
+    this.setAttribute = function(id, name, value, silent) {
         var c = this.components.getById(id);
         for (var i = 0; i < c.length; i++)
-            c[i].setAttribute(name, value);
+            c[i].setAttribute(name, value, silent);
     };
 
     this.getAttribute = function(id, name) {
@@ -4869,6 +4872,7 @@ Sfera.Utils = function() {
 			window.addEvent(browser.browser == "Firefox"?"DOMMouseScroll":"mousewheel", e, f);
 	}
 
+    // XML parser
     if (typeof window.DOMParser != "undefined") {
         this.parseXML = function(xmlStr) {
             return (new window.DOMParser()).parseFromString(xmlStr, "text/xml");
@@ -5323,9 +5327,9 @@ Sfera.Components.create("_Base", {
     },
 
     // shared methods
-    setAttribute: function(name, value, manualUpdate) {
+    setAttribute: function(name, value, options) {
         if (this.attributes[name]) {
-            this.attributes[name].set(value, manualUpdate);
+            this.attributes[name].set(value, options);
         }
     },
 

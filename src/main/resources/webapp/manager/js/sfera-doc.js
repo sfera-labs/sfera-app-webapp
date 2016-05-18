@@ -1,4 +1,4 @@
-/*! sfera-webapp - v0.0.2 -  */
+/*! sfera-webapp - v0.0.2 */
 
 /**
  * Sfera.Doc

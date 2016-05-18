@@ -43,17 +43,19 @@ Sfera.Components.create("Slider", {
         },
 
         min: {
-            type: "integer",
+            type: "float",
             default: "0",
             update: function() {
+                this.component.updateDecimals();
                 this.component.updateValue();
             }
         },
 
         max: {
-            type: "integer",
+            type: "float",
             default: "100",
             update: function() {
+                this.component.updateDecimals();
                 this.component.updateValue();
             }
         },
@@ -77,8 +79,14 @@ Sfera.Components.create("Slider", {
         },
 
         value: {
-            update: function() {
+            type: "float",
+            update: function(options) {
                 this.component.updateValue();
+                this.post(options);
+            },
+            post: function(options) {
+                if (!options || !options.silent)
+                    this.component.onChange();
             }
         },
 
@@ -110,6 +118,7 @@ Sfera.Components.create("Slider", {
 
         this.value = ""; // TODO: used?
         this.changeTimeout = null;
+        this.decimals = 0;
 
         // fill elements with all nodes that have a name
         this.elements = Sfera.Utils.getComponentElements(this.element, true, this.elements);
@@ -129,7 +138,6 @@ Sfera.Components.create("Slider", {
         var c = this.subComponents.cursor;
         c.button.link(this.button);
     },
-
 
 
     /*
@@ -229,8 +237,10 @@ Sfera.Components.create("Slider", {
             var p = p * (max - min) + min; // min-max
             p = (p < min ? min : (p > max ? max : p));
 
+            // decimals
+            p = p.toFixed(this.decimals);
+
             this.setAttribute("value", p);
-            this.onChange();
         }
     },
 
@@ -242,6 +252,19 @@ Sfera.Components.create("Slider", {
         this.onBlur();
     },
 
+    countDecimals: function(v) {
+        var s = v.split(".");
+        return s.length<2?0:parseInt(s[1].length);
+    },
+
+    updateDecimals: function() {
+        var min = this.attributes.min.source;
+        var max = this.attributes.max.source;
+        min = (min != null)?this.countDecimals(min):0;
+        max = (max != null)?this.countDecimals(max):0;
+        this.decimals = Math.max(min,max);
+    },
+
     updateValue: function() {
         var w = this.getAttribute("width");
         var h = this.getAttribute("height");
@@ -250,6 +273,10 @@ Sfera.Components.create("Slider", {
         var s = this.getAttribute("cursorSize");
         var min = this.getAttribute("min");
         var max = this.getAttribute("max");
+
+        // clamp
+        value = value < min ? min : value > max ? max: value;
+
         var p = (value - min) / (max - min); // 0-1
         var ip = 1 - p;
 
