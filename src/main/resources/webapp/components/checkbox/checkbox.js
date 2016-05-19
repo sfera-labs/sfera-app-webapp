@@ -15,6 +15,7 @@ Sfera.Components.create("Checkbox", {
 
     attributes: {
         width: {
+            default: 20,
             update: function () {
                 if (this.component.elements.button)
                     this.component.elements.button.style.width = this.value + "px";
@@ -22,6 +23,7 @@ Sfera.Components.create("Checkbox", {
         },
 
         height: {
+            default: 20,
             update: function() {
                 if (this.component.elements.button)
                     this.component.elements.button.style.height = this.value + "px";
@@ -238,11 +240,15 @@ Sfera.Components.create("Checkbox", {
     },
 
     onChange: function() {
-        var f = this.getAttribute("onClick");
+        var f = this.getAttribute("onChange");
         var r = true;
         if (f) {
             var value = this.getAttribute("value");
             r = Sfera.Custom.exec(f, this.id, value);
+        }
+
+        if (r !== false) {
+            this.onChanged();
         }
     },
 

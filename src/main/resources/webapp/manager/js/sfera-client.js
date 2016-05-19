@@ -5394,7 +5394,11 @@ Sfera.Components.create("_Field", {
     },
 
     attributes: {
-        value: {}
+        value: {},
+        enabled: {
+            type: "boolean",
+            default: "true"
+        }
     },
 
     init: function() {

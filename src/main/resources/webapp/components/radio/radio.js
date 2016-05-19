@@ -37,7 +37,7 @@ Sfera.Components.create("Radio", {
     },
 
     onChange: function() {
-        var f = this.getAttribute("onClick");
+        var f = this.getAttribute("onChange");
         var r = true;
         if (f) {
             var value = this.getAttribute("value");
