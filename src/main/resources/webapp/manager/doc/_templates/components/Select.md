@@ -1,0 +1,1 @@
+![select](../images/components/select.png)

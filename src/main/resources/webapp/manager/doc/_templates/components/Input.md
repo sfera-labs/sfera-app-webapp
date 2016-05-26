@@ -1,0 +1,1 @@
+![input](../images/components/input.png)

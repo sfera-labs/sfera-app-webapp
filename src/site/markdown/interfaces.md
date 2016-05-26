@@ -1,8 +1,12 @@
 # Interfaces
 
 Interfaces are the main way for the end user to access the system's functionalities.
-Each interface has its own directory located under /webapp/interfaces and is defined by an index.xml file.
-It can be accessed through the webserver from the url <span style="white-space:nowrap">_http<span/>://&lt;address&gt;:&lt;port&gt;/&lt;interface name&gt;_</span>.
+Each interface has its own directory located under /webapp/interfaces.
+
+Whenever a file inside this directory is changed, the server generates a new cache directory (located under _/webapp/cache/interfaces/&lt;interface name&gt;_) that contains all the resources that will be served through the web server.
+The interface is defined by an index.xml file, optional [script files and assets](client-scripting.html) (images, icons...).
+
+It can be accessed with a browser from the url <span style="white-space:nowrap">_http<span/>://&lt;address&gt;:&lt;port&gt;/&lt;interface name&gt;_</span>.
 
 ## The interface index.xml
 
