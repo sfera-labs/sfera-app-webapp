@@ -38,7 +38,7 @@ Defines a custom css class that is applied to the component's html element. The 
 
 ### visible
 
-Specifies whether or not the component is visible
+Specifies whether or not the component is visible.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>boolean</td></tr></table>
 
 >**Example:**
@@ -49,7 +49,7 @@ Specifies whether or not the component is visible
 >In index.xml:
 
 >``` xml
-<interface id="myInterface" visible='false' />
+<interface id="myInterface" visible="false" />
 ```
 
 >Via scripting:
@@ -64,7 +64,7 @@ setAttribute("myInterface","visible","false")
 
 ### width
 
-Specifies the component's width in pixels
+Specifies the component's width in pixels.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>integer</td></tr></table>
 
 >**Example:**
@@ -75,7 +75,7 @@ Specifies the component's width in pixels
 >In index.xml:
 
 >``` xml
-<interface id="myInterface" width='100' height='50' />
+<interface id="myInterface" width="100" height="50" />
 ```
 
 >Via scripting:
@@ -90,7 +90,7 @@ setAttribute("myInterface","width","100")
 
 ### height
 
-Specifies the component's height in pixels
+Specifies the component's height in pixels.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>integer</td></tr></table>
 
 >**Example:**
@@ -101,7 +101,7 @@ Specifies the component's height in pixels
 >In index.xml:
 
 >``` xml
-<interface id="myInterface" width='100' height='50' />
+<interface id="myInterface" width="100" height="50" />
 ```
 
 >Via scripting:
@@ -116,7 +116,7 @@ setAttribute("myInterface","height","50")
 
 ### title
 
-Specifies the interface's title
+Specifies the interface's title.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>string</td></tr></table>
 
 
@@ -125,7 +125,7 @@ Specifies the interface's title
 
 ### skin
 
-Specifies the interface's skin. Can be set only on the interface's index.xml
+Specifies the interface's skin. Can be set only on the interface's index.xml.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>string</td></tr><tr><td><b>Default value:</b></td><td>default</td></tr></table>
 
 
@@ -134,7 +134,7 @@ Specifies the interface's skin. Can be set only on the interface's index.xml
 
 ### zoom
 
-Specifies the interfaces zoom
+Specifies the interfaces zoom.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>float</td></tr></table>
 
 

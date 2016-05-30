@@ -54,7 +54,7 @@ Defines a custom css class that is applied to the component's html element. The 
 
 ### visible
 
-Specifies whether or not the component is visible
+Specifies whether or not the component is visible.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>boolean</td></tr></table>
 
 >**Example:**
@@ -65,7 +65,7 @@ Specifies whether or not the component is visible
 >In index.xml:
 
 >``` xml
-<checkbox id="myCheckbox" visible='false' />
+<checkbox id="myCheckbox" visible="false" />
 ```
 
 >Via scripting:
@@ -80,7 +80,7 @@ setAttribute("myCheckbox","visible","false")
 
 ### x
 
-Specifies the left position of the component in pixels, relative to its parent container (a page or a container component)
+Specifies the left position of the component in pixels, relative to its parent container (a page or a container component).
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>integer</td></tr></table>
 
 >**Example:**
@@ -91,7 +91,7 @@ Specifies the left position of the component in pixels, relative to its parent c
 >In index.xml:
 
 >``` xml
-<checkbox id="myCheckbox" x='30' y='10' />
+<checkbox id="myCheckbox" x="30" y="10" />
 ```
 
 >Via scripting:
@@ -106,7 +106,7 @@ setAttribute("myCheckbox","x","30")
 
 ### y
 
-Specifies the top position of the component in pixels, relative to its parent container (a page or a container component)
+Specifies the top position of the component in pixels, relative to its parent container (a page or a container component).
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>integer</td></tr></table>
 
 >**Example:**
@@ -117,7 +117,7 @@ Specifies the top position of the component in pixels, relative to its parent co
 >In index.xml:
 
 >``` xml
-<checkbox id="myCheckbox" x='30' y='10' />
+<checkbox id="myCheckbox" x="30" y="10" />
 ```
 
 >Via scripting:
@@ -132,7 +132,7 @@ setAttribute("myCheckbox","y","10")
 
 ### rotation
 
-Specifies the element's clockwise rotation in degrees
+Specifies the element's clockwise rotation in degrees.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>integer</td></tr></table>
 
 >**Example:**
@@ -143,7 +143,7 @@ Specifies the element's clockwise rotation in degrees
 >In index.xml:
 
 >``` xml
-<checkbox id="myCheckbox" x='30' y='10' rotation='90' />
+<checkbox id="myCheckbox" x="30" y="10" rotation="90" />
 ```
 
 >Via scripting:
@@ -158,7 +158,7 @@ setAttribute("myCheckbox","rotation","90")
 
 ### width
 
-Specifies the component's width in pixels
+Specifies the component's width in pixels.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>integer</td></tr><tr><td><b>Default value:</b></td><td>20</td></tr></table>
 
 >**Example:**
@@ -169,7 +169,7 @@ Specifies the component's width in pixels
 >In index.xml:
 
 >``` xml
-<checkbox id="myCheckbox" width='100' height='50' />
+<checkbox id="myCheckbox" width="100" height="50" />
 ```
 
 >Via scripting:
@@ -184,7 +184,7 @@ setAttribute("myCheckbox","width","100")
 
 ### height
 
-Specifies the component's height in pixels
+Specifies the component's height in pixels.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>integer</td></tr><tr><td><b>Default value:</b></td><td>20</td></tr></table>
 
 >**Example:**
@@ -195,7 +195,7 @@ Specifies the component's height in pixels
 >In index.xml:
 
 >``` xml
-<checkbox id="myCheckbox" width='100' height='50' />
+<checkbox id="myCheckbox" width="100" height="50" />
 ```
 
 >Via scripting:
@@ -210,7 +210,7 @@ setAttribute("myCheckbox","height","50")
 
 ### style
 
-Specifies the style
+Specifies the style.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>string</td></tr><tr><td><b>Default value:</b></td><td>default</td></tr><tr><td><b>Values:</b></td><td>default, radio, switch, clear</td></tr></table>
 
 
@@ -228,7 +228,7 @@ Specifies the style
 
 ### value
 
-Specifies the checkbox's value
+Specifies the checkbox's value.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>boolean</td></tr></table>
 
 
@@ -237,7 +237,7 @@ Specifies the checkbox's value
 
 ### focus
 
-Focus the element
+Focus the element.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>boolean</td></tr></table>
 
 
@@ -246,7 +246,7 @@ Focus the element
 
 ### label
 
-Specifies the label's text
+Specifies the label's text.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>string</td></tr></table>
 
 
@@ -255,7 +255,7 @@ Specifies the label's text
 
 ### changeDelay
 
-Specifies the milliseconds before a change of value is noticed
+Specifies the milliseconds before a change of value is noticed.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>integer</td></tr><tr><td><b>Default value:</b></td><td>200</td></tr></table>
 
 
@@ -264,7 +264,7 @@ Specifies the milliseconds before a change of value is noticed
 
 ### fontSize
 
-Specifies the font size in pixels
+Specifies the font size in pixels.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>integer</td></tr></table>
 
 
@@ -273,7 +273,7 @@ Specifies the font size in pixels
 
 ### fontColor
 
-Specifies the font color
+Specifies the font color.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>string</td></tr></table>
 
 
@@ -282,7 +282,7 @@ Specifies the font color
 
 ### onKeyUp
 
-Script to be run on key up event
+Script to be run on key up event.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>js</td></tr></table>
 
 
@@ -302,13 +302,13 @@ Script to be run when a change in value is detected. Variables id and value can 
 >In index.xml:
 
 >``` xml
-<checkbox id="myCheckbox" x='10' y='10' on-change='alert(id+" changed. Current value: "+value)' />
+<checkbox id="myCheckbox" x="10" y="10" on-change="alert(id+' changed. Current value: '+value)" />
 ```
 
 >Via scripting:
 
 >``` js
-setAttribute("myCheckbox","onChange","alert(id+\" changed. Current value: \"+value)")
+setAttribute("myCheckbox","onChange","alert(id+' changed. Current value: '+value)")
 ```
 
 
@@ -326,7 +326,7 @@ setAttribute("myCheckbox","onChange","alert(id+\" changed. Current value: \"+val
 
 ### onFocus
 
-Script to be run when the field gains focus
+Script to be run when the field gains focus.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>js</td></tr></table>
 
 
@@ -335,7 +335,7 @@ Script to be run when the field gains focus
 
 ### onBlur
 
-Script to be run when the field loses focus
+Script to be run when the field loses focus.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>js</td></tr></table>
 
 

@@ -39,7 +39,7 @@ Defines a custom css class that is applied to the component's html element. The 
 
 ### visible
 
-Specifies whether or not the component is visible
+Specifies whether or not the component is visible.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>boolean</td></tr></table>
 
 >**Example:**
@@ -50,7 +50,7 @@ Specifies whether or not the component is visible
 >In index.xml:
 
 >``` xml
-<container id="myContainer" visible='false' />
+<container id="myContainer" visible="false" />
 ```
 
 >Via scripting:
@@ -65,7 +65,7 @@ setAttribute("myContainer","visible","false")
 
 ### x
 
-Specifies the left position of the component in pixels, relative to its parent container (a page or a container component)
+Specifies the left position of the component in pixels, relative to its parent container (a page or a container component).
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>integer</td></tr></table>
 
 >**Example:**
@@ -76,7 +76,7 @@ Specifies the left position of the component in pixels, relative to its parent c
 >In index.xml:
 
 >``` xml
-<container id="myContainer" x='30' y='10' />
+<container id="myContainer" x="30" y="10" />
 ```
 
 >Via scripting:
@@ -91,7 +91,7 @@ setAttribute("myContainer","x","30")
 
 ### y
 
-Specifies the top position of the component in pixels, relative to its parent container (a page or a container component)
+Specifies the top position of the component in pixels, relative to its parent container (a page or a container component).
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>integer</td></tr></table>
 
 >**Example:**
@@ -102,7 +102,7 @@ Specifies the top position of the component in pixels, relative to its parent co
 >In index.xml:
 
 >``` xml
-<container id="myContainer" x='30' y='10' />
+<container id="myContainer" x="30" y="10" />
 ```
 
 >Via scripting:
@@ -117,7 +117,7 @@ setAttribute("myContainer","y","10")
 
 ### rotation
 
-Specifies the element's clockwise rotation in degrees
+Specifies the element's clockwise rotation in degrees.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>integer</td></tr></table>
 
 >**Example:**
@@ -128,7 +128,7 @@ Specifies the element's clockwise rotation in degrees
 >In index.xml:
 
 >``` xml
-<container id="myContainer" x='30' y='10' rotation='90' />
+<container id="myContainer" x="30" y="10" rotation="90" />
 ```
 
 >Via scripting:
@@ -143,7 +143,7 @@ setAttribute("myContainer","rotation","90")
 
 ### width
 
-Specifies the component's width in pixels
+Specifies the component's width in pixels.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>integer</td></tr></table>
 
 >**Example:**
@@ -154,7 +154,7 @@ Specifies the component's width in pixels
 >In index.xml:
 
 >``` xml
-<container id="myContainer" width='100' height='50' />
+<container id="myContainer" width="100" height="50" />
 ```
 
 >Via scripting:
@@ -169,7 +169,7 @@ setAttribute("myContainer","width","100")
 
 ### height
 
-Specifies the component's height in pixels
+Specifies the component's height in pixels.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>integer</td></tr></table>
 
 >**Example:**
@@ -180,7 +180,7 @@ Specifies the component's height in pixels
 >In index.xml:
 
 >``` xml
-<container id="myContainer" width='100' height='50' />
+<container id="myContainer" width="100" height="50" />
 ```
 
 >Via scripting:

@@ -56,7 +56,7 @@ Defines a custom css class that is applied to the component's html element. The 
 
 ### visible
 
-Specifies whether or not the component is visible
+Specifies whether or not the component is visible.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>boolean</td></tr></table>
 
 >**Example:**
@@ -67,7 +67,7 @@ Specifies whether or not the component is visible
 >In index.xml:
 
 >``` xml
-<slider id="mySlider" visible='false' />
+<slider id="mySlider" visible="false" />
 ```
 
 >Via scripting:
@@ -82,7 +82,7 @@ setAttribute("mySlider","visible","false")
 
 ### x
 
-Specifies the left position of the component in pixels, relative to its parent container (a page or a container component)
+Specifies the left position of the component in pixels, relative to its parent container (a page or a container component).
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>integer</td></tr></table>
 
 >**Example:**
@@ -93,7 +93,7 @@ Specifies the left position of the component in pixels, relative to its parent c
 >In index.xml:
 
 >``` xml
-<slider id="mySlider" x='30' y='10' />
+<slider id="mySlider" x="30" y="10" />
 ```
 
 >Via scripting:
@@ -108,7 +108,7 @@ setAttribute("mySlider","x","30")
 
 ### y
 
-Specifies the top position of the component in pixels, relative to its parent container (a page or a container component)
+Specifies the top position of the component in pixels, relative to its parent container (a page or a container component).
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>integer</td></tr></table>
 
 >**Example:**
@@ -119,7 +119,7 @@ Specifies the top position of the component in pixels, relative to its parent co
 >In index.xml:
 
 >``` xml
-<slider id="mySlider" x='30' y='10' />
+<slider id="mySlider" x="30" y="10" />
 ```
 
 >Via scripting:
@@ -134,7 +134,7 @@ setAttribute("mySlider","y","10")
 
 ### rotation
 
-Specifies the element's clockwise rotation in degrees
+Specifies the element's clockwise rotation in degrees.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>integer</td></tr></table>
 
 >**Example:**
@@ -145,7 +145,7 @@ Specifies the element's clockwise rotation in degrees
 >In index.xml:
 
 >``` xml
-<slider id="mySlider" x='30' y='10' rotation='90' />
+<slider id="mySlider" x="30" y="10" rotation="90" />
 ```
 
 >Via scripting:
@@ -160,7 +160,7 @@ setAttribute("mySlider","rotation","90")
 
 ### width
 
-Specifies the component's width in pixels
+Specifies the component's width in pixels.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>integer</td></tr></table>
 
 >**Example:**
@@ -171,7 +171,7 @@ Specifies the component's width in pixels
 >In index.xml:
 
 >``` xml
-<slider id="mySlider" width='100' height='50' />
+<slider id="mySlider" width="100" height="50" />
 ```
 
 >Via scripting:
@@ -186,7 +186,7 @@ setAttribute("mySlider","width","100")
 
 ### height
 
-Specifies the component's height in pixels
+Specifies the component's height in pixels.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>integer</td></tr></table>
 
 >**Example:**
@@ -197,7 +197,7 @@ Specifies the component's height in pixels
 >In index.xml:
 
 >``` xml
-<slider id="mySlider" width='100' height='50' />
+<slider id="mySlider" width="100" height="50" />
 ```
 
 >Via scripting:
@@ -212,7 +212,7 @@ setAttribute("mySlider","height","50")
 
 ### style
 
-Specifies the style
+Specifies the style.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>string</td></tr><tr><td><b>Default value:</b></td><td>default</td></tr><tr><td><b>Values:</b></td><td>default</td></tr></table>
 
 
@@ -221,7 +221,7 @@ Specifies the style
 
 ### color
 
-Specifies the color
+Specifies the color.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>string</td></tr><tr><td><b>Default value:</b></td><td>default</td></tr><tr><td><b>Values:</b></td><td>default, light, stable, positive, calm, balanced, energized, assertive, royal, dark</td></tr></table>
 
 
@@ -239,7 +239,7 @@ Specifies the color
 
 ### cursorSize
 
-Specifies the label's text
+Specifies the label's text.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>integer</td></tr><tr><td><b>Default value:</b></td><td>30</td></tr></table>
 
 
@@ -248,7 +248,7 @@ Specifies the label's text
 
 ### barColor
 
-Specifies the color of the bar
+Specifies the color of the bar.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>color</td></tr><tr><td><b>Default value:</b></td><td>transparent</td></tr></table>
 
 
@@ -257,7 +257,7 @@ Specifies the color of the bar
 
 ### min
 
-Specifies the minumum value
+Specifies the minumum value.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>float</td></tr><tr><td><b>Default value:</b></td><td>0</td></tr></table>
 
 
@@ -266,7 +266,7 @@ Specifies the minumum value
 
 ### max
 
-Specifies the maximum value
+Specifies the maximum value.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>float</td></tr><tr><td><b>Default value:</b></td><td>100</td></tr></table>
 
 
@@ -275,7 +275,7 @@ Specifies the maximum value
 
 ### focus
 
-If true, gives the component focus
+If true, gives the component focus.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>boolean</td></tr></table>
 
 
@@ -284,7 +284,7 @@ If true, gives the component focus
 
 ### value
 
-Specifies the value of the slider
+Specifies the value of the slider.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>float</td></tr></table>
 
 
@@ -293,7 +293,7 @@ Specifies the value of the slider
 
 ### changeDelay
 
-Speficies the delay in milliseconds before a value's change is detected
+Speficies the delay in milliseconds before a value's change is detected.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>integer</td></tr><tr><td><b>Default value:</b></td><td>0</td></tr></table>
 
 
@@ -302,7 +302,7 @@ Speficies the delay in milliseconds before a value's change is detected
 
 ### onKeyUp
 
-Script to be run on key up event
+Script to be run on key up event.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>js</td></tr></table>
 
 
@@ -322,13 +322,13 @@ Script to be run when a change in value is detected. Variables id and value can 
 >In index.xml:
 
 >``` xml
-<slider id="mySlider" x='10' y='10' on-change='alert(id+" changed. Current value: "+value)' />
+<slider id="mySlider" x="10" y="10" on-change="alert(id+' changed. Current value: '+value)" />
 ```
 
 >Via scripting:
 
 >``` js
-setAttribute("mySlider","onChange","alert(id+\" changed. Current value: \"+value)")
+setAttribute("mySlider","onChange","alert(id+' changed. Current value: '+value)")
 ```
 
 
@@ -337,7 +337,7 @@ setAttribute("mySlider","onChange","alert(id+\" changed. Current value: \"+value
 
 ### onEnterKey
 
-Script to be run when enter key is pressed
+Script to be run when enter key is pressed.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>js</td></tr></table>
 
 
@@ -346,7 +346,7 @@ Script to be run when enter key is pressed
 
 ### onFocus
 
-Script to be run when the component receives focus
+Script to be run when the component receives focus.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>js</td></tr></table>
 
 
@@ -355,7 +355,7 @@ Script to be run when the component receives focus
 
 ### onBlur
 
-Script to be run when the component loses focus
+Script to be run when the component loses focus.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>js</td></tr></table>
 
 

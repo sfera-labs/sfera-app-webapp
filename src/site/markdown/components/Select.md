@@ -55,7 +55,7 @@ Defines a custom css class that is applied to the component's html element. The 
 
 ### visible
 
-Specifies whether or not the component is visible
+Specifies whether or not the component is visible.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>boolean</td></tr></table>
 
 >**Example:**
@@ -66,7 +66,7 @@ Specifies whether or not the component is visible
 >In index.xml:
 
 >``` xml
-<select id="mySelect" visible='false' />
+<select id="mySelect" visible="false" />
 ```
 
 >Via scripting:
@@ -81,7 +81,7 @@ setAttribute("mySelect","visible","false")
 
 ### x
 
-Specifies the left position of the component in pixels, relative to its parent container (a page or a container component)
+Specifies the left position of the component in pixels, relative to its parent container (a page or a container component).
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>integer</td></tr></table>
 
 >**Example:**
@@ -92,7 +92,7 @@ Specifies the left position of the component in pixels, relative to its parent c
 >In index.xml:
 
 >``` xml
-<select id="mySelect" x='30' y='10' />
+<select id="mySelect" x="30" y="10" />
 ```
 
 >Via scripting:
@@ -107,7 +107,7 @@ setAttribute("mySelect","x","30")
 
 ### y
 
-Specifies the top position of the component in pixels, relative to its parent container (a page or a container component)
+Specifies the top position of the component in pixels, relative to its parent container (a page or a container component).
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>integer</td></tr></table>
 
 >**Example:**
@@ -118,7 +118,7 @@ Specifies the top position of the component in pixels, relative to its parent co
 >In index.xml:
 
 >``` xml
-<select id="mySelect" x='30' y='10' />
+<select id="mySelect" x="30" y="10" />
 ```
 
 >Via scripting:
@@ -133,7 +133,7 @@ setAttribute("mySelect","y","10")
 
 ### rotation
 
-Specifies the element's clockwise rotation in degrees
+Specifies the element's clockwise rotation in degrees.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>integer</td></tr></table>
 
 >**Example:**
@@ -144,7 +144,7 @@ Specifies the element's clockwise rotation in degrees
 >In index.xml:
 
 >``` xml
-<select id="mySelect" x='30' y='10' rotation='90' />
+<select id="mySelect" x="30" y="10" rotation="90" />
 ```
 
 >Via scripting:
@@ -159,7 +159,7 @@ setAttribute("mySelect","rotation","90")
 
 ### width
 
-Specifies the component's width in pixels
+Specifies the component's width in pixels.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>integer</td></tr></table>
 
 >**Example:**
@@ -170,7 +170,7 @@ Specifies the component's width in pixels
 >In index.xml:
 
 >``` xml
-<select id="mySelect" width='100' height='50' />
+<select id="mySelect" width="100" height="50" />
 ```
 
 >Via scripting:
@@ -185,7 +185,7 @@ setAttribute("mySelect","width","100")
 
 ### height
 
-Specifies the component's height in pixels
+Specifies the component's height in pixels.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>integer</td></tr></table>
 
 >**Example:**
@@ -196,7 +196,7 @@ Specifies the component's height in pixels
 >In index.xml:
 
 >``` xml
-<select id="mySelect" width='100' height='50' />
+<select id="mySelect" width="100" height="50" />
 ```
 
 >Via scripting:
@@ -211,7 +211,7 @@ setAttribute("mySelect","height","50")
 
 ### style
 
-Specifies the style
+Specifies the style.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>string</td></tr><tr><td><b>Default value:</b></td><td>default</td></tr><tr><td><b>Values:</b></td><td>default</td></tr></table>
 
 
@@ -229,7 +229,7 @@ Specifies the style
 
 ### value
 
-Specifies the current value
+Specifies the current value.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>string</td></tr></table>
 
 
@@ -238,7 +238,7 @@ Specifies the current value
 
 ### focus
 
-If true the component gains focus
+If true the component gains focus.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>boolean</td></tr></table>
 
 
@@ -247,7 +247,7 @@ If true the component gains focus
 
 ### icon
 
-Specifies the url of the icon, if any
+Specifies the url of the icon, if any.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>string</td></tr></table>
 
 
@@ -256,7 +256,7 @@ Specifies the url of the icon, if any
 
 ### values
 
-Specifies the values of the items
+Specifies the values of the items.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>list</td></tr></table>
 
 
@@ -265,7 +265,7 @@ Specifies the values of the items
 
 ### labels
 
-Specifies the labels of the items
+Specifies the labels of the items.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>list</td></tr></table>
 
 
@@ -274,7 +274,7 @@ Specifies the labels of the items
 
 ### changeDelay
 
-Speficies the delay in milliseconds before a value's change is detected
+Speficies the delay in milliseconds before a value's change is detected.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>integer</td></tr><tr><td><b>Default value:</b></td><td>0</td></tr></table>
 
 
@@ -283,7 +283,7 @@ Speficies the delay in milliseconds before a value's change is detected
 
 ### fontSize
 
-Specifies the font size in pixels
+Specifies the font size in pixels.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>integer</td></tr></table>
 
 
@@ -292,7 +292,7 @@ Specifies the font size in pixels
 
 ### fontColor
 
-Specifies the font color
+Specifies the font color.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>string</td></tr></table>
 
 
@@ -301,7 +301,7 @@ Specifies the font color
 
 ### onKeyUp
 
-Script to be run on key up event
+Script to be run on key up event.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>js</td></tr></table>
 
 
@@ -321,13 +321,13 @@ Script to be run when a change in value is detected. Variables id and value can 
 >In index.xml:
 
 >``` xml
-<select id="mySelect" x='10' y='10' on-change='alert(id+" changed. Current value: "+value)' />
+<select id="mySelect" x="10" y="10" on-change="alert(id+' changed. Current value: '+value)" />
 ```
 
 >Via scripting:
 
 >``` js
-setAttribute("mySelect","onChange","alert(id+\" changed. Current value: \"+value)")
+setAttribute("mySelect","onChange","alert(id+' changed. Current value: '+value)")
 ```
 
 
@@ -336,7 +336,7 @@ setAttribute("mySelect","onChange","alert(id+\" changed. Current value: \"+value
 
 ### onEnterKey
 
-Script to be run when enter key is pressed
+Script to be run when enter key is pressed.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>js</td></tr></table>
 
 
@@ -345,7 +345,7 @@ Script to be run when enter key is pressed
 
 ### onFocus
 
-Script to be run when the component receives focus
+Script to be run when the component receives focus.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>js</td></tr></table>
 
 
@@ -354,7 +354,7 @@ Script to be run when the component receives focus
 
 ### onBlur
 
-Script to be run when the component loses focus
+Script to be run when the component loses focus.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>js</td></tr></table>
 
 

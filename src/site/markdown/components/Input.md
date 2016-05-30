@@ -59,7 +59,7 @@ Defines a custom css class that is applied to the component's html element. The 
 
 ### visible
 
-Specifies whether or not the component is visible
+Specifies whether or not the component is visible.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>boolean</td></tr></table>
 
 >**Example:**
@@ -70,7 +70,7 @@ Specifies whether or not the component is visible
 >In index.xml:
 
 >``` xml
-<input id="myInput" visible='false' />
+<input id="myInput" visible="false" />
 ```
 
 >Via scripting:
@@ -85,7 +85,7 @@ setAttribute("myInput","visible","false")
 
 ### x
 
-Specifies the left position of the component in pixels, relative to its parent container (a page or a container component)
+Specifies the left position of the component in pixels, relative to its parent container (a page or a container component).
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>integer</td></tr></table>
 
 >**Example:**
@@ -96,7 +96,7 @@ Specifies the left position of the component in pixels, relative to its parent c
 >In index.xml:
 
 >``` xml
-<input id="myInput" x='30' y='10' />
+<input id="myInput" x="30" y="10" />
 ```
 
 >Via scripting:
@@ -111,7 +111,7 @@ setAttribute("myInput","x","30")
 
 ### y
 
-Specifies the top position of the component in pixels, relative to its parent container (a page or a container component)
+Specifies the top position of the component in pixels, relative to its parent container (a page or a container component).
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>integer</td></tr></table>
 
 >**Example:**
@@ -122,7 +122,7 @@ Specifies the top position of the component in pixels, relative to its parent co
 >In index.xml:
 
 >``` xml
-<input id="myInput" x='30' y='10' />
+<input id="myInput" x="30" y="10" />
 ```
 
 >Via scripting:
@@ -137,7 +137,7 @@ setAttribute("myInput","y","10")
 
 ### rotation
 
-Specifies the element's clockwise rotation in degrees
+Specifies the element's clockwise rotation in degrees.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>integer</td></tr></table>
 
 >**Example:**
@@ -148,7 +148,7 @@ Specifies the element's clockwise rotation in degrees
 >In index.xml:
 
 >``` xml
-<input id="myInput" x='30' y='10' rotation='90' />
+<input id="myInput" x="30" y="10" rotation="90" />
 ```
 
 >Via scripting:
@@ -163,7 +163,7 @@ setAttribute("myInput","rotation","90")
 
 ### width
 
-Specifies the component's width in pixels
+Specifies the component's width in pixels.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>integer</td></tr></table>
 
 >**Example:**
@@ -174,7 +174,7 @@ Specifies the component's width in pixels
 >In index.xml:
 
 >``` xml
-<input id="myInput" width='100' height='50' />
+<input id="myInput" width="100" height="50" />
 ```
 
 >Via scripting:
@@ -189,7 +189,7 @@ setAttribute("myInput","width","100")
 
 ### height
 
-Specifies the component's height in pixels
+Specifies the component's height in pixels.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>integer</td></tr></table>
 
 >**Example:**
@@ -200,7 +200,7 @@ Specifies the component's height in pixels
 >In index.xml:
 
 >``` xml
-<input id="myInput" width='100' height='50' />
+<input id="myInput" width="100" height="50" />
 ```
 
 >Via scripting:
@@ -215,7 +215,7 @@ setAttribute("myInput","height","50")
 
 ### style
 
-Specifies the style
+Specifies the style.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>string</td></tr><tr><td><b>Default value:</b></td><td>default</td></tr><tr><td><b>Values:</b></td><td>default, clear</td></tr></table>
 
 
@@ -233,7 +233,7 @@ Specifies the style
 
 ### value
 
-Specifies the field's value
+Specifies the field's value.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>string</td></tr></table>
 
 
@@ -242,7 +242,7 @@ Specifies the field's value
 
 ### type
 
-Specifies the input type that defines its behavior
+Specifies the input type that defines its behavior.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>string</td></tr><tr><td><b>Default value:</b></td><td>input</td></tr><tr><td><b>Values:</b></td><td>input, textarea, color, date, datetime, email, number, password, tel, time, url</td></tr></table>
 
 
@@ -251,7 +251,7 @@ Specifies the input type that defines its behavior
 
 ### focus
 
-If true, gives the component focus
+If true, gives the component focus.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>boolean</td></tr></table>
 
 
@@ -260,7 +260,7 @@ If true, gives the component focus
 
 ### icon
 
-Sepcifies an optional icon's url
+Sepcifies an optional icon's url.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>string</td></tr></table>
 
 
@@ -269,7 +269,7 @@ Sepcifies an optional icon's url
 
 ### eraseButton
 
-If true, shows the erase button
+If true, shows the erase button.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>boolean</td></tr><tr><td><b>Default value:</b></td><td>false</td></tr></table>
 
 
@@ -278,7 +278,7 @@ If true, shows the erase button
 
 ### changeDelay
 
-Speficies the delay in milliseconds before a value's change is detected
+Speficies the delay in milliseconds before a value's change is detected.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>integer</td></tr><tr><td><b>Default value:</b></td><td>1000</td></tr></table>
 
 
@@ -287,7 +287,7 @@ Speficies the delay in milliseconds before a value's change is detected
 
 ### keyRegex
 
-Specifies a regex to validate a key press. If the regex doesn't match, the input is canceled
+Specifies a regex to validate a key press. If the regex doesn't match, the input is canceled.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>regexp</td></tr></table>
 
 
@@ -296,7 +296,7 @@ Specifies a regex to validate a key press. If the regex doesn't match, the input
 
 ### valueRegex
 
-Specifies a regex to validate the value. If the regex doesn't match, the value is not sent to the server
+Specifies a regex to validate the value. If the regex doesn't match, the value is not sent to the server.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>regexp</td></tr></table>
 
 
@@ -305,7 +305,7 @@ Specifies a regex to validate the value. If the regex doesn't match, the value i
 
 ### fontSize
 
-Specifies the font size in pixels
+Specifies the font size in pixels.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>integer</td></tr></table>
 
 
@@ -314,7 +314,7 @@ Specifies the font size in pixels
 
 ### fontColor
 
-Specifies the font color
+Specifies the font color.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>string</td></tr></table>
 
 
@@ -323,7 +323,7 @@ Specifies the font color
 
 ### maxLength
 
-Specifies the value's maximum length
+Specifies the value's maximum length.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>integer</td></tr></table>
 
 
@@ -332,7 +332,7 @@ Specifies the value's maximum length
 
 ### onKeyUp
 
-Script to be run on key up event
+Script to be run on key up event.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>js</td></tr></table>
 
 
@@ -352,13 +352,13 @@ Script to be run when a change in value is detected. Variables id and value can 
 >In index.xml:
 
 >``` xml
-<input id="myInput" x='10' y='10' on-change='alert(id+" changed. Current value: "+value)' />
+<input id="myInput" x="10" y="10" on-change="alert(id+' changed. Current value: '+value)" />
 ```
 
 >Via scripting:
 
 >``` js
-setAttribute("myInput","onChange","alert(id+\" changed. Current value: \"+value)")
+setAttribute("myInput","onChange","alert(id+' changed. Current value: '+value)")
 ```
 
 
@@ -367,7 +367,7 @@ setAttribute("myInput","onChange","alert(id+\" changed. Current value: \"+value)
 
 ### onEnterKey
 
-Script to be run when enter key is pressed
+Script to be run when enter key is pressed.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>js</td></tr></table>
 
 
@@ -376,7 +376,7 @@ Script to be run when enter key is pressed
 
 ### onFocus
 
-Script to be run when the component receives focus
+Script to be run when the component receives focus.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>js</td></tr></table>
 
 
@@ -385,7 +385,7 @@ Script to be run when the component receives focus
 
 ### onBlur
 
-Script to be run when the component loses focus
+Script to be run when the component loses focus.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>js</td></tr></table>
 
 

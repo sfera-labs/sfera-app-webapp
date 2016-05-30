@@ -117,22 +117,22 @@ _/webapp/interfaces/ex\_functions/script.js_
 
 It's possible to declare the following functions that will be called on the corresponding events:
 
-* `function onStartup()`: called when the interface is ready
-* `function onEvent(id, json)`: called when a UI event is received. If the return value is false, the event is canceled (as if it wasn't received at all). This is useful for example to filter a ui.set event.
+* `function onReady()`: called when the interface is ready
+* `function onEvent(id, value)`: called when a UI event is received. If the return value is false, the event is canceled (as if it wasn't received at all). This is useful for example to filter a ui.set event.
 * `function onPage(id)`: called when a page is about to be shown. If the return value is false, the page won't be shown.
 
 Here's an example that opens an alert popup on each event:
     
 _/webapp/interfaces/ex\_callbacks/script.js_
 
-    function onStartup(value) {
-        alert(“startup event”);
+    function onReady() {
+        alert(“ready event”);
     }
     
-    function onPage(name) {
-        alert("page event: " + name);
+    function onPage(id) {
+        alert("page shown: " + id);
     }
     
-    function onEvent(node, json) {
-		alert("event received. Node: " + node + ", JSON: " + JSON.stringify(json));
+    function onEvent(id, value) {
+		alert("event received. Node: " + node + ", value: " + value);
     }

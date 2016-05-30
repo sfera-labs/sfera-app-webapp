@@ -23,7 +23,7 @@ Its appearance is defined by a style attribute. The [onClick](#onClick) attribut
 |**[label](#label)**|string|Specifies the label's text|
 |**[icon](#icon)**|string|Specifies the url of the icon, if any|
 |**[fontSize](#fontSize)**|string|Specifies the label's font size|
-|**[onClick](#onClick)**|js|Script to be run on click/touch end event|
+|**[onClick](#onClick)**|js|Script to be run on click/touch end event. The variable _id_ contains the button's id.|
 |**[onDown](#onDown)**|js|Script to be run on down/touch start event|
 |**[onMove](#onMove)**|js|Script to be run on mouse/touch move event|
 
@@ -50,7 +50,7 @@ Defines a custom css class that is applied to the component's html element. The 
 
 ### visible
 
-Specifies whether or not the component is visible
+Specifies whether or not the component is visible.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>boolean</td></tr></table>
 
 >**Example:**
@@ -61,7 +61,7 @@ Specifies whether or not the component is visible
 >In index.xml:
 
 >``` xml
-<button id="myButton" visible='false' />
+<button id="myButton" visible="false" />
 ```
 
 >Via scripting:
@@ -76,7 +76,7 @@ setAttribute("myButton","visible","false")
 
 ### x
 
-Specifies the left position of the component in pixels, relative to its parent container (a page or a container component)
+Specifies the left position of the component in pixels, relative to its parent container (a page or a container component).
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>integer</td></tr></table>
 
 >**Example:**
@@ -87,7 +87,7 @@ Specifies the left position of the component in pixels, relative to its parent c
 >In index.xml:
 
 >``` xml
-<button id="myButton" x='30' y='10' />
+<button id="myButton" x="30" y="10" />
 ```
 
 >Via scripting:
@@ -102,7 +102,7 @@ setAttribute("myButton","x","30")
 
 ### y
 
-Specifies the top position of the component in pixels, relative to its parent container (a page or a container component)
+Specifies the top position of the component in pixels, relative to its parent container (a page or a container component).
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>integer</td></tr></table>
 
 >**Example:**
@@ -113,7 +113,7 @@ Specifies the top position of the component in pixels, relative to its parent co
 >In index.xml:
 
 >``` xml
-<button id="myButton" x='30' y='10' />
+<button id="myButton" x="30" y="10" />
 ```
 
 >Via scripting:
@@ -128,7 +128,7 @@ setAttribute("myButton","y","10")
 
 ### rotation
 
-Specifies the element's clockwise rotation in degrees
+Specifies the element's clockwise rotation in degrees.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>integer</td></tr></table>
 
 >**Example:**
@@ -139,7 +139,7 @@ Specifies the element's clockwise rotation in degrees
 >In index.xml:
 
 >``` xml
-<button id="myButton" x='30' y='10' rotation='90' />
+<button id="myButton" x="30" y="10" rotation="90" />
 ```
 
 >Via scripting:
@@ -154,7 +154,7 @@ setAttribute("myButton","rotation","90")
 
 ### width
 
-Specifies the component's width in pixels
+Specifies the component's width in pixels.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>integer</td></tr></table>
 
 >**Example:**
@@ -165,7 +165,7 @@ Specifies the component's width in pixels
 >In index.xml:
 
 >``` xml
-<button id="myButton" width='100' height='50' />
+<button id="myButton" width="100" height="50" />
 ```
 
 >Via scripting:
@@ -180,7 +180,7 @@ setAttribute("myButton","width","100")
 
 ### height
 
-Specifies the component's height in pixels
+Specifies the component's height in pixels.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>integer</td></tr></table>
 
 >**Example:**
@@ -191,7 +191,7 @@ Specifies the component's height in pixels
 >In index.xml:
 
 >``` xml
-<button id="myButton" width='100' height='50' />
+<button id="myButton" width="100" height="50" />
 ```
 
 >Via scripting:
@@ -206,7 +206,7 @@ setAttribute("myButton","height","50")
 
 ### style
 
-Specifies the style
+Specifies the style.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>string</td></tr><tr><td><b>Default value:</b></td><td>default</td></tr><tr><td><b>Values:</b></td><td>default, clear, icon</td></tr></table>
 
 
@@ -215,7 +215,7 @@ Specifies the style
 
 ### color
 
-Specifies the color
+Specifies the color.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>string</td></tr><tr><td><b>Default value:</b></td><td>default</td></tr><tr><td><b>Values:</b></td><td>default, light, stable, positive, calm, balanced, energized, assertive, royal, dark</td></tr></table>
 
 
@@ -233,7 +233,7 @@ Specifies the color
 
 ### label
 
-Specifies the label's text
+Specifies the label's text.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>string</td></tr></table>
 
 
@@ -242,7 +242,7 @@ Specifies the label's text
 
 ### icon
 
-Specifies the url of the icon, if any
+Specifies the url of the icon, if any.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>string</td></tr></table>
 
 
@@ -251,7 +251,7 @@ Specifies the url of the icon, if any
 
 ### fontSize
 
-Specifies the label's font size
+Specifies the label's font size.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>string</td></tr></table>
 
 
@@ -260,8 +260,8 @@ Specifies the label's font size
 
 ### onClick
 
-Script to be run on click/touch end event
-<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>js</td></tr></table>
+Script to be run on click/touch end event. The variable _id_ contains the button's id.
+<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>js</td></tr><tr><td><b>Default value:</b></td><td>event(id,true)</td></tr></table>
 
 >**Example:**
 >
@@ -271,7 +271,7 @@ Script to be run on click/touch end event
 >In index.xml:
 
 >``` xml
-<button id="myButton" x='10' y='10' on-click='alert(&apos;hello&apos;)' />
+<button id="myButton" x="10" y="10" on-click="alert('hello')" />
 ```
 
 >Via scripting:
@@ -286,7 +286,7 @@ setAttribute("myButton","onClick","alert('hello')")
 
 ### onDown
 
-Script to be run on down/touch start event
+Script to be run on down/touch start event.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>js</td></tr></table>
 
 
@@ -295,7 +295,7 @@ Script to be run on down/touch start event
 
 ### onMove
 
-Script to be run on mouse/touch move event
+Script to be run on mouse/touch move event.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>js</td></tr></table>
 
 

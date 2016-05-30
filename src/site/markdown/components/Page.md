@@ -43,7 +43,7 @@ Defines a custom css class that is applied to the component's html element. The 
 
 ### visible
 
-Specifies whether or not the component is visible
+Specifies whether or not the component is visible.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>boolean</td></tr><tr><td><b>Default value:</b></td><td>false</td></tr></table>
 
 >**Example:**
@@ -54,7 +54,7 @@ Specifies whether or not the component is visible
 >In index.xml:
 
 >``` xml
-<page id="myPage" visible='false' />
+<page id="myPage" visible="false" />
 ```
 
 >Via scripting:
@@ -69,7 +69,7 @@ setAttribute("myPage","visible","false")
 
 ### title
 
-Specifies the page's title, visible in the browser's tab title
+Specifies the page's title, visible in the browser's tab title.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>string</td></tr></table>
 
 
