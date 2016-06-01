@@ -123,4 +123,9 @@ IMG {
     margin-top: 4px;
     margin-right: 3px; }
 
+.component.disabled {
+  -ms-filter: 'progid:DXImageTransform.Microsoft.Alpha(Opacity="50")';
+  filter: alpha(opacity=50);
+  opacity: 0.5; }
+
 /*# sourceMappingURL=default.css.map */

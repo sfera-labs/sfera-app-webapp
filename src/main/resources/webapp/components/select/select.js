@@ -192,7 +192,7 @@ Sfera.Components.create("Select", {
             this.elements.field.onfocus = this.onFocus; // skip this.elements.field.focus to avoid loop
         }
         this.elements.field.onblur = this.onBlur;
-        this.elements.field.onchange = this.onChange;
+        this.elements.field.onchange = this.onChange.bind(this);
 
         this.elements.field.controller = this;
     },
@@ -203,9 +203,13 @@ Sfera.Components.create("Select", {
 
 
     updateClass: function() {
-        this.element.className = "component comp_select" + (this.focused ? " focused" : "");
+        var d = this.getAttribute("enabled") ? "" : " disabled";
+        this.element.className = "component comp_select" + (this.focused ? " focused" : "") + d;
         var sty = this.getAttribute("style");
         this.elements.container.className = "container " + (sty?" style_"+sty:"");
+        if (this.elements.field) {
+            this.elements.field[(d?"set":"remove") + "Attribute"]("disabled", true);
+        }
     },
 
     //
@@ -216,28 +220,6 @@ Sfera.Components.create("Select", {
     onErase: function() {
         this.setAttribute("value", "");
         this.onChangedTimeout();
-    },
-
-    onChanged: function() {
-        var v = this.elements.field.value;
-
-        if (v != this.attributes.value.source) {
-            this.attributes.value.source =
-                this.attributes.value.value = v;
-
-            this.clearChangeTimeout();
-            //if (foo.autoSend || foo.onUserChange) { // otherwise there's nothing to do
-
-            var changeDelay = this.getAttribute("changeDelay");
-            var self = this;
-            if (changeDelay) { // if 0, run immediately
-                this.changeTimeout = setTimeout(function() {
-                    self.onChangedTimeout()
-                }, changeDelay);
-            } else {
-                self.onChangedTimeout();
-            }
-        }
     },
 
     clearChangeTimeout: function() {
@@ -281,7 +263,7 @@ Sfera.Components.create("Select", {
 
             return false; // done, prevent
         } else {
-            this.onChanged();
+            this.onChange();
 
             return true; // allow
         }
@@ -316,7 +298,7 @@ Sfera.Components.create("Select", {
         if (!c && keyRegex && !event.ctrlKey && !event.metaKey && !keyRegex.test(String.fromCharCode(code)))
             return false; // key validation failed: prevent
 
-        this.onChanged();
+        this.onChange();
         return true; // allow
     },
 
@@ -325,7 +307,7 @@ Sfera.Components.create("Select", {
         var c = Sfera.Utils.getKeyFromCode(code);
 
         if (c != "enter" && c !== "tab") {
-            this.onChanged();
+            this.onChange();
             return false; // nothing to see here: prevent
         }
 
@@ -333,11 +315,25 @@ Sfera.Components.create("Select", {
     },
 
     onChange: function() {
-        this.controller.onChanged();
-        /*
-        var f = this.getAttribute("onClick");
-        Sfera.Custom.exec(f);
-        */
+        var v = this.elements.field.value;
+
+        if (v != this.attributes.value.source) {
+            this.attributes.value.source =
+                this.attributes.value.value = v;
+
+            this.clearChangeTimeout();
+            //if (foo.autoSend || foo.onUserChange) { // otherwise there's nothing to do
+
+            var changeDelay = this.getAttribute("changeDelay");
+            var self = this;
+            if (changeDelay) { // if 0, run immediately
+                this.changeTimeout = setTimeout(function() {
+                    self.onChangedTimeout()
+                }, changeDelay);
+            } else {
+                self.onChangedTimeout();
+            }
+        }
     },
 
     onEnterKey: function() {
@@ -358,7 +354,7 @@ Sfera.Components.create("Select", {
 
     onBlur: function() {
         var co = this.controller;
-        co.onChanged();
+        co.onChange();
         Sfera.client.clearFocused(co);
         co.focused = false;
         co.updateClass();

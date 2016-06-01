@@ -11,7 +11,7 @@
  * @constructor
  */
 Sfera.Components.create("Button", {
-    presets: ["Visibility", "Position", "Size", "Style", "Color"],
+    presets: ["Visibility", "Position", "Size", "Style", "Color", "Enable"],
 
     attributes: {
         label: {
@@ -57,6 +57,7 @@ Sfera.Components.create("Button", {
 
         onClick: {
             type: "js",
+            default: "event(id,true)"
         },
 
         onDown: {
@@ -88,7 +89,9 @@ Sfera.Components.create("Button", {
     updateClass: function() {
         var col = this.getAttribute("color") || "default";
         var sty = this.getAttribute("style") || "default";
-        this.button.setClassName("container" + (sty?" style_"+sty:"") + (col?" color_"+col:""));
+        var d = (this.getAttribute("enabled") ? "" : " disabled")
+        this.button.setClassName("container" + (sty?" style_"+sty:"") + (col?" color_"+col:"")) + d;
+        this.button.enable(d?false:true);
     },
 
     onDown: function() {

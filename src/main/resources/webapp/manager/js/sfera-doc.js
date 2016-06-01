@@ -31,10 +31,10 @@ Sfera.Doc = new function() {
 Sfera.Doc.add.component("_Base", {
     attr:{
         id: {
-            descr: "Component identifier"
+            descr: "Component identifier. Allows the component to be reached through an identifier."
         },
         cssClass: {
-            descr: "Defines a custom css class that is applied to the component's html element"
+            descr: "Defines a custom css class that is applied to the component's html element. The css class can then be defined in a css file inside the interface's directory."
         }
     }
 });
@@ -44,7 +44,7 @@ Sfera.Doc.add.component("_Base", {
 
 Sfera.Doc.add.component("Button", {
     doc: {
-        descr:"A button component used to execute customized javascript code."
+        descr:"A button component used to execute customized javascript code.\nIts appearance is defined by a style attribute. The [onClick](#onClick) attribute is used to associate an action to execute when the button is pressed."
     },
     attr:{
         label: {
@@ -60,7 +60,15 @@ Sfera.Doc.add.component("Button", {
         },
 
         onClick: {
-            descr: "Script to be run on click/touch end event"
+            descr: "Script to be run on click/touch end event. The variable _id_ contains the button's id.",
+            example:{
+                descr:"Clicking the button will open an alert popup.",
+                values: {
+                    x:10,
+                    y:10,
+                    onClick:"alert('hello')"
+                }
+            }
         },
 
         onDown: {
@@ -77,7 +85,7 @@ Sfera.Doc.add.component("Button", {
 
 Sfera.Doc.add.component("Checkbox", {
     doc: {
-        descr:"Checkbox component"
+        descr:"Checkbox component, used to represent a boolean value.\nIts appearance is defined by a [style](#style) attribute."
     },
     attr:{
         focus: {
@@ -108,7 +116,15 @@ Sfera.Doc.add.component("Checkbox", {
             descr: "Script to be run on key up event"
         },
         onChange: {
-            descr: "Script to be run on change event"
+            descr: "Script to be run when a change in value is detected. Variables id and value can be used.",
+            example: {
+                descr: "When a change is detected (based on the changeDelay attribute) an alert will display the current value",
+                values: {
+                    x:10,
+                    y:10,
+                    onChange:"alert(id+' changed. Current value: '+value)"
+                }
+            }
         },
         onEnter: {
             descr: "Script to be run when the enter key is pressed"
@@ -125,17 +141,17 @@ Sfera.Doc.add.component("Checkbox", {
 
 Sfera.Doc.add.component("Container", {
     doc: {
-        descr:"This component is used to group other components together. All the contained components' positions are relative to the container's top left corner. Containers can be nested."
+        descr:"This component is used to group other components together.\nAll the contained components' positions are relative to the container's top left corner. Containers can be nested."
     },
     attr:{
-        
+
     }
 });
 
 
 Sfera.Doc.add.component("Image", {
     doc: {
-        descr:"Image component"
+        descr:"Image component, used to display a single image of any type supported by the target browser."
     },
     attr:{
         source: {
@@ -149,7 +165,7 @@ Sfera.Doc.add.component("Image", {
 
 Sfera.Doc.add.component("Input", {
     doc: {
-        descr:"Input component"
+        descr:"Input component, to allow the user to input a value of various types (defined by the type attribute).\nIts appearance is defined by a [style](#style) attribute."
     },
     attr:{
         type: {
@@ -201,7 +217,15 @@ Sfera.Doc.add.component("Input", {
         },
 
         onChange: {
-            descr: "Script to be run when a change in value is detected"
+            descr: "Script to be run when a change in value is detected. Variables id and value can be used.",
+            example: {
+                descr: "When a change is detected (based on the changeDelay attribute) an alert will display the current value",
+                values: {
+                    x:10,
+                    y:10,
+                    onChange:"alert(id+' changed. Current value: '+value)"
+                }
+            }
         },
 
         onEnterKey: {
@@ -222,7 +246,7 @@ Sfera.Doc.add.component("Input", {
 
 Sfera.Doc.add.component("Interface", {
     doc: {
-        descr:"Interface component"
+        descr:"Interface component, the root component that contains all the others."
     },
     attr:{
         title: {
@@ -242,7 +266,7 @@ Sfera.Doc.add.component("Interface", {
 
 Sfera.Doc.add.component("Label", {
     doc: {
-        descr:"Label component"
+        descr:"Label component, used to display a string."
     },
     attr:{
         text: {
@@ -254,7 +278,7 @@ Sfera.Doc.add.component("Label", {
 
 Sfera.Doc.add.component("Page", {
     doc: {
-        descr:"Page component"
+        descr:"Page component, used to group components in different views.\nPage ids are usually prefixed with \"page:\" to differentiate them from other components."
     },
     attr:{
         title: {
@@ -267,7 +291,7 @@ Sfera.Doc.add.component("Page", {
 
 Sfera.Doc.add.component("Radio", {
     doc: {
-        descr:"Radio component"
+        descr:"Radio component, used in a group of multiple radio components to represent an exclusive value.\nIts appearance is defined by a [style](#style) attribute.\nThe [group](#group) attribute defines which radio components work together."
     },
     attr:{
         group: {
@@ -280,7 +304,7 @@ Sfera.Doc.add.component("Radio", {
 
 Sfera.Doc.add.component("Select", {
     doc: {
-        descr:"Select component"
+        descr:"Select component, allows the user to select a single value among a list of [values](#values)."
     },
     attr:{
         value: {
@@ -320,7 +344,15 @@ Sfera.Doc.add.component("Select", {
         },
 
         onChange: {
-            descr: "Script to be run when a change in value is detected"
+            descr: "Script to be run when a change in value is detected. Variables id and value can be used.",
+            example: {
+                descr: "When a change is detected (based on the changeDelay attribute) an alert will display the current value",
+                values: {
+                    x:10,
+                    y:10,
+                    onChange:"alert(id+' changed. Current value: '+value)"
+                }
+            }
         },
 
         onEnterKey: {
@@ -341,7 +373,7 @@ Sfera.Doc.add.component("Select", {
 
 Sfera.Doc.add.component("Slider", {
     doc: {
-        descr:"Slider component"
+        descr:"Slider component, allows the user to input a numeric [value](#value) between a [minimum](#min) and [maximum](#max) value.\nThe decimal digits in the value are based on the maximum amount of decimal digits in the min and max attributes."
     },
     attr:{
         cursorSize: {
@@ -377,7 +409,15 @@ Sfera.Doc.add.component("Slider", {
         },
 
         onChange: {
-            descr: "Script to be run when a change in value is detected"
+            descr: "Script to be run when a change in value is detected. Variables id and value can be used.",
+            example: {
+                descr: "When a change is detected (based on the changeDelay attribute) an alert will display the current value",
+                values: {
+                    x:10,
+                    y:10,
+                    onChange:"alert(id+' changed. Current value: '+value)"
+                }
+            }
         },
 
         onEnterKey: {
@@ -402,6 +442,13 @@ Sfera.Doc.add.preset("Color", {
 });
 
 
+Sfera.Doc.add.preset("Enable", {
+    enabled: {
+        descr: "Specifies whether the component is enabled or not"
+    }
+});
+
+
 Sfera.Doc.add.preset("Label", {
     label: {
         descr: "Specifies the label"
@@ -420,41 +467,83 @@ Sfera.Doc.add.preset("Label", {
 
 Sfera.Doc.add.preset("Position", {
     position:{
-        descr: "Specifies the type of positioning method used (static, relative, absolute or fixed)"
+        descr: "Specifies the type of positioning method used (static, relative, absolute or fixed)",
+        hidden: true
     },
     x: {
-        descr: "Specifies the left position of the component"
+        descr: "Specifies the left position of the component in pixels, relative to its parent container (a page or a container component)",
+        example: {
+            descr:"Set the left edge of the component to 30 pixels to the right of the left edge of the page",
+            values:{
+                x:30,
+                y:10
+            },
+        }
     },
     y: {
-        descr: "Specifies the top position of the component"
+        descr: "Specifies the top position of the component in pixels, relative to its parent container (a page or a container component)",
+        example: {
+            descr:"Set the top edge of the component to 10 pixels to the bottom of the top edge of the page",
+            values:{
+                x:30,
+                y:10
+            },
+        }
     },
     rotation: {
-        descr: "Specifies the element's rotation in degrees"
+        descr: "Specifies the element's clockwise rotation in degrees",
+        example: {
+            descr:"Set the rotation of the component to 90&deg;",
+            values:{
+                x:30,
+                y:10,
+                rotation:90
+            },
+        }
     }
-
 });
 
 
 Sfera.Doc.add.preset("Size", {
     width: {
-        descr: "Specifies the component's width"
+        descr: "Specifies the component's width in pixels",
+        example:{
+            descr:"Sets the component's width to 100 pixels wide",
+            values:{
+                width:100,
+                height:50
+            }
+        }
     },
     height: {
-        descr: "Specifies the component's height"
+        descr: "Specifies the component's height in pixels",
+        example:{
+            descr:"Sets the component's height to 50 pixels tall",
+            values:{
+                width:100,
+                height:50
+            }
+        }
     }
 });
 
 
 Sfera.Doc.add.preset("Style", {
     style: {
-        descr: "Specifies the style"
+        descr: "Specifies the style",
     }
 });
 
 
 Sfera.Doc.add.preset("Visibility", {
     visible: {
-        descr: "Specifies whether or not the component is visible"
+        descr: "Specifies whether or not the component is visible",
+        example: {
+            descr:"Set the component's visibility to false",
+            values:{
+                visible:false
+            }
+        }
     }
 });
 

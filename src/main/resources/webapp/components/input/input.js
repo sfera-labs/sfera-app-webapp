@@ -180,10 +180,11 @@ Sfera.Components.create("Input", {
         var style = ""; // TODO: styling the field
         style = style ? ' style="' + style + '"' : '';
 
+        var d = this.getAttribute("enabled")?"":" disabled";
         if (type == "textarea")
-            this.elements.fieldC.innerHTML = '<textarea class="field" ' + style + phText + ' /></textarea>';
+            this.elements.fieldC.innerHTML = '<textarea class="field" ' + style + phText + d + ' /></textarea>';
         else
-            this.elements.fieldC.innerHTML = '<input class="field" type="' + type + '"' + style + phText + ' autocorrect="off" autocapitalize="off" />';
+            this.elements.fieldC.innerHTML = '<input class="field" type="' + type + '"' + style + phText + d + ' autocorrect="off" autocapitalize="off" />';
 
         this.elements.field = this.elements.fieldC.childNodes[0];
         this.elements.field.value = value;
@@ -205,9 +206,15 @@ Sfera.Components.create("Input", {
 
     updateClass: function () {
         var cl = this.getAttribute("cssClass");
-        this.element.className = "component comp_input" + (cl?" "+cl:"") + (this.focused?" focused":"");
+        var f = (this.focused?" focused":"");
+        var d = this.getAttribute("enabled") ? "" : " disabled";
+        this.element.className = "component comp_input" + (cl?" "+cl:"") + f + d;
         var sty = this.getAttribute("style");
-        this.elements.container.className = "container" + (sty?" style_"+sty:"");
+        this.elements.container.className = "container" + (sty?" style_"+sty:"")
+
+        if (this.elements.field) {
+            this.elements.field[(d?"set":"remove") + "Attribute"]("disabled", true);
+        }
     },
 
     //
@@ -216,6 +223,9 @@ Sfera.Components.create("Input", {
 
     // on erase button
     onErase: function() {
+        if (!this.getAttribute("enabled"))
+            return;
+
         this.setAttribute("value", "");
         this.onChangedTimeout();
     },
@@ -261,6 +271,9 @@ Sfera.Components.create("Input", {
     },
 
     onKeyDown: function(event) {
+        if (!this.getAttribute("enabled"))
+            return;
+
         //this.controller.setAttribute("error", "false"); // make sure we're not showing an error
         var code = event.keyCode;
         var c = Sfera.Utils.getKeyFromCode(code);
@@ -287,6 +300,9 @@ Sfera.Components.create("Input", {
     },
 
     onKeyPress: function(event) {
+        if (!this.getAttribute("enabled"))
+            return;
+
         var code = event.keyCode;
         var c = Sfera.Utils.getKeyFromCode(code);
         var fieldE = this.elements.field;
@@ -324,6 +340,9 @@ Sfera.Components.create("Input", {
     },
 
     onKeyUp: function(event) {
+        if (!this.getAttribute("enabled"))
+            return;
+
         var code = event.keyCode;
         var c = Sfera.Utils.getKeyFromCode(code);
 
@@ -344,6 +363,9 @@ Sfera.Components.create("Input", {
     },
 
     onEnterKey: function () {
+        if (!this.getAttribute("enabled"))
+            return;
+
         var f = this.getAttribute("onEnterKey");
         if (f) {
             return Sfera.Custom.exec(f);

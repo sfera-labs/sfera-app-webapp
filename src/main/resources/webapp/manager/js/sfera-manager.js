@@ -85,10 +85,13 @@ Sfera.Manager = function(config) {
         docViewer = addApp(new Sfera.Manager.Apps.DocViewer());
 
         window.onresize = this.onResize.bind(this);
+        window.onbeforeunload = this.onBeforeUnload.bind(this);
+        document.onkeydown = this.onKeyDown.bind(this);
+		document.onkeyup = this.onKeyUp.bind(this);
+
         /*
         window.onload = onLoadInit;
         window.onorientationchange = onOrientationChange;
-        window.onbeforeunload = onBeforeUnload;
         */
 
        this.onResize();
@@ -116,8 +119,6 @@ Sfera.Manager = function(config) {
 
     // focus, restore key events
 	this.focus = function () {
-		document.onkeydown = this.onKeyDown;
-		document.onkeyup = this.onKeyUp;
 		if (window.focus) window.focus();
 		this.deselect();
 	} // focus()
@@ -557,15 +558,6 @@ Sfera.Manager = function(config) {
 			showPopup();
 		} else {
 			popupAreaContentsE.style.display = "none";
-			// focus, restore events..
-			switch (this.cApp) {
-			case "te": textEditor.focus(); break;
-			case "fm": fileManager.focus(); break;
-			case "sb": statusBrowser.focus(); break;
-
-			case "lv": logViewer.focus(); break;
-			case "sm": systemMonitor.focus(); break;
-			}
 		}
 	} // closePopup()
 
@@ -843,6 +835,77 @@ Sfera.Manager = function(config) {
 			animations.fadeAnimation(document.getElementById("noticePanel"), {fadeOutTime:1500});
 		}
 	} // clearNotice()
+
+    // --------------------------------------------------------------------------------------------------------------------------
+	// Events -------------------------------------------------------------------------------------------------------------------
+	// --------------------------------------------------------------------------------------------------------------------------
+
+    // key down
+	this.onKeyDown = function (e) {
+		if (!e) var e = window.event;
+		// code
+		var code;
+		if (e.keyCode) code = e.keyCode;
+		else if (e.which) code = e.which;
+		// target
+		var t;
+		if (e.target) t = e.target;
+		else if (e.srcElement) t = e.srcElement;
+		if (t.nodeType == 3) // defeat Safari bug
+			t = t.parentNode;
+
+		// backspace. prevent only when focused element is not password, text or file
+		if ((code == 8) && !(t && t.tagName && (t.type && /(password)|(text)|(file)/.test(t.type.toLowerCase())) || t.tagName.toLowerCase() == 'textarea')) {
+			Sfera.Browser.preventDefault(e);
+			//return false;
+		}
+
+		// ctrl shift, show quick apps panel
+		if (code == 16 && e.ctrlKey) {
+			self.showQuickAppsPanel();
+            return false;
+        }
+
+        // esc
+		if (manager.cPopup && manager.cPopup.closeBt && code == 27) {
+			manager.closePopup();
+			Sfera.Browser.preventDefault(e);
+			return;
+		}
+
+        if (this.cApp && this.apps[this.cApp].onKeyDown)
+            this.apps[this.cApp].onKeyDown(e, code, t);
+
+		//this.showNotice("keydown "+code+" "+e.ctrlKey,10000);
+	}; // onKeyDown()
+
+	// key up
+	this.onKeyUp = function (e) {
+		if (!e) var e = window.event;
+		// code
+		var code;
+		if (e.keyCode) code = e.keyCode;
+		else if (e.which) code = e.which;
+		// target
+		var t;
+		if (e.target) t = e.target;
+		else if (e.srcElement) t = e.srcElement;
+		if (t.nodeType == 3) // defeat Safari bug
+			t = t.parentNode;
+
+		// deselect?
+		//if (!focusedElement) self.deselect();
+
+		// ctrl shift released?
+		if (!e.ctrlKey && self.hideQuickAppsPanel()) return; // close quick apps panel?
+
+        if (this.cApp && this.apps[this.cApp].onKeyUp)
+            this.apps[this.cApp].onKeyUp(e, code, t);
+	}; // onKeyUp()
+
+    this.onBeforeUnload = function (e) {
+
+    };
 
 };
 
@@ -1199,8 +1262,14 @@ Sfera.Manager.Files = function () {
 		// file manager
 		case "list":
 		case "refresh_list":
-            url = "/api/files/ls?path="+this.encodeFileName(value);
-            url += "&depth=0";
+			url = "/api/files/ls?path=";
+			if (value && value.isArray) {
+				url += this.encodeFileName(value[0]);
+				url += "&depth="+value[1];
+			} else {
+            	url += this.encodeFileName(value);
+				url += "&depth=0";
+			}
 			break;
 		case "readfile":
             url = "/api/files/read?path="+this.encodeFileName(value);
@@ -1591,30 +1660,57 @@ Sfera.Manager.Apps.DocViewer = function() {
         req.onLoaded = onDictionaryLoaded;
         req.open('/' + Sfera.Net.getURL("dictionary"), 20);
         */
-        Sfera.Components.boot(); // init component classes
-
-        lQueue.push({name:"index", path:"index."+ext});
-        lQueue.push({name:"index_item", path:"index_item."+ext});
-        lQueue.push({name:"component", path:"component."+ext});
-        processLoadQueue();
     } // init()
+
+    function onList(list, path) {
+        var sub = list.result? list.result.sub : list.sub;
+        for (var i=0; i<sub.length; i++) {
+            if (sub[i].sub) {
+                 onList(sub[i], sub[i].name);
+             } else {
+                var a = sub[i].name.split("/");
+                var b = a.last().split(".");
+
+                if (b.last() != ext) continue;
+
+                var n = b[0];
+                if (path)
+                    n = path + "/" + n;
+
+                lQueue.push({name:n,
+                    path:"webapp/cache/manager/doc/_templates/" + n + "." + ext});
+            }
+        }
+        if (!path)
+            processLoadQueue();
+    }
 
     function onDictionaryLoaded() {
         Sfera.Compiler.compileDictionary(req.getResponseXML());
     }
 
+    this.startGenerator = function () {
+        lQueue = []; // queue of files to load
+        wQueue = []; // queue of files to write
+        templates = {};
+        files.load("list", ["webapp/cache/manager/doc/_templates",1], 100, onList);
+    }
+
     // start
     this.start = function(options) {
-            manager.hideOtherApps(this);
+        if (!started) {
+            Sfera.Components.boot(); // init component classes
+            this.startGenerator();
+        }
 
-            this.e.style.display = "inline";
+        manager.hideOtherApps(this);
 
-            generate();
+        this.e.style.display = "inline";
 
-            this.open = true;
+        this.open = true;
 
-            this.adjustLayout();
-        } // start()
+        this.adjustLayout();
+    } // start()
 
     // hide (switching to another app)
     this.hide = function() {
@@ -1627,47 +1723,47 @@ Sfera.Manager.Apps.DocViewer = function() {
 
     // adjust layout. viewport size
     this.adjustLayout = function() {
-            if (!manager.viewportWidth || !manager.viewportHeight) return;
+        if (!manager.viewportWidth || !manager.viewportHeight) return;
 
-            var vw = manager.viewportWidth;
-            var vh = manager.viewportHeight;
+        var vw = manager.viewportWidth;
+        var vh = manager.viewportHeight;
 
-            // tool bar size
-            var tbW = 0; // left one
-            var tbH = 36; // top one
+        // tool bar size
+        var tbW = 0; // left one
+        var tbH = 36; // top one
 
-            // editable area size
-            var eW = vw - tbW;
-            var eH = vh - tbH;
+        // editable area size
+        var eW = vw - tbW;
+        var eH = vh - tbH;
 
-            toolbarE.style.left = (tbW - 1) + "px"; // +1, attach it to the iconPanel
-            toolbarE.style.width = (eW + 1) + "px";
+        toolbarE.style.left = (tbW - 1) + "px"; // +1, attach it to the iconPanel
+        toolbarE.style.width = (eW + 1) + "px";
 
-            // panels
-            var bs = 1; // border size
-            var pm = 5 + bs; // panel margin: padding + border size
-            var pd = 7; // panel distance from border
-            var pw = Math.round((vw - pd * 3 - pm * 4) / 2); //;
-            var ph = vh - tbH - pm * 2 - pd * 2;
-            if (pw < 340) pw = 340;
+        // panels
+        var bs = 1; // border size
+        var pm = 5 + bs; // panel margin: padding + border size
+        var pd = 7; // panel distance from border
+        var pw = Math.round((vw - pd * 3 - pm * 4) / 2); //;
+        var ph = vh - tbH - pm * 2 - pd * 2;
+        if (pw < 340) pw = 340;
 
-            pw = (vw - pd * 3 - pm * 4) - pw; // fix it: since it's /2, pw could be 1 pixel wider
+        pw = (vw - pd * 3 - pm * 4) - pw; // fix it: since it's /2, pw could be 1 pixel wider
 
-            var eW = vw - pm * 2 - pd * 2; // full content width
+        var eW = vw - pm * 2 - pd * 2; // full content width
 
-            panelE.style.left = (pd) + "px";
-            panelE.style.top = (tbH + pd) + "px";
-            panelE.style.width = (eW) + "px";
-            panelE.style.height = (ph) + "px";
-        } // adjustLayout()
+        panelE.style.left = (pd) + "px";
+        panelE.style.top = (tbH + pd) + "px";
+        panelE.style.width = (eW) + "px";
+        panelE.style.height = (ph) + "px";
+    } // adjustLayout()
 
     // set edit font size
     this.setFontSize = function(a) {
-            if (a) this.fontSize++;
-            else this.fontSize--;
-            editorE.style.fontSize = this.fontSize + "px";
-            //editorE.style.lineHeight = Math.round(this.editorFontSize + this.editorFontSize/2)+"px";
-        } // setEditFontSize()
+        if (a) this.fontSize++;
+        else this.fontSize--;
+        editorE.style.fontSize = this.fontSize + "px";
+        //editorE.style.lineHeight = Math.round(this.editorFontSize + this.editorFontSize/2)+"px";
+    } // setEditFontSize()
 
 
 
@@ -1751,11 +1847,11 @@ Sfera.Manager.Apps.DocViewer = function() {
     function processLoadQueue() {
         // done?
         if (!lQueue.length) {
-            //generate();
+            generate();
         } else {
             var f = lQueue.last(); // pop in onFileLoaded
             // /src/main/javadoc/webapp/
-            files.load("readfile", ["/webapp/cache/manager/doc/_templates/" + f.path], 10, onTemplateLoaded);
+            files.load("readfile", [f.path], 10, onTemplateLoaded);
         }
     }
 
@@ -1841,6 +1937,9 @@ Sfera.Manager.Apps.DocViewer = function() {
             if (co.doc && co.doc.descr)
                 $(co.doc.descr);
 
+            if (templates["components/"+co.type])
+                $(_br(2)+templates["components/"+co.type]);
+
             for (sub in co.subComponents) {
                 $(_h(2, "Sub components"));
                 break;
@@ -1909,8 +2008,12 @@ Sfera.Manager.Apps.DocViewer = function() {
             res += txt;
         }
 
-        function _br() {
-            return "\n";
+        function _br(n) {
+            if (!n) n = 1;
+            var b = "";
+            for (var i=0; i<n; i++)
+                b += "\n";
+            return b;
         }
 
         function _s() {
@@ -1957,6 +2060,32 @@ Sfera.Manager.Apps.DocViewer = function() {
             return "|" +text;
         }
 
+        //
+        function _hb(txt) {
+            return '<b>' + txt + '</b>';
+        }
+
+        function _hta(e, c, s) {
+            c = c ? " class='" + c + "'" : "";
+            s = s ? " style='" + s + "'" : "";
+            return (e ? "</" : "<") + "table" + (!e && c ? c : "") + (!e && s ? s : "") + ">";
+        }
+
+        function _hr(e) {
+            return (e ? "</" : "<") + "tr>"
+        }
+
+        function _hc(text) {
+            return "<td>" + text + "</td>";
+        }
+
+        function _hch(text) {
+            return "<th>" + text + "</th>";
+        }
+
+        //
+
+
         this.toc = function(ac) {
             res = "";
 
@@ -1984,6 +2113,9 @@ Sfera.Manager.Apps.DocViewer = function() {
             if (co.doc && co.doc.descr)
                 $(co.doc.descr);
 
+            if (templates["components/"+co.type])
+                $(_br(2)+templates["components/"+co.type]);
+
             for (sub in co.subComponents) {
                 $(_h(2, "Sub components"));
                 break;
@@ -2001,22 +2133,58 @@ Sfera.Manager.Apps.DocViewer = function() {
             $(_r());
             $(_ch("Name"));
             $(_ch("Type"));
-            $(_ch("Default"));
-            $(_ch("Values"));
             $(_ch("Description"));
             $(_r(1));
 
             for (var attr in co.attributes) {
+                var a = co.attributes[attr];
+                if (a.doc && a.doc.hidden)
+                    continue;
+
                 $(_r());
 
-                var a = co.attributes[attr];
-
-                $(_c(_b(attr)));
+                $(_c(_b("["+attr+"](#"+attr+")")));
 
                 $(_c(a.type));
 
+                $(_c(a.doc && a.doc.descr ? a.doc.descr : ""));
+
+                $(_r(1));
+            }
+            $(_ta(1));
+
+            for (var attr in co.attributes) {
+                var a = co.attributes[attr];
+                if (a.doc && a.doc.hidden)
+                    continue;
+
+                // title
+                $(_br(2)+"---"+_br(1));
+                $(_h(3,attr));
+
+                // descr
+                if (a.doc && a.doc.descr) {
+                    $(a.doc.descr);
+                    if (a.doc.descr[a.doc.descr.length-1]!=".")
+                        $(".");
+                }
+                $(_br());
+
+                // table
+                $(_hta(0, "attrTable table", "width:auto"));
+
+                $(_hr());
+                $(_hc(_hb("Type:")));
+                $(_hc(a.type));
+                $(_hr(1));
+
                 var str = co.attributes[attr].default;
-                $(_c(str?str:""));
+                if (str) {
+                    $(_hr());
+                    $(_hc(_hb("Default value:")));
+                    $(_hc(str));
+                    $(_hr(1));
+                }
 
                 str = "";
                 var av = co.attributes[attr].values;
@@ -2032,13 +2200,47 @@ Sfera.Manager.Apps.DocViewer = function() {
                         str += av.join(", ");
                     }
                 }
-                $(_c(str));
+                if (str) {
+                    $(_hr());
+                    $(_hc(_hb("Values:")));
+                    $(_hc(str));
+                    $(_hr(1));
+                }
 
-                $(_c(a.doc && a.doc.descr ? a.doc.descr : ""));
+                $(_hta(1));
 
-                $(_r(1));
+                $(_br(2));
+
+                // example
+                var v;
+                if (a.doc && a.doc.example && a.doc.example.values) {
+                    $(">**Example:**"+_br());
+                    $(">\n");
+                    v = a.doc.example.descr;
+                    if (v[v.length-1] != ".")
+                        v += ".";
+                    $(">"+v+_br());
+                    $(">\n\n");
+                    $(">In index.xml:"+_br(2));
+                    $(">``` xml"+_br());
+                    $("<"+Sfera.Utils.camelToDash(co.type)+' id="my'+co.type+'"');
+                    for (var aa in a.doc.example.values) {
+                        v = a.doc.example.values[aa] + "";
+                        v = v.replace(/"/g,'&quot;'); // use single quote, less frequent in values
+                        $(" "+Sfera.Utils.camelToDash(aa)+'="'+v+'"');
+                    }
+                    $(" />"+_br());
+                    $("```"+_br(2));
+
+                    $(">Via scripting:"+_br(2));
+                    $(">``` js"+_br());
+                    v = a.doc.example.values[attr] + "";
+                    v = v.replace(/"/g,'\\"');
+                    $(""+'setAttribute("my'+co.type+'","'+attr+'","'+v+'")'+_br());
+                    $("```"+_br(2));
+                }
+
             }
-            $(_ta(1));
 
             return res;
         }
@@ -2262,7 +2464,6 @@ Sfera.Manager.Apps.FileManager = function() {
 				logViewer.startPreview(5);
 		}
 
-		this.focus();
 		this.open = true;
 	} // start()
 
@@ -2270,22 +2471,12 @@ Sfera.Manager.Apps.FileManager = function() {
 	this.hide = function () {
 		this.e.style.display = "none";
 
-		manager.focus();
-
 		// select mode? selMode: null, key, bt
 		if (selMode == "key")
 			self.toggleSelMode("");
 
 		this.open = false;
 	} // hide()
-
-	// focus, restore key events
-	this.focus = function () {
-		document.onkeydown = this.onKeyDown;
-		document.onkeyup = this.onKeyUp;
-		if (window.focus) window.focus();
-		//manager.deselect();
-	} // focus()
 
 	// adjust layout. viewport size
 	this.adjustLayout = function () {
@@ -2425,9 +2616,11 @@ Sfera.Manager.Apps.FileManager = function() {
 	this.parentFolder = function () {
 		var o = this.popupMode?this.popupData:this;
 		if (!o.currentPath) return;
-		var p = o.currentPath.split("/");
-		p.pop();
-		this.browseTo(p.join("/"));
+		var a = o.currentPath.split("/");
+		var n = a.pop();
+        var p = a.join("/");
+        selectOnRefresh = {path:p, name:n};
+		this.browseTo(p);
 	} // parentFolder()
 
 	// show folder contents. data
@@ -2962,8 +3155,9 @@ Sfera.Manager.Apps.FileManager = function() {
 
 	this.selectPrev = function () {
 		var o = this.popupMode?this.popupData:this;
+        var dirsCE = (this.popupMode)?dirsPContentE:dirsContentE;
 
-		var i = o.selectedItem-1;
+		var i = o.selectedItem<0?dirsCE.childNodes.length-1:o.selectedItem-1;
 		if (i < 0) return;
 		this.selectItem(i);
 	} // selectPrev()
@@ -3464,15 +3658,13 @@ Sfera.Manager.Apps.FileManager = function() {
 	function onDirsContentDrop(e) {
 		this.className = "fm_dirsContent";
 		if (!e || !e.dataTransfer) return false;
-		e.stopPropagation();
-		e.preventDefault();
+		Sfera.Browser.preventDefault(e);
 		initUpload(e.dataTransfer.files);
 	}
 
 	function showDirsOver(e) {
 		try {
-			e.stopPropagation();
-		    e.preventDefault();
+		    Sfera.Browser.preventDefault(e);
 		    e.dataTransfer.dropEffect = "copy";
 		} catch (err) {}
 
@@ -3582,7 +3774,6 @@ Sfera.Manager.Apps.FileManager = function() {
 
 			dirsPUploadBtE.style.display = this.popupData.filter.folder?"none":"inline";
 		}
-		this.focus();
 	} // openChooseFilePopup()
 
 	// confirm choose file popup
@@ -3633,43 +3824,7 @@ Sfera.Manager.Apps.FileManager = function() {
 	} // onList()
 
 	// key down
-	this.onKeyDown = function (e) {
-		if (!e) var e = window.event;
-		// code
-		var code;
-		if (e.keyCode) code = e.keyCode;
-		else if (e.which) code = e.which;
-		// target
-		var t;
-		if (e.target) t = e.target;
-		else if (e.srcElement) t = e.srcElement;
-		if (t.nodeType == 3) // defeat Safari bug
-			t = t.parentNode;
-
-		// backspace. prevent only when focused element is not password, text or file
-		if ((code == 8) && !(t && t.tagName && (t.type && /(password)|(text)|(file)/.test(t.type.toLowerCase())) || t.tagName.toLowerCase() == 'textarea')) {
-			browser.preventDefault(e);
-			return false;
-		}
-
-		// color editor. ctrl + shift + c
-		if (e.ctrlKey && e.shiftKey && code == 67) {
-			this.toggleColorMode();
-			manager.hideQuickAppsPanel(true); // quick apps panel opened on ctrl+shift, hide it (true: cancel switching)
-			return false;
-		}
-
-		// ctrl shift, show quick apps panel
-		if (code == 16 && e.ctrlKey)
-			manager.showQuickAppsPanel();
-
-		// esc
-		if (manager.cPopup && manager.cPopup.closeBt && code == 27) {
-			manager.closePopup();
-			browser.preventDefault(e);
-			return;
-		}
-
+	this.onKeyDown = function (e, code, t) {
 		// shift, select mode? selMode: null, key, bt
 		if (e.shiftKey && !selMode)
 			self.toggleSelMode("key");
@@ -3694,60 +3849,45 @@ Sfera.Manager.Apps.FileManager = function() {
 			return; // popup open
 		}
 
-		if (self.popupMode) {
-			switch (code) {
-			case 8: // backspace
-				break;
-			case 37: // left
-				browser.preventDefault(e);
-				break;
-			case 38: // up
-				browser.preventDefault(e);
-				fileManager.selectPrev();
-				break;
-			case 39: // right
-				browser.preventDefault(e);
-				break;
-			case 40: // down
-				browser.preventDefault(e);
-				fileManager.selectNext();
-				break;
+		switch (code) {
+        case 38: // up
+			Sfera.Browser.preventDefault(e);
+			fileManager.selectPrev();
+			break;
+		case 40: // down
+			Sfera.Browser.preventDefault(e);
+			fileManager.selectNext();
+			break;
 
-			case 13: // enter
-				browser.preventDefault(e);
-				var o = fileManager.popupMode?fileManager.popupData:fileManager;
-				if (o.selectedItem>=0)
-					fileManager.selectItem(o.selectedItem);
-				break;
-			case 90: // z
-				break;
-			}
+		case 8: // backspace
+		case 37: // left
+			Sfera.Browser.preventDefault(e);
+            fileManager.parentFolder();
+			break;
+
+        case 39: // right
+            var o = fileManager.popupMode?fileManager.popupData:fileManager;
+            if (o.selectedItem == -1) {
+                fileManager.selectNext();
+                break;
+            }
+		case 13: // enter
+			Sfera.Browser.preventDefault(e);
+			o = o || (fileManager.popupMode?fileManager.popupData:fileManager);
+			if (o.selectedItem>=0)
+				fileManager.selectItem(o.selectedItem);
+			break;
+
+		case 90: // z
+			break;
 		}
 	} // onKeyDown()
 
 	// key up
 	this.onKeyUp = function (e) {
-		if (!e) var e = window.event;
-		// code
-		var code;
-		if (e.keyCode) code = e.keyCode;
-		else if (e.which) code = e.which;
-		// target
-		var t;
-		if (e.target) t = e.target;
-		else if (e.srcElement) t = e.srcElement;
-		if (t.nodeType == 3) // defeat Safari bug
-			t = t.parentNode;
-
-		// deselect?
-		if (!focusedElement) manager.deselect();
-
 		// shift, select mode? selMode: null, key, bt
 		if (!e.shiftKey && selMode == "key")
 			self.toggleSelMode("");
-
-		// ctrl a released?
-		if (!e.ctrlKey && manager.hideQuickAppsPanel()) return; // close quick apps panel?
 	} // onKeyUp()
 
 	init();
@@ -3806,7 +3946,7 @@ Sfera.Manager.Apps.SystemConsole = function() {
 
 		this.adjustLayout();
 
-		this.focus();
+        inputE.focus();
 		this.open = true;
         //inputE.onblur = function(){inputE.focus()};
 
@@ -3816,19 +3956,9 @@ Sfera.Manager.Apps.SystemConsole = function() {
 	// hide (switching to another app)
 	this.hide = function () {
 		this.e.style.display = "none";
-
-		manager.focus();
-
 		this.open = false;
 	} // hide()
 
-	// focus, restore key events
-	this.focus = function () {
-		document.onkeydown = this.onKeyDown;
-		document.onkeyup = this.onKeyUp;
-		if (window.focus) window.focus();
-		inputE.focus();
-	} // focus()
 
 	// adjust layout. viewport size
 	this.adjustLayout = function () {
@@ -3928,36 +4058,7 @@ Sfera.Manager.Apps.SystemConsole = function() {
     }
 
 	// key down
-	this.onKeyDown = function (e) {
-		if (!e) var e = window.event;
-		// code
-		var code;
-		if (e.keyCode) code = e.keyCode;
-		else if (e.which) code = e.which;
-		// target
-		var t;
-		if (e.target) t = e.target;
-		else if (e.srcElement) t = e.srcElement;
-		if (t.nodeType == 3) // defeat Safari bug
-			t = t.parentNode;
-
-		// backspace. prevent only when focused element is not password, text or file
-		if ((code == 8) && !(t && t.tagName && (t.type && /(password)|(text)|(file)/.test(t.type.toLowerCase())) || t.tagName.toLowerCase() == 'textarea')) {
-			browser.preventDefault(e);
-			return false;
-		}
-
-		// color editor. ctrl + shift + c
-		if (e.ctrlKey && e.shiftKey && code == 67) {
-			this.toggleColorMode();
-			manager.hideQuickAppsPanel(true); // quick apps panel opened on ctrl+shift, hide it (true: cancel switching)
-			return false;
-		}
-
-		// ctrl shift, show quick apps panel
-		if (code == 16 && e.ctrlKey)
-			manager.showQuickAppsPanel();
-
+	this.onKeyDown = function (e,code,t) {
         if (code == 13 && !e.ctrlKey && !e.shiftKey) {
             self.send();
             return;
@@ -3987,21 +4088,13 @@ Sfera.Manager.Apps.SystemConsole = function() {
 		// esc
 		if (manager.cPopup && manager.cPopup.closeBt && code == 27) {
 			manager.closePopup();
-			browser.preventDefault(e);
+			Sfera.Browser.preventDefault(e);
 			return;
 		}
 	} // onKeyDown()
 
 	// key up
-	this.onKeyUp = function (e) {
-		if (!e) var e = window.event;
-		// code
-		var code;
-		if (e.keyCode) code = e.keyCode;
-		else if (e.which) code = e.which;
-
-		// ctrl a released?
-		if (!e.ctrlKey && manager.hideQuickAppsPanel()) return; // close quick apps panel?
+	this.onKeyUp = function (e,code,t) {
 	} // onKeyUp()
 
 
@@ -4101,7 +4194,6 @@ Sfera.Manager.Apps.TextEditor = function() {
         */
         this.showLoading(false);
 
-		this.focus();
 		this.open = true;
         this.closing = false;
 
@@ -4120,19 +4212,8 @@ Sfera.Manager.Apps.TextEditor = function() {
 	// hide (switching to another app)
 	this.hide = function () {
 		this.e.style.display = "none";
-
-		manager.focus();
-
 		this.open = false;
 	} // hide()
-
-	// focus, restore key events
-	this.focus = function () {
-		document.onkeydown = this.onKeyDown;
-		document.onkeyup = this.onKeyUp;
-		if (window.focus) window.focus();
-		//manager.deselect();
-	} // focus()
 
 	// adjust layout. viewport size
 	this.adjustLayout = function () {
@@ -4256,43 +4337,7 @@ Sfera.Manager.Apps.TextEditor = function() {
     }
 
 	// key down
-	this.onKeyDown = function (e) {
-		if (!e) var e = window.event;
-		// code
-		var code;
-		if (e.keyCode) code = e.keyCode;
-		else if (e.which) code = e.which;
-		// target
-		var t;
-		if (e.target) t = e.target;
-		else if (e.srcElement) t = e.srcElement;
-		if (t.nodeType == 3) // defeat Safari bug
-			t = t.parentNode;
-
-		// backspace. prevent only when focused element is not password, text or file
-		if ((code == 8) && !(t && t.tagName && (t.type && /(password)|(text)|(file)/.test(t.type.toLowerCase())) || t.tagName.toLowerCase() == 'textarea')) {
-			browser.preventDefault(e);
-			return false;
-		}
-
-		// color editor. ctrl + shift + c
-		if (e.ctrlKey && e.shiftKey && code == 67) {
-			this.toggleColorMode();
-			manager.hideQuickAppsPanel(true); // quick apps panel opened on ctrl+shift, hide it (true: cancel switching)
-			return false;
-		}
-
-		// ctrl shift, show quick apps panel
-		if (code == 16 && e.ctrlKey)
-			manager.showQuickAppsPanel();
-
-		// esc
-		if (manager.cPopup && manager.cPopup.closeBt && code == 27) {
-			manager.closePopup();
-			browser.preventDefault(e);
-			return;
-		}
-
+	this.onKeyDown = function (e,code,t) {
 		if (manager.cPopup && manager.cPopup.id != "choosefile") {
 			if (code == 13) { // return
 			switch (manager.cPopup.id) {
@@ -4315,27 +4360,17 @@ Sfera.Manager.Apps.TextEditor = function() {
 
 		// ctrl/cmd s
 		if (code == 83 && (e.ctrlKey || e.metaKey) && !manager.cPopup) {
-			browser.preventDefault(e);
-			textEditor.save();
+            Sfera.Browser.preventDefault(e);
+			this.saveFile();
 			return;
 		}
 
-		/*
         fileManager.changed = true;
-               updateTitle();
-		 */
+        updateTitle();
 	} // onKeyDown()
 
 	// key up
-	this.onKeyUp = function (e) {
-		if (!e) var e = window.event;
-		// code
-		var code;
-		if (e.keyCode) code = e.keyCode;
-		else if (e.which) code = e.which;
-
-		// ctrl a released?
-		if (!e.ctrlKey && manager.hideQuickAppsPanel()) return; // close quick apps panel?
+	this.onKeyUp = function (e,code,t) {
 	} // onKeyUp()
 
     // open file

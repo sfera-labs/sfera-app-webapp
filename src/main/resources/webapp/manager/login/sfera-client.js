@@ -1,4 +1,4 @@
-/*! sfera-webapp - v0.0.2 - 2016-04-15 */
+/*! sfera-webapp - v0.0.2 */
 
 (function(){
 
@@ -322,7 +322,10 @@ Sfera.Attribute = function(component, config) {
     }
 };
 Sfera.Attribute.prototype = {
-    set: function(value, manualUpdate) {
+    // options:
+    //  manualUpdate: don't call update
+    //  silent: don't raise events
+    set: function(value, options) {
         if (this.source === value) return; // no changes
 
         this.changed = true; // if true, we need to call compile
@@ -340,15 +343,15 @@ Sfera.Attribute.prototype = {
             for (var i=0; i<this.mustache.vars.length; i++)
                 Sfera.client.bindAttrObserver(this.mustache.vars[i], this);
         }
-        if (!manualUpdate)
-            this.compile();
+        if (!options || !options.manualUpdate)
+            this.compile(options);
     },
 
     get: function() {
         return this.value;
     },
 
-    compile: function () {
+    compile: function (options) {
         var value = Sfera.Compiler.compileAttributeValue(this);
 
         // check if value list
@@ -368,18 +371,18 @@ Sfera.Attribute.prototype = {
         if (value !== this.value) {
             this.changed = false;
             this.value = value;
-            this.update();
+            this.update(options);
         }
     },
 
-    update: function () {
+    update: function (options) {
         // do something with the value
         // ...
         // call post update
-        this.post();
+        this.post(options);
     },
 
-    post: function () {
+    post: function (options) {
 
     }
 
@@ -485,6 +488,8 @@ Sfera.ComponentPresets = {
  */
 Sfera.Components = new(function() {
 
+    // component definitions
+    this._componentDefs = {};
     // components need to be created in order depending on what component they're extending
     this._createLater = {};
 
@@ -573,6 +578,18 @@ Sfera.Components = new(function() {
      * @property {string} def - The component's definition.
      */
     this.create = function(name, def) {
+        this._componentDefs[name] = def; // create all on boot
+    };
+
+    this.boot = function() {
+        // create all
+        for (var c in this._componentDefs)
+            this.createClass(c, this._componentDefs[c]);
+        this._componentDefs = {};
+    };
+
+    // create a component class now
+    this.createClass = function(name, def) {
         // extends an existing component?
         if (def.extends && !Sfera.Components.Classes[def.extends]) {
             if (!this._createLater[def.extends])
@@ -623,7 +640,6 @@ Sfera.Components = new(function() {
                         }
                     }
                 }
-
             }
 
             // attributes
@@ -650,21 +666,21 @@ Sfera.Components = new(function() {
 
         // non standard, allows developer tools to display object class names correctly
         comp.displayName = "Sfera.Component.Classes." + name;
-        /*
-        Object.defineProperty(Sfera.Components[name], 'name', {
-          value: "Sfera.Component."+name
-        });
-        */
 
         // extends
-        if (!def.extends)
+        if (!def.extends && name != "_Base")
             def.extends = "_Base";
 
-        var sup = Sfera.Components.Classes[def.extends].prototype;
+        var sup;
+        if (def.extends) {
+            sup = Sfera.Components.Classes[def.extends].prototype;
 
-        comp.prototype = Object.create(sup);
-        comp.prototype.constructor = comp;
-        comp.prototype.type = name;
+            comp.prototype = Object.create(sup);
+            comp.prototype.constructor = comp;
+            comp.prototype.type = name;
+        } else {
+            sup = { attrDefs:{} };
+        }
 
         // doc?
         var cDoc;
@@ -672,12 +688,22 @@ Sfera.Components = new(function() {
             cDoc = Sfera.Doc.get.component(name);
             if (cDoc && cDoc.doc)
                 comp.prototype.doc = cDoc.doc;
+            if (!cDoc || !cDoc.doc)
+                cDoc = {doc:{}};
+            comp.prototype.doc = cDoc.doc;
         }
 
         // copy attributes
         comp.prototype.attrDefs = {};
+        var sDoc;
+        if (Sfera.Doc)
+            sDoc = Sfera.Doc.get.component(def.extends);
         for (var a in sup.attrDefs) {
             comp.prototype.attrDefs[a] = sup.attrDefs[a];
+            // attribute doc
+            if (sDoc && sDoc.attr && sDoc.attr[a] && !sup.attrDefs[a].doc) {
+                comp.prototype.attrDefs[a].doc = sDoc.attr[a];
+            }
         }
 
         // presets
@@ -700,31 +726,35 @@ Sfera.Components = new(function() {
             }
         }
 
-        // doc
-        if (cDoc && cDoc.attr[a]) {
-            for (var a in cDoc.attrs[a]) {
-                if (!comp.prototype.attrDefs[a])
-                    comp.prototype.attrDefs[a] = {};
-                comp.prototype.attrDefs[a].doc = cDoc.attrs[a];
-            }
-        }
-
-
         // attributes
         if (def.attributes) {
             for (var attr in def.attributes) {
                 if (!comp.prototype.attrDefs[attr]) {
                     comp.prototype.attrDefs[attr] = def.attributes[attr];
                 } else {
-                    // instance
+                    // clone from super class
                     if (comp.prototype.attrDefs[attr] == sup.attrDefs[attr]) {
-                        comp.prototype.attrDefs[attr] = Object.create(sup.attrDefs[attr]);
+                        comp.prototype.attrDefs[attr] = {};
+                        for (var i in sup.attrDefs[attr])
+                            comp.prototype.attrDefs[attr][i] = sup.attrDefs[attr][i];
                     }
                     // extend rather than replace (in case it was already defined by extend or preset)
                     for (var i in def.attributes[attr]) {
                         comp.prototype.attrDefs[attr][i] = def.attributes[attr][i];
                     }
                 }
+            }
+        }
+
+        // attribute doc
+        if (cDoc && cDoc.attr) {
+            for (var a in cDoc.attr) {
+                /*
+                if (!comp.prototype.attrDefs[a])
+                    comp.prototype.attrDefs[a] = {};
+                */
+                if (comp.prototype.attrDefs[a])
+                    comp.prototype.attrDefs[a].doc = cDoc.attr[a];
             }
         }
 
@@ -820,6 +850,11 @@ Sfera.Client = function(config) {
     this.skin = null;
 
     var interfaceC;
+
+    // requests waiting for a reply
+    var commandReqs = {};
+    var eventReqs = {};
+
     /**
      * Initialize the client and start it.
      *
@@ -842,6 +877,8 @@ Sfera.Client = function(config) {
 
 
         this.isBooted = true;
+
+        Sfera.Components.boot(); // init component classes
 
         this.components = new Sfera.ComponentManager(this);
 
@@ -874,8 +911,8 @@ Sfera.Client = function(config) {
 
         window.onresize = adjustLayout;
         window.onkeydown = onKeyDown;
-		window.onkeyup = onKeyUp;
-		window.onkeypress = onKeyPress;
+        window.onkeyup = onKeyUp;
+        window.onkeypress = onKeyPress;
 
         delete config;
     };
@@ -931,6 +968,25 @@ Sfera.Client = function(config) {
                 }
             }
         }
+        switch (json.action) {
+            case "command":
+                if (commandReqs[json.tag]) {
+                    if (commandReqs[json.tag].callback)
+                        commandReqs[json.tag].callback(commandReqs[json.tag].cmd,
+                            json.result);
+                    delete commandReqs[json.tag];
+                }
+                break;
+            case "event":
+                if (eventReqs[json.tag]) {
+                    if (eventReqs[json.tag].callback)
+                        eventReqs[json.tag].callback(eventReqs[json.tag].id,
+                            eventReqs[json.tag].value,
+                            json.result);
+                    delete eventReqs[json.tag];
+                }
+                break;
+        }
     }
 
     function onUpdateDictionary(xmlDoc) {
@@ -950,18 +1006,18 @@ Sfera.Client = function(config) {
 
         adjustLayout();
 
-        if (Sfera.Custom.onStartup)
-            Sfera.Custom.onStartup();
+        if (Sfera.Custom.onReady)
+            Sfera.Custom.onReady();
     };
 
     this.indexComponent = function(component) {
         this.components.index(component);
     };
 
-    this.setAttribute = function(id, name, value) {
+    this.setAttribute = function(id, name, value, silent) {
         var c = this.components.getById(id);
         for (var i = 0; i < c.length; i++)
-            c[i].setAttribute(name, value);
+            c[i].setAttribute(name, value, silent);
     };
 
     this.getAttribute = function(id, name) {
@@ -986,13 +1042,14 @@ Sfera.Client = function(config) {
             this.cPage = p;
             var i = interfaceC.getAttribute("title");
             var t = p.getAttribute("title");
-            Sfera.Browser.updateUrl(id, (i?i:'Sfera') + (t?" - "+t:''));
+            Sfera.Browser.updateUrl(id, (i ? i : 'Sfera') + (t ? " - " + t : ''));
         } else {
+            if (this.isLogin)
+                this.showPage("page:home");
             console.log("page not found: " + id);
         }
     };
 
-    var commandQueue = [];
     this.sendCommand = function(command, callback) {
         var tag = (new Date()).getTime();
         var req = {
@@ -1000,13 +1057,12 @@ Sfera.Client = function(config) {
             tag: tag,
             callback: callback
         };
-        commandQueue.push(req);
+        commandReqs[tag] = req;
         Sfera.Net.sendCommand(req);
 
         return tag;
     };
 
-    var eventQueue = [];
     this.sendEvent = function(id, value, callback) {
         var tag = (new Date()).getTime(); // request id
         var req = {
@@ -1015,7 +1071,7 @@ Sfera.Client = function(config) {
             tag: tag,
             callback: callback
         };
-        eventQueue.push(req, callback);
+        eventReqs[req] = req;
         Sfera.Net.sendEvent(req);
 
         return tag;
@@ -1118,69 +1174,69 @@ Sfera.Client = function(config) {
 
     // events
     // on key down event
-	function onKeyDown(event) {
-		var evt = event || window.event;
-		var code = evt.charCode || evt.keyCode;
+    function onKeyDown(event) {
+        var evt = event || window.event;
+        var code = evt.charCode || evt.keyCode;
 
-		self.ctrlKey = evt.ctrlKey;
-		self.shiftKey = evt.shiftKey;
+        self.ctrlKey = evt.ctrlKey;
+        self.shiftKey = evt.shiftKey;
 
-		// keyboard listener?
-		if (focusedCo && focusedCo.onKeyDown) {
-			if (!focusedCo.onKeyDown(evt,code)) {
-				// the event won't go through, prevent
-				Sfera.Browser.preventDefault(evt);
-				return false;
-			}
-		} else {
-			if (code == 9) {
-				if (self.cPage.children.length)
-					focusFirst(self.cPage,evt.shiftKey); // get first or last
-				// the event won't go through, prevent
-				Sfera.Browser.preventDefault(evt);
-				return false;
-			}
-		}
+        // keyboard listener?
+        if (focusedCo && focusedCo.onKeyDown) {
+            if (!focusedCo.onKeyDown(evt, code)) {
+                // the event won't go through, prevent
+                Sfera.Browser.preventDefault(evt);
+                return false;
+            }
+        } else {
+            if (code == 9) {
+                if (self.cPage.children.length)
+                    focusFirst(self.cPage, evt.shiftKey); // get first or last
+                // the event won't go through, prevent
+                Sfera.Browser.preventDefault(evt);
+                return false;
+            }
+        }
 
-		return true;
-	} // onKeyDown()
+        return true;
+    } // onKeyDown()
 
-	function onKeyPress(event) {
-		var evt = event || window.event;
-		var code = evt.charCode || evt.keyCode;
+    function onKeyPress(event) {
+        var evt = event || window.event;
+        var code = evt.charCode || evt.keyCode;
 
-		self.ctrlKey = evt.ctrlKey;
-		self.shiftKey = evt.shiftKey;
+        self.ctrlKey = evt.ctrlKey;
+        self.shiftKey = evt.shiftKey;
 
-		// keyboard listener?
-		if (focusedCo && focusedCo.onKeyPress) {
-			if (!focusedCo.onKeyPress(evt,code)) {
-				// the event won't go through, prevent
-				Sfera.Browser.preventDefault(evt);
-				return false;
-			}
-		}
+        // keyboard listener?
+        if (focusedCo && focusedCo.onKeyPress) {
+            if (!focusedCo.onKeyPress(evt, code)) {
+                // the event won't go through, prevent
+                Sfera.Browser.preventDefault(evt);
+                return false;
+            }
+        }
 
-		return true;
-	}
+        return true;
+    }
 
-	// on key up event
-	function onKeyUp(event) {
-		var evt = event || window.event;
-		var code = evt.charCode || evt.keyCode;
+    // on key up event
+    function onKeyUp(event) {
+        var evt = event || window.event;
+        var code = evt.charCode || evt.keyCode;
 
-		self.ctrlKey = evt.ctrlKey;
-		self.shiftKey = evt.shiftKey;
+        self.ctrlKey = evt.ctrlKey;
+        self.shiftKey = evt.shiftKey;
 
-		// keyboard listener?
-		if (focusedCo && focusedCo.onKeyUp) {
-			if (focusedCo.onKeyUp(evt,code)) return true; // the event will go through
-		}
+        // keyboard listener?
+        if (focusedCo && focusedCo.onKeyUp) {
+            if (focusedCo.onKeyUp(evt, code)) return true; // the event will go through
+        }
 
-		// the event won't go through, prevent
-		Sfera.Browser.preventDefault(evt);
-		return false;
-	} // onKeyUp()
+        // the event won't go through, prevent
+        Sfera.Browser.preventDefault(evt);
+        return false;
+    } // onKeyUp()
 
 
     ////////////////////////// focus
@@ -1232,7 +1288,7 @@ Sfera.Client = function(config) {
         return focusNext(co);
     } // focusFirstObj()
 
-    function focusNext(co,dir) {
+    function focusNext(co, dir) {
         var cos = co.parent.children;
         var oi = -1;
         var i;
@@ -1284,7 +1340,7 @@ Sfera.Client = function(config) {
     }
 
     this.focusNext = function(dir) {
-        return focusNext(focusedCo,dir);
+        return focusNext(focusedCo, dir);
     };
 
 };
@@ -2357,6 +2413,11 @@ Sfera.UI.Button.prototype = {
 		this.setAttribute(this.element, "selected", select);
 	}, // selectButton()
 
+	// focus/blur button
+	focus: function (focused) {
+		this.setAttribute(this.element, "focused", focused);
+	}, // selectButton()
+
 	// set mini mode
 	mini: function (mini) {
 		this.setAttribute(this.element, "mini", mini);
@@ -2935,6 +2996,7 @@ Sfera.Net = new (function() {
 
     };
 
+
 })();
 
 
@@ -3297,7 +3359,7 @@ Sfera.Browser = new (function() {
 
     this.updateUrl = function(pageId, pageTitle) {
         var location = this.getLocation();
-        hash = pageId == "page:homepage"?"":pageId;
+        hash = pageId == "page:home"?"":pageId;
         document.title = pageTitle;
         if (location.hash != hash) {
             lastHash = hash; // so the interval won't detect the change
@@ -3358,10 +3420,10 @@ Sfera.Browser = new (function() {
     this.start = function() {
         setInterval(function() {
             var location = Sfera.Browser.getLocation();
-            var locHash = location.hash == "page:homepage"?"":location.hash
+            var locHash = location.hash == "page:home"?"":location.hash
             if (locHash !== lastHash) {
                 lastHash = locHash;
-                Sfera.client.showPage(location.hash ? location.hash : "homepage");
+                Sfera.client.showPage(location.hash ? location.hash : "home");
                 //alert("User went back or forward to application state represented by " + hash);
             }
         }, 100);
@@ -4815,6 +4877,7 @@ Sfera.Utils = function() {
 			window.addEvent(browser.browser == "Firefox"?"DOMMouseScroll":"mousewheel", e, f);
 	}
 
+    // XML parser
     if (typeof window.DOMParser != "undefined") {
         this.parseXML = function(xmlStr) {
             return (new window.DOMParser()).parseFromString(xmlStr, "text/xml");
@@ -5026,7 +5089,9 @@ Sfera.ComponentPresets.Color = function() {
         default: "default",
 
         values: function() {
-            var c = Sfera.client.skin.colors[this.component.type];
+            var c;
+            if (Sfera.client && Sfera.client.skin)
+                c = Sfera.client.skin.colors[this.component.type];
             return c ? c : ["default"];
         },
 
@@ -5037,6 +5102,21 @@ Sfera.ComponentPresets.Color = function() {
             this.post();
         }
     }
+};
+
+
+Sfera.ComponentPresets.Enable = function() {
+    // extend attributes
+    this.attrDefs.enabled = {
+        type: "boolean",
+        default: "true",
+        update: function() {
+            if (this.component.updateClass)
+                this.component.updateClass();
+            // post update
+            this.post();
+        }
+    };
 };
 
 
@@ -5154,6 +5234,7 @@ Sfera.ComponentPresets.Style = function() {
                 s = Sfera.client.skin.styles[this.component.type];
             return s ? s : ["default"];
         },
+        
         update: function() {
             if (this.component.updateClass)
                 this.component.updateClass();
@@ -5225,6 +5306,10 @@ Sfera.Components.create("_Base", {
     // require update: null, true/ {}
     requireUpdate: null,
 
+    doc: {
+        hidden:true
+    },
+
     attributes: {
         id: {
             type: "string",
@@ -5237,6 +5322,17 @@ Sfera.Components.create("_Base", {
                 return this.attributeValues.id;
             },
         },
+
+        cssClass: {
+            type: "string",
+            update: function() {
+                var c = this.component;
+                var cl = this.value;
+                if (c.dom && c.dom.className)
+                    cl = c.dom.className + " " + cl;
+                c.element.className = cl;
+            }
+        }
     },
 
     init: function() {
@@ -5251,9 +5347,9 @@ Sfera.Components.create("_Base", {
     },
 
     // shared methods
-    setAttribute: function(name, value, manualUpdate) {
+    setAttribute: function(name, value, options) {
         if (this.attributes[name]) {
-            this.attributes[name].set(value, manualUpdate);
+            this.attributes[name].set(value, options);
         }
     },
 
@@ -5311,7 +5407,11 @@ Sfera.Components.create("_Base", {
  * @constructor
  */
 Sfera.Components.create("_Field", {
-    presets: ["Visibility", "Position", "Size", "Style"],
+    presets: ["Visibility", "Position", "Size", "Style", "Enable"],
+
+    doc: {
+        hidden:true
+    },
 
     attributes: {
         value: {}
@@ -5332,7 +5432,7 @@ Sfera.Components.create("_Field", {
 });
 
 
-if (typeof exports !== 'undefined') {
+    if (typeof exports !== 'undefined') {
         if (typeof module !== 'undefined' && module.exports) {
             exports = module.exports = Sfera;
         }

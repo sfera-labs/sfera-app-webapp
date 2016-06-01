@@ -2405,17 +2405,22 @@ Sfera.UI.Button.prototype = {
 
 	// enabled/disabled button
 	enable: function (enable) {
-		this.setAttribute(this.element, "disabled", !enable);
+		this.setAttribute("disabled", !enable);
 	}, // enableButton()
 
 	// select/deselect button
 	select: function (select) {
-		this.setAttribute(this.element, "selected", select);
+		this.setAttribute("selected", select);
+	}, // selectButton()
+
+	// focus/blur button
+	focus: function (focused) {
+		this.setAttribute("focused", focused);
 	}, // selectButton()
 
 	// set mini mode
 	mini: function (mini) {
-		this.setAttribute(this.element, "mini", mini);
+		this.setAttribute("mini", mini);
 	}, // miniButton()
 
 	// get button style attribute
@@ -2478,6 +2483,7 @@ Sfera.UI.Button.prototype = {
 	// generic button event. graphic feedback and function associated to the event. f can be a string or a function(event,e). of is an additional optional function (user on touchmove for onout). clt: cancel long touch on android devices when clicking on an image
 	onEvent: function (w,f,of,event) {
         if (Sfera.UI.skipButtonEvents) return;
+        if (this.getAttribute("disabled")) return;
 
 		// event
 		var evt = window.event || event;
@@ -3328,6 +3334,8 @@ Sfera.Browser = new (function() {
 
     // prevent default event
 	this.preventDefault = function (evt) {
+        if (evt.stopPropagation)
+            evt.stopPropagation();
 		if (evt.returnValue)
 			evt.returnValue = false;
 		if (evt.preventDefault)
@@ -5100,6 +5108,21 @@ Sfera.ComponentPresets.Color = function() {
 };
 
 
+Sfera.ComponentPresets.Enable = function() {
+    // extend attributes
+    this.attrDefs.enabled = {
+        type: "boolean",
+        default: "true",
+        update: function() {
+            if (this.component.updateClass)
+                this.component.updateClass();
+            // post update
+            this.post();
+        }
+    };
+};
+
+
 Sfera.ComponentPresets.Label = function() {
     // extend attributes
     this.attrDefs.label = {
@@ -5387,18 +5410,14 @@ Sfera.Components.create("_Base", {
  * @constructor
  */
 Sfera.Components.create("_Field", {
-    presets: ["Visibility", "Position", "Size", "Style"],
+    presets: ["Visibility", "Position", "Size", "Style", "Enable"],
 
     doc: {
         hidden:true
     },
 
     attributes: {
-        value: {},
-        enabled: {
-            type: "boolean",
-            default: "true"
-        }
+        value: {}
     },
 
     init: function() {

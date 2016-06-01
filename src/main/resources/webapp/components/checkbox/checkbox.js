@@ -136,24 +136,13 @@ Sfera.Components.create("Checkbox", {
     },
 
     updateClass: function () {
-        this.btObj.setAttribute("focused",this.focused);
+        this.btObj.focus(this.focused);
+        this.btObj.enable(this.getAttribute("enabled"));
     },
 
     //
     // events
     //
-
-    onChanged: function() {
-        this.clearChangeTimeout();
-        //if (foo.autoSend || foo.onUserChange) { // otherwise there's nothing to do
-
-        var changeDelay = this.getAttribute("changeDelay");
-        var self = this;
-        if (changeDelay) // if 0, disabled
-            this.changeTimeout = setTimeout(function() {
-            self.onChangedTimeout()
-        }, changeDelay);
-    },
 
     clearChangeTimeout: function() {
         if (this.changeTimeout) {
@@ -213,7 +202,7 @@ Sfera.Components.create("Checkbox", {
                 this.flip();
             }
 
-            this.onChanged();
+            this.onChange();
 
             return true; // allow
         }
@@ -223,7 +212,7 @@ Sfera.Components.create("Checkbox", {
         var code = event.keyCode;
         var c = Sfera.Utils.getKeyFromCode(code);
 
-        this.onChanged();
+        this.onChange();
         return true; // allow
     },
 
@@ -232,7 +221,7 @@ Sfera.Components.create("Checkbox", {
         var c = Sfera.Utils.getKeyFromCode(code);
 
         if (c != "enter" && c != "tab") {
-            this.onChanged();
+            this.onChange();
             return false; // nothing to see here: prevent
         }
 
@@ -240,15 +229,16 @@ Sfera.Components.create("Checkbox", {
     },
 
     onChange: function() {
-        var f = this.getAttribute("onChange");
-        var r = true;
-        if (f) {
-            var value = this.getAttribute("value");
-            r = Sfera.Custom.exec(f, this.id, value);
-        }
+        this.clearChangeTimeout();
 
-        if (r !== false) {
-            this.onChanged();
+        var changeDelay = this.getAttribute("changeDelay");
+        var self = this;
+        if (changeDelay) { // if 0, run immediately
+            this.changeTimeout = setTimeout(function() {
+                self.onChangedTimeout()
+            }, changeDelay);
+        } else {
+            self.onChangedTimeout();
         }
     },
 
@@ -268,7 +258,7 @@ Sfera.Components.create("Checkbox", {
     },
 
     onBlur: function() {
-        this.onChanged();
+        this.onChange();
         Sfera.client.clearFocused(this);
         this.focused = false;
         this.updateClass();
