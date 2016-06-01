@@ -19,7 +19,7 @@ The decimal digits in the value are based on the maximum amount of decimal digit
 |**[height](#height)**|integer|Specifies the component's height in pixels|
 |**[style](#style)**|string|Specifies the style|
 |**[color](#color)**|string|Specifies the color|
-|**[enabled](#enabled)**|boolean||
+|**[enabled](#enabled)**|boolean|Specifies whether the component is enabled or not|
 |**[cursorSize](#cursorSize)**|integer|Specifies the label's text|
 |**[barColor](#barColor)**|color|Specifies the color of the bar|
 |**[min](#min)**|float|Specifies the minumum value|
@@ -230,7 +230,7 @@ Specifies the color.
 
 ### enabled
 
-
+Specifies whether the component is enabled or not.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>boolean</td></tr><tr><td><b>Default value:</b></td><td>true</td></tr></table>
 
 

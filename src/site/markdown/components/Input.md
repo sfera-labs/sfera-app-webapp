@@ -18,7 +18,7 @@ Its appearance is defined by a [style](#style) attribute.
 |**[width](#width)**|integer|Specifies the component's width in pixels|
 |**[height](#height)**|integer|Specifies the component's height in pixels|
 |**[style](#style)**|string|Specifies the style|
-|**[enabled](#enabled)**|boolean||
+|**[enabled](#enabled)**|boolean|Specifies whether the component is enabled or not|
 |**[value](#value)**|string|Specifies the field's value|
 |**[type](#type)**|string|Specifies the input type that defines its behavior|
 |**[focus](#focus)**|boolean|If true, gives the component focus|
@@ -224,7 +224,7 @@ Specifies the style.
 
 ### enabled
 
-
+Specifies whether the component is enabled or not.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>boolean</td></tr><tr><td><b>Default value:</b></td><td>true</td></tr></table>
 
 

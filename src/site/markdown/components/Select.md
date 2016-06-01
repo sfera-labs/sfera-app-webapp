@@ -17,7 +17,7 @@ Select component, allows the user to select a single value among a list of [valu
 |**[width](#width)**|integer|Specifies the component's width in pixels|
 |**[height](#height)**|integer|Specifies the component's height in pixels|
 |**[style](#style)**|string|Specifies the style|
-|**[enabled](#enabled)**|boolean||
+|**[enabled](#enabled)**|boolean|Specifies whether the component is enabled or not|
 |**[value](#value)**|string|Specifies the current value|
 |**[focus](#focus)**|boolean|If true the component gains focus|
 |**[icon](#icon)**|string|Specifies the url of the icon, if any|
@@ -220,7 +220,7 @@ Specifies the style.
 
 ### enabled
 
-
+Specifies whether the component is enabled or not.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>boolean</td></tr><tr><td><b>Default value:</b></td><td>true</td></tr></table>
 
 

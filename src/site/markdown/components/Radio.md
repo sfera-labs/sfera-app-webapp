@@ -19,7 +19,7 @@ The [group](#group) attribute defines which radio components work together.
 |**[width](#width)**|integer|Specifies the component's width in pixels|
 |**[height](#height)**|integer|Specifies the component's height in pixels|
 |**[style](#style)**|string|Specifies the style|
-|**[enabled](#enabled)**|boolean||
+|**[enabled](#enabled)**|boolean|Specifies whether the component is enabled or not|
 |**[value](#value)**|boolean|Specifies the checkbox's value|
 |**[focus](#focus)**|boolean|Focus the element|
 |**[label](#label)**|string|Specifies the label's text|
@@ -221,7 +221,7 @@ Specifies the style.
 
 ### enabled
 
-
+Specifies whether the component is enabled or not.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>boolean</td></tr><tr><td><b>Default value:</b></td><td>true</td></tr></table>
 
 
