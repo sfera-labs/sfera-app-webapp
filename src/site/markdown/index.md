@@ -1,7 +1,10 @@
 # Sfera Web App
 
-The Sfera Web Appfeatures is a fully customizable and expandable framework based on HTML5, CSS3 and JavaScript that enables you to easily create Web user interfaces to interact with the server.
+The Sfera Web App is a fully customizable and expandable framework based on HTML5, CSS3 and JavaScript that enables you to easily create Web user interfaces to interact with your Sfera system through any Web browser.
 
-It allows access to the server's functionalities through any web browser, allows users to access interfaces and offers a development environment.
+You can create custom interfaces by simply placing components such as buttons, images, input fields, etc. using a simple XML format and link them with events or other actions to be triggered on the server.   
+For more advanced applications you can easily add your own JavaScript code and link it to action on components or events from the Sfera server.    
+If that's still not enough for your project you can create custom components with their own look and behaviors, custom skins for your interfaces and overwrite the design and functionalities of standard components. 
 
-TODO
+Moreover, it provides a Web-based development environment, the "manager", to browse and edit files on the server and to interact with Sfera's console. 
+

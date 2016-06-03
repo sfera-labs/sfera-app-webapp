@@ -1,0 +1,12 @@
+# Installation
+
+As for any other Sfera app, just drop the [Web App plugin jar file][jar-distr] into the _plugins_ directory of your Sfera installation.
+
+Now you will be able to access the [Manager](manager.html) at `http[s]://<server_address>:<port>/manager`. The used port(s) will be the same as the one specified for `http_port`/`https_port` in the [system configuration](../../sfera/configuration.html).
+
+To create an interface, follow the instructions provided in [Interfaces](interfaces.html).
+
+[jar-distr]: http://sfera.sferalabs.cc/mvn-repo/cc/sferalabs/sfera/apps/webapp/${latestDeployedVersion}/webapp-${latestDeployedVersion}-jar-with-dependencies.jar
+
+
+TODO maven declaration for development

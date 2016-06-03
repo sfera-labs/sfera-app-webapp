@@ -23,6 +23,7 @@
 	</organization>
 
 	<properties>
+		<latestDeployedVersion>1.0.0</latestDeployedVersion>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<sfera-version>0.1.0</sfera-version>
 	</properties>
