@@ -9,14 +9,14 @@ import cc.sferalabs.sfera.apps.webapp.Cache;
  * @version 1.0.0
  *
  */
-public class ManagerLoginCacheServletHolder extends WebAppServletHolder {
+public class WebIdeLoginCacheServletHolder extends WebAppServletHolder {
 
-	public static final ManagerLoginCacheServletHolder INSTANCE = new ManagerLoginCacheServletHolder();
+	public static final WebIdeLoginCacheServletHolder INSTANCE = new WebIdeLoginCacheServletHolder();
 
 	/**
 	 * 
 	 */
-	protected ManagerLoginCacheServletHolder() {
+	protected WebIdeLoginCacheServletHolder() {
 		super(Cache.CACHE_ROOT.toString());
 	}
 

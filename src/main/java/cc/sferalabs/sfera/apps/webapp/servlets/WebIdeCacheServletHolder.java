@@ -18,14 +18,14 @@ import cc.sferalabs.sfera.apps.webapp.Cache;
  * @version 1.0.0
  *
  */
-public class ManagerCacheServletHolder extends WebAppServletHolder {
+public class WebIdeCacheServletHolder extends WebAppServletHolder {
 
-	public static final ManagerCacheServletHolder INSTANCE = new ManagerCacheServletHolder();
+	public static final WebIdeCacheServletHolder INSTANCE = new WebIdeCacheServletHolder();
 
 	/**
 	 * 
 	 */
-	protected ManagerCacheServletHolder() {
+	protected WebIdeCacheServletHolder() {
 		super(Cache.CACHE_ROOT.toString());
 	}
 

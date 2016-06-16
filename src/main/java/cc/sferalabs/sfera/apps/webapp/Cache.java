@@ -16,8 +16,8 @@ import com.google.common.eventbus.Subscribe;
 import cc.sferalabs.sfera.apps.webapp.events.InterfaceUpdateEvent;
 import cc.sferalabs.sfera.apps.webapp.servlets.AuthInterfaceCacheServletHolder;
 import cc.sferalabs.sfera.apps.webapp.servlets.InterfaceCacheServletHolder;
-import cc.sferalabs.sfera.apps.webapp.servlets.ManagerCacheServletHolder;
-import cc.sferalabs.sfera.apps.webapp.servlets.ManagerLoginCacheServletHolder;
+import cc.sferalabs.sfera.apps.webapp.servlets.WebIdeCacheServletHolder;
+import cc.sferalabs.sfera.apps.webapp.servlets.WebIdeLoginCacheServletHolder;
 import cc.sferalabs.sfera.console.Console;
 import cc.sferalabs.sfera.core.events.PluginsEvent;
 import cc.sferalabs.sfera.events.Bus;
@@ -36,13 +36,15 @@ import cc.sferalabs.sfera.web.WebServerException;
 public abstract class Cache {
 
 	private static final Logger logger = LoggerFactory.getLogger(Cache.class);
+	
+	private final static String WEB_IDE_URL_NAME = "wide";
 
 	static final Path INTERFACES_PATH = WebApp.ROOT.resolve("interfaces/");
-	static final Path MANAGER_PATH = WebApp.ROOT.resolve("manager/");
+	static final Path WEB_IDE_PATH = WebApp.ROOT.resolve(WEB_IDE_URL_NAME + "/");
 
 	public static final Path CACHE_ROOT = WebApp.ROOT.resolve("cache/");
 	public static final Path INTERFACES_CACHE_ROOT = CACHE_ROOT.resolve("interfaces/");
-	public static final Path MANAGER_CACHE_ROOT = CACHE_ROOT.resolve("manager/");
+	public static final Path WEB_IDE_CACHE_ROOT = CACHE_ROOT.resolve(WEB_IDE_URL_NAME + "/");
 
 	private static Set<String> interfaces;
 
@@ -78,10 +80,10 @@ public abstract class Cache {
 		});
 
 		try {
-			WebServer.addServlet(ManagerCacheServletHolder.INSTANCE, "/manager/*");
-			WebServer.addServlet(ManagerLoginCacheServletHolder.INSTANCE, "/manager/login/*");
+			WebServer.addServlet(WebIdeCacheServletHolder.INSTANCE, "/" + WEB_IDE_URL_NAME + "/*");
+			WebServer.addServlet(WebIdeLoginCacheServletHolder.INSTANCE, "/" + WEB_IDE_URL_NAME + "/login/*");
 		} catch (WebServerException e) {
-			logger.error("Error registering servlet for manager", e);
+			logger.error("Error registering servlet for Web IDE", e);
 		}
 	}
 
@@ -89,25 +91,25 @@ public abstract class Cache {
 	 * 
 	 */
 	static void buildCache() {
-		buildManagerCache();
+		buildWebIdeCache();
 		buildInterfacesCache();
 	}
 
 	/**
 	 * 
 	 */
-	private synchronized static void buildManagerCache() {
+	private synchronized static void buildWebIdeCache() {
 		try {
 			try {
-				FilesUtil.delete(MANAGER_CACHE_ROOT);
+				FilesUtil.delete(WEB_IDE_CACHE_ROOT);
 			} catch (NoSuchFileException e) {
 			}
-			logger.debug("Building cache for manager...");
-			Files.createDirectories(MANAGER_CACHE_ROOT);
-			ResourcesUtil.copyRecursive(MANAGER_PATH, MANAGER_CACHE_ROOT, true);
-			logger.info("WebApp manager built");
+			logger.debug("Building cache for Web IDE...");
+			Files.createDirectories(WEB_IDE_CACHE_ROOT);
+			ResourcesUtil.copyRecursive(WEB_IDE_PATH, WEB_IDE_CACHE_ROOT, true);
+			logger.info("Web IDE cache built");
 		} catch (IOException e) {
-			logger.error("Error building manager cache", e);
+			logger.error("Error building Web IDE cache", e);
 		}
 	}
 

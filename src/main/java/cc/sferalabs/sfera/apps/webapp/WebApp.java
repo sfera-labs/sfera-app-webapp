@@ -10,8 +10,8 @@ import cc.sferalabs.sfera.apps.webapp.events.WebAppNode;
 import cc.sferalabs.sfera.apps.webapp.events.WebAppUIEvent;
 import cc.sferalabs.sfera.apps.webapp.servlets.AuthInterfaceCacheServletHolder;
 import cc.sferalabs.sfera.apps.webapp.servlets.InterfaceCacheServletHolder;
-import cc.sferalabs.sfera.apps.webapp.servlets.ManagerCacheServletHolder;
-import cc.sferalabs.sfera.apps.webapp.servlets.ManagerLoginCacheServletHolder;
+import cc.sferalabs.sfera.apps.webapp.servlets.WebIdeCacheServletHolder;
+import cc.sferalabs.sfera.apps.webapp.servlets.WebIdeLoginCacheServletHolder;
 import cc.sferalabs.sfera.core.Configuration;
 import cc.sferalabs.sfera.events.Bus;
 import cc.sferalabs.sfera.web.WebServer;
@@ -47,8 +47,8 @@ public class WebApp extends Application {
 		try {
 			WebServer.removeServlet(AuthInterfaceCacheServletHolder.INSTANCE);
 			WebServer.removeServlet(InterfaceCacheServletHolder.INSTANCE);
-			WebServer.removeServlet(ManagerCacheServletHolder.INSTANCE);
-			WebServer.removeServlet(ManagerLoginCacheServletHolder.INSTANCE);
+			WebServer.removeServlet(WebIdeCacheServletHolder.INSTANCE);
+			WebServer.removeServlet(WebIdeLoginCacheServletHolder.INSTANCE);
 		} catch (WebServerException e) {
 			log.error("Error removing servlet", e);
 		}
