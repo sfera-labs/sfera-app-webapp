@@ -68,7 +68,7 @@ Sfera.Wide = function(config) {
 		initQuickAppsPanel();
 
 
-        this.initEvents(document.getElementById("manager"));
+        this.initEvents(document.getElementById("wide"));
 
         // animations
 		animations = new Animations();
@@ -110,7 +110,7 @@ Sfera.Wide = function(config) {
                 systemConsole.output(json.output);
                 break;
             case "event":
-                // manager.showNotice("hsyco.jar updated");
+                // wide.showNotice("hsyco.jar updated");
                 if (json.files)
                     fileManager.onWSMessage(json);
                 break;
@@ -157,7 +157,7 @@ Sfera.Wide = function(config) {
     	this.adjustLayout(viewportWidth,viewportHeight);
     } // onResize()
 
-    // adjust manager layout. viewport size
+    // adjust wide layout. viewport size
 	this.adjustLayout = function (vw,vh) {
 		if (vw && vh) {
 			this.viewportWidth = vw;
@@ -724,7 +724,7 @@ Sfera.Wide = function(config) {
 
 	// show quick app switch panel
 	this.showQuickAppsPanel = function () {
-		// check if can open (no blocking popups). appswitch is closed even if blocking (when opening the manager)
+		// check if can open (no blocking popups). appswitch is closed even if blocking (when opening the wide)
 		if (this.cPopup) {
 			if (!this.cPopup.closeBt || this.cPopup.id == "appswitch") return;
 		}
@@ -821,7 +821,7 @@ Sfera.Wide = function(config) {
 		if (ms == null)
 			ms = NOTICE_WAIT;
 		if (ms)
-			noticeTimeout = setTimeout(function() {manager.clearNotice()}, ms); // specifying directly the function gave closeNow values
+			noticeTimeout = setTimeout(function() {wide.clearNotice()}, ms); // specifying directly the function gave closeNow values
 	} // showNotice()
 
 	// clear notice panel
@@ -867,8 +867,8 @@ Sfera.Wide = function(config) {
         }
 
         // esc
-		if (manager.cPopup && manager.cPopup.closeBt && code == 27) {
-			manager.closePopup();
+		if (wide.cPopup && wide.cPopup.closeBt && code == 27) {
+			wide.closePopup();
 			Sfera.Browser.preventDefault(e);
 			return;
 		}
