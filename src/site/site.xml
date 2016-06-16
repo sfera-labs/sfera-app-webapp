@@ -24,7 +24,7 @@
 			<item name="Introduction" href="index.html" />
 			<item name="Installation" href="installation.html" />
 			<item name="Configuration" href="configuration.html" />
-			<item name="Manager" href="manager.html" />
+			<item name="Web IDE" href="web-ide.html" />
 			<item name="Interfaces" href="interfaces.html" />
 			<item name="Components" href="components.html" collapse="true">
 				<item name="Button" href="components/Button.html" />

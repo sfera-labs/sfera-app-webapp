@@ -2,7 +2,7 @@
 
 Interfaces are the main way for the end user to interact with Sfera and control the connected systems.
 
-You can create as many interface as you need. Different interfaces can provide different layouts for different devices (mobile, desktop, touch panel...), or they can give access to different parts of the system, or they can provide different restrictions for different users, or simply an alternate look and feel. 
+You can create as many interfaces as you need. Different interfaces can provide different layouts for different devices (mobile, desktop, touch panel...), or they can give access to different parts of the system, or they can provide different restrictions for different users, or simply an alternate look and feel. 
 
 Each interface has its own directory located under _webapp/interfaces/_. Here you can create a new directory for each interface that will contain all the interface resources, as explained in the following.     
 Once the interface is created, it will be accessible at the URL `http://<server_address>:<port>/<interface_directory_name>`.

@@ -6,5 +6,5 @@ You can create custom interfaces by simply placing components such as buttons, i
 For more advanced applications you can easily add your own JavaScript code and link it to action on components or events from the Sfera server.    
 If that's still not enough for your project you can create custom components with their own look and behaviors, custom skins for your interfaces and overwrite the design and functionalities of standard components. 
 
-Moreover, it provides a Web-based development environment, the "manager", to browse and edit files on the server and to interact with Sfera's console. 
+Moreover, it provides a Web-based development environment, the Web IDE or wIDE, to browse and edit files on the server and to interact with Sfera's console. 
 
