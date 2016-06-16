@@ -40,8 +40,8 @@
 				<item name="Slider" href="components/Slider.html" />
 			</item>
 			<item name="Client-side scripting" href="client-scripting.html">
-				<item name="Callbacks" href="client-callbacks.html" />
 				<item name="Utility functions" href="client-functions.html" />
+				<item name="Callbacks" href="client-callbacks.html" />
 			</item>
 			<item name="Server-side programming" href="server-programming.html" />
 		</menu>

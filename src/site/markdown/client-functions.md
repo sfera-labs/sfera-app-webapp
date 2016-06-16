@@ -23,7 +23,7 @@ setAttribute(id, name, value)
 ```
 
 ### event
-Sends an event with the specified id and value to the server.
+Sends a UI event (instance of [UIEvent class](../../sfera/apidocs/cc/sferalabs/sfera/ui/UIEvent.html)) with the specified id and value to the server.
 
 ```js
 event(<id>, <value>)
