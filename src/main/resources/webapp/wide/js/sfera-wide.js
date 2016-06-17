@@ -3831,6 +3831,7 @@ Sfera.Wide.Apps.FileManager = function() {
 
 		if (wide.cPopup && wide.cPopup.id != "choosefile") {
 			if (code == 13) { // return
+            Sfera.Browser.preventDefault(e);
 			switch (wide.cPopup.id) {
 				case "newfolder":
 					if (focusedElement == wide.cPopup.data.input["n"])
@@ -4022,7 +4023,7 @@ Sfera.Wide.Apps.SystemConsole = function() {
         inputE.value = "";
 
         if (v != "clear")
-            this.output("> "+v);
+            this.output("> "+v+"\n");
     }
 
     this.output = function (text) {
@@ -4030,7 +4031,7 @@ Sfera.Wide.Apps.SystemConsole = function() {
         session.insert({
            row: session.getLength(),
            column: 0
-       }, "\n" + text);
+       }, "" + text);
 
        this.editor.gotoLine(session.getLength());
     }
@@ -4444,10 +4445,13 @@ Sfera.Wide.Apps.TextEditor = function() {
 
     this.updateEditor = function (text) {
 		this.showLoading(false);
-        this.editor.setValue(text);
+        this.editor.session.setValue(text);
+        /*
         this.editor.clearSelection();
         this.editor.moveCursorTo(0,0);
+        */
         this.editor.getSession().setScrollTop(0);
+        this.editor.session.getUndoManager().reset();
         this.editor.focus();
         updateTitle();
     }
