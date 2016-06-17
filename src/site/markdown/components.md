@@ -11,11 +11,7 @@ All components have an `id` attribute that is used to address them in client or 
 A component's attribute value can be set in two ways:
 
 * from the component definition in the index.xml file: this is the initial value. Attributes on the index.xml files are written in dash-delimited style (ex. text-align="center").
-* with a `setAttribute()` call that dinamically changes the value. Attributes in scripts are written using camel case style (ex. textAlign="center"). 
-	There are two ways of calling a setAttribute:
-	* from a client script, using the setAttribute function: [setAttribute(id, name, value)](client-scripting.html)
-	* from the server, through a [ui.set event](server-programming.html).
-
+* from your custom logic, to dynamically change the value. You can do this both in your [client scripts](client-scripting.html) as well as from your [server-side logic](server-programming.html). In this case, attributes are written using camel case style (ex. textAlign="center"). 
 
 Each attribute has a type, which determines how the value is handled.
 
