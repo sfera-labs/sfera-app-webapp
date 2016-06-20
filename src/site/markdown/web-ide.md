@@ -1,6 +1,6 @@
 # Web IDE
 
-The Web IDE (or wIDE) lets you access your Sfera installation from your browser. From here you can browse and edit files and interact with the [console](../../sfera/console.html).
+The Web IDE (or wIDE) lets you access your Sfera installation from your browser. From here you can browse and edit files and interact with the [console](../../../sfera/console.html).
 
 The wIDE can be accessed at `/wide`. You need "admin" rights. 
 

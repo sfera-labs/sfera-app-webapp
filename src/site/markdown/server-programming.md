@@ -1,6 +1,6 @@
 # Server-side programming
 
-The client communicates with the server by means of UI events. These events are instances of the [UIEvent class](../../sfera/apidocs/cc/sferalabs/sfera/ui/UIEvent.html).
+The client communicates with the server by means of UI events. These events are instances of the [UIEvent class](../../../sfera/apidocs/cc/sferalabs/sfera/ui/UIEvent.html).
 
 You can handle UI events in your Java applications:
 
@@ -19,7 +19,7 @@ ui.test == "hello" : {
 }
 ```
 
-The `ui` node (instance of the [UI class](../../sfera/apidocs/cc/sferalabs/sfera/ui/UI.html)) provides the methods to set the value of of UI components' attributes.
+The `ui` node (instance of the [UI class](../../../sfera/apidocs/cc/sferalabs/sfera/ui/UI.html)) provides the methods to set the value of of UI components' attributes.
 
 ```
 init {

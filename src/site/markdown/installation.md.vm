@@ -2,7 +2,7 @@
 
 As for any other Sfera app, just drop the [Web App plugin jar file][jar-distr] into the _plugins_ directory of your Sfera installation and create an empty configuration file (`config/apps/WebApp.yml`) to enable it.
 
-Now you will be able to access the [Web IDE](web-ide.html) at `http[s]://<server_address>:<port>/wide`. The used port(s) will be the same as the one specified for `http_port`/`https_port` in the [system configuration](../../sfera/configuration.html).
+Now you will be able to access the [Web IDE](web-ide.html) at `http[s]://<server_address>:<port>/wide`. The used port(s) will be the same as the one specified for `http_port`/`https_port` in the [system configuration](../../../sfera/configuration.html).
 
 You will be asked to log in; to access the wIDE the user needs the "admin" role. Make sure you have properly [configured](configuration.html) your access rights.
 

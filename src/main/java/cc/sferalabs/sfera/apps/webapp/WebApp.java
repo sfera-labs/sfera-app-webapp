@@ -18,6 +18,13 @@ import cc.sferalabs.sfera.web.WebServer;
 import cc.sferalabs.sfera.web.WebServerException;
 import cc.sferalabs.sfera.web.api.WebApiEvent;
 
+/**
+ *
+ * @author Giampiero Baggiani
+ *
+ * @version 1.0.0
+ *
+ */
 public class WebApp extends Application {
 
 	static final Path ROOT = Paths.get("webapp/");

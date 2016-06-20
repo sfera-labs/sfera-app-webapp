@@ -1,10 +1,17 @@
 <HTML>
 	<body>
-		The Sfera WebApp.
+		The Sfera Web App.
 		
 		@author Giampiero Baggiani
 		@author Gionatan Iasio
 		@sfera.config type
 			cc.sferalabs.sfera.apps.webapp.WebApp
-	</body>
+		@sfera.config application_cache
+			boolean value: "true" to enable the HTML5 application cache for the interfaces, "false" to disable it. The default value is "true".
+		@sfera.config idle_timeout
+			number of seconds of inactivity on an interface after which the user is logged out 
+		@sfera.config manual_rebuild
+			boolean value: "true" to disable automatic build of interfaces when webapp files are modified. The default value is "false".
+		@sfera.config js_use_min
+			boolean value: "true" to load the minified version of the JavaScript files of the Web App (i.e. '.min.js' extension), "false" to use the normal version (i.e. '.js' extension). The default value is "true".
 </HTML>
