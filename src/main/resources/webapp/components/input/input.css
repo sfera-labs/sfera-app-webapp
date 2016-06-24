@@ -36,6 +36,10 @@
         padding: 0 4px; }
       .component.comp_input .container.style_default .erase {
         padding-right: 4px; }
+      .component.comp_input .container.style_default::after {
+        -webkit-box-shadow: inset 0px 0px 5px 1px red;
+        -moz-box-shadow: inset 0px 0px 5px 1px red;
+        box-shadow: inset 0px 0px 5px 1px red; }
     .component.comp_input .container.style_clear {
       background: transparent;
       border-top: 1px solid black;
@@ -45,6 +49,10 @@
       .component.comp_input .container.style_clear svg,
       .component.comp_input .container.style_clear svg path {
         fill: white; }
+      .component.comp_input .container.style_clear::after {
+        -webkit-box-shadow: inset 0px 12px 7px -11px rgba(255,0,0,0.5), inset 0px -12px 7px -11px rgba(255,0,0,0.5);
+        -moz-box-shadow: inset 0px 12px 7px -11px rgba(255,0,0,0.5), inset 0px -12px 7px -11px rgba(255,0,0,0.5);
+        box-shadow: inset 0px 12px 7px -11px rgba(255,0,0,0.5), inset 0px -12px 7px -11px rgba(255,0,0,0.5); }
     .component.comp_input .container.style_strict .edit {
       background: white;
       -webkit-border-radius: 4px;
@@ -53,6 +61,46 @@
       padding: 0 4px; }
     .component.comp_input .container.style_strict .field {
       color: black; }
+    .component.comp_input .container.style_strict::after {
+      -webkit-box-shadow: inset 0px 12px 7px -11px rgba(255,0,0,0.5), inset 0px -12px 7px -11px rgba(255,0,0,0.5);
+      -moz-box-shadow: inset 0px 12px 7px -11px rgba(255,0,0,0.5), inset 0px -12px 7px -11px rgba(255,0,0,0.5);
+      box-shadow: inset 0px 12px 7px -11px rgba(255,0,0,0.5), inset 0px -12px 7px -11px rgba(255,0,0,0.5); }
+    .component.comp_input .container::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      z-index: -1;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      transition: opacity 0.3s ease-in-out; }
+    .component.comp_input .container.error {
+      animation: shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+      transform: translate3d(0, 0, 0);
+      backface-visibility: hidden;
+      perspective: 1000px;
+      /* The fast way */
+      -webkit-box-shadow: none;
+      -moz-box-shadow: none;
+      box-shadow: none;
+      /* Pre-render the bigger shadow, but hide it */ }
+      .component.comp_input .container.error::after {
+        opacity: 1; }
+@keyframes shake {
+  10%,
+            90% {
+    transform: translate3d(-1px, 0, 0); }
+  20%,
+            80% {
+    transform: translate3d(2px, 0, 0); }
+  30%,
+            50%,
+            70% {
+    transform: translate3d(-3px, 0, 0); }
+  40%,
+            60% {
+    transform: translate3d(3px, 0, 0); } }
   .component.comp_input .icon {
     display: table-cell;
     vertical-align: middle;
@@ -104,8 +152,8 @@
     .component.comp_input .erase.down svg path {
       fill: #551010; }
 
-input[type=text],
 input[type=password],
+input[type=text],
 input[type=textarea] {
   user-select: text;
   -moz-user-select: text;
@@ -126,17 +174,17 @@ input {
   cursor: auto;
   padding: 1px; }
 
-textarea:focus,
 input:focus,
-select:focus {
+select:focus,
+textarea:focus {
   outline: none; }
 
 textarea {
   resize: none; }
 
 input,
-textarea,
-select {
+select,
+textarea {
   padding: 1px;
   border: none;
   outline: 0;

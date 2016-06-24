@@ -68,17 +68,7 @@ Sfera.Compiler = new(function() {
      * @return {object}             thing
      */
     this.createComponent = function(name, attributes) {
-        /*
-        if (src.indexOf("<!--sml") != -1) {
-            var comments = getComments(newDiv);
-            if (comments && comments.length) {
-                // replace with components
-            }
-        }
-        */
-
-        var component = Sfera.Components.createInstance(name, attributes);
-        return component;
+        return Sfera.Components.createInstance(name, attributes);
     };
 
     this.compileXMLNode = function(xmlNode, options) {
@@ -144,28 +134,29 @@ Sfera.Compiler = new(function() {
             var c = xmlNode.childNodes,
                 c2, c3, n, i, t, k;
             for (i = 0; i < c.length; i++) {
-                if (c[i].nodeType == 1) switch (c[i].tagName) {
-                    case "skin":
-                        break;
-                    case "components":
-                        c2 = c[i].childNodes;
-                        for (t = 0; t < c2.length; t++) {
-                            if (c2[t].nodeType == 1) {
-                                // component has source and lan
-                                c3 = c2[t].childNodes;
-                                for (k = 0; k < c3.length; k++) {
-                                    switch (c3[k].tagName) {
-                                        case "src":
-                                            Sfera.Components.setSource(c2[t].tagName, Sfera.Utils.getCDATA(c3[k]));
-                                            break;
-                                        case "_lan":
-                                            Sfera.Components.setLanguage(c2[t].tagName, Sfera.Utils.getCDATA(c3[k]));
-                                            break;
-                                    }
+                if (c[i].nodeType == 1)
+                switch (c[i].tagName) {
+                case "skin":
+                    break;
+                case "components":
+                    c2 = c[i].childNodes;
+                    for (t = 0; t < c2.length; t++) {
+                        if (c2[t].nodeType == 1) {
+                            // component has source and lan
+                            c3 = c2[t].childNodes;
+                            for (k = 0; k < c3.length; k++) {
+                                switch (c3[k].tagName) {
+                                    case "src":
+                                        Sfera.Components.setSource(c2[t].tagName, Sfera.Utils.getCDATA(c3[k]));
+                                        break;
+                                    case "_lan":
+                                        Sfera.Components.setLanguage(c2[t].tagName, Sfera.Utils.getCDATA(c3[k]));
+                                        break;
                                 }
                             }
                         }
-                        break;
+                    }
+                    break;
                 }
             }
         }
@@ -296,6 +287,10 @@ Sfera.Attribute = function(component, config) {
     // owner component
     this.component = component;
 
+    // restore default value after msec (0: disabled)
+    this.restoreTimeout = 0;
+    this._restoreTimeoutId = null;
+
     for (var c in config) {
         switch (c) {
         case "type":
@@ -303,6 +298,7 @@ Sfera.Attribute = function(component, config) {
         case "value":
         case "default":
         case "doc":
+        case "restoreTimeout":
             this[c] = config[c];
             break;
         case "set":
@@ -327,7 +323,6 @@ Sfera.Attribute.prototype = {
     //  silent: don't raise events
     set: function(value, options) {
         if (this.source === value) return; // no changes
-
         this.changed = true; // if true, we need to call compile
         this.source = value;
         var mustache = Sfera.Compiler.getMustacheData(value);
@@ -367,7 +362,9 @@ Sfera.Attribute.prototype = {
             }
         }
 
-        // update only if changed. TODO: same source compiles to different values???????????????????
+        this.updateRestore();
+
+        // update only if changed. TODO: same source could compile to different values???????????????????
         if (value !== this.value) {
             this.changed = false;
             this.value = value;
@@ -383,7 +380,16 @@ Sfera.Attribute.prototype = {
     },
 
     post: function (options) {
+    },
 
+    updateRestore: function () {
+        clearTimeout(this._restoreTimeoutId);
+        if (this.restoreTimeout) {
+            function reset() {
+                this.set(this.default);
+            }
+            this._restoreTimeoutId = setTimeout(reset.bind(this), this.restoreTimeout);
+        }
     }
 
 
@@ -773,7 +779,7 @@ Sfera.Components = new(function() {
         if (this._createLater[name]) {
             for (var i=0; i<this._createLater[name].length; i++) {
                 var c = this._createLater[name][i];
-                this.create(c.name, c.def);
+                this.createClass(c.name, c.def);
             }
             delete this._createLater[name];
         }
@@ -855,6 +861,9 @@ Sfera.Client = function(config) {
     var commandReqs = {};
     var eventReqs = {};
 
+
+    var idleIntervalId = null;
+
     /**
      * Initialize the client and start it.
      *
@@ -930,7 +939,6 @@ Sfera.Client = function(config) {
         this.isBooted = false;
 
         Sfera.CLIENTS[this.id] = null;
-
     };
 
     /**
@@ -1005,6 +1013,7 @@ Sfera.Client = function(config) {
         interfaceC = this.components.getByType("Interface")[0];
 
         adjustLayout();
+        resetIdleTimeout();
 
         if (Sfera.Custom.onReady)
             Sfera.Custom.onReady();
@@ -1076,7 +1085,6 @@ Sfera.Client = function(config) {
 
         return tag;
     };
-
 
     var nodeValues = {};
 
@@ -1238,6 +1246,49 @@ Sfera.Client = function(config) {
         return false;
     } // onKeyUp()
 
+
+    /////////////////////////// idle
+
+    function stopIdleTimeout() {
+        setIdleEvents(true);
+        clearInterval(idleIntervalId);
+    }
+
+    function resetIdleTimeout() {
+        stopIdleTimeout();
+        if (config.idleTimeout && parseInt(config.idleTimeout) && !self.isLogin) {
+            setIdleEvents();
+            idleIntervalId = setInterval(onIdleInterval, 1000);
+            localStorage.setItem("idleTimestamp",(new Date().getTime()));
+        }
+    }
+
+    // check every second (shared between all tabs)
+    function onIdleInterval() {
+        // check last timestamp
+        var ts = localStorage.getItem("idleTimestamp");
+        var nts = new Date().getTime();
+
+        if (nts-ts >= parseInt(config.idleTimeout)*1000) {
+            onIdleTimeout();
+        }
+    }
+
+    function onIdleTimeout() {
+        stopIdleTimeout();
+        Sfera.Login.logout();
+    }
+
+    function setIdleEvents(remove) {
+		var f = (remove?"remove":"add")+"Event";
+		var t = Sfera.Device.touch;
+		window[f](t?"touchstart":"mousedown", document.body, onIdleActivity);
+		window[f](t?"touchend":"mouseup", document.body, onIdleActivity);
+        window[f]("onkeydown", document.body, onIdleActivity);
+	}
+	function onIdleActivity(e) {
+		resetIdleTimeout();
+	}
 
     ////////////////////////// focus
     var focusedCo;
@@ -1526,8 +1577,14 @@ Sfera.Login = new(function() {
     function initReq() {
         req = new Sfera.Net.Request();
 
-        req.onLoaded = function() {
+        req.onLoaded = function(code) {
             clearTimeout(checkTimeout);
+
+            if (code != 200) {
+                Sfera.client.setAttribute("username","error","true");
+                Sfera.client.setAttribute("password","error","true");
+                return;
+            }
 
             switch (action) {
             case "login":
@@ -1538,7 +1595,9 @@ Sfera.Login = new(function() {
                 break;
             }
         }
-        req.onError = function() {
+        req.onError = function(errCode) {
+            Sfera.client.setAttribute("username","error","true");
+            Sfera.client.setAttribute("password","error","true");
             resetCheck();
         }
 
@@ -2241,14 +2300,8 @@ Sfera.UI = new (function(){
     // lift pressed button. bt or currently pressed button if any
 	this.liftButton = function (bt) {
 		if (pressedBt && (!bt || bt == pressedBt)) {
-			if (pressedBt.data.state) {
-				pressedBt.data.state = "";
-				pressedBt.updateClass();
-			}
-			// on lift event?
-			if (pressedBt.onLift)
-				pressedBt.onLift();
-			pressedBt = null;
+            pressedBt.lift();
+            pressedBt = null;
 			return true;
 		}
 		return false;
@@ -2422,6 +2475,17 @@ Sfera.UI.Button.prototype = {
 	mini: function (mini) {
 		this.setAttribute("mini", mini);
 	}, // miniButton()
+
+    // lift the button
+    lift: function () {
+        if (this.data.state) {
+            this.data.state = "";
+            this.updateClass();
+        }
+        // on lift event?
+        if (this.onLift)
+            this.onLift();
+    },
 
 	// get button style attribute
 	getAttribute: function (attrName) {
@@ -2935,10 +2999,10 @@ Sfera.Net = new (function() {
         self.sync();
     }
 
-    function onReqError() {
+    function onReqError(errCode) {
         Sfera.Debug.logError("request error");
-        //var e = document.getElementById("output");
-        //e.innerHTML += "<br><br>Error.<br><br>";
+        if (errCode == 404)
+            req.repeat(100);
     }
 
     this.nodeSubscribe = function (nodes) {
@@ -3221,7 +3285,8 @@ Sfera.Net.Request = function (options) {
 			return;
 		}
 
-		if (self.onLoaded) self.onLoaded(self);
+		if (self.onLoaded)
+			self.onLoaded.call(self, req.status);
 	}
 
 	// called when uploading
@@ -4924,9 +4989,10 @@ Array.prototype.equals = function(array, strict) {
     return true;
 }
 
-function isNumeric(n) {
-  return !isNaN(parseFloat(n)) && isFinite(n);
+window.isNumeric = function (n) {
+    return !isNaN(parseFloat(n)) && isFinite(n);
 }
+
 String.prototype.trim = function () {
     //return this.replace(/^\s*/, "").replace(/\s*$/, "");
 	var	str = this.replace(/^\s\s*/, ''),

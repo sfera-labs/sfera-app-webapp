@@ -29,3 +29,12 @@ Regardless of its type, an attribute value is always set through a string value.
 
 An attribute can have a default value, that is set before the interface is ready.
 It can also have a set of valid values.
+
+### Dynamic values: mustache
+
+An attribute value can update dynamically thanks to the use of _mustache_ variables.
+
+A mustache variable, written as `{{node}}` will substitute in real time the value of a node. 
+
+Ex.:
+{{mydriver.mynode}}

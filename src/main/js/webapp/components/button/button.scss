@@ -1,0 +1,113 @@
+@import "../../_common.scss";
+$buttonBorderRadius: 7px;
+.component.comp_button {
+    .container {
+        @include sizing(border-box);
+        display: table;
+        width: 100%;
+        height: 100%;
+        color: #fff;
+        text-align: center;
+        vertical-align: middle;
+        @include transition(opacity 250ms linear);
+        &.disabled {
+            @include opacity(50);
+        }
+        .cIcon {
+            display: table-cell;
+            vertical-align: middle;
+            min-width: 2px;
+            height: 100%;
+            @include sizing(border-box);
+            .comp_image {
+                &,
+                svg {
+                    width: 20px;
+                }
+                svg,
+                svg path {
+                    fill: white;
+                }
+            }
+        }
+        .cLabel {
+            display: table-cell;
+            vertical-align: middle;
+            min-width: 2px;
+            width: 100%;
+            height: 100%; //20px;
+            @include sizing(border-box);
+        }
+
+        // styles
+        &.style_default {
+            @include shadow("rgba(0,0,0,0.8) 0 1px 0, rgba(0,0,0,0.4) 0px 0px 1px 1px");
+            @include border-radius($buttonBorderRadius);
+            @include button-1(#2090ff,#00439e,#002c73);
+
+
+            &.color_stable {
+                @include button-1(#c0c0d9,#73738d,#48486a);
+            }
+
+            .cIcon {
+                padding: 0 8px;
+            }
+            .cLabel {
+                text-shadow: 0 1px rgba(0,0,0,0.6);
+            }
+            &.over {
+
+            }
+            &.error {
+
+            }
+            &.switch.pressed {
+                @include shadow("none");
+            }
+            &.down {
+                @include shadow("rgba(0,0,0,0.8) 0 1px 0, rgba(0,0,0,0.4) 0px 0px 1px 1px, inset 0px 1px 4px rgba(0,0,0,0.7)");
+            }
+            &.error {
+                color: #e03050;
+            }
+        }
+        &.style_icon {
+            .cIcon {
+                display: block;
+                .comp_image,
+                .comp_image svg {
+                    width: 100%;
+                }
+            }
+            .cLabel {
+                display: block;
+            }
+            &.down {
+                margin-top: 2px;
+            }
+        }
+        &.style_clear {
+            .cIcon {
+                padding: 0 8px;
+            }
+            .cLabel {
+                text-shadow: 0 1px rgba(0,0,0,0.6);
+            }
+            &.down {
+                margin-top: 2px;
+            }
+        }
+    }
+
+    // default1: b
+    /*
+    &.g, &.green { @include button-1(#84db24,#4f9316,#135915); }
+    &.y, &.yellow, &.highlight { @include button-1(#f4ed00,#ddc700,#b17300); } // highlight: y
+    &.r, &.red, &.alert { @include button-1(#dd006a,#97003f,#5e0041); } // alert: r, ex.logout
+    &.gr, &.gray, &.default2 { @include button-1(#c0c0d9,#73738d,#48486a); } // default2: gr
+    &.lgr, &.default3 { @include button-1(#f5f7f7,#e0e5e6,#adb2b3); } // default3: lgr, ex.slider cursors
+    &.glass { @include button-g(rgb(255,255,255),rgb(225,232,232),rgb(200,207,207),rgb(171,177,177),rgb(215,224,224)); }
+    &.transparent { @include button-t(rgb(255,255,255)); }
+    */
+}

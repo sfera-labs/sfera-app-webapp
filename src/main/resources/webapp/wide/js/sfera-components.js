@@ -526,6 +526,16 @@ Sfera.Components.create("Input", {
             }
         },
 
+        error: {
+            type:"boolean",
+            default:"false",
+            restoreTimeout:3000,
+            update: function() {
+                var co = this.component;
+                co.updateClass();
+            }
+        },
+
         changeDelay: {
             type: "integer",
             default: "1000" // msec to wait before noticing a change
@@ -567,12 +577,15 @@ Sfera.Components.create("Input", {
             type: "integer"
         },
 
-        onKeyUp: {
-            type: "js"
-        },
         onChange: {
             type: "js",
             default: "event(id,value)"
+        },
+        onKeyDown: {
+            type: "js"
+        },
+        onKeyUp: {
+            type: "js"
         },
         onEnterKey: {
             type: "js"
@@ -661,9 +674,10 @@ Sfera.Components.create("Input", {
         var cl = this.getAttribute("cssClass");
         var f = (this.focused?" focused":"");
         var d = this.getAttribute("enabled") ? "" : " disabled";
+        var e = this.getAttribute("error") ? " error" : "";
         this.element.className = "component comp_input" + (cl?" "+cl:"") + f + d;
         var sty = this.getAttribute("style");
-        this.elements.container.className = "container" + (sty?" style_"+sty:"")
+        this.elements.container.className = "container" + (sty?" style_"+sty:"") + e;
 
         if (this.elements.field) {
             this.elements.field[(d?"set":"remove") + "Attribute"]("disabled", true);
@@ -715,8 +729,10 @@ Sfera.Components.create("Input", {
 
         // custom change event
         var f = this.getAttribute("onChange");
-        var value = this.getAttribute("value");
-        Sfera.Custom.exec(f, this.id, value);
+        if (f) {
+            var value = this.getAttribute("value");
+            Sfera.Custom.exec(f, this.id, value);
+        }
     },
 
     onSelectStart: function(event) {
@@ -727,7 +743,7 @@ Sfera.Components.create("Input", {
         if (!this.getAttribute("enabled"))
             return;
 
-        //this.controller.setAttribute("error", "false"); // make sure we're not showing an error
+        this.setAttribute("error", "false"); // make sure we're not showing an error
         var code = event.keyCode;
         var c = Sfera.Utils.getKeyFromCode(code);
         var type = this.getAttribute("type");
@@ -809,10 +825,6 @@ Sfera.Components.create("Input", {
 
     onChange: function() {
         this.onChanged();
-        /*
-        var f = this.getAttribute("onClick");
-        Sfera.Custom.exec(f);
-        */
     },
 
     onEnterKey: function () {
@@ -821,7 +833,8 @@ Sfera.Components.create("Input", {
 
         var f = this.getAttribute("onEnterKey");
         if (f) {
-            return Sfera.Custom.exec(f);
+            var value = this.getAttribute("value");
+            return Sfera.Custom.exec(f,this.id,value);
         } else {
             return true; // don't block it
         }
@@ -832,6 +845,14 @@ Sfera.Components.create("Input", {
         Sfera.client.setFocused(co);
         co.focused = true;
         co.updateClass();
+
+        var f = this.getAttribute("onFocus");
+        if (f) {
+            var value = this.getAttribute("value");
+            return Sfera.Custom.exec(f,this.id,value);
+        } else {
+            return true; // don't block it
+        }
     },
 
     onBlur: function() {
@@ -840,6 +861,14 @@ Sfera.Components.create("Input", {
         Sfera.client.clearFocused(co);
         co.focused = false;
         co.updateClass();
+
+        var f = this.getAttribute("onBlur");
+        if (f) {
+            var value = this.getAttribute("value");
+            return Sfera.Custom.exec(f,this.id,value);
+        } else {
+            return true; // don't block it
+        }
     },
 
     onShow: function() {
@@ -938,161 +967,239 @@ Sfera.Components.create("List", {
     presets: ["Visibility", "Position", "Size", "Style", "Color", "Enable"],
 
     attributes: {
-        label: {
+        labels: {
+            type: "list",
             update: function() {
                 var co = this.component;
-                var label = co.subComponents.label;
-                label.setAttribute("label", this.value);
-                if (this.value) {
-                    co.elements.label.style.display = "";
-                    //label.setAttribute("visible",true);
-                } else {
-                    co.elements.label.style.display = "none";
-                    //label.setAttribute("visible",false);
-                }
-                //this.component.element.innerHTML = "<div class='inner'>" + this.value + "</div>";
+                co.redraw();
             },
         },
 
-        icon: {
-            type: "string",
-            default: "",
+        values: {
+            type: "list",
             update: function() {
                 var co = this.component;
-                var icon = co.subComponents.icon;
-                icon.setAttribute("source", this.value);
-                if (this.value) {
-                    co.elements.icon.style.display = "";
-                    //icon.setAttribute("visible",true);
-                } else {
-                    co.elements.icon.style.display = "none";
-                    //icon.setAttribute("visible",false);
-                }
+                co.redraw();
             },
         },
 
-        fontSize: {
+        template: {
             update: function() {
                 var co = this.component;
-                var label = co.subComponents.label;
-                label.setAttribute("fontSize", this.value);
+                var str = this.value;
+                var template;
+        		if (!str) {
+        			template = null;
+        			return;
+        		}
+        		template = {a:[], b:[]};
+        		var a = str.split("%"),
+        			k,p;
+        		for (var i=0; i<a.length; i++) {
+        			p = a[i];
+        			if (i) {
+        				// remove number from beginning of p
+        				k = 0;
+        				while (k<p.length && isNumeric(p[k])) k++;
+        				if (k) {
+        					template.a.push(p.substr(k));
+        					template.b.push(p.substr(0,k));
+        				} else {
+        					template.a[template.a.length-1] += "%"+p;
+        				}
+        			} else {
+        				template.a.push(p);
+        			}
+        		}
+
+                co.template = template;
+
+                co.redraw();
             },
         },
 
-        onClick: {
+        onItemClick: {
             type: "js",
-            default: "event(id,true)"
-        },
-
-        onDown: {
-            type: "js",
-        },
-
-        onMove: {
-            type:"js",
+            default: "event(id,value)"
         }
 
     },
 
     init: function() {
-
         // fill elements with all nodes that have a name
         this.elements = Sfera.Utils.getComponentElements(this.element, true, this.elements);
+        this.buttons = [];
 
-        this.button = new Sfera.UI.Button(this.elements.container, {
-            ondown: this.onDown.bind(this),
-            onup: this.onUp.bind(this),
-            onmove: this.onMove.bind(this)
-        });
+        this.setAttribute("template",
+        '<div class="component comp_button" style="position:static">\
+            <div name="bt" class="container style_default color_default">\
+                <div class="cLabel" name="label">\
+                %1\
+                </div>\
+            </div>\
+        </div>');
 
         this.updateClass();
-
-        //this.element.onclick = this.onClick.bind(this);
     },
 
     updateClass: function() {
         //var sty = this.getAttribute("style") || "default";
         var d = (this.getAttribute("enabled") ? "" : " disabled")
-        this.button.setClassName("container" + (sty?" style_"+sty:"") + (col?" color_"+col:"")) + d;
-        this.button.enable(d?false:true);
+        for (var i=0; i<this.buttons.length; i++) {
+            this.buttons[i].setClassName("container" + d);
+            this.buttons[i].enable(d?false:true);
+        }
+    },
+
+    removeButtons: function () {
+        for (var i=0; i<this.buttons.length; i++)
+			this.buttons[i].destroy(); // up buttons
+        this.buttons = [];
+    },
+
+    // [value, label]
+	getItem: function (i) {
+        var values = this.getAttribute("values");
+        var labels = this.getAttribute("labels");
+		var v = (values && values[i]!=null)?values[i]:i+""; // no value? use index
+		var l = (labels && labels[i]!=null)?labels[i]:v; // no label? same as value
+		return [v,l];
+	},
+
+    // total items to show
+	getTotalItems: function () {
+        var values = this.getAttribute("values");
+        var labels = this.getAttribute("labels");
+		return (values && values.length && (!labels || values.length<=labels.length))?values.length:(labels && labels.length)?labels.length:0; // min value
+	},
+
+    // index, items array (different from _items when still composing)
+    getItemHTML: function(i, items) {
+		var c = items[i], // content [v,l]
+			html = '<div class="item',
+			s = false;
+
+		// check selection
+		/*
+		if (isSelected(c[0])) {
+			if (!multi) {
+				if (selectedIndex == i ||  // already selected
+					selectedIndex == -1 || // nothing selected
+					!items[selectedIndex] || // item previously selected doesn't exist anymore
+					!isSelected(items[selectedIndex][0])) { // or the item previously selected is not selected anymore
+					s = true;
+					selectedIndex = i;
+				}
+			} else {
+				s = true;
+				_value += (_value?",":"") + c[0];
+			}
+		}
+		if (s) html += ' selected';
+        */
+
+		html += '" data-name="'+name+'" data-param="'+c[0]+'"'; // params for user object
+
+        var style ="";
+		html += ' style="'+style+'">'; // item style
+
+		html += this.applyTemplate(c[1])+"</div>";
+		return html;
+	},
+
+    initItemEvents: function (i) {
+        var d = this.elements.content.childNodes[i];
+        var ad = d.getElementsByTagName("DIV");
+        var e;
+        for (var k=0; k<ad.length; k++) {
+            if (ad[k].getAttribute("name") == "bt") {
+                e = ad[k]
+                break;
+            }
+        }
+        if (!e) e = d;
+        console.log("binding "+i);
+        this.buttons[i] = new Sfera.UI.Button(e,{onclick:this.onItemClick.bind(this,i)});
+        if (!this.getAttribute("enabled"))
+            this.buttons[i].enable(false);
+    },
+
+    onItemClick: function (i) {
+        var c = this.getItem(i);
+        var f = this.getAttribute("onItemClick");
+        Sfera.Custom.exec(f, this.id, c[0]);
+    },
+
+    updateItemContents: function (i) {
+        var c = this._items[i], e;
+        e.innerHTML = this.applyTemplate(c[1]);
+    },
+
+    applyTemplate: function (c) {
+        var l = c;
+        if (!l) {
+            l = "&nbsp;";
+        } else if (this.template) {
+            var a = l.split("|"),
+                k;
+            l = "";
+            for (var i=0; i<this.template.a.length; i++) {
+                l += this.template.a[i];
+                if (this.template.b.length > i) {
+                    k = this.template.b[i]-1;
+                    l += a[k]!==undefined?a[k]:"";
+                }
+            }
+        }
+        return l;
     },
 
     redraw: function () {
 		// lift all buttons
-		//contentO.onHide();
-		for (var b in btsE)
-			browser.onButtonEvent("mouseup",null,btsE[b]); // up buttons
+		for (var i=0; i<this.buttons.length; i++)
+			this.buttons[i].lift(); // up buttons
+
+        var values = this.getAttribute("values");
+        var labels = this.getAttribute("labels");
 
 		if (!values && !labels) {
-			removeButtons();
-			_items = [];
-			btsE = []; // reset
-			for (var i = 0; i<userO.length; i++) {
-				userO[i].free();
-				delete userO[i];
-			}
-			userO = [];
+			this.removeButtons();
 			return; // nothing to draw
 		}
 
 		// how many?
-		var n = getTotalItems();
+		var n = this.getTotalItems();
 
 		var i,k;
 
 		var items = [];
 		for (i=0; i<n; i++)
-			items.push(getItem(i));
+			items.push(this.getItem(i));
 
 		var mn = 0, // modified
 			an = 0  // added
 			rn = 0; // removed counter
 
 		// full redraw
-		if (this.linkedField || !_items.length || (!n && _items.length) || items.length>_items.length*2) { // not so sure about this...
+		if (true || !_items.length || (!n && _items.length) || items.length>_items.length*2) { // not so sure about this...
 			// draw
 			var html = "";
 
-
-			// reset _value if multi (I don't like this very much...)
-			if (multi) _value = getDefault();
-
-			// reset content, size
-			if (this.linkedField) {
-				contentE.innerHTML = "";
-				contentE.style.width = "";
-				contentE.style.height = "";
-			}
 			_items = []; // reset
-			removeButtons(); // remove from container, reset userO
+			this.removeButtons(); // remove from container, reset userO
 			var c,s; // current item [value, label], selected
 			for (i=0; i<n; i++) {
 				_items[i] = items[i];
-				html += getItemHTML(i,items);
+				html += this.getItemHTML(i,items);
 				an++;
 			}
-			contentE.innerHTML = html;
-			// can't have a value that isn't in the list
-			if (!multi && _value && selectedIndex == -1)
-				_value = getDefault(); // no more value
+			this.elements.content.innerHTML = html;
 			// assign events
-			var l = contentE.childNodes.length;
-			if (!isUserList) { // selectpanel: assign events to divs
-				btsE = []; // reset
-				for (var i = 0; i<l; i++)
-					initItemEvents(i);
-			} else { // userlist: every item is a user object
-				// clear user
-				for (var i = 0; i<userO.length; i++) {
-					userO[i].free();
-					delete userO[i];
-				}
-				userO = []; // reset array
-				for (var i = 0; i<l; i++)
-					initItemEvents(i);
-			}
+			var l = this.elements.content.childNodes.length;
+			for (var i = 0; i<l; i++)
+				this.initItemEvents(i);
 		}
-
+        /*
 		// no redraw, add/remove items
 		else {
 			// add items
@@ -1102,7 +1209,7 @@ Sfera.Components.create("List", {
 					if (n < _items.length) { // new is shorter
 						// remove from head
 						while (n < _items.length) {
-							contentE.removeChild(contentE.firstChild);
+							this.elements.content.removeChild(this.elements.content.firstChild);
 							_items.shift();
 
 							if (!isUserList) {
@@ -1124,7 +1231,7 @@ Sfera.Components.create("List", {
 						for (i=k-1;i>=0;i--) {
 							_items.unshift(items[i]);
 							para.innerHTML = getItemHTML(i,items);
-							contentE.insertBefore(para.childNodes[0], contentE.firstChild);
+							this.elements.content.insertBefore(para.childNodes[0], this.elements.content.firstChild);
 							if (!isUserList)
 								btsE.unshift(null);
 							else
@@ -1150,7 +1257,7 @@ Sfera.Components.create("List", {
 					if (n < _items.length) { // new is shorter
 						// remove from tail
 						while (n < _items.length) {
-							contentE.removeChild(contentE.lastChild);
+							this.elements.content.removeChild(this.elements.content.lastChild);
 							_items.pop();
 
 							if (!isUserList) {
@@ -1171,7 +1278,7 @@ Sfera.Components.create("List", {
 						for (i=0; i<k; i++) {
 							_items[t+i] = items[t+i];
 							para.innerHTML = getItemHTML(t+i,items);
-							contentE.appendChild(para.childNodes[0]);
+							this.elements.content.appendChild(para.childNodes[0]);
 							an++;
 						}
 						// assign events
@@ -1193,12 +1300,10 @@ Sfera.Components.create("List", {
 					mn++;
 				}
 			}
-			// update selection
-			updateSelection();
-		}
 
-		adjust();
-	} // redraw()
+		}
+        */
+	}, // redraw()
 
 
 });
