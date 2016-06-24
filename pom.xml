@@ -9,6 +9,12 @@
 	<name>Sfera Web App</name>
 	<description>Sfera Web App</description>
 
+	<properties>
+		<latestDeployedVersion>1.0.0</latestDeployedVersion>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<sfera-version>0.1.0</sfera-version>
+	</properties>
+
 	<licenses>
 		<license>
 			<name>The GNU Lesser General Public License, Version 3</name>
@@ -18,15 +24,11 @@
 	</licenses>
 
 	<organization>
-		<name>Sfera Labs</name>
+		<name>Sfera Labs S.r.l.</name>
 		<url>http://www.sferalabs.cc</url>
 	</organization>
 
-	<properties>
-		<latestDeployedVersion>1.0.0</latestDeployedVersion>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<sfera-version>0.1.0</sfera-version>
-	</properties>
+	<inceptionYear>2015</inceptionYear>
 
 	<distributionManagement>
 		<repository>
@@ -170,6 +172,23 @@
 						<artifactId>sfera</artifactId>
 						<version>${sfera-version}</version>
 					</tagletArtifact>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>license-maven-plugin</artifactId>
+				<version>1.9</version>
+				<configuration>
+					<licenseName>lgpl_v3</licenseName>
+					<addJavaLicenseAfterPackage>false</addJavaLicenseAfterPackage>
+					<emptyLineAfterHeader>true</emptyLineAfterHeader>
+					<sectionDelimiter>---</sectionDelimiter>
+					<processStartTag>+======================================================================+</processStartTag>
+					<processEndTag>-======================================================================-</processEndTag>
+					<roots>
+						<root>src/main/java</root>
+						<root>src/test/java</root>
+					</roots>
 				</configuration>
 			</plugin>
 		</plugins>
