@@ -58,8 +58,6 @@ import org.apache.http.client.utils.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import cc.sferalabs.sfera.util.files.FilesUtil;
-
 /**
  *
  * @author Giampiero Baggiani
@@ -84,20 +82,19 @@ public class InterfaceCacheBuilder {
 
 	private final String interfaceName;
 	private final long timestamp;
-	private final Path interfaceCacheRoot;
 	private final Path interfaceTmpCacheRoot;
 
 	/**
-	 *
+	 * 
 	 * @param interfaceName
 	 * @param timestamp
+	 * @param tmpCache
 	 * @throws IOException
 	 */
-	InterfaceCacheBuilder(String interfaceName, long timestamp) throws IOException {
+	InterfaceCacheBuilder(String interfaceName, long timestamp, Path tmpCache) throws IOException {
 		this.interfaceName = interfaceName;
 		this.timestamp = timestamp;
-		this.interfaceTmpCacheRoot = Files.createTempDirectory(getClass().getName());
-		this.interfaceCacheRoot = Cache.INTERFACES_CACHE_ROOT.resolve(interfaceName + "/");
+		this.interfaceTmpCacheRoot = tmpCache.resolve(interfaceName + "/");
 	}
 
 	/**
@@ -113,16 +110,7 @@ public class InterfaceCacheBuilder {
 			attributes.put("skin", null);
 			createCache("/", attributes);
 			createCache("/login/", attributes);
-			try {
-				FilesUtil.delete(interfaceCacheRoot);
-			} catch (NoSuchFileException e) {
-			}
-			FilesUtil.move(interfaceTmpCacheRoot, interfaceCacheRoot);
 		} finally {
-			try {
-				FilesUtil.delete(interfaceTmpCacheRoot);
-			} catch (Exception e) {
-			}
 			ResourcesUtil.release();
 		}
 	}
@@ -324,13 +312,15 @@ public class InterfaceCacheBuilder {
 	private void createCode(String sub, Set<String> components, Map<String, String> attributes)
 			throws IOException {
 		try (BufferedWriter writer = Files.newBufferedWriter(
-				interfaceTmpCacheRoot.resolve("." + sub + "sfera-client.js"), StandardCharsets.UTF_8)) {
+				interfaceTmpCacheRoot.resolve("." + sub + "sfera-client.js"),
+				StandardCharsets.UTF_8)) {
 			writeContentFrom("code/sfera-client.js", writer);
 		}
 
 		if (!WebApp.useJSMin) {
 			try (BufferedWriter writer = Files.newBufferedWriter(
-					interfaceTmpCacheRoot.resolve("." + sub + "sfera-client.js.map"), StandardCharsets.UTF_8)) {
+					interfaceTmpCacheRoot.resolve("." + sub + "sfera-client.js.map"),
+					StandardCharsets.UTF_8)) {
 				writeContentFrom("code/sfera-client.js.map", writer);
 			}
 		}
@@ -652,7 +642,7 @@ public class InterfaceCacheBuilder {
 	 */
 	private static void addElementWithCDataContentFromFile(Path file, String elementLocalName,
 			XMLEventWriter eventWriter, XMLEventFactory eventFactory)
-					throws XMLStreamException, IOException {
+			throws XMLStreamException, IOException {
 		Path filePath = ResourcesUtil.getResource(file);
 		try (BufferedReader reader = Files.newBufferedReader(filePath, StandardCharsets.UTF_8)) {
 			eventWriter.add(eventFactory.createStartElement("", "", elementLocalName));

@@ -70,7 +70,7 @@ public abstract class WebAppServletHolder extends ServletHolder {
 	 */
 	protected void redirectIfNotInRoles(Request baseRequest, ServletRequest request,
 			ServletResponse response, String... roles)
-					throws UnavailableException, ServletException, IOException {
+			throws UnavailableException, ServletException, IOException {
 		HttpServletRequest req = (HttpServletRequest) request;
 		HttpServletResponse resp = (HttpServletResponse) response;
 
