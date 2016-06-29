@@ -78,6 +78,7 @@ public abstract class Cache {
 	synchronized static void init(boolean manualRebuild) throws Exception {
 		ResourcesUtil.lookForPluginsOverwritingWebapp();
 		interfaces = new HashSet<String>();
+		Files.createDirectories(INTERFACES_PATH);
 		buildCache();
 		if (manualRebuild) {
 			Console.addHandler(WebAppConsoleCommandHandler.INSTANCE);
