@@ -44,7 +44,7 @@ Sfera.Doc.add.component("_Base", {
 
 Sfera.Doc.add.component("Button", {
     doc: {
-        descr:"A button component used to execute customized javascript code.\nIts appearance is defined by a style attribute. The [onClick](#onClick) attribute is used to associate an action to execute when the button is pressed."
+        descr:"A button component used to execute customized JavaScript code.\nIts appearance is defined by a style attribute. The [onClick](#onClick) attribute is used to associate an action to execute when the button is pressed."
     },
     attr:{
         label: {
@@ -157,9 +157,7 @@ Sfera.Doc.add.component("Image", {
         source: {
             descr: "Specifies the image source file"
         },
-
     }
-
 });
 
 
@@ -217,7 +215,7 @@ Sfera.Doc.add.component("Input", {
         },
 
         onChange: {
-            descr: "Script to be run when a change in value is detected. Variables id and value can be used.",
+            descr: "Script to be run when a change in value is detected. Variables `id` and `value` can be used.",
             example: {
                 descr: "When a change is detected (based on the changeDelay attribute) an alert will display the current value",
                 values: {
@@ -229,15 +227,15 @@ Sfera.Doc.add.component("Input", {
         },
 
         onEnterKey: {
-            descr: "Script to be run when enter key is pressed"
+            descr: "Script to be run when enter key is pressed. Variables `id` and `value` can be used."
         },
 
         onFocus: {
-            descr: "Script to be run when the component receives focus"
+            descr: "Script to be run when the component receives focus. Variables `id` and `value` can be used."
         },
 
         onBlur: {
-            descr: "Script to be run when the component loses focus"
+            descr: "Script to be run when the component loses focus. Variables `id` and `value` can be used."
         }
     }
 
@@ -273,6 +271,39 @@ Sfera.Doc.add.component("Label", {
             descr: "Specifies the label's text"
         }
     }
+});
+
+
+Sfera.Doc.add.component("List", {
+    doc: {
+        descr:"List component, to display a list of items. Each item can have an html template to vary its appearance and an (onItemClick)[#onItemClick] event"
+    },
+    attr:{
+        values: {
+            descr: "Specifies the values of the items"
+        },
+
+        labels: {
+            descr: "Specifies the labels of the items"
+        },
+
+        template: {
+            descr: "Specifies the template for the items"
+        },
+
+        onItemClick: {
+            descr: "Script to be run when an item is clicked. Variables `id` and `value` can be used.",
+            example: {
+                descr: "When an item is clicked an alert will display its value",
+                values: {
+                    x:10,
+                    y:10,
+                    onChange:"alert('list '+id+' changed. Current value: '+value)"
+                }
+            }
+        }
+    }
+
 });
 
 

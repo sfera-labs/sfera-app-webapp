@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" >
+<html xmlns="http://www.w3.org/1999/xhtml" manifest="/new/login/sfera.appcache">
 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -17,7 +17,7 @@
     <meta name="application-name" content="Sfera"/>
     <meta name="msapplication-TileColor" content="#FFFFFF" />
     <meta name="msapplication-TileImage" content="images/skin/mstile-144x144.png" />
-    <title>Sfera</title>
+    <title>Sfera wIDE</title>
     <script type="text/javascript" src="sfera-client.js"></script>
     <script type="text/javascript" src="interface.js"></script>
     <link rel="stylesheet" href="style.css">
@@ -30,7 +30,7 @@
             timestamp: 0,
             idleTimeout:600,
             appCacheEnabled: false,
-            interface: "wIDE"
+            interface: "wide"
         };
         Sfera.Device.whenReady(function() {
             client = new Sfera.Client(config);
@@ -40,6 +40,13 @@
 
     <div id="bg"></div>
     <div id="sfera"></div>
+    <div id="loading">
+        <image class="inner" src="images/skin/loading.svg">
+    </div>
+    <div id="cacheStatus">
+        <span id="cachePerc">20%</span>
+        <image class="inner" src="images/skin/loading.svg">
+    </div>
 
 </body>
 

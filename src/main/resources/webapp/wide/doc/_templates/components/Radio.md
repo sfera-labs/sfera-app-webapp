@@ -1,1 +1,0 @@
-![radio](../images/components/radio.png)

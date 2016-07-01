@@ -67,40 +67,23 @@ Sfera.Debug = new(function() {
      * @protected
      */
     this.showHeader = function() {
-
         var v = Sfera.VERSION;
-
-        var a = "hello";
+        var u = "https://sferalabs.cc/sfera";
 
         if (Sfera.Device.chrome) {
             var a = [
-                '%c %c %c Sfera v' + v + ' | ' + a + '  %c %c ' + '%c http://sfera.cc', // %c\u2665%c\u2665%c\u2665',
-                'background: #9854d8',
-                'background: #6c2ca7',
-                'color: #ffffff; background: #450f78;',
-                'background: #6c2ca7',
-                'background: #9854d8',
+                '%c %c %c Sfera v' + v + '  %c %c ' + '%c ' + u,
+                'background: #afc4dc',
+                'background: #6991bc',
+                'color: #ffffff; background: #26609f;',
+                'background: #6991bc',
+                'background: #afc4dc',
                 'background: #ffffff'
             ];
-
-            /*
-            var c = 2;
-            for (var i = 0; i < 3; i++) {
-                if (i < c) {
-                    a.push('color: #ff2424; background: #fff');
-                } else {
-                    a.push('color: #959595; background: #fff');
-                }
-            }
-            */
-
             console.log.apply(console, a);
         } else if (window.console) {
-            console.log('Sfera v' + v + ' | ' + a + ' | http://sferalabs.cc');
+            console.log('Sfera v' + v + ' | ' + u);
         }
-
     };
-
-
 
 })();

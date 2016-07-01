@@ -44,8 +44,8 @@ form {
 div, span {
   cursor: default; }
 
-#hsycomanager {
-  background-color: #a9adb4; }
+#wide {
+  background-color: #369; }
 
 /* common */
 #tempArea {
@@ -228,7 +228,7 @@ div, span {
   cursor: default;
   width: 4px;
   height: 26px;
-  background: url(/manager/images/ticonsep.png) repeat-y left top; }
+  background: url(/wide/images/ticonsep.png) repeat-y left top; }
 
 .mItemButton {
   padding: 5px;
@@ -618,7 +618,7 @@ div, span {
   padding: 3px; }
 
 .selectIcon {
-  background: url("/manager/images/bticonlist.png") no-repeat;
+  background: url("/wide/images/bticonlist.png") no-repeat;
   height: 22px;
   width: 20px;
   margin-top: 3px; }
@@ -1449,29 +1449,5 @@ span {
 
 #lv_filterModeBt {
   height: 22px; }
-
-#docViewer {
-  display: none;
-  color: black; }
-
-#dv_docPanel {
-  position: absolute;
-  background-color: #fdfdfd;
-  border-left: 1px solid #fefefe;
-  border-right: 1px solid #fefefe;
-  border-top: 1px solid #ffffff;
-  border-bottom: 1px solid #dedede;
-  overflow: hidden;
-  padding: 5px;
-  -webkit-box-shadow: 0px 1px 8px rgba(0,0,0,0.5);
-  -moz-box-shadow: 0px 1px 8px rgba(0,0,0,0.5);
-  box-shadow: 0px 1px 8px rgba(0,0,0,0.5);
-  -webkit-border-radius: 4px;
-  -moz-border-radius: 4px;
-  border-radius: 4px; }
-  #dv_docPanel iframe {
-    border: none;
-    width: 100%;
-    height: 100%; }
 
 /*# sourceMappingURL=style.css.map */

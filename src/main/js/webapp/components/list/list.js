@@ -165,7 +165,6 @@ Sfera.Components.create("List", {
             }
         }
         if (!e) e = d;
-        console.log("binding "+i);
         this.buttons[i] = new Sfera.UI.Button(e,{onclick:this.onItemClick.bind(this,i)});
         if (!this.getAttribute("enabled"))
             this.buttons[i].enable(false);

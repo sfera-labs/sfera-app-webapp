@@ -815,17 +815,12 @@ Sfera.Client = function(config) {
      */
     this.isLogin = false;
 
-    /**
-     * @property {boolean} isBooted - Is the client booted?
-     * @readonly
-     */
-    this.isBooted = false;
-
-    /**
-     * @property {boolean} isRunning - Is the client running or paused?
-     * @readonly
-     */
-    this.isRunning = false;
+    this.state = {
+        booted: false,
+        started: false,
+        indexUpdated: false,
+        firstEventReceived: false
+    }
 
     /**
      * @property {Sfera.ComponentManager} - Reference to the component manager.
@@ -842,27 +837,28 @@ Sfera.Client = function(config) {
      */
     this.debug = null;
 
-    // Is the client paused?
-    var paused = false;
+    // current interface
+    this.cInterface = null;
 
     // currently visible page
     this.cPage = null;
 
     var manifestTimestamp = 0;
-
     var self = this;
-
-    this.interface = "";
-    this.skin = null;
-
-    var interfaceC;
 
     // requests waiting for a reply
     var commandReqs = {};
     var eventReqs = {};
 
-
     var idleIntervalId = null;
+
+    // html elements
+    var elements = {};
+
+    // cache variables
+    var cacheLoadedFiles = 0;
+    var checkCacheInterval; // just to be sure, an interval to check if cache is ready
+    var reloadCalled;
 
     /**
      * Initialize the client and start it.
@@ -871,7 +867,7 @@ Sfera.Client = function(config) {
      * @protected
      */
     this.boot = function(url) {
-        if (this.isBooted)
+        if (this.state.booted)
             return;
 
         var location = Sfera.Browser.getLocation();
@@ -884,8 +880,7 @@ Sfera.Client = function(config) {
 
         Sfera.client = this;
 
-
-        this.isBooted = true;
+        this.state.booted = true;
 
         Sfera.Components.boot(); // init component classes
 
@@ -897,12 +892,16 @@ Sfera.Client = function(config) {
         if (true || this.config.enableDebug) {
             this.debug = Sfera.Debug;
             this.debug.boot();
-        } else {
-
         }
 
         if (window.focus) {
             window.focus();
+        }
+
+        // get html elements
+        var e = ["sfera", "loading", "cacheStatus", "cachePerc"];
+        for (var i=0; i<e.length; i++) {
+            elements[e[i]] = document.getElementById(e[i]);
         }
 
         Sfera.Debug.showHeader();
@@ -915,13 +914,20 @@ Sfera.Client = function(config) {
         Sfera.Net.onUpdateDictionary.add(onUpdateDictionary);
         Sfera.Net.onUpdateIndex.add(onUpdateIndex);
         Sfera.Net.onConnection.add(onConnection);
+        Sfera.Net.onClose.add(onClose);
 
         Sfera.Net.connect();
 
+        // window events
         window.onresize = adjustLayout;
         window.onkeydown = onKeyDown;
         window.onkeyup = onKeyUp;
         window.onkeypress = onKeyPress;
+
+        // loading events
+        elements.loading.onmousedown =
+        elements.loading.onmouseup =
+        elements.loading.onmousemove = function (e) { Sfera.Browser.preventDefault(e) };
 
         delete config;
     };
@@ -932,7 +938,6 @@ Sfera.Client = function(config) {
      * @method Sfera.Client#destroy
      */
     this.destroy = function() {
-
         this.input.destroy();
 
         this.input = null;
@@ -958,11 +963,17 @@ Sfera.Client = function(config) {
     // Net callbacks
 
     function onConnection() {
+        self.state.firstEventReceived = false;
         if (self.isLogin) {
             Sfera.Login.gotoInterface();
         } else {
             Sfera.Net.nodeSubscribe("*");
         }
+    }
+
+    function onClose() {
+        if (!self.isLogin)
+            self.showLoading(true);
     }
 
     function onReply(json) {
@@ -1003,20 +1014,35 @@ Sfera.Client = function(config) {
 
     function onUpdateIndex(xmlDoc) {
         var root = Sfera.Compiler.compileXML(xmlDoc);
-        document.getElementById("sfera").appendChild(root.element);
+        elements.sfera.appendChild(root.element);
 
-        self.start();
+        self.cInterface = self.components.getByType("Interface")[0];
+        self.cInterface.setAttribute("visible","false");
+
+        self.state.indexUpdated = true;
+        // whichever runs last, starts the interface. login is not connected, so it never receives the first event
+        if (!self.state.started && (self.state.firstEventReceived || self.isLogin)) {
+            self.start();
+        }
     };
 
     this.start = function() {
         Sfera.Browser.start();
-        interfaceC = this.components.getByType("Interface")[0];
+
+        this.cInterface.setAttribute("visible","true");
 
         adjustLayout();
         resetIdleTimeout();
 
+        this.state.started = true;
+        this.showLoading(false);
+
         if (Sfera.Custom.onReady)
             Sfera.Custom.onReady();
+    };
+
+    this.stop = function () {
+
     };
 
     this.indexComponent = function(component) {
@@ -1049,7 +1075,7 @@ Sfera.Client = function(config) {
         if (p) {
             p.setAttribute("visible", true);
             this.cPage = p;
-            var i = interfaceC.getAttribute("title");
+            var i = this.cInterface.getAttribute("title");
             var t = p.getAttribute("title");
             Sfera.Browser.updateUrl(id, (i ? i : 'Sfera') + (t ? " - " + t : ''));
         } else {
@@ -1115,9 +1141,9 @@ Sfera.Client = function(config) {
                     if (n[1] == "interface" &&
                         n[2] == self.name &&
                         n[3] == "update") {
-                        if (json.nodes[e] != manifestTimestamp) {
-                            manifestTimestamp = json.nodes[e];
-                            Sfera.Browser.reload();
+                        manifestTimestamp = json.nodes[e];
+                        if (manifestTimestamp != config.timestamp) {
+                            self.reload();
                         }
                     }
                     break;
@@ -1130,14 +1156,22 @@ Sfera.Client = function(config) {
             if (attrObservers[e])
                 attrObservers[e].dispatch();
         }
+
+        self.state.firstEventReceived = true;
+        // whichever runs last, starts the interface
+        if (!self.state.started && self.state.indexUpdated) {
+            self.start();
+        } else {
+            self.showLoading(false);
+        }
     }
 
     function adjustLayout() {
         // not initialized yet
-        if (!interfaceC) return;
+        if (!self.cInterface) return;
 
-        var width = parseInt(interfaceC.getAttribute("width"));
-        var height = parseInt(interfaceC.getAttribute("height"));
+        var width = parseInt(self.cInterface.getAttribute("width"));
+        var height = parseInt(self.cInterface.getAttribute("height"));
 
         // center container within window size
         var viewportWidth;
@@ -1161,13 +1195,12 @@ Sfera.Client = function(config) {
             var left = (viewportWidth > width) ? (viewportWidth - width) / 2 : 0;
             var top = (viewportHeight > height) ? (viewportHeight - height) / 2 : 0;
 
-            interfaceC.element.style.display = "none";
-            interfaceC.element.style.left = left + "px";
-            interfaceC.element.style.top = top + "px";
-            interfaceC.element.style.display = "block";
+            self.cInterface.element.style.display = "none";
+            self.cInterface.element.style.left = left + "px";
+            self.cInterface.element.style.top = top + "px";
+            self.cInterface.element.style.display = "block";
         } // viewportWidth>0
     } // adjustLayout()
-
 
     var attrObservers = {};
     // attribute observers
@@ -1175,10 +1208,10 @@ Sfera.Client = function(config) {
         if (!attrObservers[node])
             attrObservers[node] = new Sfera.Signal();
         attrObservers[node].addOnce(attribute.compile, attribute);
-    }
+    };
     this.removeAttrObserver = function(node, attribute) {
         attrObservers[node].remove(attribute.compile, attribute);
-    }
+    };
 
     // events
     // on key down event
@@ -1337,7 +1370,7 @@ Sfera.Client = function(config) {
 
         // couldn't focus, keep looking
         return focusNext(co);
-    } // focusFirstObj()
+    } // focusFirst()
 
     function focusNext(co, dir) {
         var cos = co.parent.children;
@@ -1388,11 +1421,98 @@ Sfera.Client = function(config) {
             }
         } while (cos[i] != co); // go round once
         return null; // no next coect found (co wasn't focusable?)
-    }
+    } // focusNext()
 
     this.focusNext = function(dir) {
         return focusNext(focusedCo, dir);
     };
+
+    /////////////////////// connecting
+    this.showLoading = function (show) {
+        elements.loading.style.display = show?"inline":"none";
+    };
+
+    //--------------------------------------------------------------------------------------------------------------------------------
+	// reload, cache -----------------------------------------------------------------------------------------------------------------
+	//--------------------------------------------------------------------------------------------------------------------------------
+
+    this.showCachePercentage = function (perc) {
+        elements.cacheStatus.style.display = perc?"inline":"none";
+        elements.cachePerc.innerHTML = perc?perc+"%":"";
+    };
+
+	// reload, cache
+	this.reload = function (now) {
+		if (reloadCalled) return;
+		reloadCalled = true; // so we can call it just once
+
+		if (!now && window.applicationCache && window.applicationCache.status != window.applicationCache.UNCACHED) {
+			if (window.applicationCache.status == window.applicationCache.UPDATEREADY) {
+				checkCache();
+			} else {
+				checkCacheInterval = setInterval(checkCache,500);
+				window.addEvent("updateready", window.applicationCache, checkCache, false);
+				window.addEvent("error", window.applicationCache, onCacheError, false);
+				window.addEvent("progress", applicationCache, cacheProgressEvent, false);
+				cacheLoadedFiles = 0
+				window.applicationCache.update();
+			}
+		} else if (!this.cInterface.getAttribute("autoReload")) { // no autoreload, needs to be reloaded manually
+			config.timestamp = manifestTimestamp;
+			reloadCalled = false;
+		} else { // reload now
+			client.stop();
+			//client.clearCookies();
+			Sfera.Browser.reload();
+		}
+	}; // reload()
+
+	// cache progress event
+	function cacheProgressEvent(e) {
+		if (e != null) try {
+			// update the percent
+			totalFiles = Number(e.total);
+			cacheLoadedFiles = cacheLoadedFiles + 1;
+			var progress = Math.round(cacheLoadedFiles / totalFiles * 100);
+
+			self.showCachePercentage(progress);
+		} catch (e) {}
+	} // cacheProgressEvent()
+
+	// check cache to see if we're ready to reload
+	function checkCache() {
+		// done
+		if (window.applicationCache.status == window.applicationCache.UPDATEREADY ||
+			window.applicationCache.status == window.applicationCache.IDLE) {
+			clearInterval(checkCacheInterval);
+			//var weirdErr;
+			try {
+				window.applicationCache.swapCache();
+			} catch (err) {
+				console.log("Error on swapCache "+err.message);
+				//weirdErr = (err.message == "Failed to execute 'swapCache' on 'ApplicationCache': there is no newer application cache to swap to.");
+			}
+			if (!self.cInterface.getAttribute("autoReload")) { // no autoreload, needs to be reloaded manually
+				config.timestamp = manifestTimestamp;
+				reloadCalled = false;
+				statusIcon.set("cache",false);
+			} else { // reload now
+				client.stop();
+				//client.clearCookies();
+				Sfera.Browser.reload(true);
+			}
+		} else if (window.applicationCache.status == window.applicationCache.OBSOLETE) {
+			// correct behaviour?
+			onCacheError();
+		}
+	} // checkCache()
+
+	// cache error
+	function onCacheError() {
+		clearInterval(checkCacheInterval);
+		reloadCalled = false;
+		self.reload();
+	} // onCacheError()
 
 };
 
@@ -1460,41 +1580,24 @@ Sfera.Debug = new(function() {
      * @protected
      */
     this.showHeader = function() {
-
         var v = Sfera.VERSION;
-
-        var a = "hello";
+        var u = "https://sferalabs.cc/sfera";
 
         if (Sfera.Device.chrome) {
             var a = [
-                '%c %c %c Sfera v' + v + ' | ' + a + '  %c %c ' + '%c http://sfera.cc', // %c\u2665%c\u2665%c\u2665',
-                'background: #9854d8',
-                'background: #6c2ca7',
-                'color: #ffffff; background: #450f78;',
-                'background: #6c2ca7',
-                'background: #9854d8',
+                '%c %c %c Sfera v' + v + '  %c %c ' + '%c ' + u,
+                'background: #afc4dc',
+                'background: #6991bc',
+                'color: #ffffff; background: #26609f;',
+                'background: #6991bc',
+                'background: #afc4dc',
                 'background: #ffffff'
             ];
-
-            /*
-            var c = 2;
-            for (var i = 0; i < 3; i++) {
-                if (i < c) {
-                    a.push('color: #ff2424; background: #fff');
-                } else {
-                    a.push('color: #959595; background: #fff');
-                }
-            }
-            */
-
             console.log.apply(console, a);
         } else if (window.console) {
-            console.log('Sfera v' + v + ' | ' + a + ' | http://sferalabs.cc');
+            console.log('Sfera v' + v + ' | ' + u);
         }
-
     };
-
-
 
 })();
 
@@ -2679,23 +2782,6 @@ Sfera.UI.Button.prototype = {
  * @constructor
  */
 Sfera.Net = new (function() {
-    // getURL function
-    this.getURL = function(name) {
-    	switch (name) {
-    	case "dictionary":  return location.interface+(location.login?"/login":"")+"/dictionary.xml";
-    	case "index" :      return location.interface+(location.login?"/login":"")+"/index.xml";
-
-        case "connect" :    return apiBaseUrl+"connect";
-    	case "subscribe" :  return apiBaseUrl+"subscribe?cid="+(Sfera.Net.connectionId?Sfera.Net.connectionId:"");
-    	case "state" :      return apiBaseUrl+"state/"+Sfera.Net.connectionId+"?ts="+Sfera.client.stateTs;
-        case "command":     return apiBaseUrl+"command";
-        case "event":       return apiBaseUrl+"event";
-
-        case "websocket":   return (location.protocol == "https:" ? "wss:" : "ws:")+
-                                    "//"+location.host+"/"+apiBaseUrl+"websocket";
-        }
-	};
-
     var req;
 
     var webSocket;
@@ -2753,6 +2839,35 @@ Sfera.Net = new (function() {
     this.onConsole = new Sfera.Signal();
     this.onUpdateDictionary = new Sfera.Signal();
     this.onUpdateIndex = new Sfera.Signal();
+
+    // getURL function
+    this.getURL = function(name, options) {
+        // options has priority
+        if (!options)
+            options = {};
+        for (var i in location) {
+            if (options[i] == null)
+                options[i] = location[i];
+        }
+        options.connectionId = this.connectionId;
+        options.stateTs = Sfera.client?Sfera.client.stateTs:null;
+
+    	switch (name) {
+    	case "dictionary":  return options.interface+(options.login?"/login":"")+"/dictionary.xml";
+    	case "index" :      return options.interface+(options.login?"/login":"")+"/index.xml";
+
+        case "connect" :    return apiBaseUrl+"connect";
+    	case "subscribe" :  return apiBaseUrl+"subscribe?cid="+(options.connectionId?options.connectionId:"");
+    	case "state" :      return apiBaseUrl+"state/"+options.connectionId+"?ts="+options.stateTs;
+        case "command":     return apiBaseUrl+"command";
+        case "event":       return apiBaseUrl+"event";
+
+        case "websocket":   return (options.protocol == "https:" ? "wss:" : "ws:")+
+                                    "//"+options.host+"/"+apiBaseUrl+"websocket";
+
+        case "check":       return options.interface+"/login/index.xml";
+        }
+	};
 
     this.boot = function () {
         location = Sfera.Browser ? Sfera.Browser.getLocation() : {};
@@ -2856,7 +2971,8 @@ Sfera.Net = new (function() {
         self.onClose.dispatch(event.code,event.reason);
 
         if (event.reason == "Unauthorized" && Sfera.Login && !location.login) { //code 1008
-            Sfera.Login.gotoLogin();
+            cSync = "check"; // check if login is available
+            self.request(httpBaseUrl + self.getURL(cSync));
         } else {
             self.wsOpen (wsTimeoutMs); // reopen
         }
@@ -2922,14 +3038,19 @@ Sfera.Net = new (function() {
         return (new Date()).getTime();
     }
 
-    // connect
-    this.connect = function(options) {
+    // request resource
+    this.request = function(url) {
         if (!req) {
             req = new Sfera.Net.Request()
             req.onLoaded = onReqLoaded;
             req.onError = onReqError;
         }
 
+        req.open(url, 20);
+    };
+
+    // connect
+    this.connect = function(options) {
         this.sync();
     }; // connect()
 
@@ -2938,7 +3059,7 @@ Sfera.Net = new (function() {
         for (var s in this.localTs) {
             if (this.localTs[s] == -1) { // || this.localTs[s] < this.remoteTs[s]) {
                 cSync = s;
-                req.open(httpBaseUrl + self.getURL(s), 20);
+                this.request(httpBaseUrl + self.getURL(s));
                 return; // one resource per time
             }
         }
@@ -2951,19 +3072,19 @@ Sfera.Net = new (function() {
 
         if (!this.connectionId) {
             cSync = "connect";
-            req.open(httpBaseUrl + self.getURL("connect"));
+            this.request(httpBaseUrl + self.getURL("connect"));
             return;
         }
 
         if (!this.subscribed) {
             cSync = "subscribe";
 
-            req.open(httpBaseUrl + self.getURL("subscribe")+"&nodes=*");
+            this.request(httpBaseUrl + self.getURL("subscribe")+"&nodes=*");
             return;
         }
 
         cSync = "state";
-        req.open(httpBaseUrl + self.getURL("state"));
+        this.request(httpBaseUrl + self.getURL("state"));
     };
 
     function onReqLoaded() {
@@ -2993,6 +3114,11 @@ Sfera.Net = new (function() {
                 state = JSON.parse(req.getResponseText());
                 if (state.timestamp)
                     self.stateTs = state.timestamp;
+                break;
+
+            // check if interface is available (load login index)
+            case "check":
+                Sfera.Login.gotoLogin();
                 break;
         }
 

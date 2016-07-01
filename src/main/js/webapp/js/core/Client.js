@@ -31,17 +31,12 @@ Sfera.Client = function(config) {
      */
     this.isLogin = false;
 
-    /**
-     * @property {boolean} isBooted - Is the client booted?
-     * @readonly
-     */
-    this.isBooted = false;
-
-    /**
-     * @property {boolean} isRunning - Is the client running or paused?
-     * @readonly
-     */
-    this.isRunning = false;
+    this.state = {
+        booted: false,
+        started: false,
+        indexUpdated: false,
+        firstEventReceived: false
+    }
 
     /**
      * @property {Sfera.ComponentManager} - Reference to the component manager.
@@ -58,27 +53,28 @@ Sfera.Client = function(config) {
      */
     this.debug = null;
 
-    // Is the client paused?
-    var paused = false;
+    // current interface
+    this.cInterface = null;
 
     // currently visible page
     this.cPage = null;
 
     var manifestTimestamp = 0;
-
     var self = this;
-
-    this.interface = "";
-    this.skin = null;
-
-    var interfaceC;
 
     // requests waiting for a reply
     var commandReqs = {};
     var eventReqs = {};
 
-
     var idleIntervalId = null;
+
+    // html elements
+    var elements = {};
+
+    // cache variables
+    var cacheLoadedFiles = 0;
+    var checkCacheInterval; // just to be sure, an interval to check if cache is ready
+    var reloadCalled;
 
     /**
      * Initialize the client and start it.
@@ -87,7 +83,7 @@ Sfera.Client = function(config) {
      * @protected
      */
     this.boot = function(url) {
-        if (this.isBooted)
+        if (this.state.booted)
             return;
 
         var location = Sfera.Browser.getLocation();
@@ -100,8 +96,7 @@ Sfera.Client = function(config) {
 
         Sfera.client = this;
 
-
-        this.isBooted = true;
+        this.state.booted = true;
 
         Sfera.Components.boot(); // init component classes
 
@@ -113,12 +108,16 @@ Sfera.Client = function(config) {
         if (true || this.config.enableDebug) {
             this.debug = Sfera.Debug;
             this.debug.boot();
-        } else {
-
         }
 
         if (window.focus) {
             window.focus();
+        }
+
+        // get html elements
+        var e = ["sfera", "loading", "cacheStatus", "cachePerc"];
+        for (var i=0; i<e.length; i++) {
+            elements[e[i]] = document.getElementById(e[i]);
         }
 
         Sfera.Debug.showHeader();
@@ -131,13 +130,20 @@ Sfera.Client = function(config) {
         Sfera.Net.onUpdateDictionary.add(onUpdateDictionary);
         Sfera.Net.onUpdateIndex.add(onUpdateIndex);
         Sfera.Net.onConnection.add(onConnection);
+        Sfera.Net.onClose.add(onClose);
 
         Sfera.Net.connect();
 
+        // window events
         window.onresize = adjustLayout;
         window.onkeydown = onKeyDown;
         window.onkeyup = onKeyUp;
         window.onkeypress = onKeyPress;
+
+        // loading events
+        elements.loading.onmousedown =
+        elements.loading.onmouseup =
+        elements.loading.onmousemove = function (e) { Sfera.Browser.preventDefault(e) };
 
         delete config;
     };
@@ -148,7 +154,6 @@ Sfera.Client = function(config) {
      * @method Sfera.Client#destroy
      */
     this.destroy = function() {
-
         this.input.destroy();
 
         this.input = null;
@@ -174,11 +179,17 @@ Sfera.Client = function(config) {
     // Net callbacks
 
     function onConnection() {
+        self.state.firstEventReceived = false;
         if (self.isLogin) {
             Sfera.Login.gotoInterface();
         } else {
             Sfera.Net.nodeSubscribe("*");
         }
+    }
+
+    function onClose() {
+        if (!self.isLogin)
+            self.showLoading(true);
     }
 
     function onReply(json) {
@@ -219,20 +230,35 @@ Sfera.Client = function(config) {
 
     function onUpdateIndex(xmlDoc) {
         var root = Sfera.Compiler.compileXML(xmlDoc);
-        document.getElementById("sfera").appendChild(root.element);
+        elements.sfera.appendChild(root.element);
 
-        self.start();
+        self.cInterface = self.components.getByType("Interface")[0];
+        self.cInterface.setAttribute("visible","false");
+
+        self.state.indexUpdated = true;
+        // whichever runs last, starts the interface. login is not connected, so it never receives the first event
+        if (!self.state.started && (self.state.firstEventReceived || self.isLogin)) {
+            self.start();
+        }
     };
 
     this.start = function() {
         Sfera.Browser.start();
-        interfaceC = this.components.getByType("Interface")[0];
+
+        this.cInterface.setAttribute("visible","true");
 
         adjustLayout();
         resetIdleTimeout();
 
+        this.state.started = true;
+        this.showLoading(false);
+
         if (Sfera.Custom.onReady)
             Sfera.Custom.onReady();
+    };
+
+    this.stop = function () {
+
     };
 
     this.indexComponent = function(component) {
@@ -265,7 +291,7 @@ Sfera.Client = function(config) {
         if (p) {
             p.setAttribute("visible", true);
             this.cPage = p;
-            var i = interfaceC.getAttribute("title");
+            var i = this.cInterface.getAttribute("title");
             var t = p.getAttribute("title");
             Sfera.Browser.updateUrl(id, (i ? i : 'Sfera') + (t ? " - " + t : ''));
         } else {
@@ -331,9 +357,9 @@ Sfera.Client = function(config) {
                     if (n[1] == "interface" &&
                         n[2] == self.name &&
                         n[3] == "update") {
-                        if (json.nodes[e] != manifestTimestamp) {
-                            manifestTimestamp = json.nodes[e];
-                            Sfera.Browser.reload();
+                        manifestTimestamp = json.nodes[e];
+                        if (manifestTimestamp != config.timestamp) {
+                            self.reload();
                         }
                     }
                     break;
@@ -346,14 +372,22 @@ Sfera.Client = function(config) {
             if (attrObservers[e])
                 attrObservers[e].dispatch();
         }
+
+        self.state.firstEventReceived = true;
+        // whichever runs last, starts the interface
+        if (!self.state.started && self.state.indexUpdated) {
+            self.start();
+        } else {
+            self.showLoading(false);
+        }
     }
 
     function adjustLayout() {
         // not initialized yet
-        if (!interfaceC) return;
+        if (!self.cInterface) return;
 
-        var width = parseInt(interfaceC.getAttribute("width"));
-        var height = parseInt(interfaceC.getAttribute("height"));
+        var width = parseInt(self.cInterface.getAttribute("width"));
+        var height = parseInt(self.cInterface.getAttribute("height"));
 
         // center container within window size
         var viewportWidth;
@@ -377,13 +411,12 @@ Sfera.Client = function(config) {
             var left = (viewportWidth > width) ? (viewportWidth - width) / 2 : 0;
             var top = (viewportHeight > height) ? (viewportHeight - height) / 2 : 0;
 
-            interfaceC.element.style.display = "none";
-            interfaceC.element.style.left = left + "px";
-            interfaceC.element.style.top = top + "px";
-            interfaceC.element.style.display = "block";
+            self.cInterface.element.style.display = "none";
+            self.cInterface.element.style.left = left + "px";
+            self.cInterface.element.style.top = top + "px";
+            self.cInterface.element.style.display = "block";
         } // viewportWidth>0
     } // adjustLayout()
-
 
     var attrObservers = {};
     // attribute observers
@@ -391,10 +424,10 @@ Sfera.Client = function(config) {
         if (!attrObservers[node])
             attrObservers[node] = new Sfera.Signal();
         attrObservers[node].addOnce(attribute.compile, attribute);
-    }
+    };
     this.removeAttrObserver = function(node, attribute) {
         attrObservers[node].remove(attribute.compile, attribute);
-    }
+    };
 
     // events
     // on key down event
@@ -553,7 +586,7 @@ Sfera.Client = function(config) {
 
         // couldn't focus, keep looking
         return focusNext(co);
-    } // focusFirstObj()
+    } // focusFirst()
 
     function focusNext(co, dir) {
         var cos = co.parent.children;
@@ -604,10 +637,97 @@ Sfera.Client = function(config) {
             }
         } while (cos[i] != co); // go round once
         return null; // no next coect found (co wasn't focusable?)
-    }
+    } // focusNext()
 
     this.focusNext = function(dir) {
         return focusNext(focusedCo, dir);
     };
+
+    /////////////////////// connecting
+    this.showLoading = function (show) {
+        elements.loading.style.display = show?"inline":"none";
+    };
+
+    //--------------------------------------------------------------------------------------------------------------------------------
+	// reload, cache -----------------------------------------------------------------------------------------------------------------
+	//--------------------------------------------------------------------------------------------------------------------------------
+
+    this.showCachePercentage = function (perc) {
+        elements.cacheStatus.style.display = perc?"inline":"none";
+        elements.cachePerc.innerHTML = perc?perc+"%":"";
+    };
+
+	// reload, cache
+	this.reload = function (now) {
+		if (reloadCalled) return;
+		reloadCalled = true; // so we can call it just once
+
+		if (!now && window.applicationCache && window.applicationCache.status != window.applicationCache.UNCACHED) {
+			if (window.applicationCache.status == window.applicationCache.UPDATEREADY) {
+				checkCache();
+			} else {
+				checkCacheInterval = setInterval(checkCache,500);
+				window.addEvent("updateready", window.applicationCache, checkCache, false);
+				window.addEvent("error", window.applicationCache, onCacheError, false);
+				window.addEvent("progress", applicationCache, cacheProgressEvent, false);
+				cacheLoadedFiles = 0
+				window.applicationCache.update();
+			}
+		} else if (!this.cInterface.getAttribute("autoReload")) { // no autoreload, needs to be reloaded manually
+			config.timestamp = manifestTimestamp;
+			reloadCalled = false;
+		} else { // reload now
+			client.stop();
+			//client.clearCookies();
+			Sfera.Browser.reload();
+		}
+	}; // reload()
+
+	// cache progress event
+	function cacheProgressEvent(e) {
+		if (e != null) try {
+			// update the percent
+			totalFiles = Number(e.total);
+			cacheLoadedFiles = cacheLoadedFiles + 1;
+			var progress = Math.round(cacheLoadedFiles / totalFiles * 100);
+
+			self.showCachePercentage(progress);
+		} catch (e) {}
+	} // cacheProgressEvent()
+
+	// check cache to see if we're ready to reload
+	function checkCache() {
+		// done
+		if (window.applicationCache.status == window.applicationCache.UPDATEREADY ||
+			window.applicationCache.status == window.applicationCache.IDLE) {
+			clearInterval(checkCacheInterval);
+			//var weirdErr;
+			try {
+				window.applicationCache.swapCache();
+			} catch (err) {
+				console.log("Error on swapCache "+err.message);
+				//weirdErr = (err.message == "Failed to execute 'swapCache' on 'ApplicationCache': there is no newer application cache to swap to.");
+			}
+			if (!self.cInterface.getAttribute("autoReload")) { // no autoreload, needs to be reloaded manually
+				config.timestamp = manifestTimestamp;
+				reloadCalled = false;
+				statusIcon.set("cache",false);
+			} else { // reload now
+				client.stop();
+				//client.clearCookies();
+				Sfera.Browser.reload(true);
+			}
+		} else if (window.applicationCache.status == window.applicationCache.OBSOLETE) {
+			// correct behaviour?
+			onCacheError();
+		}
+	} // checkCache()
+
+	// cache error
+	function onCacheError() {
+		clearInterval(checkCacheInterval);
+		reloadCalled = false;
+		self.reload();
+	} // onCacheError()
 
 };

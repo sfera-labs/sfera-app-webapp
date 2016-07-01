@@ -52,7 +52,7 @@ Sfera.Doc.add.component("Input", {
         },
 
         onChange: {
-            descr: "Script to be run when a change in value is detected. Variables id and value can be used.",
+            descr: "Script to be run when a change in value is detected. Variables `id` and `value` can be used.",
             example: {
                 descr: "When a change is detected (based on the changeDelay attribute) an alert will display the current value",
                 values: {
@@ -64,15 +64,15 @@ Sfera.Doc.add.component("Input", {
         },
 
         onEnterKey: {
-            descr: "Script to be run when enter key is pressed"
+            descr: "Script to be run when enter key is pressed. Variables `id` and `value` can be used."
         },
 
         onFocus: {
-            descr: "Script to be run when the component receives focus"
+            descr: "Script to be run when the component receives focus. Variables `id` and `value` can be used."
         },
 
         onBlur: {
-            descr: "Script to be run when the component loses focus"
+            descr: "Script to be run when the component loses focus. Variables `id` and `value` can be used."
         }
     }
 

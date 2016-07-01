@@ -6,7 +6,5 @@ Sfera.Doc.add.component("Image", {
         source: {
             descr: "Specifies the image source file"
         },
-
     }
-
 });

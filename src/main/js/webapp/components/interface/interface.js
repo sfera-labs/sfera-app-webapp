@@ -48,8 +48,12 @@
          			bodyE.style.width = "0px";
          			bodyE.style.height = "0px";
          		}
-
              }
+         },
+
+         autoReload: {
+             type: "boolean",
+             default: "true"
          }
      }
  });

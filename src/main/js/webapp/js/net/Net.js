@@ -11,23 +11,6 @@
  * @constructor
  */
 Sfera.Net = new (function() {
-    // getURL function
-    this.getURL = function(name) {
-    	switch (name) {
-    	case "dictionary":  return location.interface+(location.login?"/login":"")+"/dictionary.xml";
-    	case "index" :      return location.interface+(location.login?"/login":"")+"/index.xml";
-
-        case "connect" :    return apiBaseUrl+"connect";
-    	case "subscribe" :  return apiBaseUrl+"subscribe?cid="+(Sfera.Net.connectionId?Sfera.Net.connectionId:"");
-    	case "state" :      return apiBaseUrl+"state/"+Sfera.Net.connectionId+"?ts="+Sfera.client.stateTs;
-        case "command":     return apiBaseUrl+"command";
-        case "event":       return apiBaseUrl+"event";
-
-        case "websocket":   return (location.protocol == "https:" ? "wss:" : "ws:")+
-                                    "//"+location.host+"/"+apiBaseUrl+"websocket";
-        }
-	};
-
     var req;
 
     var webSocket;
@@ -85,6 +68,35 @@ Sfera.Net = new (function() {
     this.onConsole = new Sfera.Signal();
     this.onUpdateDictionary = new Sfera.Signal();
     this.onUpdateIndex = new Sfera.Signal();
+
+    // getURL function
+    this.getURL = function(name, options) {
+        // options has priority
+        if (!options)
+            options = {};
+        for (var i in location) {
+            if (options[i] == null)
+                options[i] = location[i];
+        }
+        options.connectionId = this.connectionId;
+        options.stateTs = Sfera.client?Sfera.client.stateTs:null;
+
+    	switch (name) {
+    	case "dictionary":  return options.interface+(options.login?"/login":"")+"/dictionary.xml";
+    	case "index" :      return options.interface+(options.login?"/login":"")+"/index.xml";
+
+        case "connect" :    return apiBaseUrl+"connect";
+    	case "subscribe" :  return apiBaseUrl+"subscribe?cid="+(options.connectionId?options.connectionId:"");
+    	case "state" :      return apiBaseUrl+"state/"+options.connectionId+"?ts="+options.stateTs;
+        case "command":     return apiBaseUrl+"command";
+        case "event":       return apiBaseUrl+"event";
+
+        case "websocket":   return (options.protocol == "https:" ? "wss:" : "ws:")+
+                                    "//"+options.host+"/"+apiBaseUrl+"websocket";
+
+        case "check":       return options.interface+"/login/index.xml";
+        }
+	};
 
     this.boot = function () {
         location = Sfera.Browser ? Sfera.Browser.getLocation() : {};
@@ -188,7 +200,8 @@ Sfera.Net = new (function() {
         self.onClose.dispatch(event.code,event.reason);
 
         if (event.reason == "Unauthorized" && Sfera.Login && !location.login) { //code 1008
-            Sfera.Login.gotoLogin();
+            cSync = "check"; // check if login is available
+            self.request(httpBaseUrl + self.getURL(cSync));
         } else {
             self.wsOpen (wsTimeoutMs); // reopen
         }
@@ -254,14 +267,19 @@ Sfera.Net = new (function() {
         return (new Date()).getTime();
     }
 
-    // connect
-    this.connect = function(options) {
+    // request resource
+    this.request = function(url) {
         if (!req) {
             req = new Sfera.Net.Request()
             req.onLoaded = onReqLoaded;
             req.onError = onReqError;
         }
 
+        req.open(url, 20);
+    };
+
+    // connect
+    this.connect = function(options) {
         this.sync();
     }; // connect()
 
@@ -270,7 +288,7 @@ Sfera.Net = new (function() {
         for (var s in this.localTs) {
             if (this.localTs[s] == -1) { // || this.localTs[s] < this.remoteTs[s]) {
                 cSync = s;
-                req.open(httpBaseUrl + self.getURL(s), 20);
+                this.request(httpBaseUrl + self.getURL(s));
                 return; // one resource per time
             }
         }
@@ -283,19 +301,19 @@ Sfera.Net = new (function() {
 
         if (!this.connectionId) {
             cSync = "connect";
-            req.open(httpBaseUrl + self.getURL("connect"));
+            this.request(httpBaseUrl + self.getURL("connect"));
             return;
         }
 
         if (!this.subscribed) {
             cSync = "subscribe";
 
-            req.open(httpBaseUrl + self.getURL("subscribe")+"&nodes=*");
+            this.request(httpBaseUrl + self.getURL("subscribe")+"&nodes=*");
             return;
         }
 
         cSync = "state";
-        req.open(httpBaseUrl + self.getURL("state"));
+        this.request(httpBaseUrl + self.getURL("state"));
     };
 
     function onReqLoaded() {
@@ -325,6 +343,11 @@ Sfera.Net = new (function() {
                 state = JSON.parse(req.getResponseText());
                 if (state.timestamp)
                     self.stateTs = state.timestamp;
+                break;
+
+            // check if interface is available (load login index)
+            case "check":
+                Sfera.Login.gotoLogin();
                 break;
         }
 
