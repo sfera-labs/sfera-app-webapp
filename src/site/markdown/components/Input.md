@@ -3,6 +3,7 @@
 
 Input component, to allow the user to input a value of various types (defined by the type attribute).
 Its appearance is defined by a [style](#style) attribute.
+![input](../images/components/input.png)
 ## Attributes
 
 |Name|Type|Description|

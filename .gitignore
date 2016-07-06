@@ -28,6 +28,9 @@ Thumbs.db
 *.lck
 /bin/
 
-src/main/webapp/node_modules
-src/main/webapp/tasks
+src/main/client/.sass-cache
+src/main/client/dist/*
+src/main/client/node_modules
+src/main/client/tasks
 src/main/resources/webapp/wide/test
+src/main/client/resources/docstrap-master

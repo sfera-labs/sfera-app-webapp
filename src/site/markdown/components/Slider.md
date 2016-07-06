@@ -3,6 +3,7 @@
 
 Slider component, allows the user to input a numeric [value](#value) between a [minimum](#min) and [maximum](#max) value.
 The decimal digits in the value are based on the maximum amount of decimal digits in the min and max attributes.
+![slider](../images/components/slider.png)
 ## Attributes
 
 |Name|Type|Description|

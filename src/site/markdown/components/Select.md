@@ -2,6 +2,7 @@
 # Select
 
 Select component, allows the user to select a single value among a list of [values](#values).
+![select](../images/components/select.png)
 ## Attributes
 
 |Name|Type|Description|

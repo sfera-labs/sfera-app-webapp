@@ -3,6 +3,7 @@
 
 Checkbox component, used to represent a boolean value.
 Its appearance is defined by a [style](#style) attribute.
+![checkbox](../images/components/checkbox.png)
 ## Attributes
 
 |Name|Type|Description|

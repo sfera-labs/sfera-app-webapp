@@ -4,6 +4,7 @@
 Radio component, used in a group of multiple radio components to represent an exclusive value.
 Its appearance is defined by a [style](#style) attribute.
 The [group](#group) attribute defines which radio components work together.
+![radio](../images/components/radio.png)
 ## Attributes
 
 |Name|Type|Description|
