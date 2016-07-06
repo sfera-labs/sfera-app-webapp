@@ -1,6 +1,7 @@
 Sfera.Doc.add.component("Button", {
     doc: {
-        descr:"A button componentz used to execute customized JavaScript code.\nIts appearance is defined by a style attribute. The [onClick](#onClick) attribute is used to associate an action to execute when the button is pressed."
+        descr:"A button component used to execute customized JavaScript code.\nIts appearance is defined by a style attribute. The [onClick](#onClick) attribute is used to associate an action to execute when the button is pressed.",
+        extra:"![button](../images/components/button.png)"
     },
     attr:{
         label: {

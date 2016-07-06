@@ -42,9 +42,123 @@ Sfera.Doc.add.component("_Base", {
 
 
 
+Sfera.Doc.add.preset("Color", {
+    color: {
+        descr: "Specifies the color"
+    }
+});
+
+
+Sfera.Doc.add.preset("Enable", {
+    enabled: {
+        descr: "Specifies whether the component is enabled or not"
+    }
+});
+
+
+Sfera.Doc.add.preset("Label", {
+    label: {
+        descr: "Specifies the label"
+    },
+    color: {
+        descr: "Specifies the color"
+    },
+    fontSize: {
+        descr: "Specifies the font size in pixels"
+    },
+    textAlign: {
+        descr: "Specifies the text alignment"
+    }
+});
+
+
+Sfera.Doc.add.preset("Position", {
+    position:{
+        descr: "Specifies the type of positioning method used (static, relative, absolute or fixed)",
+        hidden: true
+    },
+    x: {
+        descr: "Specifies the left position of the component in pixels, relative to its parent container (a page or a container component)",
+        example: {
+            descr:"Set the left edge of the component to 30 pixels to the right of the left edge of the page",
+            values:{
+                x:30,
+                y:10
+            },
+        }
+    },
+    y: {
+        descr: "Specifies the top position of the component in pixels, relative to its parent container (a page or a container component)",
+        example: {
+            descr:"Set the top edge of the component to 10 pixels to the bottom of the top edge of the page",
+            values:{
+                x:30,
+                y:10
+            },
+        }
+    },
+    rotation: {
+        descr: "Specifies the element's clockwise rotation in degrees",
+        example: {
+            descr:"Set the rotation of the component to 90&deg;",
+            values:{
+                x:30,
+                y:10,
+                rotation:90
+            },
+        }
+    }
+});
+
+
+Sfera.Doc.add.preset("Size", {
+    width: {
+        descr: "Specifies the component's width in pixels",
+        example:{
+            descr:"Sets the component's width to 100 pixels wide",
+            values:{
+                width:100,
+                height:50
+            }
+        }
+    },
+    height: {
+        descr: "Specifies the component's height in pixels",
+        example:{
+            descr:"Sets the component's height to 50 pixels tall",
+            values:{
+                width:100,
+                height:50
+            }
+        }
+    }
+});
+
+
+Sfera.Doc.add.preset("Style", {
+    style: {
+        descr: "Specifies the style",
+    }
+});
+
+
+Sfera.Doc.add.preset("Visibility", {
+    visible: {
+        descr: "Specifies whether or not the component is visible",
+        example: {
+            descr:"Set the component's visibility to false",
+            values:{
+                visible:false
+            }
+        }
+    }
+});
+
+
 Sfera.Doc.add.component("Button", {
     doc: {
-        descr:"A button component used to execute customized JavaScript code.\nIts appearance is defined by a style attribute. The [onClick](#onClick) attribute is used to associate an action to execute when the button is pressed."
+        descr:"A button component used to execute customized JavaScript code.\nIts appearance is defined by a style attribute. The [onClick](#onClick) attribute is used to associate an action to execute when the button is pressed.",
+        extra:"![button](../images/components/button.png)"
     },
     attr:{
         label: {
@@ -85,7 +199,8 @@ Sfera.Doc.add.component("Button", {
 
 Sfera.Doc.add.component("Checkbox", {
     doc: {
-        descr:"Checkbox component, used to represent a boolean value.\nIts appearance is defined by a [style](#style) attribute."
+        descr:"Checkbox component, used to represent a boolean value.\nIts appearance is defined by a [style](#style) attribute.",
+        extra:"![checkbox](../images/components/checkbox.png)"
     },
     attr:{
         focus: {
@@ -163,7 +278,8 @@ Sfera.Doc.add.component("Image", {
 
 Sfera.Doc.add.component("Input", {
     doc: {
-        descr:"Input component, to allow the user to input a value of various types (defined by the type attribute).\nIts appearance is defined by a [style](#style) attribute."
+        descr:"Input component, to allow the user to input a value of various types (defined by the type attribute).\nIts appearance is defined by a [style](#style) attribute.",
+        extra:"![input](../images/components/input.png)"
     },
     attr:{
         type: {
@@ -309,7 +425,15 @@ Sfera.Doc.add.component("List", {
 
 Sfera.Doc.add.component("Page", {
     doc: {
-        descr:"Page component, used to group components in different views.\nPage ids are usually prefixed with \"page:\" to differentiate them from other components."
+        descr:"Page component, used to group components in different views.\nPage ids are usually prefixed with \"page:\" to differentiate them from other components.",
+        extra:"\
+To open a page from a script use the _[page(id)](../client-scripting.html)_ function.\n\
+The id can optionally include the \"page:\" prefix.\n\
+**Example**:\n\
+\n\
+	page(\"home\") or page(\"page:home\")\n\
+\n\
+        "
     },
     attr:{
         title: {
@@ -322,7 +446,8 @@ Sfera.Doc.add.component("Page", {
 
 Sfera.Doc.add.component("Radio", {
     doc: {
-        descr:"Radio component, used in a group of multiple radio components to represent an exclusive value.\nIts appearance is defined by a [style](#style) attribute.\nThe [group](#group) attribute defines which radio components work together."
+        descr:"Radio component, used in a group of multiple radio components to represent an exclusive value.\nIts appearance is defined by a [style](#style) attribute.\nThe [group](#group) attribute defines which radio components work together.",
+        extra:"![radio](../images/components/radio.png)"
     },
     attr:{
         group: {
@@ -335,7 +460,8 @@ Sfera.Doc.add.component("Radio", {
 
 Sfera.Doc.add.component("Select", {
     doc: {
-        descr:"Select component, allows the user to select a single value among a list of [values](#values)."
+        descr:"Select component, allows the user to select a single value among a list of [values](#values).",
+        extra:"![select](../images/components/select.png)"
     },
     attr:{
         value: {
@@ -404,7 +530,8 @@ Sfera.Doc.add.component("Select", {
 
 Sfera.Doc.add.component("Slider", {
     doc: {
-        descr:"Slider component, allows the user to input a numeric [value](#value) between a [minimum](#min) and [maximum](#max) value.\nThe decimal digits in the value are based on the maximum amount of decimal digits in the min and max attributes."
+        descr:"Slider component, allows the user to input a numeric [value](#value) between a [minimum](#min) and [maximum](#max) value.\nThe decimal digits in the value are based on the maximum amount of decimal digits in the min and max attributes.",
+        extra:"![slider](../images/components/slider.png)"
     },
     attr:{
         cursorSize: {
@@ -461,119 +588,6 @@ Sfera.Doc.add.component("Slider", {
 
         onBlur: {
             descr: "Script to be run when the component loses focus"
-        }
-    }
-});
-
-
-Sfera.Doc.add.preset("Color", {
-    color: {
-        descr: "Specifies the color"
-    }
-});
-
-
-Sfera.Doc.add.preset("Enable", {
-    enabled: {
-        descr: "Specifies whether the component is enabled or not"
-    }
-});
-
-
-Sfera.Doc.add.preset("Label", {
-    label: {
-        descr: "Specifies the label"
-    },
-    color: {
-        descr: "Specifies the color"
-    },
-    fontSize: {
-        descr: "Specifies the font size in pixels"
-    },
-    textAlign: {
-        descr: "Specifies the text alignment"
-    }
-});
-
-
-Sfera.Doc.add.preset("Position", {
-    position:{
-        descr: "Specifies the type of positioning method used (static, relative, absolute or fixed)",
-        hidden: true
-    },
-    x: {
-        descr: "Specifies the left position of the component in pixels, relative to its parent container (a page or a container component)",
-        example: {
-            descr:"Set the left edge of the component to 30 pixels to the right of the left edge of the page",
-            values:{
-                x:30,
-                y:10
-            },
-        }
-    },
-    y: {
-        descr: "Specifies the top position of the component in pixels, relative to its parent container (a page or a container component)",
-        example: {
-            descr:"Set the top edge of the component to 10 pixels to the bottom of the top edge of the page",
-            values:{
-                x:30,
-                y:10
-            },
-        }
-    },
-    rotation: {
-        descr: "Specifies the element's clockwise rotation in degrees",
-        example: {
-            descr:"Set the rotation of the component to 90&deg;",
-            values:{
-                x:30,
-                y:10,
-                rotation:90
-            },
-        }
-    }
-});
-
-
-Sfera.Doc.add.preset("Size", {
-    width: {
-        descr: "Specifies the component's width in pixels",
-        example:{
-            descr:"Sets the component's width to 100 pixels wide",
-            values:{
-                width:100,
-                height:50
-            }
-        }
-    },
-    height: {
-        descr: "Specifies the component's height in pixels",
-        example:{
-            descr:"Sets the component's height to 50 pixels tall",
-            values:{
-                width:100,
-                height:50
-            }
-        }
-    }
-});
-
-
-Sfera.Doc.add.preset("Style", {
-    style: {
-        descr: "Specifies the style",
-    }
-});
-
-
-Sfera.Doc.add.preset("Visibility", {
-    visible: {
-        descr: "Specifies whether or not the component is visible",
-        example: {
-            descr:"Set the component's visibility to false",
-            values:{
-                visible:false
-            }
         }
     }
 });

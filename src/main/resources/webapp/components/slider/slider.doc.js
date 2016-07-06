@@ -1,6 +1,7 @@
 Sfera.Doc.add.component("Slider", {
     doc: {
-        descr:"Slider component, allows the user to input a numeric [value](#value) between a [minimum](#min) and [maximum](#max) value.\nThe decimal digits in the value are based on the maximum amount of decimal digits in the min and max attributes."
+        descr:"Slider component, allows the user to input a numeric [value](#value) between a [minimum](#min) and [maximum](#max) value.\nThe decimal digits in the value are based on the maximum amount of decimal digits in the min and max attributes.",
+        extra:"![slider](../images/components/slider.png)"
     },
     attr:{
         cursorSize: {

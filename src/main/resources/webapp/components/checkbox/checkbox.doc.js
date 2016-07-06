@@ -1,6 +1,7 @@
 Sfera.Doc.add.component("Checkbox", {
     doc: {
-        descr:"Checkbox component, used to represent a boolean value.\nIts appearance is defined by a [style](#style) attribute."
+        descr:"Checkbox component, used to represent a boolean value.\nIts appearance is defined by a [style](#style) attribute.",
+        extra:"![checkbox](../images/components/checkbox.png)"
     },
     attr:{
         focus: {

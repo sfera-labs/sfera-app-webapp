@@ -16,9 +16,6 @@
      attributes: {
          title: {
              type:"string",
-             // @ifdef DOC
-             doc:"Title visible in the browser's title bar"
-             // @endif
          },
 
          skin: {

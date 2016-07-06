@@ -1,6 +1,7 @@
 Sfera.Doc.add.component("Input", {
     doc: {
-        descr:"Input component, to allow the user to input a value of various types (defined by the type attribute).\nIts appearance is defined by a [style](#style) attribute."
+        descr:"Input component, to allow the user to input a value of various types (defined by the type attribute).\nIts appearance is defined by a [style](#style) attribute.",
+        extra:"![input](../images/components/input.png)"
     },
     attr:{
         type: {

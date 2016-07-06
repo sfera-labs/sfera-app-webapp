@@ -31,7 +31,7 @@ Sfera.Login = new(function() {
         user = user || Sfera.client.getAttribute("username","value");
         password = password || Sfera.client.getAttribute("password","value");
 
-        req.open("/api/login?user=" + user + "&password=" + password, 100);
+        req.open("/api/login?user=" + user + "&password=" + password + "&", 100);
     };
 
     this.logout = function () {

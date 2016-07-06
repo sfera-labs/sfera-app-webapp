@@ -1,6 +1,7 @@
 Sfera.Doc.add.component("Select", {
     doc: {
-        descr:"Select component, allows the user to select a single value among a list of [values](#values)."
+        descr:"Select component, allows the user to select a single value among a list of [values](#values).",
+        extra:"![select](../images/components/select.png)"
     },
     attr:{
         value: {
