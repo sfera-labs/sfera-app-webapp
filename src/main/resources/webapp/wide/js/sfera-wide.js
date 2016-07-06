@@ -98,9 +98,13 @@ Sfera.Wide = function(config) {
        Sfera.Net.boot();
        Sfera.Net.wsOpen();
        Sfera.Net.onMessage.add(onWSMessage);
+       Sfera.Net.onClose.add(onWSClose);
     }
 
     function onWSMessage(jsonStr) {
+        if (self.cPopup && self.cPopup.id == "connecting")
+            self.closePopup();
+
         json = JSON.parse(jsonStr);
         switch (json.type) {
             case "console":
@@ -112,6 +116,10 @@ Sfera.Wide = function(config) {
                     fileManager.onWSMessage(json);
                 break;
         }
+    }
+
+    function onWSClose() {
+        self.openPopup("connecting", false);
     }
 
     // focus, restore key events
@@ -203,27 +211,6 @@ Sfera.Wide = function(config) {
 		for (var i=0; i<tbts.length; i++) { // remove labels from buttons?
 			browser.miniButton(document.getElementById("fm_toolbar"+tbts[i]+"Bt"), (vw-t.offsetWidth<390));
 		}
-
-		// panel and arrow pos, better fixed position???
-		/*
-		switch (cToolbarPopup) {
-		case "pe_edit":
-			toolbarArrowE.style.left = Math.round(document.getElementById("pe_toolbarToolsBt").offsetLeft+document.getElementById("pe_toolbarToolsBt").offsetWidth/2+192)+"px"; // 192 = 200 (left panel) - 16/2 (arrow width)
-			break;
-		case "pe_warnings":
-			toolbarPopupPEWarningsE.style.left = Math.round(document.getElementById("pe_toolbarWarningsBt").offsetLeft+document.getElementById("pe_toolbarWarningsBt").offsetWidth/2+100)+"px"; // 100 = 200 (left panel) - 200/2 (panel width)
-			toolbarArrowE.style.left = Math.round(document.getElementById("pe_toolbarWarningsBt").offsetLeft+document.getElementById("pe_toolbarWarningsBt").offsetWidth/2+192)+"px";
-			break;
-		case "fm_edit":
-			var ebt = document.getElementById("fm_toolbarToolsBt");
-			toolbarArrowE.style.left = Math.round(ebt.offsetLeft+ebt.offsetWidth/2-8+tbW)+"px"; // (16/2) arrow width
-			break;
-		case "fm_warnings":
-			toolbarPopupTEWarningsE.style.left = Math.round(document.getElementById("fm_toolbarWarningsBt").offsetLeft+document.getElementById("fm_toolbarWarningsBt").offsetWidth/2-100)+"px";  // -100 = - 200/2 (panel width)
-			toolbarArrowE.style.left = Math.round(document.getElementById("fm_toolbarWarningsBt").offsetLeft+document.getElementById("fm_toolbarWarningsBt").offsetWidth/2-8)+"px";  // -8 = - (16/2) arrow width
-			break;
-		}
-        */
 	} // adjustToolbar()
 
 	// adjust popup if visible
@@ -362,26 +349,6 @@ Sfera.Wide = function(config) {
 			}
 		}
 
-		function initInput(e) {
-            /*
-			f = e.getAttribute("data-autocomplete"); // autocomplete values
-			if (f!=null) { // any values?
-				self.initAutocomplete(e, f);
-			}
-            */
-		}
-
-		function initLabel(e) {
-            /*
-			e.onclick = function (){
-				var pe = this.previousSibling;
-				if (pe.nodeType == 3) pe = pe.previousSibling; // text node? try previous one
-				pe.checked = !pe.checked;
-				if (pe.onchange) pe.onchange();
-			};
-            */
-		}
-
 		var d,i;
 		// add onmousedown on images
 		for (i = 0; (d = e.getElementsByTagName("img")[i]); i++) initImg(d);
@@ -393,11 +360,6 @@ Sfera.Wide = function(config) {
 		for (i = 0; (d = e.getElementsByTagName("span")[i]); i++) initDiv(d);
 		if (e.nodeName == "SPAN") initDiv(e);
 
-		for (i = 0; (d = e.getElementsByTagName("input")[i]); i++) initInput(d);
-		if (e.nodeName == "DIV") initInput(e);
-
-		for (i = 0; (d = e.getElementsByTagName("label")[i]); i++) initLabel(d);
-		if (e.nodeName == "LABEL") initLabel(e);
 	} // initEvents()
 
 	// render a div and get size
@@ -589,8 +551,6 @@ Sfera.Wide = function(config) {
 
 		return res;
 	} // getPopupData()
-
-
 
 	// init apps popup
 	function initAppsPopup() {
@@ -3055,8 +3015,9 @@ Sfera.Wide.Apps.FileManager = function() {
 	this.openChooseFilePopup = function (f,t) {
 		this.popupMode = true;
 		// timestampChecker.stop(); // will be restarted by browse, and on close popup TODO:
-		wide.openPopup("choosefile",true,function(){fileManager.popupMode = false;
-        //    timestampChecker.start();
+		wide.openPopup("choosefile", true, function(){
+            fileManager.popupMode = false;
+            self.onList(self.currentFolder); // refresh
         });
 
 		// if f is null, don't refresh: we're reopening after upload, or new folder
@@ -3179,12 +3140,21 @@ Sfera.Wide.Apps.FileManager = function() {
 
 	// on list, from files
 	this.onList = function (f) {
-		if (!this.editorOpen) // if editor is open, currentFile has to remain the same
-			this.selectItem(-1);
 		this.showFolder(f);
 
-        var o = this.popupMode?this.popupData:this;
-        var p = o.currentPath;
+        // main app path, popup path
+        var i, c,
+            p = "",
+            a = [this.open?this.currentPath:null,
+                this.popupMode?this.popupData.currentPath:null];
+        for (i=0; i<2; i++) {
+            if (a[i] !== null) {
+                c = a[i]?a[i]:".";
+                if (c != p)
+                    p += (p?",":"") + c;
+            }
+        }
+
         var r = {
             action: "subscribe",
             files: p ? p : ".",

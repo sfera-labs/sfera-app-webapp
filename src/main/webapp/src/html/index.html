@@ -1,0 +1,53 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" $manifest;>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="cache-control" content="no-cache">
+
+    <meta id="viewport" name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width, user-scalable=no, shrink-to-fit=no, minimal-ui">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="images/skin/apple-touch-icon-144x144.png" />
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="images/skin/apple-touch-icon-152x152.png" />
+    <link rel="icon" type="image/png" href="images/skin/favicon-32x32.png" sizes="32x32" />
+    <link rel="icon" type="image/png" href="images/skin/favicon-16x16.png" sizes="16x16" />
+    <meta name="application-name" content="Sfera"/>
+    <meta name="msapplication-TileColor" content="#FFFFFF" />
+    <meta name="msapplication-TileImage" content="images/skin/mstile-144x144.png" />
+    <title>Sfera</title>
+    <script type="text/javascript" src="sfera-client.js"></script>
+    <script type="text/javascript" src="interface.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <script type="text/javascript">
+        var client;
+        var config = {
+            timestamp: $timestamp;,
+            idleTimeout:$idleTimeout;,
+            appCacheEnabled: $appCacheEnabled;,
+            interface: "$interface;"
+        };
+        Sfera.Device.whenReady(function() {
+            client = new Sfera.Client(config);
+            client.boot();
+        }, client);
+    </script>
+
+    <div id="bg"></div>
+    <div id="sfera"></div>
+    <div id="loading">
+        <image class="inner" src="images/skin/loading.svg">
+    </div>
+    <div id="cacheStatus">
+        <span id="cachePerc">20%</span>
+        <image class="inner" src="images/skin/loading.svg">
+    </div>
+
+</body>
+
+</html>

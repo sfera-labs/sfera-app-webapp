@@ -14,6 +14,7 @@ Interface component, the root component that contains all the others.
 |**[title](#title)**|string|Specifies the interface's title|
 |**[skin](#skin)**|string|Specifies the interface's skin. Can be set only on the interface's index.xml|
 |**[zoom](#zoom)**|float|Specifies the interfaces zoom|
+|**[autoReload](#autoReload)**|boolean||
 
 
 ---
@@ -137,4 +138,12 @@ Specifies the interface's skin. Can be set only on the interface's index.xml.
 Specifies the interfaces zoom.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>float</td></tr></table>
 
+
+
+---
+
+### autoReload
+
+
+<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>boolean</td></tr><tr><td><b>Default value:</b></td><td>true</td></tr></table>
 

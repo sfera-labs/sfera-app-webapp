@@ -3,8 +3,6 @@
 
 Checkbox component, used to represent a boolean value.
 Its appearance is defined by a [style](#style) attribute.
-
-![checkbox](../images/components/checkbox.png)
 ## Attributes
 
 |Name|Type|Description|
@@ -211,7 +209,7 @@ setAttribute("myCheckbox","height","50")
 ### style
 
 Specifies the style.
-<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>string</td></tr><tr><td><b>Default value:</b></td><td>default</td></tr><tr><td><b>Values:</b></td><td>default, radio, switch, clear</td></tr></table>
+<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>string</td></tr><tr><td><b>Default value:</b></td><td>default</td></tr><tr><td><b>Values:</b></td><td>default</td></tr></table>
 
 
 
@@ -337,5 +335,4 @@ Script to be run when the field gains focus.
 
 Script to be run when the field loses focus.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>js</td></tr></table>
-
 

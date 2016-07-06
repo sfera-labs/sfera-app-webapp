@@ -1,0 +1,138 @@
+// button functions
+@mixin border-radius($radius) {
+    -webkit-border-radius: $radius;
+    -moz-border-radius: $radius;
+    border-radius: $radius;
+}
+@mixin opacity($o) {
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=\"#{$o}\")";
+    filter:alpha(opacity=$o);
+    opacity: $o/100;
+}
+@mixin shadow($v) {
+    -webkit-box-shadow: #{$v};
+    -moz-box-shadow: #{$v};
+    box-shadow: #{$v};
+}
+@mixin sizing($v) {
+    -webkit-box-sizing: #{$v};
+    -moz-box-sizing: #{$v};
+    -ms-box-sizing: #{$v};
+    box-sizing: #{$v};
+}
+@mixin transition($v) {
+    -webkit-transition: #{$v}; // Saf3.2+, Chrome
+    -moz-transition: #{$v}; // FF3.7+
+    -o-transition: #{$v}; // Opera 10.5
+    transition: #{$v};
+}
+@mixin transform($v) {
+    -webkit-transform: #{$v};
+    -ms-transform: #{$v};
+    transform: #{$v};
+}
+@mixin gradient($v, $g) {
+    background-color: #{$v};
+    background-image: -webkit-linear-gradient(#{$g});
+    background-image: -moz-linear-gradient(#{$g});
+    background-image: -o-linear-gradient(#{$g});
+    background-image: -ms-linear-gradient(#{$g});
+    background-image: linear-gradient(#{$g});
+}
+@mixin gradient-oblique($v1, $v2) {
+    background: mix($v1,$v2);
+    /* Old browsers */
+    background: -moz-linear-gradient(-45deg, #{$v1} 0%, #{$v2} 99%);
+    /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, right bottom, color-stop(0%,#{$v1}), color-stop(99%,#{$v2}));
+    /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(-45deg, #{$v1} 0%,#{$v2} 99%);
+    /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(-45deg, #{$v1} 0%,#{$v2} 99%);
+    /* Opera 11.10+ */
+    background: -ms-linear-gradient(-45deg, #{$v1} 0%,#{$v2} 99%);
+    /* IE10+ */
+    background: linear-gradient(135deg, #{$v1} 0%,#{$v2} 99%);
+    /* W3C */
+    filter:progid:DXImageTransform.Microsoft.gradient( startColorstr='#{$v1}', endColorstr='#572e8f',GradientType=1 );
+    /* IE6-9 fallback on horizontal gradient */
+}
+@mixin button-flat($bg) {
+    $c1: $bg + #202020;
+    $c2: $bg - #101010;
+    $c3: $bg + #404040;
+    border-top: 1px solid $bg;
+    background-image: none;
+    background-color: $bg;
+    &.over {
+        border-top: 1px solid $c1;
+        background-color: $c1;
+    }
+    &.down {
+        border-top: 1px solid $c2;
+        background-color: $c2;
+    }
+    &.selected {
+        border-top: 1px solid $c3;
+        background-color: $c3;
+    }
+}
+@mixin button-1($top-border, $top-bg, $bottom-bg) {
+    $c1: $top-border + #202020;
+    $c2: $top-bg + #202020;
+    $c3: $bottom-bg + #202020;
+    $c4: $top-bg - #101010;
+    $c5: $bottom-bg - #202020;
+    $top-bg-s: $top-bg + #404040;
+    $bottom-bg-s: $bottom-bg + #404040;
+    border-top: 1px solid $top-border;
+    @include gradient(mix($top-bg,$bottom-bg), "top, #{$top-bg} 0%,#{$bottom-bg} 100%");
+    &.over {
+        border-top: 1px solid $c1;
+        @include gradient(mix($c2,$c3), "top, #{$c2} 0%,#{$c3} 100%");
+    }
+    &.down {
+        border-top: 1px solid $bottom-bg;
+        background: $c3;
+    }
+    &.selected {
+        @include gradient(mix($top-bg-s,$bottom-bg-s), "top, #{$top-bg-s} 0%,#{$bottom-bg-s} 100%");
+    }
+}
+@mixin button-g($top-border, $bg1, $bg2, $bg3, $bg4) {
+    $top-border: rgba($top-border,0.7);
+    $abg1: rgba($bg1,0.5);
+    $abg2: rgba($bg2,0.5);
+    $abg3: rgba($bg3,0.5);
+    $abg4: rgba($bg4,0.5);
+    $ct: $top-border + rgba(20,20,20,0.7);
+    $c1: $abg1 + rgba(20,20,20,0.5);
+    $c2: $abg2 + rgba(20,20,20,0.5);
+    $c3: $abg3 + rgba(20,20,20,0.5);
+    $c4: $abg4 + rgba(20,20,20,0.5);
+    border-top: 1px solid $top-border;
+    @include gradient($abg1, "top, #{$abg1} 0%, #{$abg2} 49.9%, #{$abg3} 50%, #{$abg4} 100%");
+    &.over {
+        border-top: 1px solid $ct;
+        @include gradient($c1, "top, #{$c1} 0%, #{$c2} 49.9%, #{$c3} 50%, #{$c4} 100%");
+    }
+    &.down {
+        border-top: 1px solid rgba(0,0,0,0.4);
+        background: $abg3;
+    }
+}
+@mixin button-t($top-border) {
+    $top-border: rgba($top-border,0.7);
+    $ct: $top-border + rgba(20,20,20,0.7);
+    border-top: 1px solid $top-border;
+    background-image: none;
+    background-color: transparent;
+    &.over {
+        border-top: 1px solid $ct;
+        background: rgba(255,255,255,0.3);
+    }
+    &.down {
+        border-top: 1px solid rgba(0,0,0,0.4);
+        background: rgba(0,0,0,0.3);
+    }
+}

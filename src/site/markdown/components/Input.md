@@ -3,8 +3,6 @@
 
 Input component, to allow the user to input a value of various types (defined by the type attribute).
 Its appearance is defined by a [style](#style) attribute.
-
-![input](../images/components/input.png)
 ## Attributes
 
 |Name|Type|Description|
@@ -24,17 +22,19 @@ Its appearance is defined by a [style](#style) attribute.
 |**[focus](#focus)**|boolean|If true, gives the component focus|
 |**[icon](#icon)**|string|Sepcifies an optional icon's url|
 |**[eraseButton](#eraseButton)**|boolean|If true, shows the erase button|
+|**[error](#error)**|boolean||
 |**[changeDelay](#changeDelay)**|integer|Speficies the delay in milliseconds before a value's change is detected|
 |**[keyRegex](#keyRegex)**|regexp|Specifies a regex to validate a key press. If the regex doesn't match, the input is canceled|
 |**[valueRegex](#valueRegex)**|regexp|Specifies a regex to validate the value. If the regex doesn't match, the value is not sent to the server|
 |**[fontSize](#fontSize)**|integer|Specifies the font size in pixels|
 |**[fontColor](#fontColor)**|string|Specifies the font color|
 |**[maxLength](#maxLength)**|integer|Specifies the value's maximum length|
+|**[onChange](#onChange)**|js|Script to be run when a change in value is detected. Variables `id` and `value` can be used.|
+|**[onKeyDown](#onKeyDown)**|js||
 |**[onKeyUp](#onKeyUp)**|js|Script to be run on key up event|
-|**[onChange](#onChange)**|js|Script to be run when a change in value is detected. Variables id and value can be used.|
-|**[onEnterKey](#onEnterKey)**|js|Script to be run when enter key is pressed|
-|**[onFocus](#onFocus)**|js|Script to be run when the component receives focus|
-|**[onBlur](#onBlur)**|js|Script to be run when the component loses focus|
+|**[onEnterKey](#onEnterKey)**|js|Script to be run when enter key is pressed. Variables `id` and `value` can be used.|
+|**[onFocus](#onFocus)**|js|Script to be run when the component receives focus. Variables `id` and `value` can be used.|
+|**[onBlur](#onBlur)**|js|Script to be run when the component loses focus. Variables `id` and `value` can be used.|
 
 
 ---
@@ -216,7 +216,7 @@ setAttribute("myInput","height","50")
 ### style
 
 Specifies the style.
-<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>string</td></tr><tr><td><b>Default value:</b></td><td>default</td></tr><tr><td><b>Values:</b></td><td>default, clear</td></tr></table>
+<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>string</td></tr><tr><td><b>Default value:</b></td><td>default</td></tr><tr><td><b>Values:</b></td><td>default</td></tr></table>
 
 
 
@@ -270,6 +270,15 @@ Sepcifies an optional icon's url.
 ### eraseButton
 
 If true, shows the erase button.
+<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>boolean</td></tr><tr><td><b>Default value:</b></td><td>false</td></tr></table>
+
+
+
+---
+
+### error
+
+
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>boolean</td></tr><tr><td><b>Default value:</b></td><td>false</td></tr></table>
 
 
@@ -330,18 +339,9 @@ Specifies the value's maximum length.
 
 ---
 
-### onKeyUp
-
-Script to be run on key up event.
-<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>js</td></tr></table>
-
-
-
----
-
 ### onChange
 
-Script to be run when a change in value is detected. Variables id and value can be used.
+Script to be run when a change in value is detected. Variables `id` and `value` can be used.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>js</td></tr><tr><td><b>Default value:</b></td><td>event(id,value)</td></tr></table>
 
 >**Example:**
@@ -365,9 +365,27 @@ setAttribute("myInput","onChange","alert(id+' changed. Current value: '+value)")
 
 ---
 
+### onKeyDown
+
+
+<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>js</td></tr></table>
+
+
+
+---
+
+### onKeyUp
+
+Script to be run on key up event.
+<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>js</td></tr></table>
+
+
+
+---
+
 ### onEnterKey
 
-Script to be run when enter key is pressed.
+Script to be run when enter key is pressed. Variables `id` and `value` can be used.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>js</td></tr></table>
 
 
@@ -376,7 +394,7 @@ Script to be run when enter key is pressed.
 
 ### onFocus
 
-Script to be run when the component receives focus.
+Script to be run when the component receives focus. Variables `id` and `value` can be used.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>js</td></tr></table>
 
 
@@ -385,7 +403,6 @@ Script to be run when the component receives focus.
 
 ### onBlur
 
-Script to be run when the component loses focus.
+Script to be run when the component loses focus. Variables `id` and `value` can be used.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>js</td></tr></table>
-
 

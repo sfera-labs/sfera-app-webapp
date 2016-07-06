@@ -3,8 +3,6 @@
 
 Slider component, allows the user to input a numeric [value](#value) between a [minimum](#min) and [maximum](#max) value.
 The decimal digits in the value are based on the maximum amount of decimal digits in the min and max attributes.
-
-![slider](../images/components/slider.png)
 ## Attributes
 
 |Name|Type|Description|
@@ -222,7 +220,7 @@ Specifies the style.
 ### color
 
 Specifies the color.
-<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>string</td></tr><tr><td><b>Default value:</b></td><td>default</td></tr><tr><td><b>Values:</b></td><td>default, light, stable, positive, calm, balanced, energized, assertive, royal, dark</td></tr></table>
+<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>string</td></tr><tr><td><b>Default value:</b></td><td>default</td></tr></table>
 
 
 
@@ -357,5 +355,4 @@ Script to be run when the component receives focus.
 
 Script to be run when the component loses focus.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>js</td></tr></table>
-
 

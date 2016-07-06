@@ -1,10 +1,8 @@
 
 # Button
 
-A button component used to execute customized JavaScript code.
+A button componentz used to execute customized JavaScript code.
 Its appearance is defined by a style attribute. The [onClick](#onClick) attribute is used to associate an action to execute when the button is pressed.
-
-![button](../images/components/button.png)
 ## Attributes
 
 |Name|Type|Description|
@@ -207,7 +205,7 @@ setAttribute("myButton","height","50")
 ### style
 
 Specifies the style.
-<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>string</td></tr><tr><td><b>Default value:</b></td><td>default</td></tr><tr><td><b>Values:</b></td><td>default, clear, icon</td></tr></table>
+<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>string</td></tr><tr><td><b>Default value:</b></td><td>default</td></tr><tr><td><b>Values:</b></td><td>default</td></tr></table>
 
 
 
@@ -216,7 +214,7 @@ Specifies the style.
 ### color
 
 Specifies the color.
-<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>string</td></tr><tr><td><b>Default value:</b></td><td>default</td></tr><tr><td><b>Values:</b></td><td>default, light, stable, positive, calm, balanced, energized, assertive, royal, dark</td></tr></table>
+<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>string</td></tr><tr><td><b>Default value:</b></td><td>default</td></tr><tr><td><b>Values:</b></td><td>default</td></tr></table>
 
 
 
@@ -297,5 +295,4 @@ Script to be run on down/touch start event.
 
 Script to be run on mouse/touch move event.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>js</td></tr></table>
-
 

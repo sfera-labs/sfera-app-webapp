@@ -2,8 +2,6 @@
 # Select
 
 Select component, allows the user to select a single value among a list of [values](#values).
-
-![select](../images/components/select.png)
 ## Attributes
 
 |Name|Type|Description|
@@ -356,5 +354,4 @@ Script to be run when the component receives focus.
 
 Script to be run when the component loses focus.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>js</td></tr></table>
-
 

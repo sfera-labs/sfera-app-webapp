@@ -1,0 +1,1 @@
+![checkbox](../images/components/checkbox.png)

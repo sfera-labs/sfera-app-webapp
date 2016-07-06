@@ -1,0 +1,64 @@
+@import "../../css/_common.scss";
+$buttonBorderRadius: 7px;
+.component.comp_slider {
+    .container {
+        width: 100%;
+        height: 100%;
+    }
+
+    // active bar
+    // background
+    .bg,
+    .bar {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        @include sizing("border-box");
+        .in {
+            width: 100%;
+            height: 100%;
+            @include sizing("border-box");
+            @include border-radius($buttonBorderRadius);
+        }
+    }
+    .bg {
+        .in {
+            @include shadow("inset 2px 2px 2px 1px rgba(0, 0, 0, 0.3)");
+            border-right: 1px solid rgba(255, 255, 255, 0.4);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.7);
+        }
+    }
+    .bar .in {
+        overflow: hidden;
+        padding:1px;
+        .fill {
+            height: 100%;
+            width: 100%;
+            //@include border-radius(0 0 $buttonBorderRadius $buttonBorderRadius);
+        }
+    }
+    .vertical {
+        .bg,
+        .bar {
+            padding: 0 7px;
+        }
+    }
+    .horizontal {
+        .bg,
+        .bar {
+            padding: 7px 0;
+        }
+    }
+
+    // ghost
+    .ghost {
+        position: absolute;
+        @include border-radius($buttonBorderRadius);
+    }
+    .over {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+    }
+
+}

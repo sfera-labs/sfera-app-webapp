@@ -1,6 +1,6 @@
 {
 "version": 3,
-"mappings": "AAAA,sBAAuB;EACnB,MAAM,EAAE,OAAO",
+"mappings": "AACA,sBAAuB;EACnB,MAAM,EAAE,OAAO",
 "sources": ["label.scss"],
 "names": [],
 "file": "label.css"

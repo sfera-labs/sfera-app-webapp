@@ -238,4 +238,3 @@ Specifies the text alignment.
 Specifies the label's text.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>string</td></tr></table>
 
-

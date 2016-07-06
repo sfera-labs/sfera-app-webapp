@@ -4,8 +4,6 @@
 Radio component, used in a group of multiple radio components to represent an exclusive value.
 Its appearance is defined by a [style](#style) attribute.
 The [group](#group) attribute defines which radio components work together.
-
-![radio](../images/components/radio.png)
 ## Attributes
 
 |Name|Type|Description|
@@ -348,5 +346,4 @@ Script to be run when the field loses focus.
 
 Specifies the radio's group. Only one radio component of the same group can be checked at the same time.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>string</td></tr></table>
-
 

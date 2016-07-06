@@ -189,4 +189,3 @@ Specifies the component's height in pixels.
 setAttribute("myContainer","height","50")
 ```
 
-

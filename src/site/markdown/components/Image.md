@@ -198,4 +198,3 @@ setAttribute("myImage","height","50")
 Specifies the image source file.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>string</td></tr></table>
 
-

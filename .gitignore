@@ -29,3 +29,6 @@ ehthumbs.db
 Thumbs.db
 *.lck
 /bin/
+
+src/main/webapp/node_modules
+src/main/webapp/tasks

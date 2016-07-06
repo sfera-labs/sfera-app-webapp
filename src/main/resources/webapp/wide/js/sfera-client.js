@@ -2875,8 +2875,8 @@ Sfera.Net = new (function() {
 
     function onWsOpen(event) {
         // onopen gets called twice and the first time event.data is undefined. TODO:check
-        if (event.data === undefined)
-            return;
+        //if (event.data === undefined)
+        //    return;
 
         self.onOpen.dispatch(event.data);
         Sfera.Debug.log("ws open", event.data);
@@ -5085,7 +5085,7 @@ Sfera.Utils = function() {
             return xmlDoc;
         };
     } else {
-        throw new Error("No XML parser found");
+        //throw new Error("No XML parser found");
     }
 
 };

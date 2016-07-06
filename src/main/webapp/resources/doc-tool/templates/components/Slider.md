@@ -1,0 +1,1 @@
+![slider](../images/components/slider.png)

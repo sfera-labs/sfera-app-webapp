@@ -1,0 +1,79 @@
+@import "../../css/_common.scss";
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    color: white;
+    padding: 0;
+    margin: 0;
+    background: #2f3336;
+    background: #369;
+}
+img {
+    padding: 0;
+    margin: 0;
+}
+#loading {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 100;
+    background: rgba(0,0,0,0.7);
+    text-align: center;
+    .inner {
+        width:70px;
+        height:70px;
+        position: relative;
+        top: 50%;
+        @include transform(translateY(-50%));
+    }
+}
+#cacheStatus {
+    position: absolute;
+    cursor: default;
+    display: none;
+    top: 0;
+    right: 0;
+    z-index: 101;
+    background: #26609f;
+    color: white;
+    padding: 5px;
+    @include border-radius(0 0 0 4px);
+    @include shadow(0px 0px 5px 0px black);
+    span {
+        margin: 0 5px;
+    }
+    img {
+        margin-top: 0;
+        position: relative;
+        top: 3px;
+        width: 20px;
+        height: 20px;
+    }
+}
+.component {
+    position: absolute;
+    left: 0;
+    top: 0;
+    &.page {
+        background-color: #4040e0;
+    }
+    &.interface {
+        background-color: rgba(0, 0, 0, 0.2);
+    }
+}
+/*
+.txt-header {
+    padding-top: 15pt;
+}
+.txt-header-list LI {
+    text-align: center;
+    padding: 0 0 15pt;
+}
+.txt-real {
+    line-height: 14pt;
+}
+*/
+.component.disabled {
+    @include opacity(50);
+}
