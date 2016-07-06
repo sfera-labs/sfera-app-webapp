@@ -19,6 +19,6 @@ TODO: ADD MAVEN INSTRUCTIONS
 
 ### Client
 
-The client sources are located under [tree/master/src/main/webapp](src/main/webapp).
+The client sources are located under [src/main/webapp](tree/master/src/main/webapp).
 
 [Grunt](http://gruntjs.com) automates the building of the client part of the WebApp.
