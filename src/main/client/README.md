@@ -55,4 +55,3 @@ The tasks:
 
 Default icon set: [https://github.com/Keyamoon/IcoMoon-Free](IcoMoon Free) from [https://icomoon.io](icomoon.io).
 Released under the CC BY 4.0 license.
-
