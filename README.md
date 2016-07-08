@@ -9,7 +9,7 @@ If that’s still not enough for your project you can create custom components w
 Moreover, it provides a Web-based development environment, the Web IDE or wIDE, to browse and edit files on the server and to interact with Sfera’s console.
 
 * **Visit:** [Sfera Labs website](https://sferalabs.cc) and [Sfera website](https://sferalabs.cc/sfera)
-* **Learn:** [Documentation](https://sfera.sferalabs.cc/docs)
+* **Learn:** [Documentation](https://sfera.sferalabs.cc/docs/sfera)
 
 ## Building
 
@@ -19,6 +19,6 @@ TODO: ADD MAVEN INSTRUCTIONS
 
 ### Client
 
-The client sources are located under [src/main/webapp](src/main/webapp).
+The client sources are located under [src/main/client](src/main/client).
 
 [Grunt](http://gruntjs.com) automates the building of the client part of the WebApp.
