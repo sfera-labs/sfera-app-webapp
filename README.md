@@ -11,13 +11,7 @@ Moreover, it provides a Web-based development environment, the Web IDE or wIDE, 
 * **Visit:** [Sfera Labs website](https://sferalabs.cc) and [Sfera website](https://sferalabs.cc/sfera)
 * **Learn:** [Documentation](https://sfera.sferalabs.cc/docs/sfera)
 
-## Building
-
-
-TODO: ADD MAVEN INSTRUCTIONS
-
-
-### Client
+### Client sources
 
 The client sources are located under [src/main/client](src/main/client).
 
