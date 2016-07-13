@@ -315,7 +315,7 @@ Sfera.Wide = function(config) {
 	} // formatFS()
 
     this.formatDate = function (date) {
-        return date.replace(/-/g,"/").replace("T"," ").replace("Z","");
+        return date.replace(/-/g,"/").replace("T"," ").replace("Z","").substr(0,16);
     }
 
 
@@ -2075,7 +2075,8 @@ Sfera.Wide.Apps.FileManager = function() {
 
 		// auto select after uploading?
 		if (selectOnRefresh) {
-			if (selectOnRefresh.path == o.currentPath) {
+			if (selectOnRefresh.path == o.currentPath &&
+                selectOnRefresh.path+"/"+selectOnRefresh.name != o.currentFile ) {
 				for (var i=0; i<data.sub.length; i++) {
 					if (selectOnRefresh.name==data.sub[i].name) {
 						this.selectItem(i); // just uploaded, popup mode. select it
