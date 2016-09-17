@@ -23,7 +23,7 @@ Here is an example of the file structure for an interface:
         |   |   |   |   └── my-picture.jpg
         |   |   ├── my-code.js
         |   |   ├── my-other-code.js
-        |   |   └── my-style.css
+        |   |   └── style.css
         └── cache/
             └── ...
 
