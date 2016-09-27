@@ -55,7 +55,7 @@ public class WebApp extends Application {
 	static boolean useApplicationCache;
 	static boolean useJSBuilder;
 	static boolean useJSMin;
-	static int idleTimeout;
+	static long idleTimeout;
 
 	@Override
 	public void onEnable(Configuration config) {
