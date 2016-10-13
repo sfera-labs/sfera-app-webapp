@@ -19,7 +19,7 @@ The decimal digits in the value are based on the maximum amount of decimal digit
 |**[style](#style)**|string|Specifies the style|
 |**[color](#color)**|string|Specifies the color|
 |**[enabled](#enabled)**|boolean|Specifies whether the component is enabled or not|
-|**[cursorSize](#cursorSize)**|integer|Specifies the label's text|
+|**[cursorSize](#cursorSize)**|integer|Specifies the cursor's size in pixels|
 |**[barColor](#barColor)**|color|Specifies the color of the bar|
 |**[min](#min)**|float|Specifies the minumum value|
 |**[max](#max)**|float|Specifies the maximum value|
@@ -221,7 +221,7 @@ Specifies the style.
 ### color
 
 Specifies the color.
-<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>string</td></tr><tr><td><b>Default value:</b></td><td>default</td></tr></table>
+<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>string</td></tr><tr><td><b>Default value:</b></td><td>default</td></tr><tr><td><b>Values:</b></td><td>default, light, stable, positive, calm, balanced, energized, assertive, royal, dark</td></tr></table>
 
 
 
@@ -238,7 +238,7 @@ Specifies whether the component is enabled or not.
 
 ### cursorSize
 
-Specifies the label's text.
+Specifies the cursor's size in pixels.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>integer</td></tr><tr><td><b>Default value:</b></td><td>30</td></tr></table>
 
 
