@@ -15,21 +15,21 @@
 
      attributes: {
          title: {
-             type:"string",
+             type: "string",
              // @ifdef DOC
              doc:"Title visible in the browser's title bar"
              // @endif
          },
 
          skin: {
-            default:"default",
+            default: "default",
             update: function () {
                 Sfera.client.skin = new Sfera.Skins[Sfera.Utils.capitalize(this.value)]();
             }
          },
 
          zoom: {
-             type:"float",
+             type: "float",
              update: function () {
          		if (this.value != 1) {
          			var bodyE = document.getElementsByTagName("BODY")[0];
@@ -57,6 +57,7 @@
          },
 
          backgroundColor: {
+             type: "color",
              update: function () {
                  var bodyE = document.getElementById("bg");
                  bodyE.style.backgroundColor = this.value;
@@ -64,6 +65,7 @@
          },
 
          pageBackgroundColor: {
+             type: "color",
              update: function () {
                  this.component.element.style.backgroundColor = this.value;
              }

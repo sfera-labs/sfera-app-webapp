@@ -16,7 +16,7 @@ Sfera.Doc.add.component("Interface", {
         },
 
         backgroundColor: {
-            descr: "Specifies the background color of the interface"
+            descr: "Specifies the background color of the interface (the frame visible around the pages)"
         },
 
         pageBackgroundColor: {
