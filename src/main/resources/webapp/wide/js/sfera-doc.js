@@ -107,6 +107,17 @@ Sfera.Doc.add.preset("Position", {
                 rotation:90
             },
         }
+    },
+    opacity: {
+        descr: "Specifies the element's opacity (0..1)",
+        example: {
+            descr:"Set the opacity of the component to 50%",
+            values:{
+                x:30,
+                y:10,
+                opacity:0.5
+            },
+        }
     }
 });
 
@@ -186,7 +197,7 @@ Sfera.Doc.add.component("Button", {
         },
 
         onDown: {
-            descr: "Script to be run on down/touch start event"
+            descr: "Script to be run on down/touch start event. The onClick event function as an onUp event."
         },
 
         onMove: {
@@ -373,7 +384,16 @@ Sfera.Doc.add.component("Interface", {
 
         zoom: {
             descr: "Specifies the interfaces zoom"
+        },
+
+        backgroundColor: {
+            descr: "Specifies the background color of the interface"
+        },
+
+        pageBackgroundColor: {
+            descr: "Specifies the background color for the interface's pages"
         }
+
     }
 });
 

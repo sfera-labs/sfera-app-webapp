@@ -14,6 +14,7 @@ Its appearance is defined by a style attribute. The [onClick](#onClick) attribut
 |**[x](#x)**|integer|Specifies the left position of the component in pixels, relative to its parent container (a page or a container component)|
 |**[y](#y)**|integer|Specifies the top position of the component in pixels, relative to its parent container (a page or a container component)|
 |**[rotation](#rotation)**|integer|Specifies the element's clockwise rotation in degrees|
+|**[opacity](#opacity)**|integer|Specifies the element's opacity (0..1)|
 |**[width](#width)**|integer|Specifies the component's width in pixels|
 |**[height](#height)**|integer|Specifies the component's height in pixels|
 |**[style](#style)**|string|Specifies the style|
@@ -23,7 +24,7 @@ Its appearance is defined by a style attribute. The [onClick](#onClick) attribut
 |**[icon](#icon)**|string|Specifies the url of the icon, if any|
 |**[fontSize](#fontSize)**|string|Specifies the label's font size|
 |**[onClick](#onClick)**|js|Script to be run on click/touch end event. The variable _id_ contains the button's id.|
-|**[onDown](#onDown)**|js|Script to be run on down/touch start event|
+|**[onDown](#onDown)**|js|Script to be run on down/touch start event. The onClick event function as an onUp event.|
 |**[onMove](#onMove)**|js|Script to be run on mouse/touch move event|
 
 
@@ -145,6 +146,32 @@ Specifies the element's clockwise rotation in degrees.
 
 >``` js
 setAttribute("myButton","rotation","90")
+```
+
+
+
+---
+
+### opacity
+
+Specifies the element's opacity (0..1).
+<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>integer</td></tr></table>
+
+>**Example:**
+>
+>Set the opacity of the component to 50%.
+>
+
+>In index.xml:
+
+>``` xml
+<button id="myButton" x="30" y="10" opacity="0.5" />
+```
+
+>Via scripting:
+
+>``` js
+setAttribute("myButton","opacity","0.5")
 ```
 
 
@@ -285,7 +312,7 @@ setAttribute("myButton","onClick","alert('hello')")
 
 ### onDown
 
-Script to be run on down/touch start event.
+Script to be run on down/touch start event. The onClick event function as an onUp event.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>js</td></tr></table>
 
 

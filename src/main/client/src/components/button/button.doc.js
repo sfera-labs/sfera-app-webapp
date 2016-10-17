@@ -29,7 +29,7 @@ Sfera.Doc.add.component("Button", {
         },
 
         onDown: {
-            descr: "Script to be run on down/touch start event"
+            descr: "Script to be run on down/touch start event. The onClick event function as an onUp event."
         },
 
         onMove: {

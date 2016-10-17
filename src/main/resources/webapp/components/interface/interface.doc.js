@@ -13,6 +13,15 @@ Sfera.Doc.add.component("Interface", {
 
         zoom: {
             descr: "Specifies the interfaces zoom"
+        },
+
+        backgroundColor: {
+            descr: "Specifies the background color of the interface"
+        },
+
+        pageBackgroundColor: {
+            descr: "Specifies the background color for the interface's pages"
         }
+
     }
 });

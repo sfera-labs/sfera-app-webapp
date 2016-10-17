@@ -15,6 +15,8 @@ Interface component, the root component that contains all the others.
 |**[skin](#skin)**|string|Specifies the interface's skin. Can be set only on the interface's index.xml|
 |**[zoom](#zoom)**|float|Specifies the interfaces zoom|
 |**[autoReload](#autoReload)**|boolean||
+|**[backgroundColor](#backgroundColor)**|string|Specifies the background color of the interface|
+|**[pageBackgroundColor](#pageBackgroundColor)**|string|Specifies the background color for the interface's pages|
 
 
 ---
@@ -146,4 +148,22 @@ Specifies the interfaces zoom.
 
 
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>boolean</td></tr><tr><td><b>Default value:</b></td><td>true</td></tr></table>
+
+
+
+---
+
+### backgroundColor
+
+Specifies the background color of the interface.
+<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>string</td></tr></table>
+
+
+
+---
+
+### pageBackgroundColor
+
+Specifies the background color for the interface's pages.
+<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>string</td></tr></table>
 
