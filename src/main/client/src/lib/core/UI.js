@@ -134,8 +134,7 @@ Sfera.UI.Button.prototype = {
 		} else {
             this.element.onmouseover = this.onEvent.bind(this,'mouseover',f.onover,null);
 			this.element.onmouseout = this.onEvent.bind(this,'mouseout',f.onout,null);
-			if (f.onmove)
-				this.element.onmousemove = this.onEvent.bind(this,'mousemove',f.onmove,null);
+			this.element.onmousemove = this.onEvent.bind(this,'mousemove',f.onmove,null);
 			this.element.onmousedown = this.onEvent.bind(this,'mousedown',f.ondown,null);
 			this.element.onmouseup = this.onEvent.bind(this,'mouseup',f.onup,null);
 		}

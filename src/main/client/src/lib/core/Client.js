@@ -66,8 +66,6 @@ Sfera.Client = function(config) {
     var commandReqs = {};
     var eventReqs = {};
 
-    var idleIntervalId = null;
-
     // html elements
     var elements = {};
 
@@ -136,9 +134,9 @@ Sfera.Client = function(config) {
 
         // window events
         window.onresize = adjustLayout;
-        window.onkeydown = onKeyDown;
-        window.onkeyup = onKeyUp;
-        window.onkeypress = onKeyPress;
+        window.addEvent("keydown", window, onKeyDown);
+        window.addEvent("keyup", window, onKeyUp);
+        window.addEvent("keypress", window, onKeyPress);
 
         // loading events
         elements.loading.onmousedown =
@@ -178,7 +176,10 @@ Sfera.Client = function(config) {
 
     // Net callbacks
 
-    function onConnection() {
+    function onConnection(json) {
+        config.idleTimeout = parseInt(json.idleTimeout);
+        Sfera.Login.resetIdleTimeout();
+
         self.state.firstEventReceived = false;
         if (self.isLogin) {
             Sfera.Login.gotoInterface();
@@ -248,7 +249,6 @@ Sfera.Client = function(config) {
         this.cInterface.setAttribute("visible","true");
 
         adjustLayout();
-        resetIdleTimeout();
 
         this.state.started = true;
         this.showLoading(false);
@@ -315,6 +315,11 @@ Sfera.Client = function(config) {
     };
 
     this.sendEvent = function(id, value, callback) {
+        if (!id) {
+            Sfera.Debug.logError("sending event: id not valid");
+            return;
+        }
+
         var tag = (new Date()).getTime(); // request id
         var req = {
             id: "webapp.ui." + id,
@@ -494,50 +499,6 @@ Sfera.Client = function(config) {
         Sfera.Browser.preventDefault(evt);
         return false;
     } // onKeyUp()
-
-
-    /////////////////////////// idle
-
-    function stopIdleTimeout() {
-        setIdleEvents(true);
-        clearInterval(idleIntervalId);
-    }
-
-    function resetIdleTimeout() {
-        stopIdleTimeout();
-        if (config.idleTimeout && parseInt(config.idleTimeout) && !self.isLogin) {
-            setIdleEvents();
-            idleIntervalId = setInterval(onIdleInterval, 1000);
-            localStorage.setItem("idleTimestamp",(new Date().getTime()));
-        }
-    }
-
-    // check every second (shared between all tabs)
-    function onIdleInterval() {
-        // check last timestamp
-        var ts = localStorage.getItem("idleTimestamp");
-        var nts = new Date().getTime();
-
-        if (nts-ts >= parseInt(config.idleTimeout)*1000) {
-            onIdleTimeout();
-        }
-    }
-
-    function onIdleTimeout() {
-        stopIdleTimeout();
-        Sfera.Login.logout();
-    }
-
-    function setIdleEvents(remove) {
-		var f = (remove?"remove":"add")+"Event";
-		var t = Sfera.Device.touch;
-		window[f](t?"touchstart":"mousedown", document.body, onIdleActivity);
-		window[f](t?"touchend":"mouseup", document.body, onIdleActivity);
-        window[f]("onkeydown", document.body, onIdleActivity);
-	}
-	function onIdleActivity(e) {
-		resetIdleTimeout();
-	}
 
     ////////////////////////// focus
     var focusedCo;

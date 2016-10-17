@@ -117,7 +117,6 @@ Sfera.Net = new (function() {
             resetConnCheckTimeout();
             self.wsSend("&");
         } else {
-            self.onMessage.dispatch(event.data);
             Sfera.Debug.log("ws msg", event.data);
             json = JSON.parse(event.data);
 
@@ -132,12 +131,14 @@ Sfera.Net = new (function() {
                         clearTimeout(wsConnectTimeout);
                         wsTimeoutMs = null;
 
-                        self.onConnection.dispatch(json);
                         self.connectionId = json.connectionId;
                         pingInterval = parseInt(json.pingInterval);
                         responseTimeout = parseInt(json.responseTimeout);
                         resetConnCheckTimeout();
+
                         wsConnected = true;
+
+                        self.onConnection.dispatch(json);
                     }
                     break;
                 case "console":
@@ -147,6 +148,8 @@ Sfera.Net = new (function() {
                     self.onEvent.dispatch(json);
                     break;
             }
+
+            self.onMessage.dispatch(event.data);
         }
     }
 

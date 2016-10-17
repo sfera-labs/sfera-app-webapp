@@ -45,5 +45,14 @@ Sfera.ComponentPresets.Position = function() {
             // post update
             this.post();
         },
+    };
+
+    this.attrDefs.opacity = {
+        type: "integer",
+        update: function() {
+            this.component.element.style.opacity = this.value;
+            // post update
+            this.post();
+        }
     }
 };

@@ -1,4 +1,6 @@
 @import "../../css/_common.scss";
+$buttonBorderRadius: 7px;
+
 body {
     font-family: Arial, Helvetica, sans-serif;
     color: white;
@@ -62,18 +64,247 @@ img {
         background-color: rgba(0, 0, 0, 0.2);
     }
 }
-/*
-.txt-header {
-    padding-top: 15pt;
-}
-.txt-header-list LI {
-    text-align: center;
-    padding: 0 0 15pt;
-}
-.txt-real {
-    line-height: 14pt;
-}
-*/
 .component.disabled {
     @include opacity(50);
+}
+
+
+// Button
+.component.comp_button {
+    .container {
+        color: #fff;
+        .cIcon {
+            .comp_image {
+                svg,
+                svg path {
+                    fill: white;
+                }
+            }
+        }
+
+        // styles
+        &.style_default {
+            @include shadow("rgba(0,0,0,0.8) 0 1px 0, rgba(0,0,0,0.4) 0px 0px 1px 1px");
+            @include border-radius($buttonBorderRadius);
+            @include button-1(#2090ff,#00439e,#002c73);
+
+            &.color_stable {
+                @include button-1(#c0c0d9,#73738d,#48486a);
+            }
+
+            .cLabel {
+                text-shadow: 0 1px rgba(0,0,0,0.6);
+            }
+            &.switch.pressed {
+                @include shadow("none");
+            }
+            &.down {
+                @include shadow("rgba(0,0,0,0.8) 0 1px 0, rgba(0,0,0,0.4) 0px 0px 1px 1px, inset 0px 1px 4px rgba(0,0,0,0.7)");
+            }
+            &.error {
+                color: #e03050;
+            }
+        }
+        &.style_icon {
+        }
+        &.style_clear {
+            .cLabel {
+                text-shadow: 0 1px rgba(0,0,0,0.6);
+            }
+        }
+    }
+
+    // default1: b
+    /*
+
+    "default",
+    "light",
+    "stable",
+    "positive",
+    "calm",
+    "balanced",
+    "energized",
+    "assertive",
+    "royal",
+    "dark"
+
+    &.g, &.green { @include button-1(#84db24,#4f9316,#135915); }
+    &.y, &.yellow, &.highlight { @include button-1(#f4ed00,#ddc700,#b17300); } // highlight: y
+    &.r, &.red, &.alert { @include button-1(#dd006a,#97003f,#5e0041); } // alert: r, ex.logout
+    &.gr, &.gray, &.default2 { @include button-1(#c0c0d9,#73738d,#48486a); } // default2: gr
+    &.lgr, &.default3 { @include button-1(#f5f7f7,#e0e5e6,#adb2b3); } // default3: lgr, ex.slider cursors
+    &.glass { @include button-g(rgb(255,255,255),rgb(225,232,232),rgb(200,207,207),rgb(171,177,177),rgb(215,224,224)); }
+    &.transparent { @include button-t(rgb(255,255,255)); }
+    */
+}
+
+// Input
+.component.comp_input {
+    &.focused {
+        .container {
+            &.style_default {
+                @include border-radius(4px);
+                @include shadow(0px 0px 15px 0px rgba(0,0,0,0.75));
+            }
+            &.style_clear {
+                @include shadow("inset 0px 12px 7px -11px rgba(255,255,255,0.5), inset 0px -12px 7px -11px rgba(255,255,255,0.5)");
+            }
+        }
+    }
+    .container {
+        &.style_default {
+            background: white;
+            @include border-radius(4px);
+            .icon {
+                padding-left: 4px;
+            }
+            .field {
+                color: black;
+            }
+            &::after {
+                @include shadow(inset 0px 0px 5px 1px rgba(255,0,0,1));
+            }
+        }
+        &.style_clear {
+            background: transparent;
+            .field {
+                color: white;
+            }
+            border-top: 1px solid black;
+            border-bottom: 1px solid black;
+            svg,
+            svg path {
+                fill: white;
+            }
+            &::after {
+                @include shadow("inset 0px 12px 7px -11px rgba(255,0,0,0.5), inset 0px -12px 7px -11px rgba(255,0,0,0.5)");
+            }
+        }
+        &.style_strict {
+            .edit {
+                background: white;
+                @include border-radius(4px);
+            }
+            .field {
+                color: black;
+            }
+            .erase {}
+            &::after {
+                @include shadow("inset 0px 12px 7px -11px rgba(255,0,0,0.5), inset 0px -12px 7px -11px rgba(255,0,0,0.5)");
+            }
+        }
+    }
+    .erase {
+        &.over {
+            svg,
+            svg path {
+                fill: #f01010;
+            }
+        }
+        &.down {
+            svg,
+            svg path {
+                fill: #551010;
+            }
+        }
+    }
+
+}
+
+
+
+// Slider
+.component.comp_slider {
+    .container {
+    }
+
+    // active bar
+    // background
+    .bg,
+    .bar {
+        .in {
+            @include border-radius($buttonBorderRadius);
+        }
+    }
+    .bg {
+        .in {
+            @include shadow("inset 2px 2px 2px 1px rgba(0, 0, 0, 0.3)");
+            border-right: 1px solid rgba(255, 255, 255, 0.4);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.7);
+        }
+    }
+    .bar .in {
+        .fill {
+        }
+    }
+    .vertical {
+    }
+    .horizontal {
+    }
+
+    // ghost
+    .ghost {
+        @include border-radius($buttonBorderRadius);
+    }
+    .over {
+    }
+
+}
+
+// List
+.component.comp_list {
+    .content {
+        color: #fff;
+        &.disabled {
+        }
+        .item {
+            &.disabled {
+            }
+            .container {
+                color: #fff;
+                .cIcon {
+                    .comp_image {
+                        &,
+                        svg {
+                        }
+                        svg,
+                        svg path {
+                            fill: white;
+                        }
+                    }
+                }
+                .cLabel {
+                }
+                // styles
+                &.style_default {
+                    @include shadow("rgba(0,0,0,0.8) 0 1px 0, rgba(0,0,0,0.4) 0px 0px 1px 1px");
+                    @include border-radius($buttonBorderRadius);
+                    @include button-1(#2090ff,#00439e,#002c73);
+
+
+                    &.color_stable {
+                        @include button-1(#c0c0d9,#73738d,#48486a);
+                    }
+
+                    .cIcon {
+                    }
+                    .cLabel {
+                        text-shadow: 0 1px rgba(0,0,0,0.6);
+                    }
+                    &.over {
+
+                    }
+                    &.switch.pressed {
+                        @include shadow("none");
+                    }
+                    &.down {
+                        @include shadow("rgba(0,0,0,0.8) 0 1px 0, rgba(0,0,0,0.4) 0px 0px 1px 1px, inset 0px 1px 4px rgba(0,0,0,0.7)");
+                    }
+                    &.error {
+                        color: #e03050;
+                    }
+                }
+            }
+        }
+    }
 }

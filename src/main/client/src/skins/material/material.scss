@@ -1,0 +1,301 @@
+@import "../../css/_common.scss";
+$buttonBorderRadius: 2px;
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    color: white;
+    padding: 0;
+    margin: 0;
+    background: #2f3336;
+    background: #369;
+}
+img {
+    padding: 0;
+    margin: 0;
+}
+#loading {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 100;
+    background: rgba(0,0,0,0.7);
+    text-align: center;
+    .inner {
+        width:70px;
+        height:70px;
+        position: relative;
+        top: 50%;
+        @include transform(translateY(-50%));
+    }
+}
+#cacheStatus {
+    position: absolute;
+    cursor: default;
+    display: none;
+    top: 0;
+    right: 0;
+    z-index: 101;
+    background: #26609f;
+    color: white;
+    padding: 5px;
+    @include border-radius(0 0 0 4px);
+    @include shadow(0px 0px 5px 0px black);
+    span {
+        margin: 0 5px;
+    }
+    img {
+        margin-top: 0;
+        position: relative;
+        top: 3px;
+        width: 20px;
+        height: 20px;
+    }
+}
+.component {
+    position: absolute;
+    left: 0;
+    top: 0;
+    &.page {
+        background-color: #4040e0;
+    }
+    &.interface {
+        background-color: rgba(0, 0, 0, 0.2);
+    }
+}
+.component.disabled {
+    @include opacity(50);
+}
+
+
+.component.comp_button {
+    .container {
+        color: #fff;
+        .cIcon {
+            .comp_image {
+                svg,
+                svg path {
+                    fill: white;
+                }
+            }
+        }
+
+        // styles
+        &.style_default {
+            @include border-radius($buttonBorderRadius);
+            @include button-material(#2090ff);
+
+            &.color_stable {
+                @include button-material(#c0c0d9);
+            }
+
+            .cLabel {
+                text-shadow: 0 1px rgba(0,0,0,0.6);
+            }
+            &.switch.pressed {
+//                @include shadow("none");
+            }
+            &.down {
+
+            }
+            &.error {
+                color: #e03050;
+            }
+        }
+        &.style_icon {
+        }
+        &.style_clear {
+            .cLabel {
+                text-shadow: 0 1px rgba(0,0,0,0.6);
+            }
+        }
+    }
+
+    // default1: b
+    /*
+
+    "default",
+    "light",
+    "stable",
+    "positive",
+    "calm",
+    "balanced",
+    "energized",
+    "assertive",
+    "royal",
+    "dark"
+
+
+    &.g, &.green { @include button-1(#84db24,#4f9316,#135915); }
+    &.y, &.yellow, &.highlight { @include button-1(#f4ed00,#ddc700,#b17300); } // highlight: y
+    &.r, &.red, &.alert { @include button-1(#dd006a,#97003f,#5e0041); } // alert: r, ex.logout
+    &.gr, &.gray, &.default2 { @include button-1(#c0c0d9,#73738d,#48486a); } // default2: gr
+    &.lgr, &.default3 { @include button-1(#f5f7f7,#e0e5e6,#adb2b3); } // default3: lgr, ex.slider cursors
+    &.glass { @include button-g(rgb(255,255,255),rgb(225,232,232),rgb(200,207,207),rgb(171,177,177),rgb(215,224,224)); }
+    &.transparent { @include button-t(rgb(255,255,255)); }
+    */
+}
+
+.component.comp_input {
+    &.focused {
+        .container {
+            &.style_default {
+                @include shadow(0px 0px 15px 0px rgba(0,0,0,0.75));
+            }
+            &.style_clear {
+                border-bottom: 3px solid #2090ff;
+            }
+        }
+    }
+    .container {
+        &.style_default {
+            background: white;
+        }
+        &.style_clear {
+            background: transparent;
+            .field {
+                color: white;
+            }
+            border-bottom: 3px solid rgba(0,0,0,0.5);
+            svg,
+            svg path {
+                fill: white;
+            }
+            &::after {
+//                @include shadow("inset 0px 12px 7px -11px rgba(255,0,0,0.5), inset 0px -12px 7px -11px rgba(255,0,0,0.5)");
+            }
+        }
+    }
+}
+
+.component.comp_slider {
+    .container {
+    }
+
+    // active bar
+    // background
+    .bg,
+    .bar {
+        position:absolute;
+        left:0px;
+        top:0px;
+        padding: 0 !important;
+        margin:0;
+        .in {
+            position:relative;
+            padding:0 !important;
+            margin:auto;
+            @include border-radius($buttonBorderRadius);
+            background:none;
+        }
+    }
+
+    .bar .in {
+        background-color: rgba(0,0,0,0.5);
+    }
+
+    .vertical {
+        .bg, .bar {
+            left:50%;
+            width:auto;
+            .in {
+                left:-2px;
+                width:4px;
+            }
+        }
+    }
+    .horizontal {
+        .bg, .bar {
+            top:50%;
+            height:auto;
+            .in {
+                top:-2px;
+                height:4px;
+            }
+        }
+    }
+    .component.comp_button {
+        @include sizing(border-box);
+        width:10px;
+        height:10px;
+        .container {
+            position: static !important;
+            @include border-radius(1000px);
+            &::after {
+                @include border-radius(1000px);
+            }
+        }
+    }
+
+    // ghost
+    .ghost {
+        @include border-radius($buttonBorderRadius);
+    }
+    .over {
+    }
+
+}
+
+.component.comp_list {
+    .content {
+        color: #fff;
+        &.disabled {
+        }
+        .item {
+            &.disabled {
+            }
+            .container {
+                color: #fff;
+                .cIcon {
+                    .comp_image {
+                        &,
+                        svg {
+                        }
+                        svg,
+                        svg path {
+                            fill: white;
+                        }
+                    }
+                }
+                .cLabel {
+                }
+                // styles
+                &.style_default {
+                    @include shadow("rgba(0,0,0,0.8) 0 1px 0, rgba(0,0,0,0.4) 0px 0px 1px 1px");
+                    @include border-radius($buttonBorderRadius);
+                    @include button-material(#2090ff);
+
+                    margin-bottom:1px;
+
+                    &::after {
+                        width:0;
+                        height:0;
+                    }
+
+                    &.color_stable {
+                        @include button-material(#c0c0d9);
+                    }
+
+                    .cIcon {
+                    }
+                    .cLabel {
+                        text-shadow: 0 1px rgba(0,0,0,0.6);
+                    }
+                    &.over {
+
+                    }
+                    &.switch.pressed {
+                        @include shadow("none");
+                    }
+                    &.down {
+                        @include shadow("rgba(0,0,0,0.8) 0 1px 0, rgba(0,0,0,0.4) 0px 0px 1px 1px, inset 0px 1px 4px rgba(0,0,0,0.7)");
+                    }
+                    &.error {
+                        color: #e03050;
+                    }
+                }
+            }
+        }
+    }
+}

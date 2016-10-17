@@ -191,12 +191,22 @@ Sfera.Utils = function() {
         return str;
     };
 
+    // rotate point (x,y) around center (cx,cy) by angle in degrees
+    this.rotatePoint = function (cx, cy, x, y, angle) {
+        var radians = (Math.PI / 180) * angle,
+            cos = Math.cos(radians),
+            sin = Math.sin(radians),
+            nx = (cos * (x - cx)) + (sin * (y - cy)) + cx,
+            ny = (cos * (y - cy)) - (sin * (x - cx)) + cy;
+        return [nx, ny];
+    };
+
     // get mouse relative position
 	this.getMouseRelativePosition = function (evt,target) {
 		var ep = this.getElementAbsolutePosition(target);
 		var p = this.getMouseAbsolutePosition(evt,target);
 		return {x:p.x-ep.x,y:p.y-ep.y};
-	} // getMouseRelativePosition()
+	}; // getMouseRelativePosition()
 
 	// get absolute mouse position, if touch, first touch. target if != evt.target
 	this.getMouseAbsolutePosition = function (evt,target) {

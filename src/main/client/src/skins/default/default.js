@@ -1,11 +1,10 @@
 /**
  * @author       Gionatan Iasio <gionatan@sferalabs.cc>
  * @copyright    2016 SferaLabs
- * @license      {@link http://sfera.sferalabs.cc/docs/sfera/license.html|LGPL License}
+ * @license      {@link https://github.com/sfera-labs/sfera-webapp/license.txt|MIT License}
  */
 
 /**
- * Sfera.Skins.Default contains and handles skins
  *
  * @class Sfera.Skins.Default
  * @constructor

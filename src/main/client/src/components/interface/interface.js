@@ -54,6 +54,20 @@
          autoReload: {
              type: "boolean",
              default: "true"
+         },
+
+         backgroundColor: {
+             update: function () {
+                 var bodyE = document.getElementById("bg");
+                 bodyE.style.backgroundColor = this.value;
+             }
+         },
+
+         pageBackgroundColor: {
+             update: function () {
+                 this.component.element.style.backgroundColor = this.value;
+             }
          }
+
      }
  });

@@ -850,8 +850,6 @@ Sfera.Client = function(config) {
     var commandReqs = {};
     var eventReqs = {};
 
-    var idleIntervalId = null;
-
     // html elements
     var elements = {};
 
@@ -920,9 +918,9 @@ Sfera.Client = function(config) {
 
         // window events
         window.onresize = adjustLayout;
-        window.onkeydown = onKeyDown;
-        window.onkeyup = onKeyUp;
-        window.onkeypress = onKeyPress;
+        window.addEvent("keydown", window, onKeyDown);
+        window.addEvent("keyup", window, onKeyUp);
+        window.addEvent("keypress", window, onKeyPress);
 
         // loading events
         elements.loading.onmousedown =
@@ -962,7 +960,10 @@ Sfera.Client = function(config) {
 
     // Net callbacks
 
-    function onConnection() {
+    function onConnection(json) {
+        config.idleTimeout = parseInt(json.idleTimeout);
+        Sfera.Login.resetIdleTimeout();
+
         self.state.firstEventReceived = false;
         if (self.isLogin) {
             Sfera.Login.gotoInterface();
@@ -1032,7 +1033,6 @@ Sfera.Client = function(config) {
         this.cInterface.setAttribute("visible","true");
 
         adjustLayout();
-        resetIdleTimeout();
 
         this.state.started = true;
         this.showLoading(false);
@@ -1099,6 +1099,11 @@ Sfera.Client = function(config) {
     };
 
     this.sendEvent = function(id, value, callback) {
+        if (!id) {
+            Sfera.Debug.logError("sending event: id not valid");
+            return;
+        }
+
         var tag = (new Date()).getTime(); // request id
         var req = {
             id: "webapp.ui." + id,
@@ -1278,50 +1283,6 @@ Sfera.Client = function(config) {
         Sfera.Browser.preventDefault(evt);
         return false;
     } // onKeyUp()
-
-
-    /////////////////////////// idle
-
-    function stopIdleTimeout() {
-        setIdleEvents(true);
-        clearInterval(idleIntervalId);
-    }
-
-    function resetIdleTimeout() {
-        stopIdleTimeout();
-        if (config.idleTimeout && parseInt(config.idleTimeout) && !self.isLogin) {
-            setIdleEvents();
-            idleIntervalId = setInterval(onIdleInterval, 1000);
-            localStorage.setItem("idleTimestamp",(new Date().getTime()));
-        }
-    }
-
-    // check every second (shared between all tabs)
-    function onIdleInterval() {
-        // check last timestamp
-        var ts = localStorage.getItem("idleTimestamp");
-        var nts = new Date().getTime();
-
-        if (nts-ts >= parseInt(config.idleTimeout)*1000) {
-            onIdleTimeout();
-        }
-    }
-
-    function onIdleTimeout() {
-        stopIdleTimeout();
-        Sfera.Login.logout();
-    }
-
-    function setIdleEvents(remove) {
-		var f = (remove?"remove":"add")+"Event";
-		var t = Sfera.Device.touch;
-		window[f](t?"touchstart":"mousedown", document.body, onIdleActivity);
-		window[f](t?"touchend":"mouseup", document.body, onIdleActivity);
-        window[f]("onkeydown", document.body, onIdleActivity);
-	}
-	function onIdleActivity(e) {
-		resetIdleTimeout();
-	}
 
     ////////////////////////// focus
     var focusedCo;
@@ -1644,6 +1605,8 @@ Sfera.Login = new(function() {
 
     var action = "";
 
+    var idleIntervalId = null;
+
     var self = this;
 
     this.login = function (user, password) {
@@ -1718,6 +1681,48 @@ Sfera.Login = new(function() {
     window.onload = function() {
         resetCheck(); // start now
     }
+
+    function stopIdleTimeout() {
+        setIdleEvents(true);
+        clearInterval(idleIntervalId);
+    }
+
+    this.resetIdleTimeout = function () {
+        stopIdleTimeout();
+        if (config.idleTimeout && parseInt(config.idleTimeout) && !self.isLogin) {
+            setIdleEvents();
+            idleIntervalId = setInterval(onIdleInterval, 1000);
+            localStorage.setItem("idleTimestamp",(new Date().getTime()));
+        }
+    }
+
+    // check every second (shared between all tabs)
+    function onIdleInterval() {
+        // check last timestamp
+        var ts = localStorage.getItem("idleTimestamp");
+        var nts = new Date().getTime();
+
+        if (nts-ts >= parseInt(config.idleTimeout)*1000) {
+            onIdleTimeout();
+        }
+    }
+
+    function onIdleTimeout() {
+        stopIdleTimeout();
+        Sfera.Login.logout();
+    }
+
+    function setIdleEvents(remove) {
+		var f = (remove?"remove":"add")+"Event";
+		var t = Sfera.Device.touch;
+		window[f](t?"touchstart":"mousedown", window, onIdleActivity);
+		window[f](t?"touchend":"mouseup", window, onIdleActivity);
+        window[f]("keydown", window, onIdleActivity);
+	}
+	function onIdleActivity(e) {
+		self.resetIdleTimeout();
+	}
+
 
 })();
 
@@ -2503,8 +2508,7 @@ Sfera.UI.Button.prototype = {
 		} else {
             this.element.onmouseover = this.onEvent.bind(this,'mouseover',f.onover,null);
 			this.element.onmouseout = this.onEvent.bind(this,'mouseout',f.onout,null);
-			if (f.onmove)
-				this.element.onmousemove = this.onEvent.bind(this,'mousemove',f.onmove,null);
+			this.element.onmousemove = this.onEvent.bind(this,'mousemove',f.onmove,null);
 			this.element.onmousedown = this.onEvent.bind(this,'mousedown',f.ondown,null);
 			this.element.onmouseup = this.onEvent.bind(this,'mouseup',f.onup,null);
 		}
@@ -2888,7 +2892,6 @@ Sfera.Net = new (function() {
             resetConnCheckTimeout();
             self.wsSend("&");
         } else {
-            self.onMessage.dispatch(event.data);
             Sfera.Debug.log("ws msg", event.data);
             json = JSON.parse(event.data);
 
@@ -2903,12 +2906,14 @@ Sfera.Net = new (function() {
                         clearTimeout(wsConnectTimeout);
                         wsTimeoutMs = null;
 
-                        self.onConnection.dispatch(json);
                         self.connectionId = json.connectionId;
                         pingInterval = parseInt(json.pingInterval);
                         responseTimeout = parseInt(json.responseTimeout);
                         resetConnCheckTimeout();
+
                         wsConnected = true;
+
+                        self.onConnection.dispatch(json);
                     }
                     break;
                 case "console":
@@ -2918,6 +2923,8 @@ Sfera.Net = new (function() {
                     self.onEvent.dispatch(json);
                     break;
             }
+
+            self.onMessage.dispatch(event.data);
         }
     }
 
@@ -5018,12 +5025,22 @@ Sfera.Utils = function() {
         return str;
     };
 
+    // rotate point (x,y) around center (cx,cy) by angle in degrees
+    this.rotatePoint = function (cx, cy, x, y, angle) {
+        var radians = (Math.PI / 180) * angle,
+            cos = Math.cos(radians),
+            sin = Math.sin(radians),
+            nx = (cos * (x - cx)) + (sin * (y - cy)) + cx,
+            ny = (cos * (y - cy)) - (sin * (x - cx)) + cy;
+        return [nx, ny];
+    };
+
     // get mouse relative position
 	this.getMouseRelativePosition = function (evt,target) {
 		var ep = this.getElementAbsolutePosition(target);
 		var p = this.getMouseAbsolutePosition(evt,target);
 		return {x:p.x-ep.x,y:p.y-ep.y};
-	} // getMouseRelativePosition()
+	}; // getMouseRelativePosition()
 
 	// get absolute mouse position, if touch, first touch. target if != evt.target
 	this.getMouseAbsolutePosition = function (evt,target) {
@@ -5392,6 +5409,15 @@ Sfera.ComponentPresets.Position = function() {
             // post update
             this.post();
         },
+    };
+
+    this.attrDefs.opacity = {
+        type: "integer",
+        update: function() {
+            this.component.element.style.opacity = this.value;
+            // post update
+            this.post();
+        }
     }
 };
 

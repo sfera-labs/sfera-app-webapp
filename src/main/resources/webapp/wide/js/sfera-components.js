@@ -933,7 +933,21 @@ Sfera.Components.create("Input", {
          autoReload: {
              type: "boolean",
              default: "true"
+         },
+
+         backgroundColor: {
+             update: function () {
+                 var bodyE = document.getElementById("bg");
+                 bodyE.style.backgroundColor = this.value;
+             }
+         },
+
+         pageBackgroundColor: {
+             update: function () {
+                 this.component.element.style.backgroundColor = this.value;
+             }
          }
+
      }
  });
 
@@ -2289,8 +2303,8 @@ Sfera.Components.create("Slider", {
             e.onover = this.onOver.bind(this);
             e.onout = this.onOut.bind(this);
         }
-        //e.onmove = this.onCursorMove.bind(this);
 
+//this.elements.over.style.background = "rgba(255,0,0,0.5)";
         this.button = new Sfera.UI.Button(this.elements.over, e);
 
         // rig cursor component's button object
@@ -2364,6 +2378,8 @@ Sfera.Components.create("Slider", {
             window.addEvent("mousemove", document.body, this._onMove);
         }
 
+Sfera.client.sendEvent("TEST_LOG", "onDown touch? "+Sfera.Device.touch);
+
         // find absolute bar coords, so we don't have to get them again on mouse move
         this._bp = Sfera.Utils.getElementAbsolutePosition(this.elements.bar_in);
 
@@ -2374,6 +2390,8 @@ Sfera.Components.create("Slider", {
             return;
 
         this.isDown = false;
+
+Sfera.client.sendEvent("TEST_LOG", "onUp touch? "+Sfera.Device.touch);
 
         // add up, move events
         if (Sfera.Device.touch) {
@@ -2389,14 +2407,28 @@ Sfera.Components.create("Slider", {
         if (!this.getAttribute("enabled"))
             return;
 
+Sfera.client.sendEvent("TEST_LOG", "onMove: is down? "+this.isDown);
+
         var mp = Sfera.Utils.getMouseAbsolutePosition(event, this.elements.bar_in);
         if (this.isDown) {
+Sfera.client.sendEvent("TEST_LOG", "onMove: pos "+mp.x+", "+mp.y+" ("+this._bp.x+","+this._bp.y+")");
+
             var w = this.getAttribute("width");
             var h = this.getAttribute("height");
             var v = h > w;
             var s = this.getAttribute("cursorSize");
 
-            var p = v ? ((mp.y - this._bp.y - s / 2) / (h - s)) : ((mp.x - this._bp.x - s / 2) / (w - s)); //
+            var x = mp.x - this._bp.x;
+            var y = mp.y - this._bp.y;
+
+            var r = this.getAttribute("rotation");
+            if (r) {
+                r = Sfera.Utils.rotatePoint(w/2, h/2, x, y, r);
+                x = r[0];
+                y = r[1];
+            }
+
+            var p = v ? ((y - s / 2) / (h - s)) : ((x - s / 2) / (w - s)); //
             if (v)
                 p = 1 - p;
 
@@ -2463,7 +2495,7 @@ Sfera.Components.create("Slider", {
 
         // cursor
         this.subComponents.cursor.setAttribute(v ? "y" : "x", (v ? ip : p) * (v ? h - s : w - s));
-        this.subComponents.cursor.setAttribute(v ? "x" : "y", "0");
+        //this.subComponents.cursor.setAttribute(v ? "x" : "y", "0");
     },
 
     updateDirection: function() {
@@ -2476,11 +2508,9 @@ Sfera.Components.create("Slider", {
         var v = h > w;
 
         this.vertical = v;
+
         this.updateClass();
-
-        this.subComponents.cursor.setAttribute("width", v ? w : s);
-        this.subComponents.cursor.setAttribute("height", v ? s : h);
-
+        this.updateStyle();
         this.updateValue();
     },
 
@@ -2490,6 +2520,19 @@ Sfera.Components.create("Slider", {
         this.element.className = "component comp_slider " + d + f;
         var sty = this.getAttribute("style");
         this.elements.container.className = "container " + (this.vertical ? "vertical" : "horizontal") + (sty ? " style_" + sty : "");
+    },
+
+    updateStyle: function () {
+        var w = this.getAttribute("width");
+        var h = this.getAttribute("height");
+        var s = this.getAttribute("cursorSize");
+
+        if (!w || !h || !s) return; // we need width, height and cursor size
+
+        var v = h > w;
+
+        this.subComponents.cursor.setAttribute("width", v ? w : s);
+        this.subComponents.cursor.setAttribute("height", v ? s : h);
     },
 
     //
