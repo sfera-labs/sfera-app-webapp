@@ -12,7 +12,11 @@ Sfera.Doc.add.component("Interface", {
         },
 
         zoom: {
-            descr: "Specifies the interfaces zoom"
+            descr: "Specifies the interface's zoom. A value of 2 means the interface is scaled at 200%"
+        },
+
+        autoReload: {
+            descr: "If true, the interface reloads when the cache is updated (wherever the interface's sources change)"
         },
 
         backgroundColor: {
