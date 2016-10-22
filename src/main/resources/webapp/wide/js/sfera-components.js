@@ -935,15 +935,15 @@ Sfera.Components.create("Input", {
              default: "true"
          },
 
-         backgroundColor: {
+         bodyBackgroundColor: {
              type: "color",
              update: function () {
-                 var bodyE = document.getElementById("bg");
+                 var bodyE = document.getElementsByTagName("body")[0];
                  bodyE.style.backgroundColor = this.value;
              }
          },
 
-         pageBackgroundColor: {
+         frameBackgroundColor: {
              type: "color",
              update: function () {
                  this.component.element.style.backgroundColor = this.value;
@@ -1794,6 +1794,10 @@ Sfera.Components.create("Select", {
         // fill elements with all nodes that have a name
         this.elements = Sfera.Utils.getComponentElements(this.element, true, this.elements);
 
+        this.arrowButton = new Sfera.UI.Button(this.elements.arrow, {
+            onclick: this.focus.bind(this)
+        });
+
         this.redraw();
 
         /*
@@ -2245,7 +2249,7 @@ Sfera.Components.create("Slider", {
 
         color: {
             values: function() {
-                var c = Sfera.client.skin.colors.Button;
+                var c = Sfera.client.skin.colors.Slider;
                 return c ? c : ["default"];
             },
             post: function() {

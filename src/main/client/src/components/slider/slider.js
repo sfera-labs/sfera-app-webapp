@@ -70,7 +70,7 @@ Sfera.Components.create("Slider", {
 
         color: {
             values: function() {
-                var c = Sfera.client.skin.colors.Button;
+                var c = Sfera.client.skin.colors.Slider;
                 return c ? c : ["default"];
             },
             post: function() {

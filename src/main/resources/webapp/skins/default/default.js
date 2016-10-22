@@ -30,9 +30,30 @@ Sfera.Skins.Default = function() {
             "balanced",
             "energized",
             "assertive",
-            "royal",
-            "dark"
+
+            "gray",
+            "green",
+            "blue",
+            "yellow",
+            "red"
+        ],
+        Slider: [
+            "default",
+            "light",
+            "stable",
+            "positive",
+            "calm",
+            "balanced",
+            "energized",
+            "assertive",
+
+            "gray",
+            "green",
+            "blue",
+            "yellow",
+            "red"
         ]
+
     }
 
 };

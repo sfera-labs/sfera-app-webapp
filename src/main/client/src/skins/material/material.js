@@ -15,6 +15,7 @@ Sfera.Skins.Material = function() {
 
     this.styles = {
         Input: ["default", "clear"],
+        Select: ["default", "clear"],
         Button: ["default", "clear", "icon"],
         Checkbox: ["default", "radio", "switch", "clear"],
         Radio: ["default"],
@@ -30,8 +31,28 @@ Sfera.Skins.Material = function() {
             "balanced",
             "energized",
             "assertive",
-            "royal",
-            "dark"
+
+            "gray",
+            "green",
+            "blue",
+            "yellow",
+            "red"
+        ],
+        Slider: [
+            "default",
+            "light",
+            "stable",
+            "positive",
+            "calm",
+            "balanced",
+            "energized",
+            "assertive",
+
+            "gray",
+            "green",
+            "blue",
+            "yellow",
+            "red"
         ]
     }
 

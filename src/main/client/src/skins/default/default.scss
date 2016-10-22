@@ -88,8 +88,20 @@ img {
             @include border-radius($buttonBorderRadius);
             @include button-1(#2090ff,#00439e,#002c73);
 
-            &.color_stable {
+            &.color_stable, &.color_gray {
+                @include button-1(#2090ff,#00439e,#002c73);
+            }
+            &.color_positive, &.color_blue {
                 @include button-1(#c0c0d9,#73738d,#48486a);
+            }
+            &.color_balanced, &.color_green {
+                @include button-1(#84db24,#4f9316,#135915);
+            }
+            &.color_energized, &.color_yellow {
+                @include button-1(#f4ed00,#ddc700,#b17300);
+            }
+            &.color_assertive, &.color_red {
+                 @include button-1(#dd006a,#97003f,#5e0041);
             }
 
             .cLabel {
@@ -208,7 +220,80 @@ img {
             }
         }
     }
+}
 
+
+// Select
+.component.comp_select {
+    &.focused {
+        .container {
+            &.style_default {
+                @include shadow(0px 0px 15px 0px rgba(0,0,0,0.75));
+            }
+            &.style_clear {
+
+                //@include shadow("0px 14px 14px -10px rgba(255,255,255,0.5), 0px -14px 14px -10px rgba(255,255,255,0.5)");
+                @include shadow("inset 0px 12px 7px -11px rgba(255,255,255,0.5), inset 0px -12px 7px -11px rgba(255,255,255,0.5)");
+            }
+        }
+    }
+    .container {
+        select {
+        }
+        &.style_default {
+            background: white;
+            @include border-radius(4px);
+            .icon {
+                padding-left: 4px;
+            }
+            .field {
+                color: black;
+            }
+        }
+        &.style_clear {
+            background: transparent;
+            .field {
+                color: white;
+            }
+            border-top: 1px solid black;
+            border-bottom: 1px solid black;
+            svg,
+            svg path {
+                fill: white;
+            }
+        }
+        &.style_strict {
+            .edit {
+                background: white;
+                @include border-radius(4px);
+                padding: 0 4px;
+            }
+            .field {
+                color: black;
+            }
+            .erase {
+
+            }
+        }
+    }
+    &:focus {
+        border-color: #9ecaed;
+        box-shadow: 0 0 10px #9ecaed;
+    }
+    .erase {
+        &.over {
+            svg,
+            svg path {
+                fill: #f01010;
+            }
+        }
+        &.down {
+            svg,
+            svg path {
+                fill: #551010;
+            }
+        }
+    }
 }
 
 
@@ -250,6 +335,71 @@ img {
     }
 
 }
+
+// Checkbox
+.component.comp_checkbox {
+    &.focused {
+        .container {
+            &.style_default, &.style_radio, &.style_switch {
+                .button {
+                    @include shadow(0px 0px 15px 0px rgba(0,0,0,0.75));
+                }
+            }
+            &.style_clear {
+                @include shadow("inset 0px 12px 7px -11px rgba(255,255,255,0.5), inset 0px -12px 7px -11px rgba(255,255,255,0.5)");
+            }
+        }
+    }
+    .container {
+        &.style_default {
+            .button {
+                background: white;
+                @include border-radius(4px);
+            }
+        }
+
+        &.style_radio {
+            .button {
+                background: white;
+                @include border-radius(700px);
+            }
+            .flag {
+                background: black;
+                @include border-radius(700px);
+            }
+        }
+
+        &.style_switch {
+            .button {
+                background: #fff;
+                @include border-radius(16px);
+                @include sizing(border-box);
+            }
+            .button .inner {
+                .flag:after {
+                    background: #fff;
+                    @include border-radius(28px);
+                    @include shadow(0 2px 5px rgba(0,0,0,0.4));
+                }
+            }
+            &.on .button {
+                background: #4ea5db !important; // #4cd964
+            }
+        }
+
+        &.style_clear {
+            .button {
+                @include border-radius(4px);
+            }
+
+            svg,
+            svg path {
+                fill: #4ea5db;
+            }
+        }
+    }
+}
+
 
 // List
 .component.comp_list {

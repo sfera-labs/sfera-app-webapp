@@ -67,45 +67,49 @@ img {
   filter: alpha(opacity=50);
   opacity: 0.5; }
 
-.component.comp_button {
-    /*
-
-    "default",
-    "light",
-    "stable",
-    "positive",
-    "calm",
-    "balanced",
-    "energized",
-    "assertive",
-    "royal",
-    "dark"
-
-
-    &.g, &.green { @include button-1(#84db24,#4f9316,#135915); }
-    &.y, &.yellow, &.highlight { @include button-1(#f4ed00,#ddc700,#b17300); } // highlight: y
-    &.r, &.red, &.alert { @include button-1(#dd006a,#97003f,#5e0041); } // alert: r, ex.logout
-    &.gr, &.gray, &.default2 { @include button-1(#c0c0d9,#73738d,#48486a); } // default2: gr
-    &.lgr, &.default3 { @include button-1(#f5f7f7,#e0e5e6,#adb2b3); } // default3: lgr, ex.slider cursors
-    &.glass { @include button-g(rgb(255,255,255),rgb(225,232,232),rgb(200,207,207),rgb(171,177,177),rgb(215,224,224)); }
-    &.transparent { @include button-t(rgb(255,255,255)); }
-    */ }
-  .component.comp_button .container {
-    color: #fff; }
-    .component.comp_button .container .cIcon .comp_image svg,
-    .component.comp_button .container .cIcon .comp_image svg path {
-      fill: white; }
-    .component.comp_button .container.style_default {
-      -webkit-border-radius: 2px;
-      -moz-border-radius: 2px;
-      border-radius: 2px;
+.component.comp_button .container {
+  color: #fff; }
+  .component.comp_button .container .cIcon .comp_image svg,
+  .component.comp_button .container .cIcon .comp_image svg path {
+    fill: white; }
+  .component.comp_button .container.style_default {
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    border-radius: 2px;
+    background-image: none;
+    background-color: #2090ff;
+    -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+    -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+    /* Pre-render the bigger shadow, but hide it */ }
+    .component.comp_button .container.style_default::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      -webkit-box-shadow: 0 3px 2px rgba(0, 0, 20, 0.4);
+      -moz-box-shadow: 0 3px 2px rgba(0, 0, 20, 0.4);
+      box-shadow: 0 3px 2px rgba(0, 0, 20, 0.4);
+      opacity: 0; }
+    .component.comp_button .container.style_default.over {
+      background-color: #30a0ff; }
+    .component.comp_button .container.style_default.down {
+      background-color: #1080ef;
+      /* Transition to showing the bigger shadow on hover */ }
+      .component.comp_button .container.style_default.down::after {
+        opacity: 1; }
+    .component.comp_button .container.style_default.selected {
+      background-color: #60d0ff; }
+    .component.comp_button .container.style_default.color_stable, .component.comp_button .container.style_default.color_gray {
       background-image: none;
-      background-color: #2090ff;
+      background-color: #00439e;
       -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
       -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
       box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
       /* Pre-render the bigger shadow, but hide it */ }
-      .component.comp_button .container.style_default::after {
+      .component.comp_button .container.style_default.color_stable::after, .component.comp_button .container.style_default.color_gray::after {
         content: '';
         position: absolute;
         left: 0;
@@ -116,65 +120,172 @@ img {
         -moz-box-shadow: 0 3px 2px rgba(0, 0, 20, 0.4);
         box-shadow: 0 3px 2px rgba(0, 0, 20, 0.4);
         opacity: 0; }
-      .component.comp_button .container.style_default.over {
-        background-color: #30a0ff; }
-      .component.comp_button .container.style_default.down {
-        background-color: #1080ef;
+      .component.comp_button .container.style_default.color_stable.over, .component.comp_button .container.style_default.color_gray.over {
+        background-color: #1053ae; }
+      .component.comp_button .container.style_default.color_stable.down, .component.comp_button .container.style_default.color_gray.down {
+        background-color: #00338e;
         /* Transition to showing the bigger shadow on hover */ }
-        .component.comp_button .container.style_default.down::after {
+        .component.comp_button .container.style_default.color_stable.down::after, .component.comp_button .container.style_default.color_gray.down::after {
           opacity: 1; }
-      .component.comp_button .container.style_default.selected {
-        background-color: #60d0ff; }
-      .component.comp_button .container.style_default.color_stable {
-        background-image: none;
-        background-color: #c0c0d9;
-        -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
-        -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
-        /* Pre-render the bigger shadow, but hide it */ }
-        .component.comp_button .container.style_default.color_stable::after {
-          content: '';
-          position: absolute;
-          left: 0;
-          top: 0;
-          width: 100%;
-          height: 100%;
-          -webkit-box-shadow: 0 3px 2px rgba(0, 0, 20, 0.4);
-          -moz-box-shadow: 0 3px 2px rgba(0, 0, 20, 0.4);
-          box-shadow: 0 3px 2px rgba(0, 0, 20, 0.4);
-          opacity: 0; }
-        .component.comp_button .container.style_default.color_stable.over {
-          background-color: #d0d0e9; }
-        .component.comp_button .container.style_default.color_stable.down {
-          background-color: #b0b0c9;
-          /* Transition to showing the bigger shadow on hover */ }
-          .component.comp_button .container.style_default.color_stable.down::after {
-            opacity: 1; }
-        .component.comp_button .container.style_default.color_stable.selected {
-          background-color: white; }
-      .component.comp_button .container.style_default .cLabel {
-        text-shadow: 0 1px rgba(0, 0, 0, 0.6); }
-      .component.comp_button .container.style_default.error {
-        color: #e03050; }
-    .component.comp_button .container.style_clear .cLabel {
+      .component.comp_button .container.style_default.color_stable.selected, .component.comp_button .container.style_default.color_gray.selected {
+        background-color: #4083de; }
+    .component.comp_button .container.style_default.color_positive, .component.comp_button .container.style_default.color_blue {
+      background-image: none;
+      background-color: #73738d;
+      -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+      -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+      /* Pre-render the bigger shadow, but hide it */ }
+      .component.comp_button .container.style_default.color_positive::after, .component.comp_button .container.style_default.color_blue::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        -webkit-box-shadow: 0 3px 2px rgba(0, 0, 20, 0.4);
+        -moz-box-shadow: 0 3px 2px rgba(0, 0, 20, 0.4);
+        box-shadow: 0 3px 2px rgba(0, 0, 20, 0.4);
+        opacity: 0; }
+      .component.comp_button .container.style_default.color_positive.over, .component.comp_button .container.style_default.color_blue.over {
+        background-color: #83839d; }
+      .component.comp_button .container.style_default.color_positive.down, .component.comp_button .container.style_default.color_blue.down {
+        background-color: #63637d;
+        /* Transition to showing the bigger shadow on hover */ }
+        .component.comp_button .container.style_default.color_positive.down::after, .component.comp_button .container.style_default.color_blue.down::after {
+          opacity: 1; }
+      .component.comp_button .container.style_default.color_positive.selected, .component.comp_button .container.style_default.color_blue.selected {
+        background-color: #b3b3cd; }
+    .component.comp_button .container.style_default.color_balanced, .component.comp_button .container.style_default.color_green {
+      background-image: none;
+      background-color: #4f9316;
+      -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+      -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+      /* Pre-render the bigger shadow, but hide it */ }
+      .component.comp_button .container.style_default.color_balanced::after, .component.comp_button .container.style_default.color_green::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        -webkit-box-shadow: 0 3px 2px rgba(0, 0, 20, 0.4);
+        -moz-box-shadow: 0 3px 2px rgba(0, 0, 20, 0.4);
+        box-shadow: 0 3px 2px rgba(0, 0, 20, 0.4);
+        opacity: 0; }
+      .component.comp_button .container.style_default.color_balanced.over, .component.comp_button .container.style_default.color_green.over {
+        background-color: #5fa326; }
+      .component.comp_button .container.style_default.color_balanced.down, .component.comp_button .container.style_default.color_green.down {
+        background-color: #3f8306;
+        /* Transition to showing the bigger shadow on hover */ }
+        .component.comp_button .container.style_default.color_balanced.down::after, .component.comp_button .container.style_default.color_green.down::after {
+          opacity: 1; }
+      .component.comp_button .container.style_default.color_balanced.selected, .component.comp_button .container.style_default.color_green.selected {
+        background-color: #8fd356; }
+    .component.comp_button .container.style_default.color_energized, .component.comp_button .container.style_default.color_yellow {
+      background-image: none;
+      background-color: #ddc700;
+      -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+      -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+      /* Pre-render the bigger shadow, but hide it */ }
+      .component.comp_button .container.style_default.color_energized::after, .component.comp_button .container.style_default.color_yellow::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        -webkit-box-shadow: 0 3px 2px rgba(0, 0, 20, 0.4);
+        -moz-box-shadow: 0 3px 2px rgba(0, 0, 20, 0.4);
+        box-shadow: 0 3px 2px rgba(0, 0, 20, 0.4);
+        opacity: 0; }
+      .component.comp_button .container.style_default.color_energized.over, .component.comp_button .container.style_default.color_yellow.over {
+        background-color: #edd710; }
+      .component.comp_button .container.style_default.color_energized.down, .component.comp_button .container.style_default.color_yellow.down {
+        background-color: #cdb700;
+        /* Transition to showing the bigger shadow on hover */ }
+        .component.comp_button .container.style_default.color_energized.down::after, .component.comp_button .container.style_default.color_yellow.down::after {
+          opacity: 1; }
+      .component.comp_button .container.style_default.color_energized.selected, .component.comp_button .container.style_default.color_yellow.selected {
+        background-color: #ffff40; }
+    .component.comp_button .container.style_default.color_assertive, .component.comp_button .container.style_default.color_red {
+      background-image: none;
+      background-color: #97003f;
+      -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+      -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+      /* Pre-render the bigger shadow, but hide it */ }
+      .component.comp_button .container.style_default.color_assertive::after, .component.comp_button .container.style_default.color_red::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        -webkit-box-shadow: 0 3px 2px rgba(0, 0, 20, 0.4);
+        -moz-box-shadow: 0 3px 2px rgba(0, 0, 20, 0.4);
+        box-shadow: 0 3px 2px rgba(0, 0, 20, 0.4);
+        opacity: 0; }
+      .component.comp_button .container.style_default.color_assertive.over, .component.comp_button .container.style_default.color_red.over {
+        background-color: #a7104f; }
+      .component.comp_button .container.style_default.color_assertive.down, .component.comp_button .container.style_default.color_red.down {
+        background-color: #87002f;
+        /* Transition to showing the bigger shadow on hover */ }
+        .component.comp_button .container.style_default.color_assertive.down::after, .component.comp_button .container.style_default.color_red.down::after {
+          opacity: 1; }
+      .component.comp_button .container.style_default.color_assertive.selected, .component.comp_button .container.style_default.color_red.selected {
+        background-color: #d7407f; }
+    .component.comp_button .container.style_default .cLabel {
       text-shadow: 0 1px rgba(0, 0, 0, 0.6); }
+    .component.comp_button .container.style_default.error {
+      color: #e03050; }
+  .component.comp_button .container.style_clear .cLabel {
+    text-shadow: 0 1px rgba(0, 0, 0, 0.6); }
 
 .component.comp_input.focused .container.style_default {
   -webkit-box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.75);
   -moz-box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.75);
   box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.75); }
 .component.comp_input.focused .container.style_clear {
-  border-bottom: 3px solid #2090ff; }
+  border-bottom: 1px solid #2090ff; }
 .component.comp_input .container.style_default {
   background: white; }
 .component.comp_input .container.style_clear {
   background: transparent;
-  border-bottom: 3px solid rgba(0, 0, 0, 0.5); }
+  border-bottom: 2px solid rgba(0, 0, 0, 0.5); }
   .component.comp_input .container.style_clear .field {
     color: white; }
   .component.comp_input .container.style_clear svg,
   .component.comp_input .container.style_clear svg path {
     fill: white; }
+
+.component.comp_select .container select {
+  padding: 9px 0 10px 4px; }
+.component.comp_select .container.style_default .icon {
+  padding-left: 4px; }
+.component.comp_select .container.style_default .field {
+  color: black; }
+.component.comp_select .container.style_default input {
+  padding: 0 4px; }
+.component.comp_select .container.style_default .erase {
+  padding-right: 4px; }
+.component.comp_select .container.style_clear {
+  background: transparent;
+  border-bottom: 2px solid rgba(0, 0, 0, 0.5); }
+  .component.comp_select .container.style_clear .field {
+    color: white; }
+  .component.comp_select .container.style_clear svg,
+  .component.comp_select .container.style_clear svg path {
+    fill: white; }
+.component.comp_select:focus {
+  outline: none; }
+.component.comp_select .field {
+  border: none;
+  background: none; }
+.component.comp_select .erase {
+  color: red; }
 
 .component.comp_slider .bg,
 .component.comp_slider .bar {
@@ -198,14 +309,14 @@ img {
   left: 50%;
   width: auto; }
   .component.comp_slider .vertical .bg .in, .component.comp_slider .vertical .bar .in {
-    left: -2px;
-    width: 4px; }
+    left: -1px;
+    width: 2px; }
 .component.comp_slider .horizontal .bg, .component.comp_slider .horizontal .bar {
   top: 50%;
   height: auto; }
   .component.comp_slider .horizontal .bg .in, .component.comp_slider .horizontal .bar .in {
-    top: -2px;
-    height: 4px; }
+    top: -1px;
+    height: 2px; }
 .component.comp_slider .component.comp_button {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -226,6 +337,56 @@ img {
   -webkit-border-radius: 2px;
   -moz-border-radius: 2px;
   border-radius: 2px; }
+
+.component.comp_checkbox.focused .container.style_default .button, .component.comp_checkbox.focused .container.style_radio .button, .component.comp_checkbox.focused .container.style_switch .button {
+  border: 1px solid #2090ff; }
+.component.comp_checkbox.focused .container.style_default svg,
+.component.comp_checkbox.focused .container.style_default svg path, .component.comp_checkbox.focused .container.style_radio svg,
+.component.comp_checkbox.focused .container.style_radio svg path, .component.comp_checkbox.focused .container.style_switch svg,
+.component.comp_checkbox.focused .container.style_switch svg path {
+  fill: #2090ff; }
+.component.comp_checkbox .container.style_default .button {
+  border: 2px solid rgba(0, 0, 0, 0.5);
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px; }
+.component.comp_checkbox .container.style_radio .button {
+  background: white;
+  -webkit-border-radius: 700px;
+  -moz-border-radius: 700px;
+  border-radius: 700px; }
+.component.comp_checkbox .container.style_radio .flag {
+  background: black;
+  -webkit-border-radius: 700px;
+  -moz-border-radius: 700px;
+  border-radius: 700px; }
+.component.comp_checkbox .container.style_switch .button {
+  border: 2px solid rgba(0, 0, 0, 0.5);
+  background: transparent;
+  -webkit-border-radius: 16px;
+  -moz-border-radius: 16px;
+  border-radius: 16px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -ms-box-sizing: border-box;
+  box-sizing: border-box; }
+.component.comp_checkbox .container.style_switch .button .inner .flag:after {
+  background: rgba(0, 0, 0, 0.5);
+  -webkit-border-radius: 28px;
+  -moz-border-radius: 28px;
+  border-radius: 28px;
+  -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+  -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4); }
+.component.comp_checkbox .container.style_switch.on .button .inner .flag:after {
+  background: #2090ff !important; }
+.component.comp_checkbox .container.style_clear .button {
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px; }
+.component.comp_checkbox .container.style_clear svg,
+.component.comp_checkbox .container.style_clear svg path {
+  fill: #4ea5db; }
 
 .component.comp_list .content {
   color: #fff; }
@@ -271,33 +432,6 @@ img {
       .component.comp_list .content .item .container.style_default::after {
         width: 0;
         height: 0; }
-      .component.comp_list .content .item .container.style_default.color_stable {
-        background-image: none;
-        background-color: #c0c0d9;
-        -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
-        -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
-        /* Pre-render the bigger shadow, but hide it */ }
-        .component.comp_list .content .item .container.style_default.color_stable::after {
-          content: '';
-          position: absolute;
-          left: 0;
-          top: 0;
-          width: 100%;
-          height: 100%;
-          -webkit-box-shadow: 0 3px 2px rgba(0, 0, 20, 0.4);
-          -moz-box-shadow: 0 3px 2px rgba(0, 0, 20, 0.4);
-          box-shadow: 0 3px 2px rgba(0, 0, 20, 0.4);
-          opacity: 0; }
-        .component.comp_list .content .item .container.style_default.color_stable.over {
-          background-color: #d0d0e9; }
-        .component.comp_list .content .item .container.style_default.color_stable.down {
-          background-color: #b0b0c9;
-          /* Transition to showing the bigger shadow on hover */ }
-          .component.comp_list .content .item .container.style_default.color_stable.down::after {
-            opacity: 1; }
-        .component.comp_list .content .item .container.style_default.color_stable.selected {
-          background-color: white; }
       .component.comp_list .content .item .container.style_default .cLabel {
         text-shadow: 0 1px rgba(0, 0, 0, 0.6); }
       .component.comp_list .content .item .container.style_default.switch.pressed {

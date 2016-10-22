@@ -12,7 +12,7 @@ List component, to display a list of items. Each item can have an html template 
 |**[x](#x)**|integer|Specifies the left position of the component in pixels, relative to its parent container (a page or a container component)|
 |**[y](#y)**|integer|Specifies the top position of the component in pixels, relative to its parent container (a page or a container component)|
 |**[rotation](#rotation)**|integer|Specifies the element's clockwise rotation in degrees|
-|**[opacity](#opacity)**|integer|Specifies the element's opacity (0..1)|
+|**[opacity](#opacity)**|float|Specifies the element's opacity (0..1)|
 |**[width](#width)**|integer|Specifies the component's width in pixels|
 |**[height](#height)**|integer|Specifies the component's height in pixels|
 |**[style](#style)**|string|Specifies the style|
@@ -151,7 +151,7 @@ setAttribute("myList","rotation","90")
 ### opacity
 
 Specifies the element's opacity (0..1).
-<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>integer</td></tr></table>
+<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>float</td></tr></table>
 
 >**Example:**
 >

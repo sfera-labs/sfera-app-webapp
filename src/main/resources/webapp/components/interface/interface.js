@@ -53,15 +53,15 @@
              default: "true"
          },
 
-         backgroundColor: {
+         bodyBackgroundColor: {
              type: "color",
              update: function () {
-                 var bodyE = document.getElementById("bg");
+                 var bodyE = document.getElementsByTagName("body")[0];
                  bodyE.style.backgroundColor = this.value;
              }
          },
 
-         pageBackgroundColor: {
+         frameBackgroundColor: {
              type: "color",
              update: function () {
                  this.component.element.style.backgroundColor = this.value;

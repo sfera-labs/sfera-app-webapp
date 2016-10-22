@@ -5412,7 +5412,7 @@ Sfera.ComponentPresets.Position = function() {
     };
 
     this.attrDefs.opacity = {
-        type: "integer",
+        type: "float",
         update: function() {
             this.component.element.style.opacity = this.value;
             // post update

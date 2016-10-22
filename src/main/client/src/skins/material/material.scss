@@ -86,8 +86,20 @@ img {
             @include border-radius($buttonBorderRadius);
             @include button-material(#2090ff);
 
-            &.color_stable {
-                @include button-material(#c0c0d9);
+            &.color_stable, &.color_gray {
+                @include button-material(#00439e);
+            }
+            &.color_positive, &.color_blue {
+                @include button-material(#73738d);
+            }
+            &.color_balanced, &.color_green {
+                @include button-material(#4f9316);
+            }
+            &.color_energized, &.color_yellow {
+                @include button-material(#ddc700);
+            }
+            &.color_assertive, &.color_red {
+                 @include button-material(#97003f);
             }
 
             .cLabel {
@@ -112,29 +124,6 @@ img {
         }
     }
 
-    // default1: b
-    /*
-
-    "default",
-    "light",
-    "stable",
-    "positive",
-    "calm",
-    "balanced",
-    "energized",
-    "assertive",
-    "royal",
-    "dark"
-
-
-    &.g, &.green { @include button-1(#84db24,#4f9316,#135915); }
-    &.y, &.yellow, &.highlight { @include button-1(#f4ed00,#ddc700,#b17300); } // highlight: y
-    &.r, &.red, &.alert { @include button-1(#dd006a,#97003f,#5e0041); } // alert: r, ex.logout
-    &.gr, &.gray, &.default2 { @include button-1(#c0c0d9,#73738d,#48486a); } // default2: gr
-    &.lgr, &.default3 { @include button-1(#f5f7f7,#e0e5e6,#adb2b3); } // default3: lgr, ex.slider cursors
-    &.glass { @include button-g(rgb(255,255,255),rgb(225,232,232),rgb(200,207,207),rgb(171,177,177),rgb(215,224,224)); }
-    &.transparent { @include button-t(rgb(255,255,255)); }
-    */
 }
 
 .component.comp_input {
@@ -144,7 +133,7 @@ img {
                 @include shadow(0px 0px 15px 0px rgba(0,0,0,0.75));
             }
             &.style_clear {
-                border-bottom: 3px solid #2090ff;
+                border-bottom: 1px solid #2090ff;
             }
         }
     }
@@ -157,13 +146,72 @@ img {
             .field {
                 color: white;
             }
-            border-bottom: 3px solid rgba(0,0,0,0.5);
+            border-bottom: 2px solid rgba(0,0,0,0.5);
             svg,
             svg path {
                 fill: white;
             }
             &::after {
-//                @include shadow("inset 0px 12px 7px -11px rgba(255,0,0,0.5), inset 0px -12px 7px -11px rgba(255,0,0,0.5)");
+            }
+        }
+    }
+}
+
+// Select
+.component.comp_select {
+    .container {
+        select {
+            padding: 9px 0 10px 4px;
+        }
+        &.style_default {
+            .icon {
+                padding-left: 4px;
+            }
+            .field {
+                color: black;
+            }
+            input {
+                padding: 0 4px;
+            }
+            .erase {
+                padding-right: 4px;
+            }
+        }
+        &.style_clear {
+            background: transparent;
+            .field {
+                color: white;
+            }
+            border-bottom: 2px solid rgba(0,0,0,0.5);
+            svg,
+            svg path {
+                fill: white;
+            }
+            &::after {
+            }
+        }
+    }
+    &:focus {
+        outline: none;
+    }
+    .icon {
+    }
+    .edit {
+    }
+    .field {
+        border: none;
+        background: none;
+    }
+    .erase {
+        color: red;
+        &.over {
+            svg,
+            svg path {
+            }
+        }
+        &.down {
+            svg,
+            svg path {
             }
         }
     }
@@ -200,8 +248,8 @@ img {
             left:50%;
             width:auto;
             .in {
-                left:-2px;
-                width:4px;
+                left:-1px;
+                width:2px;
             }
         }
     }
@@ -210,8 +258,8 @@ img {
             top:50%;
             height:auto;
             .in {
-                top:-2px;
-                height:4px;
+                top:-1px;
+                height:2px;
             }
         }
     }
@@ -237,6 +285,77 @@ img {
 
 }
 
+// Checkbox
+.component.comp_checkbox {
+    &.focused {
+        .container {
+            &.style_default, &.style_radio, &.style_switch {
+                .button {
+                    border:1px solid #2090ff;
+                }
+                svg,
+                svg path {
+                    fill: #2090ff;
+                }
+            }
+            &.style_clear {
+            }
+        }
+    }
+    .container {
+        &.style_default {
+            .button {
+                border:2px solid rgba(0,0,0,0.5);
+                @include border-radius(4px);
+            }
+        }
+
+        &.style_radio {
+            .button {
+                background: white;
+                @include border-radius(700px);
+            }
+            .flag {
+                background: black;
+                @include border-radius(700px);
+            }
+        }
+
+        &.style_switch {
+            .button {
+                border:2px solid rgba(0,0,0,0.5);
+                background: transparent;
+                @include border-radius(16px);
+                @include sizing(border-box);
+            }
+            .button .inner {
+                .flag:after {
+                    background: rgba(0,0,0,0.5);
+                    @include border-radius(28px);
+                    @include shadow(0 1px 2px rgba(0,0,0,0.4));
+                }
+            }
+            &.on .button .inner {
+                .flag:after {
+                    background: #2090ff !important; // #4cd964
+                }
+            }
+        }
+
+        &.style_clear {
+            .button {
+                @include border-radius(4px);
+            }
+
+            svg,
+            svg path {
+                fill: #4ea5db;
+            }
+        }
+    }
+}
+
+// List
 .component.comp_list {
     .content {
         color: #fff;
@@ -271,10 +390,6 @@ img {
                     &::after {
                         width:0;
                         height:0;
-                    }
-
-                    &.color_stable {
-                        @include button-material(#c0c0d9);
                     }
 
                     .cIcon {

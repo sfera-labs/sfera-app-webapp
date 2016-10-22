@@ -19,12 +19,12 @@ Sfera.Doc.add.component("Interface", {
             descr: "If true, the interface reloads when the cache is updated (wherever the interface's sources change)"
         },
 
-        backgroundColor: {
-            descr: "Specifies the background color of the interface (the frame visible around the pages)"
+        bodyBackgroundColor: {
+            descr: "Specifies the background CSS color of the interface (the body of the page, visible around the interface's pages)"
         },
 
-        pageBackgroundColor: {
-            descr: "Specifies the background color for the interface's pages"
+        frameBackgroundColor: {
+            descr: "Specifies the background CSS color for the interface's central frame that contains pages"
         }
 
     }
