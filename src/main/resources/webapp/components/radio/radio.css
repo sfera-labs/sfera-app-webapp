@@ -28,7 +28,8 @@
       display: table-cell;
       vertical-align: middle;
       min-width: 2px;
-      padding-left: 7px; }
+      padding-left: 7px;
+      white-space: nowrap; }
     .component.comp_radio .container.style_default .button {
       -webkit-box-sizing: border-box;
       -moz-box-sizing: border-box;

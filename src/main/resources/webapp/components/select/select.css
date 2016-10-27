@@ -62,12 +62,13 @@
     -webkit-appearance: none;
     -webkit-writing-mode: horizontal-tb; }
   .component.comp_select .arrow {
+    pointer-events: none;
+    position: absolute;
+    right: 0px;
     display: table-cell;
     vertical-align: middle;
-    padding-left: 4px;
+    padding: 7px 0px;
     color: red;
-    width: 10px;
-    min-width: 2px;
     height: 100%;
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;

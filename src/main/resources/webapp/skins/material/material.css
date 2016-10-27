@@ -104,7 +104,7 @@ img {
       background-color: #60d0ff; }
     .component.comp_button .container.style_default.color_stable, .component.comp_button .container.style_default.color_gray {
       background-image: none;
-      background-color: #00439e;
+      background-color: #73738d;
       -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
       -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
       box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
@@ -121,17 +121,17 @@ img {
         box-shadow: 0 3px 2px rgba(0, 0, 20, 0.4);
         opacity: 0; }
       .component.comp_button .container.style_default.color_stable.over, .component.comp_button .container.style_default.color_gray.over {
-        background-color: #1053ae; }
+        background-color: #83839d; }
       .component.comp_button .container.style_default.color_stable.down, .component.comp_button .container.style_default.color_gray.down {
-        background-color: #00338e;
+        background-color: #63637d;
         /* Transition to showing the bigger shadow on hover */ }
         .component.comp_button .container.style_default.color_stable.down::after, .component.comp_button .container.style_default.color_gray.down::after {
           opacity: 1; }
       .component.comp_button .container.style_default.color_stable.selected, .component.comp_button .container.style_default.color_gray.selected {
-        background-color: #4083de; }
+        background-color: #b3b3cd; }
     .component.comp_button .container.style_default.color_positive, .component.comp_button .container.style_default.color_blue {
       background-image: none;
-      background-color: #73738d;
+      background-color: #00439e;
       -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
       -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
       box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
@@ -148,14 +148,14 @@ img {
         box-shadow: 0 3px 2px rgba(0, 0, 20, 0.4);
         opacity: 0; }
       .component.comp_button .container.style_default.color_positive.over, .component.comp_button .container.style_default.color_blue.over {
-        background-color: #83839d; }
+        background-color: #1053ae; }
       .component.comp_button .container.style_default.color_positive.down, .component.comp_button .container.style_default.color_blue.down {
-        background-color: #63637d;
+        background-color: #00338e;
         /* Transition to showing the bigger shadow on hover */ }
         .component.comp_button .container.style_default.color_positive.down::after, .component.comp_button .container.style_default.color_blue.down::after {
           opacity: 1; }
       .component.comp_button .container.style_default.color_positive.selected, .component.comp_button .container.style_default.color_blue.selected {
-        background-color: #b3b3cd; }
+        background-color: #4083de; }
     .component.comp_button .container.style_default.color_balanced, .component.comp_button .container.style_default.color_green {
       background-image: none;
       background-color: #4f9316;

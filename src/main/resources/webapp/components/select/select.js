@@ -118,25 +118,7 @@ Sfera.Components.create("Select", {
         // fill elements with all nodes that have a name
         this.elements = Sfera.Utils.getComponentElements(this.element, true, this.elements);
 
-        this.arrowButton = new Sfera.UI.Button(this.elements.arrow, {
-            onclick: this.focus.bind(this)
-        });
-
         this.redraw();
-
-        /*
-                this.eraseButton = new Sfera.UI.Button(this.elements.erase, {
-                    onclick: this.onErase.bind(this)
-                });
-        */
-        /*
-        switch (this.getAttribute("type")) {
-            case "date":
-                this.btObj = new Sfera.UI.Button(this.element, {
-                    onclick: this.onClick.bind(this)
-                });
-        }
-        */
     },
 
 

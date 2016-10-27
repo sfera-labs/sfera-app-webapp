@@ -87,10 +87,10 @@ img {
             @include button-material(#2090ff);
 
             &.color_stable, &.color_gray {
-                @include button-material(#00439e);
+                @include button-material(#73738d);
             }
             &.color_positive, &.color_blue {
-                @include button-material(#73738d);
+                @include button-material(#00439e);
             }
             &.color_balanced, &.color_green {
                 @include button-material(#4f9316);

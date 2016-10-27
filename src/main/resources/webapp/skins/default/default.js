@@ -23,10 +23,8 @@ Sfera.Skins.Default = function() {
     this.colors = {
         Button: [
             "default",
-            "light",
             "stable",
             "positive",
-            "calm",
             "balanced",
             "energized",
             "assertive",
@@ -39,10 +37,8 @@ Sfera.Skins.Default = function() {
         ],
         Slider: [
             "default",
-            "light",
             "stable",
             "positive",
-            "calm",
             "balanced",
             "energized",
             "assertive",
