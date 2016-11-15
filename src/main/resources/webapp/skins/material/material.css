@@ -245,40 +245,43 @@ img {
     text-shadow: 0 1px rgba(0, 0, 0, 0.6); }
 
 .component.comp_input.focused .container.style_default {
+  border-bottom: 1px solid #2090ff; }
+.component.comp_input.focused .container.style_classic {
   -webkit-box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.75);
   -moz-box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.75);
   box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.75); }
-.component.comp_input.focused .container.style_clear {
-  border-bottom: 1px solid #2090ff; }
 .component.comp_input .container.style_default {
-  background: white; }
-.component.comp_input .container.style_clear {
   background: transparent;
   border-bottom: 2px solid rgba(0, 0, 0, 0.5); }
-  .component.comp_input .container.style_clear .field {
-    color: white; }
-  .component.comp_input .container.style_clear svg,
-  .component.comp_input .container.style_clear svg path {
+  .component.comp_input .container.style_default .field {
+    color: white !important; }
+  .component.comp_input .container.style_default svg,
+  .component.comp_input .container.style_default svg path {
     fill: white; }
+.component.comp_input .container.style_classic {
+  background: white; }
 
 .component.comp_select .container select {
   padding: 9px 0 10px 4px; }
-.component.comp_select .container.style_default .icon {
-  padding-left: 4px; }
-.component.comp_select .container.style_default .field {
-  color: black; }
-.component.comp_select .container.style_default input {
-  padding: 0 4px; }
-.component.comp_select .container.style_default .erase {
-  padding-right: 4px; }
-.component.comp_select .container.style_clear {
+.component.comp_select .container.style_default {
+  -webkit-border-radius: 0 !important;
+  -moz-border-radius: 0 !important;
+  border-radius: 0 !important;
   background: transparent;
   border-bottom: 2px solid rgba(0, 0, 0, 0.5); }
-  .component.comp_select .container.style_clear .field {
-    color: white; }
-  .component.comp_select .container.style_clear svg,
-  .component.comp_select .container.style_clear svg path {
+  .component.comp_select .container.style_default .field {
+    color: white !important; }
+  .component.comp_select .container.style_default svg,
+  .component.comp_select .container.style_default svg path {
     fill: white; }
+.component.comp_select .container.style_classic .icon {
+  padding-left: 4px; }
+.component.comp_select .container.style_classic .field {
+  color: black; }
+.component.comp_select .container.style_classic input {
+  padding: 0 4px; }
+.component.comp_select .container.style_classic .erase {
+  padding-right: 4px; }
 .component.comp_select:focus {
   outline: none; }
 .component.comp_select .field {
@@ -339,27 +342,19 @@ img {
   border-radius: 2px; }
 
 .component.comp_checkbox.focused .container.style_default .button, .component.comp_checkbox.focused .container.style_radio .button, .component.comp_checkbox.focused .container.style_switch .button {
-  border: 1px solid #2090ff; }
-.component.comp_checkbox.focused .container.style_default svg,
-.component.comp_checkbox.focused .container.style_default svg path, .component.comp_checkbox.focused .container.style_radio svg,
-.component.comp_checkbox.focused .container.style_radio svg path, .component.comp_checkbox.focused .container.style_switch svg,
-.component.comp_checkbox.focused .container.style_switch svg path {
-  fill: #2090ff; }
+  -webkit-box-shadow: 0px 0px 0px 5px rgba(255, 255, 255, 0.1);
+  -moz-box-shadow: 0px 0px 0px 5px rgba(255, 255, 255, 0.1);
+  box-shadow: 0px 0px 0px 5px rgba(255, 255, 255, 0.1); }
 .component.comp_checkbox .container.style_default .button {
   border: 2px solid rgba(0, 0, 0, 0.5);
   -webkit-border-radius: 4px;
   -moz-border-radius: 4px;
   border-radius: 4px; }
-.component.comp_checkbox .container.style_radio .button {
-  background: white;
-  -webkit-border-radius: 700px;
-  -moz-border-radius: 700px;
-  border-radius: 700px; }
-.component.comp_checkbox .container.style_radio .flag {
-  background: black;
-  -webkit-border-radius: 700px;
-  -moz-border-radius: 700px;
-  border-radius: 700px; }
+.component.comp_checkbox .container.style_default.on .button {
+  border: 2px solid #2090ff; }
+.component.comp_checkbox .container.style_default.on svg,
+.component.comp_checkbox .container.style_default.on svg path {
+  fill: #2090ff; }
 .component.comp_checkbox .container.style_switch .button {
   border: 2px solid rgba(0, 0, 0, 0.5);
   background: transparent;
@@ -370,7 +365,29 @@ img {
   -moz-box-sizing: border-box;
   -ms-box-sizing: border-box;
   box-sizing: border-box; }
-.component.comp_checkbox .container.style_switch .button .inner .flag:after {
+  .component.comp_checkbox .container.style_switch .button .inner .flag:after {
+    background: rgba(0, 0, 0, 0.5);
+    -webkit-border-radius: 28px;
+    -moz-border-radius: 28px;
+    border-radius: 28px;
+    -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+    -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4); }
+.component.comp_checkbox .container.style_switch.on .button {
+  border: 2px solid #2090ff; }
+  .component.comp_checkbox .container.style_switch.on .button .inner .flag:after {
+    background: #2090ff !important; }
+.component.comp_checkbox .container.style_clear .button {
+  border: 2px solid rgba(0, 0, 0, 0.5);
+  background: transparent;
+  -webkit-border-radius: 16px;
+  -moz-border-radius: 16px;
+  border-radius: 16px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -ms-box-sizing: border-box;
+  box-sizing: border-box; }
+.component.comp_checkbox .container.style_clear .button .inner .flag:after {
   background: rgba(0, 0, 0, 0.5);
   -webkit-border-radius: 28px;
   -moz-border-radius: 28px;
@@ -378,15 +395,32 @@ img {
   -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
   -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4); }
-.component.comp_checkbox .container.style_switch.on .button .inner .flag:after {
+.component.comp_checkbox .container.style_clear.on .button .inner .flag:after {
   background: #2090ff !important; }
-.component.comp_checkbox .container.style_clear .button {
-  -webkit-border-radius: 4px;
-  -moz-border-radius: 4px;
-  border-radius: 4px; }
-.component.comp_checkbox .container.style_clear svg,
-.component.comp_checkbox .container.style_clear svg path {
-  fill: #4ea5db; }
+
+.component.comp_radio.focused .container.style_default .button {
+  -webkit-box-shadow: 0px 0px 0px 5px rgba(255, 255, 255, 0.1);
+  -moz-box-shadow: 0px 0px 0px 5px rgba(255, 255, 255, 0.1);
+  box-shadow: 0px 0px 0px 5px rgba(255, 255, 255, 0.1); }
+.component.comp_radio .container.style_default .button {
+  padding: 5px;
+  -webkit-border-radius: 700px;
+  -moz-border-radius: 700px;
+  border-radius: 700px;
+  border: 2px solid rgba(0, 0, 0, 0.5); }
+.component.comp_radio .container.style_default .inner .comp_image {
+  display: none; }
+.component.comp_radio .container.style_default .flag {
+  background: black;
+  -webkit-border-radius: 700px;
+  -moz-border-radius: 700px;
+  border-radius: 700px; }
+.component.comp_radio .container.style_default.on .button {
+  border: 2px solid #2090ff; }
+.component.comp_radio .container.style_default.on .flag {
+  background: #2090ff; }
+.component.comp_radio .container.style_default.off .flag {
+  display: none; }
 
 .component.comp_list .content {
   color: #fff; }

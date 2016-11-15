@@ -14,10 +14,10 @@ Sfera.Skins.Material = function() {
     this.VERSION = "1.0";
 
     this.styles = {
-        Input: ["default", "clear"],
-        Select: ["default", "clear"],
+        Input: ["default", "classic"],
+        Select: ["default", "classic"],
         Button: ["default", "clear", "icon"],
-        Checkbox: ["default", "radio", "switch", "clear"],
+        Checkbox: ["default", "switch"],
         Radio: ["default"],
     };
 

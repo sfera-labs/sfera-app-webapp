@@ -242,7 +242,7 @@ Specifies the style.
 ### color
 
 Specifies the color.
-<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>string</td></tr><tr><td><b>Default value:</b></td><td>default</td></tr><tr><td><b>Values:</b></td><td>default, light, stable, positive, calm, balanced, energized, assertive, gray, green, blue, yellow, red</td></tr></table>
+<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>string</td></tr><tr><td><b>Default value:</b></td><td>default</td></tr><tr><td><b>Values:</b></td><td>default, stable, positive, balanced, energized, assertive, gray, green, blue, yellow, red</td></tr></table>
 
 
 

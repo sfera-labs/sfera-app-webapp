@@ -130,21 +130,18 @@ img {
     &.focused {
         .container {
             &.style_default {
-                @include shadow(0px 0px 15px 0px rgba(0,0,0,0.75));
-            }
-            &.style_clear {
                 border-bottom: 1px solid #2090ff;
+            }
+            &.style_classic {
+                @include shadow(0px 0px 15px 0px rgba(0,0,0,0.75));
             }
         }
     }
     .container {
         &.style_default {
-            background: white;
-        }
-        &.style_clear {
             background: transparent;
             .field {
-                color: white;
+                color: white !important;
             }
             border-bottom: 2px solid rgba(0,0,0,0.5);
             svg,
@@ -153,6 +150,9 @@ img {
             }
             &::after {
             }
+        }
+        &.style_classic {
+            background: white;
         }
     }
 }
@@ -164,6 +164,20 @@ img {
             padding: 9px 0 10px 4px;
         }
         &.style_default {
+            @include border-radius(0 !important);
+            background: transparent;
+            .field {
+                color: white !important;
+            }
+            border-bottom: 2px solid rgba(0,0,0,0.5);
+            svg,
+            svg path {
+                fill: white;
+            }
+            &::after {
+            }
+        }
+        &.style_classic {
             .icon {
                 padding-left: 4px;
             }
@@ -175,19 +189,6 @@ img {
             }
             .erase {
                 padding-right: 4px;
-            }
-        }
-        &.style_clear {
-            background: transparent;
-            .field {
-                color: white;
-            }
-            border-bottom: 2px solid rgba(0,0,0,0.5);
-            svg,
-            svg path {
-                fill: white;
-            }
-            &::after {
             }
         }
     }
@@ -291,37 +292,59 @@ img {
         .container {
             &.style_default, &.style_radio, &.style_switch {
                 .button {
-                    border:1px solid #2090ff;
+                    @include shadow(0px 0px 0px 5px rgba(255,255,255,0.1));
                 }
-                svg,
-                svg path {
-                    fill: #2090ff;
-                }
-            }
-            &.style_clear {
             }
         }
     }
+
     .container {
         &.style_default {
             .button {
                 border:2px solid rgba(0,0,0,0.5);
                 @include border-radius(4px);
             }
-        }
-
-        &.style_radio {
-            .button {
-                background: white;
-                @include border-radius(700px);
-            }
-            .flag {
-                background: black;
-                @include border-radius(700px);
+            &.on {
+                .button {
+                    border:2px solid #2090ff;
+                }
+                svg,
+                svg path {
+                    fill: #2090ff;
+                }
             }
         }
 
         &.style_switch {
+            .button {
+                border:2px solid rgba(0,0,0,0.5);
+                background: transparent;
+                @include border-radius(16px);
+                @include sizing(border-box);
+                .inner {
+                    .flag {
+                        //height: 150% !important;
+                        //top: -25% !important;
+                    }
+                    .flag:after {
+                        background: rgba(0,0,0,0.5);
+                        @include border-radius(28px);
+                        @include shadow(0 1px 2px rgba(0,0,0,0.4));
+                    }
+                }
+            }
+            &.on {
+                .button {
+                    border:2px solid #2090ff;
+                    .inner .flag:after {
+                        background: #2090ff !important; // #4cd964
+                    }
+                }
+            }
+
+        }
+
+        &.style_clear {
             .button {
                 border:2px solid rgba(0,0,0,0.5);
                 background: transparent;
@@ -341,15 +364,49 @@ img {
                 }
             }
         }
+    }
+}
 
-        &.style_clear {
+.component.comp_radio {
+    &.focused {
+        .container {
+            &.style_default {
+                .button {
+                    @include shadow(0px 0px 0px 5px rgba(255,255,255,0.1));
+                    //border:2px solid #2090ff;
+                }
+                .flag {
+                    //background: #2090ff;
+                }
+            }
+        }
+    }
+    .container {
+        &.style_default {
             .button {
-                @include border-radius(4px);
+                padding: 5px;
+                @include border-radius(700px);
+                border:2px solid rgba(0,0,0,0.5);
+            }
+            .inner .comp_image {
+                display: none;
+            }
+            .flag {
+                background: black;
+                @include border-radius(700px);
             }
 
-            svg,
-            svg path {
-                fill: #4ea5db;
+            &.on {
+                .button {
+                    border:2px solid #2090ff;
+                }
+                .flag {
+                    background: #2090ff;
+                }
+            }
+
+            &.off .flag {
+                display:none;
             }
         }
     }

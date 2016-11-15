@@ -436,6 +436,26 @@ img {
 .component.comp_checkbox .container.style_clear svg path {
   fill: #4ea5db; }
 
+.component.comp_radio.focused .container.style_default .button {
+  -webkit-box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.75);
+  box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.75); }
+.component.comp_radio .container.style_default .button {
+  padding: 5px;
+  background: white;
+  -webkit-border-radius: 700px;
+  -moz-border-radius: 700px;
+  border-radius: 700px; }
+.component.comp_radio .container.style_default .inner .comp_image {
+  display: none; }
+.component.comp_radio .container.style_default .flag {
+  background: black;
+  -webkit-border-radius: 700px;
+  -moz-border-radius: 700px;
+  border-radius: 700px; }
+.component.comp_radio .container.style_default.off .flag {
+  display: none; }
+
 .component.comp_list .content {
   color: #fff; }
   .component.comp_list .content .item .container {

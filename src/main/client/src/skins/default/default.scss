@@ -400,6 +400,39 @@ img {
     }
 }
 
+// Radiobutton
+.component.comp_radio {
+    &.focused {
+        .container {
+            &.style_default {
+                .button {
+                    @include shadow(0px 0px 15px 0px rgba(0,0,0,0.75));
+                }
+            }
+        }
+    }
+    .container {
+        &.style_default {
+            .button {
+                padding: 5px;
+                background: white;
+                @include border-radius(700px);
+            }
+            .inner .comp_image {
+                display: none;
+            }
+            .flag {
+                background: black;
+                @include border-radius(700px);
+            }
+
+            &.off .flag {
+                display:none;
+            }
+        }
+    }
+}
+
 
 // List
 .component.comp_list {
