@@ -140,7 +140,7 @@ public abstract class ResourcesUtil {
 					return resPath;
 				}
 			}
-		} catch (URISyntaxException e) {
+		} catch (Exception e) {
 		}
 		throw new NoSuchFileException(path.toString());
 	}
