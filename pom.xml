@@ -10,7 +10,7 @@
 	<description>Sfera Web App</description>
 
 	<properties>
-		<latestDeployedVersion>1.0.0</latestDeployedVersion>
+		<latestDeployedVersion>1.1.0</latestDeployedVersion>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<sfera-version>1.2.0</sfera-version>
 	</properties>
