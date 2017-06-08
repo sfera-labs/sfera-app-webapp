@@ -47,11 +47,11 @@ Sfera.Login = new(function() {
 
     this.gotoLogin = function() {
         Sfera.Browser.setLocation("/"+Sfera.Browser.getLocation().interface+"/login");
-    }
+    };
 
     this.gotoInterface = function() {
         Sfera.Browser.setLocation("/"+Sfera.Browser.getLocation().interface);
-    }
+    };
 
     function initReq() {
         req = new Sfera.Net.Request();
@@ -93,7 +93,7 @@ Sfera.Login = new(function() {
 
     window.onload = function() {
         resetCheck(); // start now
-    }
+    };
 
     function stopIdleTimeout() {
         setIdleEvents(true);
@@ -107,7 +107,7 @@ Sfera.Login = new(function() {
             idleIntervalId = setInterval(onIdleInterval, 1000);
             localStorage.setItem("idleTimestamp",(new Date().getTime()));
         }
-    }
+    };
 
     // check every second (shared between all tabs)
     function onIdleInterval() {

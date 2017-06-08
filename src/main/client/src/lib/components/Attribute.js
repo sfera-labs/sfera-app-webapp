@@ -67,15 +67,16 @@ Sfera.Attribute.prototype = {
         this.source = value;
         var mustache = Sfera.Compiler.getMustacheData(value);
         var eq = (this.mustache && mustache && this.mustache.vars.equals(mustache.vars)); // old and new mustache data variables are equal
+		var i;
         // remove old observers
         if (this.mustache && !eq) {
-            for (var i=0; i<this.mustache.vars.length; i++)
+            for (i=0; i<this.mustache.vars.length; i++)
                 Sfera.client.removeAttrObserver(this.mustache.vars[i], this);
         }
         this.mustache = mustache;
         // add new observers
         if (this.mustache && !eq) {
-            for (var i=0; i<this.mustache.vars.length; i++)
+            for (i=0; i<this.mustache.vars.length; i++)
                 Sfera.client.bindAttrObserver(this.mustache.vars[i], this);
         }
         if (!options || !options.manualUpdate)

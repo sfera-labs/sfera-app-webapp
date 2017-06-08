@@ -261,7 +261,7 @@ Sfera.client.sendEvent("TEST_LOG", "onMove: pos "+mp.x+", "+mp.y+" ("+this._bp.x
 
             var min = this.getAttribute("min");
             var max = this.getAttribute("max");
-            var p = p * (max - min) + min; // min-max
+            p = p * (max - min) + min; // min-max
             p = (p < min ? min : (p > max ? max : p));
 
             // decimals
@@ -343,7 +343,7 @@ Sfera.client.sendEvent("TEST_LOG", "onMove: pos "+mp.x+", "+mp.y+" ("+this._bp.x
 
     updateClass: function() {
         var f = (this.focused ? " focused" : "");
-        var d = (this.getAttribute("enabled") ? "" : " disabled")
+        var d = (this.getAttribute("enabled") ? "" : " disabled");
         this.element.className = "component comp_slider " + d + f;
         var sty = this.getAttribute("style");
         this.elements.container.className = "container " + (this.vertical ? "vertical" : "horizontal") + (sty ? " style_" + sty : "");
@@ -453,7 +453,7 @@ Sfera.client.sendEvent("TEST_LOG", "onMove: pos "+mp.x+", "+mp.y+" ("+this._bp.x
             var self = this;
             if (changeDelay) { // if 0, run immediately
                 this.changeTimeout = setTimeout(function() {
-                    self.onChangedTimeout()
+                    self.onChangedTimeout();
                 }, changeDelay);
             } else {
                 self.onChangedTimeout();
@@ -487,12 +487,18 @@ Sfera.client.sendEvent("TEST_LOG", "onMove: pos "+mp.x+", "+mp.y+" ("+this._bp.x
     },
 
     onShow: function() {
+		this.onAdjust();
         if (this.getAttribute("focus"))
             this.focus();
     },
 
     onHide: function() {
 
-    }
+    },
+
+	// triggered only for currently visible page and children
+	onAdjust: function () {
+		this.updateDirection();
+	}
 
 });

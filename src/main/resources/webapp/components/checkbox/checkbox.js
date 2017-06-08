@@ -235,7 +235,7 @@ Sfera.Components.create("Checkbox", {
         var self = this;
         if (changeDelay) { // if 0, run immediately
             this.changeTimeout = setTimeout(function() {
-                self.onChangedTimeout()
+                self.onChangedTimeout();
             }, changeDelay);
         } else {
             self.onChangedTimeout();

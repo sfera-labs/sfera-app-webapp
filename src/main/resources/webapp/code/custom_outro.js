@@ -30,14 +30,15 @@
     }
 
     function getAttribute(id, name) {
-        Sfera.client.getAttribute(id, name);
+        return Sfera.client.getAttribute(id, name);
     }
 
     // exec custom code. optional: id of the component calling, value to be sent
     this.exec = function (f, id, value) {
         // eval button js
+        var result;
         try {
-            var result = eval(f);
+            result = eval(f);
         } catch (e) {
             if (e instanceof SyntaxError) {
                 alert(e.message);
