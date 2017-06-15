@@ -927,7 +927,7 @@ Sfera.Client = function(config) {
         Sfera.Net.connect();
 
         // window events
-        window.onresize = adjustLayout;
+        window.addEvent("resize", window, adjustLayout);
         window.addEvent("keydown", window, onKeyDown);
         window.addEvent("keyup", window, onKeyUp);
         window.addEvent("keypress", window, onKeyPress);
@@ -1216,6 +1216,42 @@ Sfera.Client = function(config) {
             self.cInterface.element.style.top = top + "px";
             self.cInterface.element.style.display = "block";
         } // viewportWidth>0
+
+        //
+        if (self.cInterface.getAttribute("fit")) {
+        	var wp = window.innerWidth / self.cInterface.getAttribute("width");
+        	var hp = window.innerHeight / self.cInterface.getAttribute("height");
+
+        	var v = Math.min(wp,hp);
+        	var s = "scale("+v+","+v+")";
+
+        	var e = self.cInterface.element;
+            e.style.transform = s;
+            e.style.OTransform = s;
+            e.style.MozTransform = s;
+
+            if (wp==v) { // there's no space on sides
+                e.style.left = "0px";
+                e.style.transformOrigin = "0";
+            }
+            if (hp==v){ // there's no space above/beneath
+                e.style.top = "0px";
+                e.style.transformOrigin = "top";
+            }
+            /*
+        	if (Sfera.Device.ie == "IE") {
+        		e.style.msTransform = s;
+        		e.style.msTransformOrigin = "0% 0%";
+        	} else {
+        		//e.style.zoom = (v*100)+"%";
+        		e.style.transform = s;
+        		e.style.OTransform = s;
+        		e.style.MozTransform = s;
+        		e.style.WebkitTransformOrigin = "0 0";
+        		e.style.transformOrigin = "0% 0%";
+        	}
+            */
+        }
 
 		// trigger event on component and all children
 		function trigger(co) {
@@ -5405,6 +5441,7 @@ Sfera.ComponentPresets.Position = function() {
             this.post();
         },
     };
+    /*
 	this.attrDefs.float = {
         type: "string",
         update: function() {
@@ -5414,6 +5451,7 @@ Sfera.ComponentPresets.Position = function() {
             this.post();
         },
     };
+    */
     this.attrDefs.x = {
         type: "integer",
         update: function() {
@@ -5452,7 +5490,7 @@ Sfera.ComponentPresets.Position = function() {
             // post update
             this.post();
         }
-    }
+    };
 };
 
 

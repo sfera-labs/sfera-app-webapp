@@ -48,6 +48,10 @@
              }
          },
 
+         fit: {
+            type: "boolean", 
+         },
+
          autoReload: {
              type: "boolean",
              default: "true"

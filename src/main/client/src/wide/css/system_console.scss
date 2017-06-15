@@ -1,0 +1,34 @@
+/*----------------------------------------------------------------------------------------------*/
+/*- System Console -----------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------------------------*/
+
+#systemConsole {
+	display:none;
+}
+
+#sc_loading {
+    display:none;
+}
+
+#sc_inputPanel {
+    .pre {
+        font-family: BlinkMacSystemFont;
+        float:left;
+        padding:5px;
+    }
+    input {
+        float:left;
+        font-size:16px;
+        padding:5px;
+        border:none;
+    }
+    .mButton {
+        float:right;
+        padding:5px;
+    }
+}
+
+#sc_consoleText {
+    width:100%;
+    height:100%;
+}

@@ -16,6 +16,7 @@ Sfera.ComponentPresets.Position = function() {
             this.post();
         },
     };
+    /*
 	this.attrDefs.float = {
         type: "string",
         update: function() {
@@ -25,6 +26,7 @@ Sfera.ComponentPresets.Position = function() {
             this.post();
         },
     };
+    */
     this.attrDefs.x = {
         type: "integer",
         update: function() {
@@ -63,5 +65,5 @@ Sfera.ComponentPresets.Position = function() {
             // post update
             this.post();
         }
-    }
+    };
 };

@@ -1,0 +1,674 @@
+<!-- POPUPS -->
+<div id="popupArea">
+    <div id="toolbarPopups">
+        <div id="fm_editPopup" class="toolbarPopup">
+            <div id="downloadBackupButton" class="mButton" data-onclick="fileManager.downloadBackup()">
+                <img src="/wide/images/bticondownload.png">
+                <span>download root backup</span>
+            </div>
+            <div id="selectButtonFm" class="mButton" data-onclick="fileManager.toggleSelMode()">
+                <img class="icon" src="/wide/images/bticoncheck.png">
+                <img class="icon" style="display:none" src="/wide/images/bticonchecko.png">
+                <span>select</span>
+            </div>
+        </div>
+
+        <div id="te_warningsPopup" class="toolbarPopup">
+            <span>Errors:</span>
+            <img id="fm_warningsLoading" style="float:right" src="/wide/images/loader.gif">
+            <div id="fm_warnings" name="w" style="overflow:auto">
+            </div>
+        </div>
+
+        <div id="toolbarArrow">
+            <img class="arrow" src="/wide/images/toolbararrow.png">
+        </div>
+    </div>
+
+    <div id="popupAreaContents">
+        <div id="popupBg" onclick="return false;" ontouchstart="return false;"></div>
+        <div id="popupFrame"></div>
+
+        <!-- app switch -->
+
+        <div id="popup-appswitch" class="popupContent" style="width:250px;370px">
+            <div class="header">
+                <span>wIDE Applications</span>
+                <div name="closeBt" class="popupBt mToolButton" data-onclick="wide.closePopup()">
+                    <img src="/wide/images/bticonclose.png">
+                </div>
+                <br style="clear:both">
+            </div>
+
+            <div class="content">
+                <div name="content">
+                    <div name="fmAppBt" class="mAppButton" data-onclick="wide.switchApp('fm')">
+                        <div class="iconContainer">
+                            <img class="icon" src="/wide/images/appiconfm.png">
+                            <img class="iconDown" src="/wide/images/appiconfmd.png">
+                            <img class="iconOver" src="/wide/images/empty.png">
+                        </div>
+                        <div>File Manager</div>
+                    </div>
+                    <div name="sbAppBt" class="mAppButton" data-onclick="wide.switchApp('sc')">
+                        <div class="iconContainer">
+                            <img class="icon" src="/wide/images/appiconsc.png">
+                            <img class="iconDown" src="/wide/images/appiconscd.png">
+                            <img class="iconOver" src="/wide/images/empty.png">
+                        </div>
+                        <div>Console</div>
+                    </div>
+
+                </div>
+
+                <div name="sep1">
+                    <div class="dash" style="clear:both"></div>
+                    <div class="spacer"></div>
+                </div>
+
+                <!--div class="mToolButton" data-onclick="wide.openPopup('about')" style="float:left">
+                    <span>about</span>
+                </div-->
+                <div class="mToolButton" data-onclick="Sfera.Login.logout()">
+                    <img class="icon" src="/wide/images/ticonlogout.png">
+                    <span>logout</span>
+                </div>
+            </div>
+
+            <div class="spacer"></div>
+        </div>
+
+        <!-- general -->
+
+        <div id="popup-about" class="popupContent" style="width:160px">
+            <div class="header">
+                <span>About Sfera</span>
+                <div name="closeBt" class="popupBt mToolButton" data-onclick="wide.closePopup()">
+                    <img src="/wide/images/bticonclose.png">
+                </div>
+                <br style="clear:both">
+            </div>
+
+            <div class="content">
+                <div name="e" class="label" style="text-align:center; width:100%">
+                    Sfera
+                    <br>
+                    <script>
+                        document.write("ver. 0.0.1")
+                    </script>
+                    <br>
+                    <br> Copyright 2015-2016
+                    <br> Sfera Labs S.r.l.
+                    <br> All rights reserved.
+                    <br>
+                </div>
+                <div class="spacer"></div>
+                <div class="spacer"></div>
+                <div class="field">
+                    <div class="mButton" data-onclick="wide.closePopup()">
+                        <img src="/wide/images/bticoncheck.png">
+                        <span>ok</span>
+                    </div>
+                    <br style="clear:both">
+                </div>
+            </div>
+
+            <div class="spacer"></div>
+        </div>
+
+        <div id="popup-error" class="popupContent">
+            <div class="header">
+                <span>Error</span>
+                <div name="closeBt" class="popupBt mToolButton" data-onclick="wide.closePopup()">
+                    <img src="/wide/images/bticonclose.png">
+                </div>
+                <br style="clear:both">
+            </div>
+
+            <div class="content">
+                <div name="e" class="label"></div>
+                <div class="spacer"></div>
+                <div class="spacer"></div>
+                <div class="field">
+                    <div class="mButton" data-onclick="wide.closePopup()">
+                        <img src="/wide/images/bticoncheck.png">
+                        <span>continue</span>
+                    </div>
+                    <br style="clear:both">
+                </div>
+            </div>
+
+            <div class="spacer"></div>
+        </div>
+
+        <div id="popup-loading" class="popupContent">
+            <div class="header">
+                <span>Loading</span>
+                <div name="closeBt" class="popupBt mToolButton" data-onclick="wide.closePopup()">
+                    <img src="/wide/images/bticonclose.png">
+                </div>
+                <br style="clear:both">
+            </div>
+
+            <div class="spacer"></div>
+
+            <div class="content">
+                <div name="e" class="label">
+                    <img style="float:left; margin-right:4px;" src="/wide/images/loaderg.gif">&nbsp;Loading content</div>
+            </div>
+
+            <div class="spacer"></div>
+            <div class="spacer"></div>
+        </div>
+
+        <div id="popup-saving" class="popupContent">
+            <div class="header">
+                <span>Saving</span>
+                <div name="closeBt" class="popupBt mToolButton" data-onclick="wide.closePopup()">
+                    <img src="/wide/images/bticonclose.png">
+                </div>
+                <br style="clear:both">
+            </div>
+
+            <div class="spacer"></div>
+
+            <div class="content">
+                <div name="e" class="label">
+                    <img style="float:left; margin-right:4px;" src="/wide/images/loaderg.gif">&nbsp;Saving content</div>
+            </div>
+
+            <div class="spacer"></div>
+            <div class="spacer"></div>
+        </div>
+
+        <div id="popup-filerefresh" class="popupContent">
+            <div class="header">
+                <span>File Changed</span>
+                <div name="closeBt" class="popupBt mToolButton" data-onclick="wide.closePopup()">
+                    <img src="/wide/images/bticonclose.png">
+                </div>
+                <br style="clear:both">
+            </div>
+
+            <div class="content">
+                <div name="e" class="label">The file you're editing has been changed. Do you want to replace the editor contents with these changes?</div>
+                <div class="spacer"></div>
+                <div class="spacer"></div>
+                <div class="field">
+                    <div class="mButton" style="width:80px" data-onclick="wide.closePopup()">
+                        <img src="/wide/images/bticonclose.png">
+                        <span>no</span>
+                    </div>
+                    <div class="mButton" style="width:80px; margin-right:5px;" data-onclick="timestampChecker.onRefresh()">
+                        <img src="/wide/images/bticoncheck.png">
+                        <span>yes</span>
+                    </div>
+                    <br style="clear:both">
+                </div>
+            </div>
+        </div>
+
+        <div id="popup-waitrestart" class="popupContent">
+            <div class="header">
+                <span>Restart</span>
+                <div name="closeBt" class="popupBt mToolButton" data-onclick="wide.closePopup()">
+                    <img src="/wide/images/bticonclose.png">
+                </div>
+                <br style="clear:both">
+            </div>
+
+            <div class="content">
+                <div name="e" class="label">The server is restarting, please wait...</div>
+                <div class="spacer"></div>
+            </div>
+
+            <div class="spacer"></div>
+        </div>
+
+        <div id="popup-connecting" class="popupContent">
+            <div class="header">
+                <span>Connection Lost</span>
+                <div name="closeBt" class="popupBt mToolButton" data-onclick="wide.closePopup()">
+                    <img src="/wide/images/bticonclose.png">
+                </div>
+                <br style="clear:both">
+            </div>
+
+            <div class="content">
+                <div name="e" class="label">Server connection lost. Reconnecting...</div>
+                <div class="spacer"></div>
+            </div>
+
+            <div class="spacer"></div>
+        </div>
+
+        <div id="popup-choosefile" class="popupContent" style="width:650px">
+            <div class="header">
+                <span></span>
+                <!--  set by js -->
+                <div name="closeBt" class="popupBt mToolButton" data-onclick="wide.closePopup()">
+                    <img src="/wide/images/bticonclose.png">
+                </div>
+                <br style="clear:both">
+            </div>
+
+            <div class="content">
+                <div id="fm_dirsPPanel">
+                    <div id="fm_dirsPPath" class="fm_dirsPath"></div>
+                    <div id="fm_dirsPOptions" class="fm_dirsOptions">
+                        <div id="fm_dirsPParentBt" class="mButton" style="float:left; display:none;" data-onclick="fileManager.parentFolder()">
+                            <img src="/wide/images/bticonparent.png">
+                            <span>parent folder</span>
+                        </div>
+                        <div id="fm_dirsPNewFolderBt" class="mButton" style="margin-left:4px;" data-onclick="fileManager.openNewFolderPopup()">
+                            <img src="/wide/images/bticonfolder.png">
+                            <span>new folder</span>
+                        </div>
+                        <div id="fm_dirsPUploadBt" class="mButton" data-onclick="fileManager.openUploadPopup()">
+                            <img src="/wide/images/bticonupload.png">
+                            <span>upload files</span>
+                        </div>
+                    </div>
+
+                    <div id="fm_dirsPHeader" class="fm_dirsHeader">
+                        <div class="name">File Name</div>
+                        <div class="size">Size</div>
+                    </div>
+
+                    <div class="dash"></div>
+                    <div id="fm_dirsPContent" class="fm_dirsContent" onmouseup="fileManager.onDirsClick(event,this)"></div>
+                    <div class="dash"></div>
+
+                    <div id="fm_dirsPLoading" class="fm_dirsLoading">
+                        <div id="fm_dirsPLoadingLabel" class="fm_dirsLoadingLabel">
+                            <img style="float:left; margin-right:4px;" src="/wide/images/loader.gif">&nbsp;Loading</div>
+                    </div>
+                </div>
+
+                <div id="fm_detailsPPanel">
+                    <div id="fm_detailsPContent">
+                        <div class="icon">
+                            <img id="fm_detailsPDirIcon" class="abso" src="/wide/images/fmicondir.png">
+                            <img id="fm_detailsPFileIcon" class="abso" src="/wide/images/fmiconfile.png">
+                            <img id="fm_detailsPFilesIcon" class="abso" src="/wide/images/fmiconfiles.png">
+                            <div id="fm_detailsPTextPreview" class="text"></div>
+                            <img id="fm_detailsPFileIconOver" class="abso" src="/wide/images/fmiconfileover.png">
+                            <div class="img">
+                                <img id="fm_detailsPImgPreview" src="/wide/images/empty.png" onload="this.style.visibility='visible'">
+                            </div>
+                        </div>
+                        <div id="fm_detailsPLabel">
+                            <div class="line" id="fm_detailsPSel">
+                                <span id="fm_detailsPSelN">1</span> of
+                                <span id="fm_detailsPTot">1</span> selected</div>
+                            <div id="fm_detailsPName" class="line">
+                                <div class="a">Name</div>
+                                <div id="fm_detailsPNameV" class="b"></div>
+                                <br style="clear:both">
+                            </div>
+                            <div id="fm_detailsPKind" class="line">
+                                <div class="a">Kind</div>
+                                <div id="fm_detailsPKindV" class="b"></div>
+                                <br style="clear:both">
+                            </div>
+                            <div id="fm_detailsPSize" class="line">
+                                <div class="a">Size</div>
+                                <div id="fm_detailsPSizeV" class="b"></div>
+                                <br style="clear:both">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <br style="clear:both">
+
+                <div class="field">
+                    <div id="fm_dirsPConfirmBt" class="mButton" data-onclick="fileManager.confirmChooseFilePopup()">
+                        <img src="/wide/images/bticoncheck.png">
+                        <span>ok</span>
+                    </div>
+                    <br style="clear:both">
+                </div>
+            </div>
+
+            <div class="spacer"></div>
+        </div>
+
+        <!-- fm -->
+
+        <div id="popup-restart" class="popupContent">
+            <div class="header">
+                <span>Restart the server</span>
+                <div name="closeBt" class="popupBt mToolButton" data-onclick="wide.closePopup()">
+                    <img src="/wide/images/bticonclose.png">
+                </div>
+                <br style="clear:both">
+            </div>
+
+            <div class="content">
+                <div name="e" class="label">Are you sure you want to restart the server?</div>
+                <div class="spacer"></div>
+                <div class="spacer"></div>
+                <div class="field">
+                    <div class="mButton" style="width:80px" data-onclick="wide.closePopup()">
+                        <img src="/wide/images/bticonclose.png">
+                        <span>no</span>
+                    </div>
+                    <div class="mButton" style="width:80px; margin-right:5px;" data-onclick="wide.restartServer(true)">
+                        <img src="/wide/images/bticoncheck.png">
+                        <span>yes</span>
+                    </div>
+                    <br style="clear:both">
+                </div>
+            </div>
+
+            <div class="spacer"></div>
+        </div>
+
+        <div id="popup-newfolder" class="popupContent">
+            <div class="header">
+                <span>New Folder</span>
+                <div name="closeBt" class="popupBt mToolButton" data-onclick="wide.closePopup()">
+                    <img src="/wide/images/bticonclose.png">
+                </div>
+                <br style="clear:both">
+            </div>
+
+            <div class="content">
+                <div class="label">Folder name:</div>
+                <div class="spacer"></div>
+                <div class="field">
+                    <input name="n" class="stdInput" type="text" style="width:180px" onfocus="focusMe(this)" onblur="blurMe(this)">
+                    <br style="clear:both">
+                </div>
+                <div class="spacer"></div>
+                <div class="field">
+                    <div class="mButton" data-onclick="fileManager.newFolder()">
+                        <img src="/wide/images/bticonfolder.png">
+                        <span>new folder</span>
+                    </div>
+                    <br style="clear:both">
+                </div>
+            </div>
+
+            <div class="spacer"></div>
+        </div>
+
+        <div id="popup-newfile" class="popupContent">
+            <div class="header">
+                <span>New File</span>
+                <div name="closeBt" class="popupBt mToolButton" data-onclick="wide.closePopup()">
+                    <img src="/wide/images/bticonclose.png">
+                </div>
+                <br style="clear:both">
+            </div>
+
+            <div class="content">
+                <div class="label">File name:</div>
+                <div class="spacer"></div>
+                <div class="field">
+                    <input name="n" class="stdInput" type="text" style="width:180px" onfocus="focusMe(this)" onblur="blurMe(this)">
+                    <br style="clear:both">
+                </div>
+                <div class="spacer"></div>
+                <div class="field">
+                    <div class="mButton" data-onclick="fileManager.newFile()">
+                        <img src="/wide/images/bticontextfile.png">
+                        <span>new file</span>
+                    </div>
+                    <br style="clear:both">
+                </div>
+            </div>
+
+            <div class="spacer"></div>
+        </div>
+
+        <div id="popup-renamefile" class="popupContent">
+            <div class="header">
+                <span>Rename File</span>
+                <div name="closeBt" class="popupBt mToolButton" data-onclick="wide.closePopup()">
+                    <img src="/wide/images/bticonclose.png">
+                </div>
+                <br style="clear:both">
+            </div>
+
+            <div class="content">
+                <div class="label">File name:</div>
+                <div class="spacer"></div>
+                <div class="field">
+                    <input name="n" class="stdInput" type="text" style="width:180px" onfocus="focusMe(this)" onblur="blurMe(this)">
+                    <br style="clear:both">
+                </div>
+                <div class="spacer"></div>
+                <div class="field">
+                    <div class="mButton" data-onclick="fileManager.renameFile()">
+                        <img src="/wide/images/bticontextfile.png">
+                        <span>rename file</span>
+                    </div>
+                    <br style="clear:both">
+                </div>
+            </div>
+
+            <div class="spacer"></div>
+        </div>
+
+        <div id="popup-deletefile" class="popupContent">
+            <div class="header">
+                <span>Delete</span>
+                <div name="closeBt" class="popupBt mToolButton" data-onclick="wide.closePopup()">
+                    <img src="/wide/images/bticonclose.png">
+                </div>
+                <br style="clear:both">
+            </div>
+
+            <div class="content">
+                <div name="e" class="label">Are you sure you want to delete?</div>
+                <div class="spacer"></div>
+                <div class="spacer"></div>
+                <div class="field">
+                    <div class="mButton" style="width:80px" data-onclick="wide.closePopup()">
+                        <img src="/wide/images/bticonclose.png">
+                        <span>no</span>
+                    </div>
+                    <div class="mButton" style="width:80px; margin-right:5px;" data-onclick="fileManager.deleteItems(true)">
+                        <img src="/wide/images/bticoncheck.png">
+                        <span>yes</span>
+                    </div>
+                    <br style="clear:both">
+                </div>
+            </div>
+
+            <div class="spacer"></div>
+        </div>
+
+        <div id="popup-overwritefiles" class="popupContent">
+            <div class="header">
+                <span>Overwrite</span>
+                <div name="closeBt" class="popupBt mToolButton" data-onclick="wide.closePopup()">
+                    <img src="/wide/images/bticonclose.png">
+                </div>
+                <br style="clear:both">
+            </div>
+
+            <div class="content">
+                <div name="e" class="label">One or more items already exist in the target folder. Overwrite them?</div>
+                <div class="spacer"></div>
+                <div class="spacer"></div>
+                <div class="field">
+                    <div class="mButton" style="width:80px" data-onclick="wide.closePopup()">
+                        <img src="/wide/images/bticonclose.png">
+                        <span>no</span>
+                    </div>
+                    <div class="mButton" style="width:80px; margin-right:5px;" data-onclick="fileManager.confirmOverwrite(true)">
+                        <img src="/wide/images/bticoncheck.png">
+                        <span>yes</span>
+                    </div>
+                    <br style="clear:both">
+                </div>
+            </div>
+
+            <div class="spacer"></div>
+        </div>
+
+        <div id="popup-uploadfile" class="popupContent">
+            <div class="header">
+                <span>Upload File</span>
+                <div name="closeBt" class="popupBt mToolButton" data-onclick="wide.closePopup()">
+                    <img src="/wide/images/bticonclose.png">
+                </div>
+                <br style="clear:both">
+            </div>
+
+            <div class="content">
+                <div class="label">Choose file:</div>
+                <div class="spacer"></div>
+                <div class="field" style="overflow:hidden;">
+                    <!--form id="fm_uploadFileForm" action="" enctype="multipart/form-data" method="post" target="fm_uploadFileFrame"-->
+                        <input id="fm_uploadFileInput" style="font-size:12px" class="stdInput" type="file" name="file" size="11" multiple="multiple" onfocus="focusMe(this)" onblur="blurMe(this)">
+                    <!--/form-->
+                    <br style="clear:both">
+                </div>
+                <div class="spacer"></div>
+                <div class="spacer"></div>
+                <div class="field">
+                    <div class="mButton" data-onclick="fileManager.uploadFile()">
+                        <img src="/wide/images/bticonupload.png">
+                        <span>upload</span>
+                    </div>
+                    <br style="clear:both">
+                </div>
+                <!--iframe id="fm_uploadFileFrame" name="fm_uploadFileFrame" style="width:185px; display:none"></iframe-->
+            </div>
+
+            <div class="spacer"></div>
+        </div>
+
+        <div id="popup-uploadingfile" class="popupContent">
+            <div class="header">
+                <span>Upload File</span>
+                <div name="closeBt" class="popupBt mToolButton" data-onclick="wide.closePopup()">
+                    <img src="/wide/images/bticonclose.png">
+                </div>
+                <br style="clear:both">
+            </div>
+
+            <div class="content">
+                <div class="label">Please wait, upload in progress..</div>
+                <div class="spacer"></div>
+                <div class="field">
+                    <div id="fm_uploadPFileName">&nbsp;</div>
+                    <div id="fm_uploadPBarContainer" class="m_barContainer">
+                        <div id="fm_uploadPBar" class="m_bar"></div>
+                    </div>
+                    <div>
+                        <div id="fm_uploadPProgress">&nbsp;</div>
+                        <div id="fm_uploadPBytes">&nbsp;</div>
+                    </div>
+                    <div class="spacer"></div>
+                </div>
+                <div class="spacer"></div>
+                <div class="field">
+                    <div class="mButton" data-onclick="fileManager.cancelUpload()">
+                        <img src="/wide/images/bticondel.png">
+                        <span>cancel upload</span>
+                    </div>
+                    <br style="clear:both">
+                </div>
+            </div>
+
+            <div class="spacer"></div>
+        </div>
+
+        <div id="popup-uploadoverwrite" class="popupContent">
+            <div class="header">
+                <span>Upload File</span>
+                <div name="closeBt" class="popupBt mToolButton" data-onclick="wide.closePopup()">
+                    <img src="/wide/images/bticonclose.png">
+                </div>
+                <br style="clear:both">
+            </div>
+
+            <div class="content">
+                <div name="e" class="label">The file you're uploading already exists. Overwrite it?</div>
+                <div class="spacer"></div>
+                <div class="spacer"></div>
+                <div class="field">
+                    <div class="mButton" style="width:80px" data-onclick="wide.closePopup()">
+                        <img src="/wide/images/bticonclose.png">
+                        <span>no</span>
+                    </div>
+                    <div class="mButton" style="width:80px; margin-right:5px;" data-onclick="fileManager.confirmUpload(true)">
+                        <img src="/wide/images/bticoncheck.png">
+                        <span>yes</span>
+                    </div>
+                    <br style="clear:both">
+                </div>
+            </div>
+
+            <div class="spacer"></div>
+        </div>
+
+        <div id="popup-closeeditor" class="popupContent">
+            <div class="header">
+                <span>Save</span>
+                <div name="closeBt" class="popupBt mToolButton" data-onclick="wide.closePopup()">
+                    <img src="/wide/images/bticonclose.png">
+                </div>
+                <br style="clear:both">
+            </div>
+
+            <div class="content">
+                <div name="e" class="label">Save edited file before closing the editor?</div>
+                <div class="spacer"></div>
+                <div class="spacer"></div>
+                <div class="field">
+                    <div class="mButton" style="width:80px" data-onclick="textEditor.close(false)">
+                        <img src="/wide/images/bticonclose.png">
+                        <span>no</span>
+                    </div>
+                    <div class="mButton" style="width:80px; margin-right:5px;" data-onclick="textEditor.close(true)">
+                        <img src="/wide/images/bticoncheck.png">
+                        <span>save</span>
+                    </div>
+                    <br style="clear:both">
+                </div>
+            </div>
+
+            <div class="spacer"></div>
+        </div>
+
+    </div>
+</div>
+
+<div id="noticePanel">
+    <img src="/wide/images/iconstatus.gif">
+    <span id="notice"></span>
+    <div name="closeBt" class="popupBt mToolButton" data-onclick="wide.clearNotice(true)">
+        <img src="/wide/images/bticonclose.png">
+    </div>
+</div>
+
+<div id="quickAppsPanel">
+    <div name="fm" class="quickAppsButton">
+        <div class="iconContainer">
+            <img class="icon" src="/wide/images/appiconfm.png">
+        </div>
+        <div>File Manager</div>
+    </div>
+
+    <div name="lv" class="quickAppsButton">
+        <div class="iconContainer">
+            <img class="icon" src="/wide/images/appiconlv.png">
+        </div>
+        <div>Log Viewer</div>
+    </div>
+
+
+    <div name="sc" class="quickAppsButton">
+        <div class="iconContainer">
+            <img class="icon" src="/wide/images/appiconsc.png">
+        </div>
+        <div>Console</div>
+    </div>
+</div>
+</div>

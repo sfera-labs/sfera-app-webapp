@@ -931,6 +931,10 @@ Sfera.Components.create("Input", {
              }
          },
 
+         fit: {
+            type: "boolean", 
+         },
+
          autoReload: {
              type: "boolean",
              default: "true"

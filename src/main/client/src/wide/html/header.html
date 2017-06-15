@@ -1,0 +1,74 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" $manifest;>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="cache-control" content="no-cache">
+
+    <meta id="viewport" name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width, user-scalable=no, shrink-to-fit=no, minimal-ui">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/wide/images/favicon/apple-touch-icon-144x144.png" />
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="/wide/images/favicon/apple-touch-icon-152x152.png" />
+    <link rel="icon" type="image/png" href="/wide/images/favicon/favicon-32x32.png" sizes="32x32" />
+    <link rel="icon" type="image/png" href="/wide/images/favicon/favicon-16x16.png" sizes="16x16" />
+    <meta name="application-name" content="Sfera" />
+    <meta name="msapplication-TileColor" content="#FFFFFF" />
+    <meta name="msapplication-TileImage" content="/wide/images/favicon/mstile-144x144.png" />
+    <title>Sfera wIDE</title>
+    <script type="text/javascript" src="js/sfera-client.js"></script>
+    <script type="text/javascript" src="js/sfera-wide.js"></script>
+    <script type="text/javascript" src="js/sfera-doc.js"></script>
+    <script type="text/javascript" src="js/sfera-components.js"></script>
+    <script type="text/javascript" src="js/default/default.js"></script>
+    <script type="text/javascript" src="js/lib/ace.js"></script>
+    <script type="text/javascript" src="js/lib/mode-css.js"></script>
+    <script type="text/javascript" src="js/lib/mode-ini.js"></script>
+    <script type="text/javascript" src="js/lib/mode-javascript.js"></script>
+    <script type="text/javascript" src="js/lib/mode-xml.js"></script>
+    <script type="text/javascript" src="js/lib/mode-html.js"></script>
+    <script type="text/javascript" src="js/lib/mode-java.js"></script>
+    <script type="text/javascript" src="js/lib/mode-json.js"></script>
+    <script type="text/javascript" src="js/lib/mode-yaml.js"></script>
+    <script type="text/javascript" src="js/lib/ext-searchbox.js"></script>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <script type="text/javascript">
+        var wide;
+        var config = {
+            //timestamp: $timestamp;,
+            //appCacheEnabled: $appCacheEnabled;,
+            //interface: "wide"
+        };
+        Sfera.Device.whenReady(function() {
+            wide = new Sfera.Wide(config);
+            wide.boot();
+        }, wide);
+    </script>
+
+    <div id="bg"></div>
+
+    <div id="preloadDiv" style="display:none">
+        <img src="/wide/images/iconprojects.png">
+        <img src="/wide/images/iconpages.png">
+        <img src="/wide/images/iconobjs.png">
+        <img src="/wide/images/iconmenul.png">
+        <img src="/wide/images/iconmenup.png">
+        <img src="/wide/images/iconpagel.png">
+        <img src="/wide/images/iconpagep.png">
+        <img src="/wide/images/iconpopup.png">
+        <img src="/wide/images/iconadd.png">
+        <img src="/wide/images/arrowi.png">
+        <img src="/wide/images/iconstatus.gif">
+        <img src="/wide/images/bticonwarning.png">
+        <img src="/wide/images/bticonundo.png">
+    </div>
+
+    <iframe id="downloadTarget" style="display:none"></iframe>
+
+    <div id="wide">
