@@ -31,16 +31,16 @@ Sfera.Components.create("Image", {
                     req.init();
                     req.onLoaded = function() {
                         var xml = req.getResponseXML();
-                        var svg = xml.getElementsByTagName("svg")[0];
+                        c.svg = xml.getElementsByTagName("svg")[0];
                         e.innerHTML = "";
-                        if (svg) {
-                            e.appendChild(svg);
-                            svg.style.width = c.getAttribute("width");
-                            svg.style.height = c.getAttribute("height");
+                        if (c.svg) {
+                            e.appendChild(c.svg);
+                            c.svg.style.width = c.getAttribute("width");
+                            c.svg.style.height = c.getAttribute("height");
                         }
                         // done
-                        delete req;
-                    }
+                        req = null;
+                    };
                     req.open(this.value);
                 }
                 // normal img
@@ -51,6 +51,15 @@ Sfera.Components.create("Image", {
         }
     },
 
-    init: function() {}
+    init: function() {
+        this.svg = null;
+    },
+
+    onShow: function () {
+        if (this.svg) {
+            this.svg.style.width = this.getAttribute("width") + "px";
+            this.svg.style.height = this.getAttribute("height") + "px";
+        }
+	},
 
 });

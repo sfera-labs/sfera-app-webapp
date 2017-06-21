@@ -85,8 +85,8 @@ Sfera.Components.create("Button", {
     updateClass: function() {
         var col = this.getAttribute("color") || "default";
         var sty = this.getAttribute("style") || "default";
-        var d = (this.getAttribute("enabled") ? "" : " disabled")
-        this.button.setClassName("container" + (sty?" style_"+sty:"") + (col?" color_"+col:"")) + d;
+        var d = (this.getAttribute("enabled") ? "" : " disabled");
+        this.button.setClassName("container" + (sty?" style_"+sty:"") + (col?" color_"+col:"") + d);
         this.button.enable(d?false:true);
     },
 
@@ -103,6 +103,11 @@ Sfera.Components.create("Button", {
     onUp: function() {
         var f = this.getAttribute("onClick");
         Sfera.Custom.exec(f, this.id);
+    },
+
+    onShow: function() {
+        var icon = this.subComponents.icon;
+        icon.onShow();
     }
 
 
@@ -433,16 +438,16 @@ Sfera.Components.create("Image", {
                     req.init();
                     req.onLoaded = function() {
                         var xml = req.getResponseXML();
-                        var svg = xml.getElementsByTagName("svg")[0];
+                        c.svg = xml.getElementsByTagName("svg")[0];
                         e.innerHTML = "";
-                        if (svg) {
-                            e.appendChild(svg);
-                            svg.style.width = c.getAttribute("width");
-                            svg.style.height = c.getAttribute("height");
+                        if (c.svg) {
+                            e.appendChild(c.svg);
+                            c.svg.style.width = c.getAttribute("width");
+                            c.svg.style.height = c.getAttribute("height");
                         }
                         // done
-                        delete req;
-                    }
+                        req = null;
+                    };
                     req.open(this.value);
                 }
                 // normal img
@@ -453,7 +458,16 @@ Sfera.Components.create("Image", {
         }
     },
 
-    init: function() {}
+    init: function() {
+        this.svg = null;
+    },
+
+    onShow: function () {
+        if (this.svg) {
+            this.svg.style.width = this.getAttribute("width") + "px";
+            this.svg.style.height = this.getAttribute("height") + "px";
+        }
+	},
 
 });
 
@@ -2380,7 +2394,7 @@ Sfera.Components.create("Slider", {
             window.addEvent("mousemove", document.body, this._onMove);
         }
 
-Sfera.client.sendEvent("TEST_LOG", "onDown touch? "+Sfera.Device.touch);
+//Sfera.client.sendEvent("TEST_LOG", "onDown touch? "+Sfera.Device.touch);
 
         // find absolute bar coords, so we don't have to get them again on mouse move
         this._bp = Sfera.Utils.getElementAbsolutePosition(this.elements.bar_in);
@@ -2393,7 +2407,7 @@ Sfera.client.sendEvent("TEST_LOG", "onDown touch? "+Sfera.Device.touch);
 
         this.isDown = false;
 
-Sfera.client.sendEvent("TEST_LOG", "onUp touch? "+Sfera.Device.touch);
+//Sfera.client.sendEvent("TEST_LOG", "onUp touch? "+Sfera.Device.touch);
 
         // add up, move events
         if (Sfera.Device.touch) {
@@ -2409,11 +2423,11 @@ Sfera.client.sendEvent("TEST_LOG", "onUp touch? "+Sfera.Device.touch);
         if (!this.getAttribute("enabled"))
             return;
 
-Sfera.client.sendEvent("TEST_LOG", "onMove: is down? "+this.isDown);
+//Sfera.client.sendEvent("TEST_LOG", "onMove: is down? "+this.isDown);
 
         var mp = Sfera.Utils.getMouseAbsolutePosition(event, this.elements.bar_in);
         if (this.isDown) {
-Sfera.client.sendEvent("TEST_LOG", "onMove: pos "+mp.x+", "+mp.y+" ("+this._bp.x+","+this._bp.y+")");
+//Sfera.client.sendEvent("TEST_LOG", "onMove: pos "+mp.x+", "+mp.y+" ("+this._bp.x+","+this._bp.y+")");
 
             var w = this.getAttribute("width");
             var h = this.getAttribute("height");

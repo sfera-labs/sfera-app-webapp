@@ -2,7 +2,7 @@
     // bridge functions
     this.onReady = (typeof(onReady) === 'function') ? function () {onReady();} : null;
     this.onEvent = (typeof(onEvent) === 'function') ? function (id, value) {return onEvent(id, value);} : null;
-    this.onPage = (typeof(onPage) === 'function') ? function (name) {return onPage(id);} : null;
+    this.onPage = (typeof(onPage) === 'function') ? function (id) {return onPage(id);} : null;
 
     // context functions
     function page(id) {

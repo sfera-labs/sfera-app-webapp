@@ -205,7 +205,7 @@ Sfera.Components.create("Slider", {
             window.addEvent("mousemove", document.body, this._onMove);
         }
 
-Sfera.client.sendEvent("TEST_LOG", "onDown touch? "+Sfera.Device.touch);
+//Sfera.client.sendEvent("TEST_LOG", "onDown touch? "+Sfera.Device.touch);
 
         // find absolute bar coords, so we don't have to get them again on mouse move
         this._bp = Sfera.Utils.getElementAbsolutePosition(this.elements.bar_in);
@@ -218,7 +218,7 @@ Sfera.client.sendEvent("TEST_LOG", "onDown touch? "+Sfera.Device.touch);
 
         this.isDown = false;
 
-Sfera.client.sendEvent("TEST_LOG", "onUp touch? "+Sfera.Device.touch);
+//Sfera.client.sendEvent("TEST_LOG", "onUp touch? "+Sfera.Device.touch);
 
         // add up, move events
         if (Sfera.Device.touch) {
@@ -234,11 +234,11 @@ Sfera.client.sendEvent("TEST_LOG", "onUp touch? "+Sfera.Device.touch);
         if (!this.getAttribute("enabled"))
             return;
 
-Sfera.client.sendEvent("TEST_LOG", "onMove: is down? "+this.isDown);
+//Sfera.client.sendEvent("TEST_LOG", "onMove: is down? "+this.isDown);
 
         var mp = Sfera.Utils.getMouseAbsolutePosition(event, this.elements.bar_in);
         if (this.isDown) {
-Sfera.client.sendEvent("TEST_LOG", "onMove: pos "+mp.x+", "+mp.y+" ("+this._bp.x+","+this._bp.y+")");
+//Sfera.client.sendEvent("TEST_LOG", "onMove: pos "+mp.x+", "+mp.y+" ("+this._bp.x+","+this._bp.y+")");
 
             var w = this.getAttribute("width");
             var h = this.getAttribute("height");

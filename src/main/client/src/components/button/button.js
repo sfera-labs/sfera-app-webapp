@@ -89,8 +89,8 @@ Sfera.Components.create("Button", {
     updateClass: function() {
         var col = this.getAttribute("color") || "default";
         var sty = this.getAttribute("style") || "default";
-        var d = (this.getAttribute("enabled") ? "" : " disabled")
-        this.button.setClassName("container" + (sty?" style_"+sty:"") + (col?" color_"+col:"")) + d;
+        var d = (this.getAttribute("enabled") ? "" : " disabled");
+        this.button.setClassName("container" + (sty?" style_"+sty:"") + (col?" color_"+col:"") + d);
         this.button.enable(d?false:true);
     },
 
@@ -107,6 +107,11 @@ Sfera.Components.create("Button", {
     onUp: function() {
         var f = this.getAttribute("onClick");
         Sfera.Custom.exec(f, this.id);
+    },
+
+    onShow: function() {
+        var icon = this.subComponents.icon;
+        icon.onShow();
     }
 
 
