@@ -174,7 +174,7 @@ Sfera.Components.create("Checkbox", {
 
         changeDelay: {
             type: "integer",
-            default: "200" // msec to wait before noticing a change
+            default: "0" // msec to wait before noticing a change
         },
 
         fontSize: {
@@ -1496,7 +1496,7 @@ Sfera.Components.create("Checkbox", {
 
         changeDelay: {
             type: "integer",
-            default: "200" // msec to wait before noticing a change
+            default: "0" // msec to wait before noticing a change
         },
 
         fontSize: {
