@@ -475,3 +475,51 @@ img {
         }
     }
 }
+
+.component.comp_nouislider {
+	.noUi-horizontal {
+      height: 2px;
+    }
+    .noUi-vertical {
+      width: 2px;
+    }
+    .noUi-horizontal .noUi-handle,
+    .noUi-vertical .noUi-handle {
+      width: 20px;
+      height: 20px;
+      left: -9px;
+      top: -9px;
+    }
+    .noUi-target {
+      background-color: rgba(0,0,0,0.5);
+      border-radius: 0;
+      border: 0;
+      box-shadow: none;
+    }
+    .noUi-handle {
+      border: none;
+      border-radius: 50%;
+      background-color: #2090ff;
+      cursor: default;
+      box-shadow: none;
+    }
+    .noUi-handle:before {
+      content: none;
+    }
+    .noUi-handle:after {
+      content: none;
+    }
+    
+    .noUi-vertical {
+      height: 100%;
+    }
+    [disabled].noUi-target,
+    [disabled].noUi-handle,
+    [disabled] .noUi-handle {
+      cursor: default;
+      @include opacity(50);
+    }
+    .noUi-handle {
+        outline: none;
+    }
+}

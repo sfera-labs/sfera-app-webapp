@@ -538,4 +538,181 @@ img {
       .component.comp_list .content .item .container.style_default.error {
         color: #e03050; }
 
+.component.comp_nouislider {
+  	/* Slider size and handle placement;
+       */
+  /* Styling;
+   */
+  /* Handles and cursors;
+   */
+  /* Handle stripes;
+   */
+  /* Disabled state;
+   */
+  /* Base;
+   *
+   */
+  /* Values;
+   *
+   */
+  /* Markings;
+   *
+   */
+  /* Horizontal layout;
+   *
+   */
+  /* Vertical layout;
+   *
+   */
+  /* Modified Styles */ }
+  .component.comp_nouislider .noUi-horizontal {
+    height: 18px; }
+  .component.comp_nouislider .noUi-horizontal .noUi-handle {
+    width: 34px;
+    height: 28px;
+    left: -17px;
+    top: -6px; }
+  .component.comp_nouislider .noUi-vertical {
+    width: 18px; }
+  .component.comp_nouislider .noUi-vertical .noUi-handle {
+    width: 28px;
+    height: 34px;
+    left: -6px;
+    top: -17px; }
+  .component.comp_nouislider .noUi-target {
+    background: #FAFAFA;
+    border-radius: 4px;
+    border: 1px solid #D3D3D3;
+    box-shadow: inset 0 1px 1px #F0F0F0, 0 3px 6px -5px #BBB; }
+  .component.comp_nouislider .noUi-connect {
+    background: #3FB8AF;
+    border-radius: 4px;
+    box-shadow: inset 0 0 3px rgba(51, 51, 51, 0.45);
+    -webkit-transition: background 450ms;
+    transition: background 450ms; }
+  .component.comp_nouislider .noUi-draggable {
+    cursor: ew-resize; }
+  .component.comp_nouislider .noUi-vertical .noUi-draggable {
+    cursor: ns-resize; }
+  .component.comp_nouislider .noUi-handle {
+    border: 1px solid #D9D9D9;
+    border-radius: 3px;
+    background: #FFF;
+    cursor: default;
+    box-shadow: inset 0 0 1px #FFF, inset 0 1px 7px #EBEBEB, 0 3px 6px -3px #BBB; }
+  .component.comp_nouislider .noUi-active {
+    box-shadow: inset 0 0 1px #FFF, inset 0 1px 7px #DDD, 0 3px 6px -3px #BBB; }
+  .component.comp_nouislider .noUi-handle:before,
+  .component.comp_nouislider .noUi-handle:after {
+    content: "";
+    display: block;
+    position: absolute;
+    height: 14px;
+    width: 1px;
+    background: #E8E7E6;
+    left: 14px;
+    top: 6px; }
+  .component.comp_nouislider .noUi-handle:after {
+    left: 17px; }
+  .component.comp_nouislider .noUi-vertical .noUi-handle:before,
+  .component.comp_nouislider .noUi-vertical .noUi-handle:after {
+    width: 14px;
+    height: 1px;
+    left: 6px;
+    top: 14px; }
+  .component.comp_nouislider .noUi-vertical .noUi-handle:after {
+    top: 17px; }
+  .component.comp_nouislider [disabled] .noUi-connect {
+    background: #B8B8B8; }
+  .component.comp_nouislider [disabled].noUi-target,
+  .component.comp_nouislider [disabled].noUi-handle,
+  .component.comp_nouislider [disabled] .noUi-handle {
+    cursor: not-allowed; }
+  .component.comp_nouislider .noUi-pips,
+  .component.comp_nouislider .noUi-pips * {
+    -moz-box-sizing: border-box;
+    box-sizing: border-box; }
+  .component.comp_nouislider .noUi-pips {
+    position: absolute;
+    color: #999; }
+  .component.comp_nouislider .noUi-value {
+    position: absolute;
+    white-space: nowrap;
+    text-align: center; }
+  .component.comp_nouislider .noUi-value-sub {
+    color: #ccc;
+    font-size: 10px; }
+  .component.comp_nouislider .noUi-marker {
+    position: absolute;
+    background: #CCC; }
+  .component.comp_nouislider .noUi-marker-sub {
+    background: #AAA; }
+  .component.comp_nouislider .noUi-marker-large {
+    background: #AAA; }
+  .component.comp_nouislider .noUi-pips-horizontal {
+    padding: 10px 0;
+    height: 80px;
+    top: 100%;
+    left: 0;
+    width: 100%; }
+  .component.comp_nouislider .noUi-value-horizontal {
+    -webkit-transform: translate3d(-50%, 50%, 0);
+    transform: translate3d(-50%, 50%, 0); }
+  .component.comp_nouislider .noUi-marker-horizontal.noUi-marker {
+    margin-left: -1px;
+    width: 2px;
+    height: 5px; }
+  .component.comp_nouislider .noUi-marker-horizontal.noUi-marker-sub {
+    height: 10px; }
+  .component.comp_nouislider .noUi-marker-horizontal.noUi-marker-large {
+    height: 15px; }
+  .component.comp_nouislider .noUi-pips-vertical {
+    padding: 0 10px;
+    height: 100%;
+    top: 0;
+    left: 100%; }
+  .component.comp_nouislider .noUi-value-vertical {
+    -webkit-transform: translate3d(0, 50%, 0);
+    transform: translate3d(0, 50%, 0);
+    padding-left: 25px; }
+  .component.comp_nouislider .noUi-marker-vertical.noUi-marker {
+    width: 5px;
+    height: 2px;
+    margin-top: -1px; }
+  .component.comp_nouislider .noUi-marker-vertical.noUi-marker-sub {
+    width: 10px; }
+  .component.comp_nouislider .noUi-marker-vertical.noUi-marker-large {
+    width: 15px; }
+  .component.comp_nouislider .noUi-tooltip {
+    display: block;
+    position: absolute;
+    border: 1px solid #D9D9D9;
+    border-radius: 3px;
+    background: #fff;
+    color: #000;
+    padding: 5px;
+    text-align: center;
+    white-space: nowrap; }
+  .component.comp_nouislider .noUi-horizontal .noUi-tooltip {
+    -webkit-transform: translate(-50%, 0);
+    transform: translate(-50%, 0);
+    left: 50%;
+    bottom: 120%; }
+  .component.comp_nouislider .noUi-vertical .noUi-tooltip {
+    -webkit-transform: translate(0, -50%);
+    transform: translate(0, -50%);
+    top: 50%;
+    right: 120%; }
+  .component.comp_nouislider .noUi-vertical {
+    height: 100%; }
+  .component.comp_nouislider [disabled].noUi-target,
+  .component.comp_nouislider [disabled].noUi-handle,
+  .component.comp_nouislider [disabled] .noUi-handle {
+    cursor: default;
+    -ms-filter: 'progid:DXImageTransform.Microsoft.Alpha(Opacity="50")';
+    filter: alpha(opacity=50);
+    opacity: 0.5; }
+  .component.comp_nouislider .noUi-handle {
+    outline: none; }
+
 /*# sourceMappingURL=default.css.map */

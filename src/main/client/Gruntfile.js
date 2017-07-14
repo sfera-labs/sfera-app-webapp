@@ -99,7 +99,7 @@ module.exports = function(grunt) {
                 files: [{
                     expand: true, // Enable dynamic expansion.
                     cwd: sferaWebAppPath + '/components', // Src matches are relative to this path.
-                    src: ['*/*.js', '!*/*.min.js'],
+                    src: ['*/*.js', '!*/*.doc*.js', '!*/*.min.js'],
                     dest: sferaWebAppPath + '/components', // Destination path prefix.
                     ext: '.min.js', // Dest filepaths will have this extension.
                     //extDot: 'first' // Extensions in filenames begin after the first dot

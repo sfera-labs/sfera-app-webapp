@@ -4,7 +4,6 @@
 Radio component, used in a group of multiple radio components to represent an exclusive value.
 Its appearance is defined by a [style](#style) attribute.
 The [group](#group) attribute defines which radio components work together.
-![radio](../images/components/radio.png)
 ## Attributes
 
 |Name|Type|Description|
@@ -284,7 +283,7 @@ Specifies the label's text.
 ### changeDelay
 
 Specifies the milliseconds before a change of value is noticed.
-<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>integer</td></tr><tr><td><b>Default value:</b></td><td>200</td></tr></table>
+<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>integer</td></tr><tr><td><b>Default value:</b></td><td>0</td></tr></table>
 
 
 
