@@ -89,9 +89,8 @@ Sfera.Components.create("Button", {
     updateClass: function() {
         var col = this.getAttribute("color") || "default";
         var sty = this.getAttribute("style") || "default";
-        var d = (this.getAttribute("enabled") ? "" : " disabled");
-        this.button.setClassName("container" + (sty?" style_"+sty:"") + (col?" color_"+col:"") + d);
-        this.button.enable(d?false:true);
+        this.button.setClassName("container" + (sty?" style_"+sty:"") + (col?" color_"+col:""));
+        this.button.enable(this.getAttribute("enabled"));
     },
 
     onDown: function() {
