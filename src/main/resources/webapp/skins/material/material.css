@@ -483,4 +483,41 @@ img {
       .component.comp_list .content .item .container.style_default.error {
         color: #e03050; }
 
+.component.comp_nouislider .noUi-horizontal {
+  height: 2px; }
+.component.comp_nouislider .noUi-vertical {
+  width: 2px; }
+.component.comp_nouislider .noUi-horizontal .noUi-handle,
+.component.comp_nouislider .noUi-vertical .noUi-handle {
+  width: 20px;
+  height: 20px;
+  left: -9px;
+  top: -9px; }
+.component.comp_nouislider .noUi-target {
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 0;
+  border: 0;
+  box-shadow: none; }
+.component.comp_nouislider .noUi-handle {
+  border: none;
+  border-radius: 50%;
+  background-color: #2090ff;
+  cursor: default;
+  box-shadow: none; }
+.component.comp_nouislider .noUi-handle:before {
+  content: none; }
+.component.comp_nouislider .noUi-handle:after {
+  content: none; }
+.component.comp_nouislider .noUi-vertical {
+  height: 100%; }
+.component.comp_nouislider [disabled].noUi-target,
+.component.comp_nouislider [disabled].noUi-handle,
+.component.comp_nouislider [disabled] .noUi-handle {
+  cursor: default;
+  -ms-filter: 'progid:DXImageTransform.Microsoft.Alpha(Opacity="50")';
+  filter: alpha(opacity=50);
+  opacity: 0.5; }
+.component.comp_nouislider .noUi-handle {
+  outline: none; }
+
 /*# sourceMappingURL=material.css.map */

@@ -59,6 +59,7 @@ Sfera.Attribute = function(component, config) {
 };
 Sfera.Attribute.prototype = {
     // options:
+    //  manualCompile: don't call compile
     //  manualUpdate: don't call update
     //  silent: don't raise events
     set: function(value, options) {
@@ -79,7 +80,7 @@ Sfera.Attribute.prototype = {
             for (i=0; i<this.mustache.vars.length; i++)
                 Sfera.client.bindAttrObserver(this.mustache.vars[i], this);
         }
-        if (!options || !options.manualUpdate)
+        if (!options || !options.manualCompile)
             this.compile(options);
     },
 
@@ -109,7 +110,8 @@ Sfera.Attribute.prototype = {
         if (value !== this.value) {
             this.changed = false;
             this.value = value;
-            this.update(options);
+            if (!options || !options.manualUpdate)
+                this.update(options);
         }
     },
 
