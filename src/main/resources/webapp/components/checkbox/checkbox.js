@@ -88,21 +88,9 @@ Sfera.Components.create("Checkbox", {
             }
         },
 
-        onKeyUp: {
-            type: "js"
-        },
         onChange: {
             type: "js",
             default: "event(id,value)"
-        },
-        onEnterKey: {
-            type: "js"
-        },
-        onFocus: {
-            type: "js"
-        },
-        onBlur: {
-            type: "js"
         }
     },
 
@@ -127,8 +115,7 @@ Sfera.Components.create("Checkbox", {
     blur: function() {
         this.onBlur();
     },
-
-    // redraw
+    
     redraw: function() {
         var sty = this.getAttribute("style");
         this.elements.container.className = "container " + (sty?" style_"+sty:"") +
@@ -147,7 +134,7 @@ Sfera.Components.create("Checkbox", {
     clearChangeTimeout: function() {
         if (this.changeTimeout) {
             clearTimeout(this.changeTimeout);
-            this.changeTimeout = null; // make sure?
+            this.changeTimeout = null;
         }
     },
 
@@ -167,64 +154,31 @@ Sfera.Components.create("Checkbox", {
     },
 
     onClick: function() {
-        var f = this.getAttribute("onClick");
-        var r = true;
-        if (f) {
-            var value = this.getAttribute("value");
-            r = Sfera.Custom.exec(f, this.id, value);
-        }
-        if (r !== false) {
-            this.focus();
-            this.flip();
-        }
+    	this.focus();
+        this.flip();
     },
 
     onKeyDown: function(event) {
         var code = event.keyCode;
         var c = Sfera.Utils.getKeyFromCode(code);
 
-        // trigger on enter event
-        if (c == "enter" && !this.onEnter()) {
-            c = ""; // onEnter prevented, don't focus next
-        }
-
         if (c == "tab") {
-            this.onChangedTimeout(); // send now
-
+        	if (this.changeTimeout) {
+        		this.onChangedTimeout(); // send now
+        	}
             Sfera.client.focusNext(event.shiftKey);
-            if (c == "enter")
-                this.blur(); // still focused? (no next object)
-
             return false; // done, prevent
-        } else {
-            // space, flip
-            if (c == "space" || c == "enter") {
-                this.flip();
-            }
-
-            this.onChange();
-
-            return true; // allow
         }
-    },
-
-    onKeyPress: function(event) {
-        var code = event.keyCode;
-        var c = Sfera.Utils.getKeyFromCode(code);
-
-        this.onChange();
-        return true; // allow
     },
 
     onKeyUp: function(event) {
         var code = event.keyCode;
         var c = Sfera.Utils.getKeyFromCode(code);
-
-        if (c != "enter" && c != "tab") {
-            this.onChange();
-            return false; // nothing to see here: prevent
+        
+        if (c == "space" || c == "enter") {
+            this.flip();
         }
-
+        
         return true;
     },
 
@@ -242,15 +196,6 @@ Sfera.Components.create("Checkbox", {
         }
     },
 
-    onEnterKey: function () {
-        var f = this.getAttribute("onEnterKey");
-        if (f) {
-            return Sfera.Custom.exec(f);
-        } else {
-            return true; // don't block it
-        }
-    },
-
     onFocus: function() {
         Sfera.client.setFocused(this);
         this.focused = true;
@@ -258,7 +203,6 @@ Sfera.Components.create("Checkbox", {
     },
 
     onBlur: function() {
-        this.onChange();
         Sfera.client.clearFocused(this);
         this.focused = false;
         this.updateClass();
@@ -270,7 +214,6 @@ Sfera.Components.create("Checkbox", {
     },
 
     onHide: function() {
-
     }
 
 });
