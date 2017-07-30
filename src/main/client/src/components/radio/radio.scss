@@ -3,7 +3,7 @@
     @include sizing(border-box);
     height: auto;
     &.focused {
-        z-index: 1000;
+        z-index: 10;
         .container {
             &.style_default {
                 .button {

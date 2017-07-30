@@ -5,7 +5,7 @@
   box-sizing: border-box;
   height: auto; }
   .component.comp_checkbox.focused {
-    z-index: 1000; }
+    z-index: 10; }
   .component.comp_checkbox .container {
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
