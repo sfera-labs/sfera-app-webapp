@@ -2,6 +2,7 @@
 # Select
 
 Select component, allows the user to select a single value among a list of [values](#values).
+
 ![select](../images/components/select.png)
 ## Attributes
 
@@ -14,8 +15,8 @@ Select component, allows the user to select a single value among a list of [valu
 |**[y](#y)**|integer|Specifies the top position of the component in pixels, relative to its parent container (a page or a container component)|
 |**[rotation](#rotation)**|integer|Specifies the element's clockwise rotation in degrees|
 |**[opacity](#opacity)**|float|Specifies the element's opacity (0..1)|
-|**[width](#width)**|integer|Specifies the component's width in pixels|
-|**[height](#height)**|integer|Specifies the component's height in pixels|
+|**[width](#width)**|size|Specifies the component's width in pixels|
+|**[height](#height)**|size|Specifies the component's height in pixels|
 |**[style](#style)**|string|Specifies the style|
 |**[enabled](#enabled)**|boolean|Specifies whether the component is enabled or not|
 |**[value](#value)**|string|Specifies the current value|
@@ -26,11 +27,7 @@ Select component, allows the user to select a single value among a list of [valu
 |**[changeDelay](#changeDelay)**|integer|Speficies the delay in milliseconds before a value's change is detected|
 |**[fontSize](#fontSize)**|integer|Specifies the font size in pixels|
 |**[fontColor](#fontColor)**|string|Specifies the font color|
-|**[onKeyUp](#onKeyUp)**|js|Script to be run on key up event|
 |**[onChange](#onChange)**|js|Script to be run when a change in value is detected. Variables id and value can be used.|
-|**[onEnterKey](#onEnterKey)**|js|Script to be run when enter key is pressed|
-|**[onFocus](#onFocus)**|js|Script to be run when the component receives focus|
-|**[onBlur](#onBlur)**|js|Script to be run when the component loses focus|
 
 
 ---
@@ -186,7 +183,7 @@ setAttribute("mySelect","opacity","0.5")
 ### width
 
 Specifies the component's width in pixels.
-<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>integer</td></tr></table>
+<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>size</td></tr></table>
 
 >**Example:**
 >
@@ -212,7 +209,7 @@ setAttribute("mySelect","width","100")
 ### height
 
 Specifies the component's height in pixels.
-<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>integer</td></tr></table>
+<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>size</td></tr></table>
 
 >**Example:**
 >
@@ -325,15 +322,6 @@ Specifies the font color.
 
 ---
 
-### onKeyUp
-
-Script to be run on key up event.
-<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>js</td></tr></table>
-
-
-
----
-
 ### onChange
 
 Script to be run when a change in value is detected. Variables id and value can be used.
@@ -355,31 +343,3 @@ Script to be run when a change in value is detected. Variables id and value can 
 >``` js
 setAttribute("mySelect","onChange","alert(id+' changed. Current value: '+value)")
 ```
-
-
-
----
-
-### onEnterKey
-
-Script to be run when enter key is pressed.
-<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>js</td></tr></table>
-
-
-
----
-
-### onFocus
-
-Script to be run when the component receives focus.
-<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>js</td></tr></table>
-
-
-
----
-
-### onBlur
-
-Script to be run when the component loses focus.
-<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>js</td></tr></table>
-

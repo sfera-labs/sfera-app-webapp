@@ -3,6 +3,7 @@
 
 A button component used to execute customized JavaScript code.
 Its appearance is defined by a style attribute. The [onClick](#onClick) attribute is used to associate an action to execute when the button is pressed.
+
 ![button](../images/components/button.png)
 ## Attributes
 
@@ -15,8 +16,8 @@ Its appearance is defined by a style attribute. The [onClick](#onClick) attribut
 |**[y](#y)**|integer|Specifies the top position of the component in pixels, relative to its parent container (a page or a container component)|
 |**[rotation](#rotation)**|integer|Specifies the element's clockwise rotation in degrees|
 |**[opacity](#opacity)**|float|Specifies the element's opacity (0..1)|
-|**[width](#width)**|integer|Specifies the component's width in pixels|
-|**[height](#height)**|integer|Specifies the component's height in pixels|
+|**[width](#width)**|size|Specifies the component's width in pixels|
+|**[height](#height)**|size|Specifies the component's height in pixels|
 |**[style](#style)**|string|Specifies the style|
 |**[color](#color)**|string|Specifies the color|
 |**[enabled](#enabled)**|boolean|Specifies whether the component is enabled or not|
@@ -181,7 +182,7 @@ setAttribute("myButton","opacity","0.5")
 ### width
 
 Specifies the component's width in pixels.
-<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>integer</td></tr></table>
+<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>size</td></tr></table>
 
 >**Example:**
 >
@@ -207,7 +208,7 @@ setAttribute("myButton","width","100")
 ### height
 
 Specifies the component's height in pixels.
-<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>integer</td></tr></table>
+<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>size</td></tr></table>
 
 >**Example:**
 >
@@ -323,4 +324,3 @@ Script to be run on down/touch start event. The onClick event function as an onU
 
 Script to be run on mouse/touch move event.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>js</td></tr></table>
-

@@ -3,6 +3,7 @@
 
 Slider component, allows the user to input a numeric [value](#value) between a [minimum](#min) and [maximum](#max) value.
 The decimal digits in the value are based on the maximum amount of decimal digits in the min and max attributes.
+
 ![slider](../images/components/slider.png)
 ## Attributes
 
@@ -15,8 +16,8 @@ The decimal digits in the value are based on the maximum amount of decimal digit
 |**[y](#y)**|integer|Specifies the top position of the component in pixels, relative to its parent container (a page or a container component)|
 |**[rotation](#rotation)**|integer|Specifies the element's clockwise rotation in degrees|
 |**[opacity](#opacity)**|float|Specifies the element's opacity (0..1)|
-|**[width](#width)**|integer|Specifies the component's width in pixels|
-|**[height](#height)**|integer|Specifies the component's height in pixels|
+|**[width](#width)**|size|Specifies the component's width in pixels|
+|**[height](#height)**|size|Specifies the component's height in pixels|
 |**[style](#style)**|string|Specifies the style|
 |**[color](#color)**|string|Specifies the color|
 |**[enabled](#enabled)**|boolean|Specifies whether the component is enabled or not|
@@ -187,7 +188,7 @@ setAttribute("mySlider","opacity","0.5")
 ### width
 
 Specifies the component's width in pixels.
-<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>integer</td></tr></table>
+<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>size</td></tr></table>
 
 >**Example:**
 >
@@ -213,7 +214,7 @@ setAttribute("mySlider","width","100")
 ### height
 
 Specifies the component's height in pixels.
-<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>integer</td></tr></table>
+<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>size</td></tr></table>
 
 >**Example:**
 >
@@ -383,4 +384,3 @@ Script to be run when the component receives focus.
 
 Script to be run when the component loses focus.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>js</td></tr></table>
-
