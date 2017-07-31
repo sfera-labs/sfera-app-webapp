@@ -80,7 +80,6 @@ Sfera.Components.create("Select", {
             update: function() {
                 if (this.component.elements.field)
                     this.component.elements.field.style.fontSize = this.value + "px";
-                //this.component.subComponents.erase.setAttribute("width")
             }
         },
 
@@ -91,21 +90,9 @@ Sfera.Components.create("Select", {
             }
         },
 
-        onKeyUp: {
-            type: "js"
-        },
         onChange: {
             type: "js",
             default: "event(id,value)"
-        },
-        onEnterKey: {
-            type: "js"
-        },
-        onFocus: {
-            type: "js"
-        },
-        onBlur: {
-            type: "js"
         }
     },
 
@@ -121,7 +108,6 @@ Sfera.Components.create("Select", {
         this.redraw();
     },
 
-
     focus: function() {
         this.elements.field.focus(); // will fire onFocus
     },
@@ -132,16 +118,12 @@ Sfera.Components.create("Select", {
 
     // redraw
     redraw: function() {
-        var value = "";
-
-        if (this.elements.field) {
+    	if (this.elements.field) {
             this.elements.field.onfocus = null;
             this.elements.field.onblur = null;
             this.elements.field.onselectstart = null;
-            value = this.elements.field.value;
             this.elements.field = null;
         }
-        var type = this.getAttribute("type");
         var phText = this.getAttribute("placeHolder");
         phText = phText ? ' placeholder="' + phText + '"' : '';
         var style = ""; // TODO: styling the field
@@ -164,7 +146,7 @@ Sfera.Components.create("Select", {
         this.elements.fieldC.innerHTML = html;
 
         this.elements.field = this.elements.fieldC.childNodes[0];
-        this.elements.field.value = value;
+        this.elements.field.value = this.attributes.value.value;
         this.attributes.height.update();
 
         //this.elements.field.multiple = true;
@@ -187,7 +169,6 @@ Sfera.Components.create("Select", {
         this.redraw();
     },
 
-
     updateClass: function() {
         var d = this.getAttribute("enabled") ? "" : " disabled";
         this.element.className = "component comp_select" + (this.focused ? " focused" : "") + d;
@@ -201,12 +182,6 @@ Sfera.Components.create("Select", {
     //
     // events
     //
-
-    // on erase button
-    onErase: function() {
-        this.setAttribute("value", "");
-        this.onChangedTimeout();
-    },
 
     clearChangeTimeout: function() {
         if (this.changeTimeout) {
@@ -225,79 +200,17 @@ Sfera.Components.create("Select", {
         Sfera.Custom.exec(f, this.id, value);
     },
 
-    onSelectStart: function(event) {
-
-    },
-
     onKeyDown: function(event) {
-        //this.controller.setAttribute("error", "false"); // make sure we're not showing an error
         var code = event.keyCode;
         var c = Sfera.Utils.getKeyFromCode(code);
-        var type = this.getAttribute("type");
-
-        // trigger on enter event
-        if (c == "enter" && !this.onEnter()) {
-            c = ""; // onEnter prevented, don't focus next
-        }
-
-        if ((c == "enter" && type != "textarea") || c == "tab") {
-            this.onChangedTimeout(); // send now
-
+        
+        if (c == "tab") {
+        	if (this.changeTimeout) {
+        		this.onChangedTimeout(); // send now
+        	}
             Sfera.client.focusNext(event.shiftKey);
-            if (c == "enter" && type != "textarea")
-                this.blur(); // still focused? (no next object)
-
             return false; // done, prevent
-        } else {
-            this.onChange();
-
-            return true; // allow
         }
-    },
-
-    onKeyPress: function(event) {
-        var code = event.keyCode;
-        var c = Sfera.Utils.getKeyFromCode(code);
-        var fieldE = this.elements.field;
-        var value = this.getAttribute("value");
-        var keyRegex = this.getAttribute("keyRegex");
-        var maxLength = this.getAttribute("maxLength");
-
-        function getSelectedText() {
-            var text = "";
-            if (fieldE.selectionStart != fieldE.selectionEnd) {
-                text = value.substr(fieldE.selectionStart, fieldE.selectionEnd);
-            } else if (typeof window.getSelection != "undefined") {
-                text = window.getSelection().toString();
-            } else if (typeof document.selection != "undefined" && document.selection.type == "Text") {
-                text = document.selection.createRange().text;
-            }
-            return text;
-        }
-
-        // check max length
-        if (!c && value && maxLength && value.length >= maxLength && !getSelectedText()) {
-            return false; // prevent
-        }
-
-        // validate? (only if ctrl or meta are not pressed)
-        if (!c && keyRegex && !event.ctrlKey && !event.metaKey && !keyRegex.test(String.fromCharCode(code)))
-            return false; // key validation failed: prevent
-
-        this.onChange();
-        return true; // allow
-    },
-
-    onKeyUp: function(event) {
-        var code = event.keyCode;
-        var c = Sfera.Utils.getKeyFromCode(code);
-
-        if (c != "enter" && c !== "tab") {
-            this.onChange();
-            return false; // nothing to see here: prevent
-        }
-
-        return true;
     },
 
     onChange: function() {
@@ -308,7 +221,6 @@ Sfera.Components.create("Select", {
                 this.attributes.value.value = v;
 
             this.clearChangeTimeout();
-            //if (foo.autoSend || foo.onUserChange) { // otherwise there's nothing to do
 
             var changeDelay = this.getAttribute("changeDelay");
             var self = this;
@@ -319,15 +231,6 @@ Sfera.Components.create("Select", {
             } else {
                 self.onChangedTimeout();
             }
-        }
-    },
-
-    onEnterKey: function() {
-        var f = this.getAttribute("onEnterKey");
-        if (f) {
-            return Sfera.Custom.exec(f);
-        } else {
-            return true; // don't block it
         }
     },
 
@@ -352,7 +255,6 @@ Sfera.Components.create("Select", {
     },
 
     onHide: function() {
-
     }
 
 });
