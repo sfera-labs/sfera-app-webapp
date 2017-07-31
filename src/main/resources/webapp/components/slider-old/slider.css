@@ -1,0 +1,40 @@
+.component.comp_slider .container {
+  width: 100%;
+  height: 100%; }
+.component.comp_slider .bg,
+.component.comp_slider .bar {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -ms-box-sizing: border-box;
+  box-sizing: border-box; }
+  .component.comp_slider .bg .in,
+  .component.comp_slider .bar .in {
+    width: 100%;
+    height: 100%;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    box-sizing: border-box; }
+.component.comp_slider .bar .in {
+  overflow: hidden;
+  padding: 1px; }
+  .component.comp_slider .bar .in .fill {
+    height: 100%;
+    width: 100%; }
+.component.comp_slider .vertical .bg,
+.component.comp_slider .vertical .bar {
+  padding: 0 7px; }
+.component.comp_slider .horizontal .bg,
+.component.comp_slider .horizontal .bar {
+  padding: 7px 0; }
+.component.comp_slider .ghost {
+  position: absolute; }
+.component.comp_slider .over {
+  position: absolute;
+  width: 100%;
+  height: 100%; }
+
+/*# sourceMappingURL=slider.css.map */

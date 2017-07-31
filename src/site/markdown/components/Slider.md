@@ -1,8 +1,7 @@
 
 # Slider
 
-Slider component, allows the user to input a numeric [value](#value) between a [minimum](#min) and [maximum](#max) value.
-The decimal digits in the value are based on the maximum amount of decimal digits in the min and max attributes.
+Slider component, based on [NoUiSlider](https://refreshless.com/nouislider/).
 
 ![slider](../images/components/slider.png)
 ## Attributes
@@ -21,18 +20,13 @@ The decimal digits in the value are based on the maximum amount of decimal digit
 |**[style](#style)**|string|Specifies the style|
 |**[color](#color)**|string|Specifies the color|
 |**[enabled](#enabled)**|boolean|Specifies whether the component is enabled or not|
-|**[cursorSize](#cursorSize)**|integer|Specifies the cursor's size in pixels|
-|**[barColor](#barColor)**|color|Specifies the color of the bar|
 |**[min](#min)**|float|Specifies the minumum value|
 |**[max](#max)**|float|Specifies the maximum value|
-|**[focus](#focus)**|boolean|If true, gives the component focus|
 |**[value](#value)**|float|Specifies the value of the slider|
+|**[decimals](#decimals)**|integer|Number of decimals for the value|
 |**[changeDelay](#changeDelay)**|integer|Speficies the delay in milliseconds before a value's change is detected|
-|**[onKeyUp](#onKeyUp)**|js|Script to be run on key up event|
 |**[onChange](#onChange)**|js|Script to be run when a change in value is detected. Variables id and value can be used.|
-|**[onEnterKey](#onEnterKey)**|js|Script to be run when enter key is pressed|
-|**[onFocus](#onFocus)**|js|Script to be run when the component receives focus|
-|**[onBlur](#onBlur)**|js|Script to be run when the component loses focus|
+|**[orientation](#orientation)**|string|Orientation of the slider|
 
 
 ---
@@ -249,7 +243,7 @@ Specifies the style.
 ### color
 
 Specifies the color.
-<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>string</td></tr><tr><td><b>Default value:</b></td><td>default</td></tr><tr><td><b>Values:</b></td><td>default, stable, positive, balanced, energized, assertive, gray, green, blue, yellow, red</td></tr></table>
+<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>string</td></tr><tr><td><b>Default value:</b></td><td>default</td></tr><tr><td><b>Values:</b></td><td>default</td></tr></table>
 
 
 
@@ -259,24 +253,6 @@ Specifies the color.
 
 Specifies whether the component is enabled or not.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>boolean</td></tr><tr><td><b>Default value:</b></td><td>true</td></tr></table>
-
-
-
----
-
-### cursorSize
-
-Specifies the cursor's size in pixels.
-<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>integer</td></tr><tr><td><b>Default value:</b></td><td>30</td></tr></table>
-
-
-
----
-
-### barColor
-
-Specifies the color of the bar.
-<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>color</td></tr><tr><td><b>Default value:</b></td><td>transparent</td></tr></table>
 
 
 
@@ -300,15 +276,6 @@ Specifies the maximum value.
 
 ---
 
-### focus
-
-If true, gives the component focus.
-<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>boolean</td></tr></table>
-
-
-
----
-
 ### value
 
 Specifies the value of the slider.
@@ -318,19 +285,19 @@ Specifies the value of the slider.
 
 ---
 
-### changeDelay
+### decimals
 
-Speficies the delay in milliseconds before a value's change is detected.
+Number of decimals for the value.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>integer</td></tr><tr><td><b>Default value:</b></td><td>0</td></tr></table>
 
 
 
 ---
 
-### onKeyUp
+### changeDelay
 
-Script to be run on key up event.
-<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>js</td></tr></table>
+Speficies the delay in milliseconds before a value's change is detected.
+<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>integer</td></tr><tr><td><b>Default value:</b></td><td>0</td></tr></table>
 
 
 
@@ -362,25 +329,7 @@ setAttribute("mySlider","onChange","alert(id+' changed. Current value: '+value)"
 
 ---
 
-### onEnterKey
+### orientation
 
-Script to be run when enter key is pressed.
-<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>js</td></tr></table>
-
-
-
----
-
-### onFocus
-
-Script to be run when the component receives focus.
-<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>js</td></tr></table>
-
-
-
----
-
-### onBlur
-
-Script to be run when the component loses focus.
-<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>js</td></tr></table>
+Orientation of the slider.
+<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>string</td></tr><tr><td><b>Default value:</b></td><td>horizontal</td></tr><tr><td><b>Values:</b></td><td>horizontal, vertical</td></tr></table>
