@@ -258,7 +258,7 @@ Sfera.Components.create("Input", {
             var self = this;
             if (changeDelay) // if 0, disabled
                 this.changeTimeout = setTimeout(function() {
-                self.onChangedTimeout()
+                self.onChangedTimeout();
             }, changeDelay);
         }
     },

@@ -3,6 +3,7 @@
 
 Checkbox component, used to represent a boolean value.
 Its appearance is defined by a [style](#style) attribute.
+
 ![checkbox](../images/components/checkbox.png)
 ## Attributes
 
@@ -14,8 +15,9 @@ Its appearance is defined by a [style](#style) attribute.
 |**[x](#x)**|integer|Specifies the left position of the component in pixels, relative to its parent container (a page or a container component)|
 |**[y](#y)**|integer|Specifies the top position of the component in pixels, relative to its parent container (a page or a container component)|
 |**[rotation](#rotation)**|integer|Specifies the element's clockwise rotation in degrees|
-|**[width](#width)**|integer|Specifies the component's width in pixels|
-|**[height](#height)**|integer|Specifies the component's height in pixels|
+|**[opacity](#opacity)**|float|Specifies the element's opacity (0..1)|
+|**[width](#width)**|size|Specifies the component's width in pixels|
+|**[height](#height)**|size|Specifies the component's height in pixels|
 |**[style](#style)**|string|Specifies the style|
 |**[enabled](#enabled)**|boolean|Specifies whether the component is enabled or not|
 |**[value](#value)**|boolean|Specifies the checkbox's value|
@@ -155,10 +157,36 @@ setAttribute("myCheckbox","rotation","90")
 
 ---
 
+### opacity
+
+Specifies the element's opacity (0..1).
+<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>float</td></tr></table>
+
+>**Example:**
+>
+>Set the opacity of the component to 50%.
+>
+
+>In index.xml:
+
+>``` xml
+<checkbox id="myCheckbox" x="30" y="10" opacity="0.5" />
+```
+
+>Via scripting:
+
+>``` js
+setAttribute("myCheckbox","opacity","0.5")
+```
+
+
+
+---
+
 ### width
 
 Specifies the component's width in pixels.
-<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>integer</td></tr><tr><td><b>Default value:</b></td><td>20</td></tr></table>
+<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>size</td></tr><tr><td><b>Default value:</b></td><td>20</td></tr></table>
 
 >**Example:**
 >
@@ -184,7 +212,7 @@ setAttribute("myCheckbox","width","100")
 ### height
 
 Specifies the component's height in pixels.
-<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>integer</td></tr><tr><td><b>Default value:</b></td><td>20</td></tr></table>
+<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>size</td></tr><tr><td><b>Default value:</b></td><td>20</td></tr></table>
 
 >**Example:**
 >
@@ -210,7 +238,7 @@ setAttribute("myCheckbox","height","50")
 ### style
 
 Specifies the style.
-<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>string</td></tr><tr><td><b>Default value:</b></td><td>default</td></tr><tr><td><b>Values:</b></td><td>default</td></tr></table>
+<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>string</td></tr><tr><td><b>Default value:</b></td><td>default</td></tr><tr><td><b>Values:</b></td><td>default, radio, switch, clear</td></tr></table>
 
 
 
@@ -255,7 +283,7 @@ Specifies the label's text.
 ### changeDelay
 
 Specifies the milliseconds before a change of value is noticed.
-<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>integer</td></tr><tr><td><b>Default value:</b></td><td>200</td></tr></table>
+<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>integer</td></tr><tr><td><b>Default value:</b></td><td>0</td></tr></table>
 
 
 
@@ -336,4 +364,3 @@ Script to be run when the field gains focus.
 
 Script to be run when the field loses focus.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>js</td></tr></table>
-

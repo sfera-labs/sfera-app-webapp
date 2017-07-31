@@ -28,8 +28,6 @@ Sfera.Net = new (function() {
 
     var cSync = ""; // currently synchronizing resource
 
-    var self = this;
-
     var wsOptions = {
         // the number of milliseconds to delay before attempting to reconnect.
     	reconnectInterval: 50,
@@ -47,16 +45,10 @@ Sfera.Net = new (function() {
     this.stateTs = -1;
     this.subscribed = false; // change this
 
-    // local timestamps, to check required updates
-    this.localTs = {
-        "dictionary": -1,
-        "index": -1
-    };
-
-    this.remoteTs = {
-        "dictionary": -1,
-        "index": -1
-    };
+    // local and remote resource timestamps, to check required updates
+    // ex. dictionary, index
+    this.localTs = {};
+    this.remoteTs = {};
 
     // signals
     this.onOpen = new Sfera.Signal();
@@ -102,6 +94,15 @@ Sfera.Net = new (function() {
         location = Sfera.Browser ? Sfera.Browser.getLocation() : {};
     };
 
+	// require resources
+	this.require = function (arr) {
+		// set timestamps to -1, required on sync
+		for (var i=0; i<arr.length; i++) {
+			this.localTs[arr[i]] = -1;
+			this.remoteTs[arr[i]] = -1;
+		}
+	};
+
     function onWsOpen(event) {
         // onopen gets called twice and the first time event.data is undefined. TODO:check
         //if (event.data === undefined)
@@ -117,7 +118,6 @@ Sfera.Net = new (function() {
             resetConnCheckTimeout();
             self.wsSend("&");
         } else {
-            self.onMessage.dispatch(event.data);
             Sfera.Debug.log("ws msg", event.data);
             json = JSON.parse(event.data);
 
@@ -132,12 +132,14 @@ Sfera.Net = new (function() {
                         clearTimeout(wsConnectTimeout);
                         wsTimeoutMs = null;
 
-                        self.onConnection.dispatch(json);
                         self.connectionId = json.connectionId;
                         pingInterval = parseInt(json.pingInterval);
                         responseTimeout = parseInt(json.responseTimeout);
                         resetConnCheckTimeout();
+
                         wsConnected = true;
+
+                        self.onConnection.dispatch(json);
                     }
                     break;
                 case "console":
@@ -147,6 +149,8 @@ Sfera.Net = new (function() {
                     self.onEvent.dispatch(json);
                     break;
             }
+
+            self.onMessage.dispatch(event.data);
         }
     }
 
@@ -270,7 +274,7 @@ Sfera.Net = new (function() {
     // request resource
     this.request = function(url) {
         if (!req) {
-            req = new Sfera.Net.Request()
+            req = new Sfera.Net.Request();
             req.onLoaded = onReqLoaded;
             req.onError = onReqError;
         }
@@ -286,19 +290,18 @@ Sfera.Net = new (function() {
     // sync, if necessary
     this.sync = function() {
         for (var s in this.localTs) {
-            if (this.localTs[s] == -1) { // || this.localTs[s] < this.remoteTs[s]) {
+            if (this.localTs[s] == -1) { // TODO || this.localTs[s] < this.remoteTs[s]) {
                 cSync = s;
                 this.request(httpBaseUrl + self.getURL(s));
                 return; // one resource per time
             }
         }
 
-        // use websockets?
-        if (true) {
-            self.wsOpen ();
-            return;
-        }
+        // use websockets
+        self.wsOpen ();
 
+		// TODO alternative method, xmlhttprequests
+		/*
         if (!this.connectionId) {
             cSync = "connect";
             this.request(httpBaseUrl + self.getURL("connect"));
@@ -314,6 +317,7 @@ Sfera.Net = new (function() {
 
         cSync = "state";
         this.request(httpBaseUrl + self.getURL("state"));
+		*/
     };
 
     function onReqLoaded() {
@@ -403,7 +407,6 @@ Sfera.Net = new (function() {
             tag: req.tag || (new Date()).getTime()
         };
         this.wsSend(JSON.stringify(r));
-
     };
 
     this.sendConsole = function(req) {
@@ -413,7 +416,6 @@ Sfera.Net = new (function() {
             tag: req.tag || (new Date()).getTime()
         };
         this.wsSend(JSON.stringify(r));
-
     };
 
 

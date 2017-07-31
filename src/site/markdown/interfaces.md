@@ -35,7 +35,7 @@ All the static resources used in the interface (e.g. images) shall be placed ins
 
 Any JavaScript file ('.js' extension) found in the interface directory will be included in the client code of the interface. Check [Client-side scripting](client-scripting.html) for more details.
 
-You can also add CSS files to define custom CSS classes used by [components](components.html) in your interface.
+You can also add a `style.css` file to define custom CSS classes used by [components](components.html) in your interface.
 
 In the above case the generated interface will be served at `http://192.168.1.100/helloworld` (with some assumptions on IP address and port configuration).
 

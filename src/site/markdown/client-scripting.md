@@ -3,7 +3,7 @@
 You can add any sort of custom logic to be executed on the client when the user interacts with an interface or when events are triggered on the system. 
 
 To link the execution of some code to a user action on a component, add it to any of the js-typed attributes of the component (for instance the _on-click_ attribute of a button).    
-You can call any of the [predefined functions](client-functions) or your own functions defined in one of the JavaScript files added to the [interface](interfaces.html).
+You can call any of the [predefined functions](client-functions.html) or your own functions defined in one of the JavaScript files added to the [interface](interfaces.html).
 
 Moreover, there are a set of predefined [callbacks](client-callbacks.html) that are called automatically for instance when the interface is loaded or when an event update is received from the server.
 

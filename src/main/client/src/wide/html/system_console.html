@@ -1,0 +1,25 @@
+<div id="systemConsole">
+    <div id="sc_toolbar" class="toolbar">
+        <div class="toolbarAppIcon">
+            <img src="/wide/images/appiconscs.png">
+        </div>
+        <div id="sc_toolbarHeader" class="toolbarHeader" onselectstart="return false;">Console</div>
+        <div id="sc_toolbarAppsBt" class="mToolButton" data-onclick="wide.showAppsPopup(true)">
+            <img class="icon" src="/wide/images/ticonapps.png">
+        </div>
+    </div>
+
+    <div id="sc_outputPanel" class="appPanel">
+        <div id="sc_consoleText"></div>
+
+        <div id="sc_loading">
+            <img style="float:left; margin-right:4px;" src="/wide/images/loader.gif">&nbsp;Loading
+        </div>
+    </div>
+
+    <div id="sc_inputPanel" class="appPanel">
+        <div class="pre">&gt;</div>
+        <input id="sc_input">
+        <div class="mButton" data-onclick="systemConsole.send()">Send</div>
+    </div>
+</div>

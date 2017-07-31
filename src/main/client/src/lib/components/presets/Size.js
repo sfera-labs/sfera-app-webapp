@@ -6,19 +6,29 @@
 Sfera.ComponentPresets.Size = function() {
     // extend attributes
     this.attrDefs.width = {
-        type: "integer",
+        type: "size",
         update: function() {
-            this.component.element.style.width = this.value == "auto" ? "auto" : this.value + "px";
+            this.component.element.style.width = this.value + (typeof(this.value) != "string" ? "px" : "");
             // post update
             this.post();
         },
+		get: function () {
+			if (typeof(this.value) == "string")
+				return this.component.element.offsetWidth;
+			return this.value;
+		}
     };
     this.attrDefs.height = {
-        type: "integer",
+        type: "size",
         update: function() {
-            this.component.element.style.height = this.value == "auto" ? "auto" : this.value + "px";
+            this.component.element.style.height = this.value + (typeof(this.value) != "string" ? "px" : "");
             // post update
             this.post();
         },
+		get: function () {
+			if (typeof(this.value) == "string")
+				return this.component.element.offsetHeight;
+			return this.value;
+		}
     };
 };

@@ -3,6 +3,7 @@
 
 Input component, to allow the user to input a value of various types (defined by the type attribute).
 Its appearance is defined by a [style](#style) attribute.
+
 ![input](../images/components/input.png)
 ## Attributes
 
@@ -14,8 +15,9 @@ Its appearance is defined by a [style](#style) attribute.
 |**[x](#x)**|integer|Specifies the left position of the component in pixels, relative to its parent container (a page or a container component)|
 |**[y](#y)**|integer|Specifies the top position of the component in pixels, relative to its parent container (a page or a container component)|
 |**[rotation](#rotation)**|integer|Specifies the element's clockwise rotation in degrees|
-|**[width](#width)**|integer|Specifies the component's width in pixels|
-|**[height](#height)**|integer|Specifies the component's height in pixels|
+|**[opacity](#opacity)**|float|Specifies the element's opacity (0..1)|
+|**[width](#width)**|size|Specifies the component's width in pixels|
+|**[height](#height)**|size|Specifies the component's height in pixels|
 |**[style](#style)**|string|Specifies the style|
 |**[enabled](#enabled)**|boolean|Specifies whether the component is enabled or not|
 |**[value](#value)**|string|Specifies the field's value|
@@ -162,10 +164,36 @@ setAttribute("myInput","rotation","90")
 
 ---
 
+### opacity
+
+Specifies the element's opacity (0..1).
+<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>float</td></tr></table>
+
+>**Example:**
+>
+>Set the opacity of the component to 50%.
+>
+
+>In index.xml:
+
+>``` xml
+<input id="myInput" x="30" y="10" opacity="0.5" />
+```
+
+>Via scripting:
+
+>``` js
+setAttribute("myInput","opacity","0.5")
+```
+
+
+
+---
+
 ### width
 
 Specifies the component's width in pixels.
-<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>integer</td></tr></table>
+<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>size</td></tr></table>
 
 >**Example:**
 >
@@ -191,7 +219,7 @@ setAttribute("myInput","width","100")
 ### height
 
 Specifies the component's height in pixels.
-<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>integer</td></tr></table>
+<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>size</td></tr></table>
 
 >**Example:**
 >
@@ -217,7 +245,7 @@ setAttribute("myInput","height","50")
 ### style
 
 Specifies the style.
-<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>string</td></tr><tr><td><b>Default value:</b></td><td>default</td></tr><tr><td><b>Values:</b></td><td>default</td></tr></table>
+<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>string</td></tr><tr><td><b>Default value:</b></td><td>default</td></tr><tr><td><b>Values:</b></td><td>default, clear</td></tr></table>
 
 
 
@@ -406,4 +434,3 @@ Script to be run when the component receives focus. Variables `id` and `value` c
 
 Script to be run when the component loses focus. Variables `id` and `value` can be used.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>js</td></tr></table>
-

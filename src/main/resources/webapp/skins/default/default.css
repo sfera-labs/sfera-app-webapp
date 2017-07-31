@@ -11,7 +11,7 @@ img {
   margin: 0; }
 
 #loading {
-  position: absolute;
+  position: fixed;
   left: 0;
   top: 0;
   width: 100%;
@@ -62,21 +62,657 @@ img {
   .component.interface {
     background-color: rgba(0, 0, 0, 0.2); }
 
-/*
-.txt-header {
-    padding-top: 15pt;
-}
-.txt-header-list LI {
-    text-align: center;
-    padding: 0 0 15pt;
-}
-.txt-real {
-    line-height: 14pt;
-}
-*/
 .component.disabled {
   -ms-filter: 'progid:DXImageTransform.Microsoft.Alpha(Opacity="50")';
   filter: alpha(opacity=50);
   opacity: 0.5; }
+
+.component.comp_page {
+  width: 100%;
+  height: 100%; }
+
+.component.comp_button {
+    /*
+
+    "default",
+    "light",
+    "stable",
+    "positive",
+    "calm",
+    "balanced",
+    "energized",
+    "assertive",
+    "royal",
+    "dark"
+
+    &.g, &.green { @include button-1(#84db24,#4f9316,#135915); }
+    &.y, &.yellow, &.highlight { @include button-1(#f4ed00,#ddc700,#b17300); } // highlight: y
+    &.r, &.red, &.alert { @include button-1(#dd006a,#97003f,#5e0041); } // alert: r, ex.logout
+    &.gr, &.gray, &.default2 { @include button-1(#c0c0d9,#73738d,#48486a); } // default2: gr
+    &.lgr, &.default3 { @include button-1(#f5f7f7,#e0e5e6,#adb2b3); } // default3: lgr, ex.slider cursors
+    &.glass { @include button-g(rgb(255,255,255),rgb(225,232,232),rgb(200,207,207),rgb(171,177,177),rgb(215,224,224)); }
+    &.transparent { @include button-t(rgb(255,255,255)); }
+    */ }
+  .component.comp_button .container {
+    color: #fff; }
+    .component.comp_button .container .cIcon .comp_image svg,
+    .component.comp_button .container .cIcon .comp_image svg path {
+      fill: white; }
+    .component.comp_button .container.style_default {
+      -webkit-box-shadow: rgba(0,0,0,0.8) 0 1px 0, rgba(0,0,0,0.4) 0px 0px 1px 1px;
+      -moz-box-shadow: rgba(0,0,0,0.8) 0 1px 0, rgba(0,0,0,0.4) 0px 0px 1px 1px;
+      box-shadow: rgba(0,0,0,0.8) 0 1px 0, rgba(0,0,0,0.4) 0px 0px 1px 1px;
+      -webkit-border-radius: 7px;
+      -moz-border-radius: 7px;
+      border-radius: 7px;
+      border-top: 1px solid #2090ff;
+      background-color: #003889;
+      background-image: -webkit-linear-gradient(top, #00439e 0%,#002c73 100%);
+      background-image: -moz-linear-gradient(top, #00439e 0%,#002c73 100%);
+      background-image: -o-linear-gradient(top, #00439e 0%,#002c73 100%);
+      background-image: -ms-linear-gradient(top, #00439e 0%,#002c73 100%);
+      background-image: linear-gradient(top, #00439e 0%,#002c73 100%); }
+      .component.comp_button .container.style_default.over {
+        border-top: 1px solid #40b0ff;
+        background-color: #2058a9;
+        background-image: -webkit-linear-gradient(top, #2063be 0%,#204c93 100%);
+        background-image: -moz-linear-gradient(top, #2063be 0%,#204c93 100%);
+        background-image: -o-linear-gradient(top, #2063be 0%,#204c93 100%);
+        background-image: -ms-linear-gradient(top, #2063be 0%,#204c93 100%);
+        background-image: linear-gradient(top, #2063be 0%,#204c93 100%); }
+      .component.comp_button .container.style_default.down {
+        border-top: 1px solid #002c73;
+        background: #204c93; }
+      .component.comp_button .container.style_default.selected {
+        background-color: #4078c9;
+        background-image: -webkit-linear-gradient(top, #4083de 0%,#406cb3 100%);
+        background-image: -moz-linear-gradient(top, #4083de 0%,#406cb3 100%);
+        background-image: -o-linear-gradient(top, #4083de 0%,#406cb3 100%);
+        background-image: -ms-linear-gradient(top, #4083de 0%,#406cb3 100%);
+        background-image: linear-gradient(top, #4083de 0%,#406cb3 100%); }
+      .component.comp_button .container.style_default.color_stable, .component.comp_button .container.style_default.color_gray {
+        border-top: 1px solid #2090ff;
+        background-color: #003889;
+        background-image: -webkit-linear-gradient(top, #00439e 0%,#002c73 100%);
+        background-image: -moz-linear-gradient(top, #00439e 0%,#002c73 100%);
+        background-image: -o-linear-gradient(top, #00439e 0%,#002c73 100%);
+        background-image: -ms-linear-gradient(top, #00439e 0%,#002c73 100%);
+        background-image: linear-gradient(top, #00439e 0%,#002c73 100%); }
+        .component.comp_button .container.style_default.color_stable.over, .component.comp_button .container.style_default.color_gray.over {
+          border-top: 1px solid #40b0ff;
+          background-color: #2058a9;
+          background-image: -webkit-linear-gradient(top, #2063be 0%,#204c93 100%);
+          background-image: -moz-linear-gradient(top, #2063be 0%,#204c93 100%);
+          background-image: -o-linear-gradient(top, #2063be 0%,#204c93 100%);
+          background-image: -ms-linear-gradient(top, #2063be 0%,#204c93 100%);
+          background-image: linear-gradient(top, #2063be 0%,#204c93 100%); }
+        .component.comp_button .container.style_default.color_stable.down, .component.comp_button .container.style_default.color_gray.down {
+          border-top: 1px solid #002c73;
+          background: #204c93; }
+        .component.comp_button .container.style_default.color_stable.selected, .component.comp_button .container.style_default.color_gray.selected {
+          background-color: #4078c9;
+          background-image: -webkit-linear-gradient(top, #4083de 0%,#406cb3 100%);
+          background-image: -moz-linear-gradient(top, #4083de 0%,#406cb3 100%);
+          background-image: -o-linear-gradient(top, #4083de 0%,#406cb3 100%);
+          background-image: -ms-linear-gradient(top, #4083de 0%,#406cb3 100%);
+          background-image: linear-gradient(top, #4083de 0%,#406cb3 100%); }
+      .component.comp_button .container.style_default.color_positive, .component.comp_button .container.style_default.color_blue {
+        border-top: 1px solid #c0c0d9;
+        background-color: #5e5e7c;
+        background-image: -webkit-linear-gradient(top, #73738d 0%,#48486a 100%);
+        background-image: -moz-linear-gradient(top, #73738d 0%,#48486a 100%);
+        background-image: -o-linear-gradient(top, #73738d 0%,#48486a 100%);
+        background-image: -ms-linear-gradient(top, #73738d 0%,#48486a 100%);
+        background-image: linear-gradient(top, #73738d 0%,#48486a 100%); }
+        .component.comp_button .container.style_default.color_positive.over, .component.comp_button .container.style_default.color_blue.over {
+          border-top: 1px solid #e0e0f9;
+          background-color: #7e7e9c;
+          background-image: -webkit-linear-gradient(top, #9393ad 0%,#68688a 100%);
+          background-image: -moz-linear-gradient(top, #9393ad 0%,#68688a 100%);
+          background-image: -o-linear-gradient(top, #9393ad 0%,#68688a 100%);
+          background-image: -ms-linear-gradient(top, #9393ad 0%,#68688a 100%);
+          background-image: linear-gradient(top, #9393ad 0%,#68688a 100%); }
+        .component.comp_button .container.style_default.color_positive.down, .component.comp_button .container.style_default.color_blue.down {
+          border-top: 1px solid #48486a;
+          background: #68688a; }
+        .component.comp_button .container.style_default.color_positive.selected, .component.comp_button .container.style_default.color_blue.selected {
+          background-color: #9e9ebc;
+          background-image: -webkit-linear-gradient(top, #b3b3cd 0%,#8888aa 100%);
+          background-image: -moz-linear-gradient(top, #b3b3cd 0%,#8888aa 100%);
+          background-image: -o-linear-gradient(top, #b3b3cd 0%,#8888aa 100%);
+          background-image: -ms-linear-gradient(top, #b3b3cd 0%,#8888aa 100%);
+          background-image: linear-gradient(top, #b3b3cd 0%,#8888aa 100%); }
+      .component.comp_button .container.style_default.color_balanced, .component.comp_button .container.style_default.color_green {
+        border-top: 1px solid #84db24;
+        background-color: #317616;
+        background-image: -webkit-linear-gradient(top, #4f9316 0%,#135915 100%);
+        background-image: -moz-linear-gradient(top, #4f9316 0%,#135915 100%);
+        background-image: -o-linear-gradient(top, #4f9316 0%,#135915 100%);
+        background-image: -ms-linear-gradient(top, #4f9316 0%,#135915 100%);
+        background-image: linear-gradient(top, #4f9316 0%,#135915 100%); }
+        .component.comp_button .container.style_default.color_balanced.over, .component.comp_button .container.style_default.color_green.over {
+          border-top: 1px solid #a4fb44;
+          background-color: #519636;
+          background-image: -webkit-linear-gradient(top, #6fb336 0%,#337935 100%);
+          background-image: -moz-linear-gradient(top, #6fb336 0%,#337935 100%);
+          background-image: -o-linear-gradient(top, #6fb336 0%,#337935 100%);
+          background-image: -ms-linear-gradient(top, #6fb336 0%,#337935 100%);
+          background-image: linear-gradient(top, #6fb336 0%,#337935 100%); }
+        .component.comp_button .container.style_default.color_balanced.down, .component.comp_button .container.style_default.color_green.down {
+          border-top: 1px solid #135915;
+          background: #337935; }
+        .component.comp_button .container.style_default.color_balanced.selected, .component.comp_button .container.style_default.color_green.selected {
+          background-color: #71b656;
+          background-image: -webkit-linear-gradient(top, #8fd356 0%,#539955 100%);
+          background-image: -moz-linear-gradient(top, #8fd356 0%,#539955 100%);
+          background-image: -o-linear-gradient(top, #8fd356 0%,#539955 100%);
+          background-image: -ms-linear-gradient(top, #8fd356 0%,#539955 100%);
+          background-image: linear-gradient(top, #8fd356 0%,#539955 100%); }
+      .component.comp_button .container.style_default.color_energized, .component.comp_button .container.style_default.color_yellow {
+        border-top: 1px solid #f4ed00;
+        background-color: #c79d00;
+        background-image: -webkit-linear-gradient(top, #ddc700 0%,#b17300 100%);
+        background-image: -moz-linear-gradient(top, #ddc700 0%,#b17300 100%);
+        background-image: -o-linear-gradient(top, #ddc700 0%,#b17300 100%);
+        background-image: -ms-linear-gradient(top, #ddc700 0%,#b17300 100%);
+        background-image: linear-gradient(top, #ddc700 0%,#b17300 100%); }
+        .component.comp_button .container.style_default.color_energized.over, .component.comp_button .container.style_default.color_yellow.over {
+          border-top: 1px solid #ffff20;
+          background-color: #e7bd20;
+          background-image: -webkit-linear-gradient(top, #fde720 0%,#d19320 100%);
+          background-image: -moz-linear-gradient(top, #fde720 0%,#d19320 100%);
+          background-image: -o-linear-gradient(top, #fde720 0%,#d19320 100%);
+          background-image: -ms-linear-gradient(top, #fde720 0%,#d19320 100%);
+          background-image: linear-gradient(top, #fde720 0%,#d19320 100%); }
+        .component.comp_button .container.style_default.color_energized.down, .component.comp_button .container.style_default.color_yellow.down {
+          border-top: 1px solid #b17300;
+          background: #d19320; }
+        .component.comp_button .container.style_default.color_energized.selected, .component.comp_button .container.style_default.color_yellow.selected {
+          background-color: #f8d940;
+          background-image: -webkit-linear-gradient(top, #ffff40 0%,#f1b340 100%);
+          background-image: -moz-linear-gradient(top, #ffff40 0%,#f1b340 100%);
+          background-image: -o-linear-gradient(top, #ffff40 0%,#f1b340 100%);
+          background-image: -ms-linear-gradient(top, #ffff40 0%,#f1b340 100%);
+          background-image: linear-gradient(top, #ffff40 0%,#f1b340 100%); }
+      .component.comp_button .container.style_default.color_assertive, .component.comp_button .container.style_default.color_red {
+        border-top: 1px solid #dd006a;
+        background-color: #7b0040;
+        background-image: -webkit-linear-gradient(top, #97003f 0%,#5e0041 100%);
+        background-image: -moz-linear-gradient(top, #97003f 0%,#5e0041 100%);
+        background-image: -o-linear-gradient(top, #97003f 0%,#5e0041 100%);
+        background-image: -ms-linear-gradient(top, #97003f 0%,#5e0041 100%);
+        background-image: linear-gradient(top, #97003f 0%,#5e0041 100%); }
+        .component.comp_button .container.style_default.color_assertive.over, .component.comp_button .container.style_default.color_red.over {
+          border-top: 1px solid #fd208a;
+          background-color: #9b2060;
+          background-image: -webkit-linear-gradient(top, #b7205f 0%,#7e2061 100%);
+          background-image: -moz-linear-gradient(top, #b7205f 0%,#7e2061 100%);
+          background-image: -o-linear-gradient(top, #b7205f 0%,#7e2061 100%);
+          background-image: -ms-linear-gradient(top, #b7205f 0%,#7e2061 100%);
+          background-image: linear-gradient(top, #b7205f 0%,#7e2061 100%); }
+        .component.comp_button .container.style_default.color_assertive.down, .component.comp_button .container.style_default.color_red.down {
+          border-top: 1px solid #5e0041;
+          background: #7e2061; }
+        .component.comp_button .container.style_default.color_assertive.selected, .component.comp_button .container.style_default.color_red.selected {
+          background-color: #bb4080;
+          background-image: -webkit-linear-gradient(top, #d7407f 0%,#9e4081 100%);
+          background-image: -moz-linear-gradient(top, #d7407f 0%,#9e4081 100%);
+          background-image: -o-linear-gradient(top, #d7407f 0%,#9e4081 100%);
+          background-image: -ms-linear-gradient(top, #d7407f 0%,#9e4081 100%);
+          background-image: linear-gradient(top, #d7407f 0%,#9e4081 100%); }
+      .component.comp_button .container.style_default .cLabel {
+        text-shadow: 0 1px rgba(0, 0, 0, 0.6); }
+      .component.comp_button .container.style_default.switch.pressed {
+        -webkit-box-shadow: none;
+        -moz-box-shadow: none;
+        box-shadow: none; }
+      .component.comp_button .container.style_default.down {
+        -webkit-box-shadow: rgba(0,0,0,0.8) 0 1px 0, rgba(0,0,0,0.4) 0px 0px 1px 1px, inset 0px 1px 4px rgba(0,0,0,0.7);
+        -moz-box-shadow: rgba(0,0,0,0.8) 0 1px 0, rgba(0,0,0,0.4) 0px 0px 1px 1px, inset 0px 1px 4px rgba(0,0,0,0.7);
+        box-shadow: rgba(0,0,0,0.8) 0 1px 0, rgba(0,0,0,0.4) 0px 0px 1px 1px, inset 0px 1px 4px rgba(0,0,0,0.7); }
+      .component.comp_button .container.style_default.error {
+        color: #e03050; }
+    .component.comp_button .container.style_clear .cLabel {
+      text-shadow: 0 1px rgba(0, 0, 0, 0.6); }
+
+.component.comp_input.focused .container.style_default {
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  -webkit-box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.75);
+  box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.75); }
+.component.comp_input.focused .container.style_clear {
+  -webkit-box-shadow: inset 0px 12px 7px -11px rgba(255,255,255,0.5), inset 0px -12px 7px -11px rgba(255,255,255,0.5);
+  -moz-box-shadow: inset 0px 12px 7px -11px rgba(255,255,255,0.5), inset 0px -12px 7px -11px rgba(255,255,255,0.5);
+  box-shadow: inset 0px 12px 7px -11px rgba(255,255,255,0.5), inset 0px -12px 7px -11px rgba(255,255,255,0.5); }
+.component.comp_input .container.style_default {
+  background: white;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px; }
+  .component.comp_input .container.style_default .icon {
+    padding-left: 4px; }
+  .component.comp_input .container.style_default .field {
+    color: black; }
+  .component.comp_input .container.style_default::after {
+    -webkit-box-shadow: inset 0px 0px 5px 1px red;
+    -moz-box-shadow: inset 0px 0px 5px 1px red;
+    box-shadow: inset 0px 0px 5px 1px red; }
+.component.comp_input .container.style_clear {
+  background: transparent;
+  border-top: 1px solid black;
+  border-bottom: 1px solid black; }
+  .component.comp_input .container.style_clear .field {
+    color: white; }
+  .component.comp_input .container.style_clear svg,
+  .component.comp_input .container.style_clear svg path {
+    fill: white; }
+  .component.comp_input .container.style_clear::after {
+    -webkit-box-shadow: inset 0px 12px 7px -11px rgba(255,0,0,0.5), inset 0px -12px 7px -11px rgba(255,0,0,0.5);
+    -moz-box-shadow: inset 0px 12px 7px -11px rgba(255,0,0,0.5), inset 0px -12px 7px -11px rgba(255,0,0,0.5);
+    box-shadow: inset 0px 12px 7px -11px rgba(255,0,0,0.5), inset 0px -12px 7px -11px rgba(255,0,0,0.5); }
+.component.comp_input .container.style_strict .edit {
+  background: white;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px; }
+.component.comp_input .container.style_strict .field {
+  color: black; }
+.component.comp_input .container.style_strict::after {
+  -webkit-box-shadow: inset 0px 12px 7px -11px rgba(255,0,0,0.5), inset 0px -12px 7px -11px rgba(255,0,0,0.5);
+  -moz-box-shadow: inset 0px 12px 7px -11px rgba(255,0,0,0.5), inset 0px -12px 7px -11px rgba(255,0,0,0.5);
+  box-shadow: inset 0px 12px 7px -11px rgba(255,0,0,0.5), inset 0px -12px 7px -11px rgba(255,0,0,0.5); }
+.component.comp_input .erase.over svg,
+.component.comp_input .erase.over svg path {
+  fill: #f01010; }
+.component.comp_input .erase.down svg,
+.component.comp_input .erase.down svg path {
+  fill: #551010; }
+
+.component.comp_select.focused .container.style_default {
+  -webkit-box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.75);
+  box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.75); }
+.component.comp_select.focused .container.style_clear {
+  -webkit-box-shadow: inset 0px 12px 7px -11px rgba(255,255,255,0.5), inset 0px -12px 7px -11px rgba(255,255,255,0.5);
+  -moz-box-shadow: inset 0px 12px 7px -11px rgba(255,255,255,0.5), inset 0px -12px 7px -11px rgba(255,255,255,0.5);
+  box-shadow: inset 0px 12px 7px -11px rgba(255,255,255,0.5), inset 0px -12px 7px -11px rgba(255,255,255,0.5); }
+.component.comp_select .container.style_default {
+  background: white;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px; }
+  .component.comp_select .container.style_default .icon {
+    padding-left: 4px; }
+  .component.comp_select .container.style_default .field {
+    color: black; }
+.component.comp_select .container.style_clear {
+  background: transparent;
+  border-top: 1px solid black;
+  border-bottom: 1px solid black; }
+  .component.comp_select .container.style_clear .field {
+    color: white; }
+  .component.comp_select .container.style_clear svg,
+  .component.comp_select .container.style_clear svg path {
+    fill: white; }
+.component.comp_select .container.style_strict .edit {
+  background: white;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  padding: 0 4px; }
+.component.comp_select .container.style_strict .field {
+  color: black; }
+.component.comp_select:focus {
+  border-color: #9ecaed;
+  box-shadow: 0 0 10px #9ecaed; }
+.component.comp_select .erase.over svg,
+.component.comp_select .erase.over svg path {
+  fill: #f01010; }
+.component.comp_select .erase.down svg,
+.component.comp_select .erase.down svg path {
+  fill: #551010; }
+
+.component.comp_slider .bg .in,
+.component.comp_slider .bar .in {
+  -webkit-border-radius: 7px;
+  -moz-border-radius: 7px;
+  border-radius: 7px; }
+.component.comp_slider .bg .in {
+  -webkit-box-shadow: inset 2px 2px 2px 1px rgba(0, 0, 0, 0.3);
+  -moz-box-shadow: inset 2px 2px 2px 1px rgba(0, 0, 0, 0.3);
+  box-shadow: inset 2px 2px 2px 1px rgba(0, 0, 0, 0.3);
+  border-right: 1px solid rgba(255, 255, 255, 0.4);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.7); }
+.component.comp_slider .ghost {
+  -webkit-border-radius: 7px;
+  -moz-border-radius: 7px;
+  border-radius: 7px; }
+
+.component.comp_checkbox.focused .container.style_default .button, .component.comp_checkbox.focused .container.style_radio .button, .component.comp_checkbox.focused .container.style_switch .button {
+  -webkit-box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.75);
+  box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.75); }
+.component.comp_checkbox.focused .container.style_clear {
+  -webkit-box-shadow: inset 0px 12px 7px -11px rgba(255,255,255,0.5), inset 0px -12px 7px -11px rgba(255,255,255,0.5);
+  -moz-box-shadow: inset 0px 12px 7px -11px rgba(255,255,255,0.5), inset 0px -12px 7px -11px rgba(255,255,255,0.5);
+  box-shadow: inset 0px 12px 7px -11px rgba(255,255,255,0.5), inset 0px -12px 7px -11px rgba(255,255,255,0.5); }
+.component.comp_checkbox .container.style_default .button {
+  background: white;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px; }
+.component.comp_checkbox .container.style_radio .button {
+  background: white;
+  -webkit-border-radius: 700px;
+  -moz-border-radius: 700px;
+  border-radius: 700px; }
+.component.comp_checkbox .container.style_radio .flag {
+  background: black;
+  -webkit-border-radius: 700px;
+  -moz-border-radius: 700px;
+  border-radius: 700px; }
+.component.comp_checkbox .container.style_switch .button {
+  background: #fff;
+  -webkit-border-radius: 16px;
+  -moz-border-radius: 16px;
+  border-radius: 16px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -ms-box-sizing: border-box;
+  box-sizing: border-box; }
+.component.comp_checkbox .container.style_switch .button .inner .flag:after {
+  background: #fff;
+  -webkit-border-radius: 28px;
+  -moz-border-radius: 28px;
+  border-radius: 28px;
+  -webkit-box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+  -moz-box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4); }
+.component.comp_checkbox .container.style_switch.on .button {
+  background: #4ea5db !important; }
+.component.comp_checkbox .container.style_clear .button {
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px; }
+.component.comp_checkbox .container.style_clear svg,
+.component.comp_checkbox .container.style_clear svg path {
+  fill: #4ea5db; }
+
+.component.comp_radio.focused .container.style_default .button {
+  -webkit-box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.75);
+  box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.75); }
+.component.comp_radio .container.style_default .button {
+  padding: 5px;
+  background: white;
+  -webkit-border-radius: 700px;
+  -moz-border-radius: 700px;
+  border-radius: 700px; }
+.component.comp_radio .container.style_default .inner .comp_image {
+  display: none; }
+.component.comp_radio .container.style_default .flag {
+  background: black;
+  -webkit-border-radius: 700px;
+  -moz-border-radius: 700px;
+  border-radius: 700px; }
+.component.comp_radio .container.style_default.off .flag {
+  display: none; }
+
+.component.comp_list .content {
+  color: #fff; }
+  .component.comp_list .content .item .container {
+    color: #fff; }
+    .component.comp_list .content .item .container .cIcon .comp_image svg,
+    .component.comp_list .content .item .container .cIcon .comp_image svg path {
+      fill: white; }
+    .component.comp_list .content .item .container.style_default {
+      -webkit-box-shadow: rgba(0,0,0,0.8) 0 1px 0, rgba(0,0,0,0.4) 0px 0px 1px 1px;
+      -moz-box-shadow: rgba(0,0,0,0.8) 0 1px 0, rgba(0,0,0,0.4) 0px 0px 1px 1px;
+      box-shadow: rgba(0,0,0,0.8) 0 1px 0, rgba(0,0,0,0.4) 0px 0px 1px 1px;
+      -webkit-border-radius: 7px;
+      -moz-border-radius: 7px;
+      border-radius: 7px;
+      border-top: 1px solid #2090ff;
+      background-color: #003889;
+      background-image: -webkit-linear-gradient(top, #00439e 0%,#002c73 100%);
+      background-image: -moz-linear-gradient(top, #00439e 0%,#002c73 100%);
+      background-image: -o-linear-gradient(top, #00439e 0%,#002c73 100%);
+      background-image: -ms-linear-gradient(top, #00439e 0%,#002c73 100%);
+      background-image: linear-gradient(top, #00439e 0%,#002c73 100%); }
+      .component.comp_list .content .item .container.style_default.over {
+        border-top: 1px solid #40b0ff;
+        background-color: #2058a9;
+        background-image: -webkit-linear-gradient(top, #2063be 0%,#204c93 100%);
+        background-image: -moz-linear-gradient(top, #2063be 0%,#204c93 100%);
+        background-image: -o-linear-gradient(top, #2063be 0%,#204c93 100%);
+        background-image: -ms-linear-gradient(top, #2063be 0%,#204c93 100%);
+        background-image: linear-gradient(top, #2063be 0%,#204c93 100%); }
+      .component.comp_list .content .item .container.style_default.down {
+        border-top: 1px solid #002c73;
+        background: #204c93; }
+      .component.comp_list .content .item .container.style_default.selected {
+        background-color: #4078c9;
+        background-image: -webkit-linear-gradient(top, #4083de 0%,#406cb3 100%);
+        background-image: -moz-linear-gradient(top, #4083de 0%,#406cb3 100%);
+        background-image: -o-linear-gradient(top, #4083de 0%,#406cb3 100%);
+        background-image: -ms-linear-gradient(top, #4083de 0%,#406cb3 100%);
+        background-image: linear-gradient(top, #4083de 0%,#406cb3 100%); }
+      .component.comp_list .content .item .container.style_default.color_stable {
+        border-top: 1px solid #c0c0d9;
+        background-color: #5e5e7c;
+        background-image: -webkit-linear-gradient(top, #73738d 0%,#48486a 100%);
+        background-image: -moz-linear-gradient(top, #73738d 0%,#48486a 100%);
+        background-image: -o-linear-gradient(top, #73738d 0%,#48486a 100%);
+        background-image: -ms-linear-gradient(top, #73738d 0%,#48486a 100%);
+        background-image: linear-gradient(top, #73738d 0%,#48486a 100%); }
+        .component.comp_list .content .item .container.style_default.color_stable.over {
+          border-top: 1px solid #e0e0f9;
+          background-color: #7e7e9c;
+          background-image: -webkit-linear-gradient(top, #9393ad 0%,#68688a 100%);
+          background-image: -moz-linear-gradient(top, #9393ad 0%,#68688a 100%);
+          background-image: -o-linear-gradient(top, #9393ad 0%,#68688a 100%);
+          background-image: -ms-linear-gradient(top, #9393ad 0%,#68688a 100%);
+          background-image: linear-gradient(top, #9393ad 0%,#68688a 100%); }
+        .component.comp_list .content .item .container.style_default.color_stable.down {
+          border-top: 1px solid #48486a;
+          background: #68688a; }
+        .component.comp_list .content .item .container.style_default.color_stable.selected {
+          background-color: #9e9ebc;
+          background-image: -webkit-linear-gradient(top, #b3b3cd 0%,#8888aa 100%);
+          background-image: -moz-linear-gradient(top, #b3b3cd 0%,#8888aa 100%);
+          background-image: -o-linear-gradient(top, #b3b3cd 0%,#8888aa 100%);
+          background-image: -ms-linear-gradient(top, #b3b3cd 0%,#8888aa 100%);
+          background-image: linear-gradient(top, #b3b3cd 0%,#8888aa 100%); }
+      .component.comp_list .content .item .container.style_default .cLabel {
+        text-shadow: 0 1px rgba(0, 0, 0, 0.6); }
+      .component.comp_list .content .item .container.style_default.switch.pressed {
+        -webkit-box-shadow: none;
+        -moz-box-shadow: none;
+        box-shadow: none; }
+      .component.comp_list .content .item .container.style_default.down {
+        -webkit-box-shadow: rgba(0,0,0,0.8) 0 1px 0, rgba(0,0,0,0.4) 0px 0px 1px 1px, inset 0px 1px 4px rgba(0,0,0,0.7);
+        -moz-box-shadow: rgba(0,0,0,0.8) 0 1px 0, rgba(0,0,0,0.4) 0px 0px 1px 1px, inset 0px 1px 4px rgba(0,0,0,0.7);
+        box-shadow: rgba(0,0,0,0.8) 0 1px 0, rgba(0,0,0,0.4) 0px 0px 1px 1px, inset 0px 1px 4px rgba(0,0,0,0.7); }
+      .component.comp_list .content .item .container.style_default.error {
+        color: #e03050; }
+
+.component.comp_nouislider {
+  	/* Slider size and handle placement;
+       */
+  /* Styling;
+   */
+  /* Handles and cursors;
+   */
+  /* Handle stripes;
+   */
+  /* Disabled state;
+   */
+  /* Base;
+   *
+   */
+  /* Values;
+   *
+   */
+  /* Markings;
+   *
+   */
+  /* Horizontal layout;
+   *
+   */
+  /* Vertical layout;
+   *
+   */
+  /* Modified Styles */ }
+  .component.comp_nouislider .noUi-horizontal {
+    height: 18px; }
+  .component.comp_nouislider .noUi-horizontal .noUi-handle {
+    width: 34px;
+    height: 28px;
+    left: -17px;
+    top: -6px; }
+  .component.comp_nouislider .noUi-vertical {
+    width: 18px; }
+  .component.comp_nouislider .noUi-vertical .noUi-handle {
+    width: 28px;
+    height: 34px;
+    left: -6px;
+    top: -17px; }
+  .component.comp_nouislider .noUi-target {
+    background: #FAFAFA;
+    border-radius: 4px;
+    border: 1px solid #D3D3D3;
+    box-shadow: inset 0 1px 1px #F0F0F0, 0 3px 6px -5px #BBB; }
+  .component.comp_nouislider .noUi-connect {
+    background: #3FB8AF;
+    border-radius: 4px;
+    box-shadow: inset 0 0 3px rgba(51, 51, 51, 0.45);
+    -webkit-transition: background 450ms;
+    transition: background 450ms; }
+  .component.comp_nouislider .noUi-draggable {
+    cursor: ew-resize; }
+  .component.comp_nouislider .noUi-vertical .noUi-draggable {
+    cursor: ns-resize; }
+  .component.comp_nouislider .noUi-handle {
+    border: 1px solid #D9D9D9;
+    border-radius: 3px;
+    background: #FFF;
+    cursor: default;
+    box-shadow: inset 0 0 1px #FFF, inset 0 1px 7px #EBEBEB, 0 3px 6px -3px #BBB; }
+  .component.comp_nouislider .noUi-active {
+    box-shadow: inset 0 0 1px #FFF, inset 0 1px 7px #DDD, 0 3px 6px -3px #BBB; }
+  .component.comp_nouislider .noUi-handle:before,
+  .component.comp_nouislider .noUi-handle:after {
+    content: "";
+    display: block;
+    position: absolute;
+    height: 14px;
+    width: 1px;
+    background: #E8E7E6;
+    left: 14px;
+    top: 6px; }
+  .component.comp_nouislider .noUi-handle:after {
+    left: 17px; }
+  .component.comp_nouislider .noUi-vertical .noUi-handle:before,
+  .component.comp_nouislider .noUi-vertical .noUi-handle:after {
+    width: 14px;
+    height: 1px;
+    left: 6px;
+    top: 14px; }
+  .component.comp_nouislider .noUi-vertical .noUi-handle:after {
+    top: 17px; }
+  .component.comp_nouislider [disabled] .noUi-connect {
+    background: #B8B8B8; }
+  .component.comp_nouislider [disabled].noUi-target,
+  .component.comp_nouislider [disabled].noUi-handle,
+  .component.comp_nouislider [disabled] .noUi-handle {
+    cursor: not-allowed; }
+  .component.comp_nouislider .noUi-pips,
+  .component.comp_nouislider .noUi-pips * {
+    -moz-box-sizing: border-box;
+    box-sizing: border-box; }
+  .component.comp_nouislider .noUi-pips {
+    position: absolute;
+    color: #999; }
+  .component.comp_nouislider .noUi-value {
+    position: absolute;
+    white-space: nowrap;
+    text-align: center; }
+  .component.comp_nouislider .noUi-value-sub {
+    color: #ccc;
+    font-size: 10px; }
+  .component.comp_nouislider .noUi-marker {
+    position: absolute;
+    background: #CCC; }
+  .component.comp_nouislider .noUi-marker-sub {
+    background: #AAA; }
+  .component.comp_nouislider .noUi-marker-large {
+    background: #AAA; }
+  .component.comp_nouislider .noUi-pips-horizontal {
+    padding: 10px 0;
+    height: 80px;
+    top: 100%;
+    left: 0;
+    width: 100%; }
+  .component.comp_nouislider .noUi-value-horizontal {
+    -webkit-transform: translate3d(-50%, 50%, 0);
+    transform: translate3d(-50%, 50%, 0); }
+  .component.comp_nouislider .noUi-marker-horizontal.noUi-marker {
+    margin-left: -1px;
+    width: 2px;
+    height: 5px; }
+  .component.comp_nouislider .noUi-marker-horizontal.noUi-marker-sub {
+    height: 10px; }
+  .component.comp_nouislider .noUi-marker-horizontal.noUi-marker-large {
+    height: 15px; }
+  .component.comp_nouislider .noUi-pips-vertical {
+    padding: 0 10px;
+    height: 100%;
+    top: 0;
+    left: 100%; }
+  .component.comp_nouislider .noUi-value-vertical {
+    -webkit-transform: translate3d(0, 50%, 0);
+    transform: translate3d(0, 50%, 0);
+    padding-left: 25px; }
+  .component.comp_nouislider .noUi-marker-vertical.noUi-marker {
+    width: 5px;
+    height: 2px;
+    margin-top: -1px; }
+  .component.comp_nouislider .noUi-marker-vertical.noUi-marker-sub {
+    width: 10px; }
+  .component.comp_nouislider .noUi-marker-vertical.noUi-marker-large {
+    width: 15px; }
+  .component.comp_nouislider .noUi-tooltip {
+    display: block;
+    position: absolute;
+    border: 1px solid #D9D9D9;
+    border-radius: 3px;
+    background: #fff;
+    color: #000;
+    padding: 5px;
+    text-align: center;
+    white-space: nowrap; }
+  .component.comp_nouislider .noUi-horizontal .noUi-tooltip {
+    -webkit-transform: translate(-50%, 0);
+    transform: translate(-50%, 0);
+    left: 50%;
+    bottom: 120%; }
+  .component.comp_nouislider .noUi-vertical .noUi-tooltip {
+    -webkit-transform: translate(0, -50%);
+    transform: translate(0, -50%);
+    top: 50%;
+    right: 120%; }
+  .component.comp_nouislider .noUi-vertical {
+    height: 100%; }
+  .component.comp_nouislider [disabled].noUi-target,
+  .component.comp_nouislider [disabled].noUi-handle,
+  .component.comp_nouislider [disabled] .noUi-handle {
+    cursor: default;
+    -ms-filter: 'progid:DXImageTransform.Microsoft.Alpha(Opacity="50")';
+    filter: alpha(opacity=50);
+    opacity: 0.5; }
+  .component.comp_nouislider .noUi-handle {
+    outline: none; }
 
 /*# sourceMappingURL=default.css.map */

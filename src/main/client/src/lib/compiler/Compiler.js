@@ -209,6 +209,13 @@ Sfera.Compiler = new(function() {
                 }
                 */
                 break;
+			case "size":
+				if (typeof(value) == "string" && value.indexOf("%") != -1) {
+					value = parseInt(value) + "%";
+				} else if (value != "auto") {
+					value = parseInt(value);
+				}
+				break;
             case "string":
             case "js":
                 if (typeof(value) != "string" && value.toString) {

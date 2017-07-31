@@ -24,5 +24,6 @@ Sfera.Components.create("Container", {
                 this.component.element.style.overflow = (this.value == "auto") ? "" : "scroll";
             }
         }
-    }
+    },
+
 });

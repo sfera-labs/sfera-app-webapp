@@ -9,12 +9,15 @@ Interface component, the root component that contains all the others.
 |**[id](#id)**|string|Component identifier. Allows the component to be reached through an identifier.|
 |**[cssClass](#cssClass)**|string|Defines a custom css class that is applied to the component's html element. The css class can then be defined in a css file inside the interface's directory.|
 |**[visible](#visible)**|boolean|Specifies whether or not the component is visible|
-|**[width](#width)**|integer|Specifies the component's width in pixels|
-|**[height](#height)**|integer|Specifies the component's height in pixels|
+|**[width](#width)**|size|Specifies the component's width in pixels|
+|**[height](#height)**|size|Specifies the component's height in pixels|
 |**[title](#title)**|string|Specifies the interface's title|
 |**[skin](#skin)**|string|Specifies the interface's skin. Can be set only on the interface's index.xml|
-|**[zoom](#zoom)**|float|Specifies the interfaces zoom|
-|**[autoReload](#autoReload)**|boolean||
+|**[zoom](#zoom)**|float|Specifies the interface's zoom. A value of 2 means the interface is scaled at 200%|
+|**[fit](#fit)**|boolean||
+|**[autoReload](#autoReload)**|boolean|If true, the interface reloads when the cache is updated (wherever the interface's sources change)|
+|**[bodyBackgroundColor](#bodyBackgroundColor)**|color|Specifies the background CSS color of the interface (the body of the page, visible around the interface's pages)|
+|**[frameBackgroundColor](#frameBackgroundColor)**|color|Specifies the background CSS color for the interface's central frame that contains pages|
 
 
 ---
@@ -66,7 +69,7 @@ setAttribute("myInterface","visible","false")
 ### width
 
 Specifies the component's width in pixels.
-<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>integer</td></tr></table>
+<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>size</td></tr></table>
 
 >**Example:**
 >
@@ -92,7 +95,7 @@ setAttribute("myInterface","width","100")
 ### height
 
 Specifies the component's height in pixels.
-<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>integer</td></tr></table>
+<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>size</td></tr></table>
 
 >**Example:**
 >
@@ -135,8 +138,17 @@ Specifies the interface's skin. Can be set only on the interface's index.xml.
 
 ### zoom
 
-Specifies the interfaces zoom.
+Specifies the interface's zoom. A value of 2 means the interface is scaled at 200%.
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>float</td></tr></table>
+
+
+
+---
+
+### fit
+
+
+<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>boolean</td></tr></table>
 
 
 
@@ -144,6 +156,24 @@ Specifies the interfaces zoom.
 
 ### autoReload
 
-
+If true, the interface reloads when the cache is updated (wherever the interface's sources change).
 <table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>boolean</td></tr><tr><td><b>Default value:</b></td><td>true</td></tr></table>
+
+
+
+---
+
+### bodyBackgroundColor
+
+Specifies the background CSS color of the interface (the body of the page, visible around the interface's pages).
+<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>color</td></tr></table>
+
+
+
+---
+
+### frameBackgroundColor
+
+Specifies the background CSS color for the interface's central frame that contains pages.
+<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>color</td></tr></table>
 

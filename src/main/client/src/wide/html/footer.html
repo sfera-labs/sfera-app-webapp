@@ -1,0 +1,28 @@
+
+    </div>
+
+    <div id="debug" style="display:none">
+        <div id="debugPane">
+            <div id="debugTitle">Debug</div>
+            <div id="debugContent">
+                <div id="debugSend">
+                    <div>
+                        <input type="text" id="messageinput" />
+                    </div>
+                    <div>
+                        <button type="button" onclick="Sfera.client.net.wsOpen();">Open</button>
+                        <button type="button" onclick="Sfera.client.net.wsSend(document.getElementById('messageinput').value);">Send</button>
+                        <button type="button" onclick="Sfera.client.net.wsClose();">Close</button>
+                    </div>
+                </div>
+                <div id="debugLog">
+
+                </div>
+            </div>
+        </div>
+        <div id="debugGhost"></div>
+    </div>
+
+</body>
+
+</html>

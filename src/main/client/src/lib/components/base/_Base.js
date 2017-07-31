@@ -85,7 +85,19 @@ Sfera.Components.create("_Base", {
         if (this.element && child.element) {
             this.element.appendChild(child.element);
         }
+
     },
+	
+	getChildren: function (recursive) {
+ 		if (!recursive || !this.children.length)
+ 			return this.children;
+ 		var a = this.children.clone();
+ 		for (var i=0; i<this.children.length; i++) {
+ 			if (this.children[i].getChildren)
+ 				a.concat(this.children[i].getChildren(true));
+ 		}
+ 		return a;
+ 	},
 
     addSubComponent: function(co) {
         if (co.id === false) co.id = this.id+".icon";

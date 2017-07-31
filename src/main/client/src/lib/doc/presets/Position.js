@@ -33,5 +33,16 @@ Sfera.Doc.add.preset("Position", {
                 rotation:90
             },
         }
+    },
+    opacity: {
+        descr: "Specifies the element's opacity (0..1)",
+        example: {
+            descr:"Set the opacity of the component to 50%",
+            values:{
+                x:30,
+                y:10,
+                opacity:0.5
+            },
+        }
     }
 });

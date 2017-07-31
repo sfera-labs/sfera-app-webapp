@@ -16,6 +16,17 @@ Sfera.ComponentPresets.Position = function() {
             this.post();
         },
     };
+    /*
+	this.attrDefs.float = {
+        type: "string",
+        update: function() {
+			this.component.element.style.position = "static";
+			this.component.element.style.float = this.value;
+            // post update
+            this.post();
+        },
+    };
+    */
     this.attrDefs.x = {
         type: "integer",
         update: function() {
@@ -37,7 +48,7 @@ Sfera.ComponentPresets.Position = function() {
         type: "integer",
         update: function() {
             var s = this.component.element.style;
-            var r = "rotate(" + this.value + "deg)"
+            var r = "rotate(" + this.value + "deg)";
             s.msTransform = /* IE 9 */
                 s.webkitTransform = /* Safari */
                 s.transform = r;
@@ -45,5 +56,14 @@ Sfera.ComponentPresets.Position = function() {
             // post update
             this.post();
         },
-    }
+    };
+
+    this.attrDefs.opacity = {
+        type: "float",
+        update: function() {
+            this.component.element.style.opacity = this.value;
+            // post update
+            this.post();
+        }
+    };
 };

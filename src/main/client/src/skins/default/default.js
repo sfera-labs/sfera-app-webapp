@@ -1,11 +1,10 @@
 /**
  * @author       Gionatan Iasio <gionatan@sferalabs.cc>
  * @copyright    2016 SferaLabs
- * @license      {@link http://sfera.sferalabs.cc/docs/sfera/license.html|LGPL License}
+ * @license      {@link https://github.com/sfera-labs/sfera-webapp/license.txt|MIT License}
  */
 
 /**
- * Sfera.Skins.Default contains and handles skins
  *
  * @class Sfera.Skins.Default
  * @constructor
@@ -24,16 +23,33 @@ Sfera.Skins.Default = function() {
     this.colors = {
         Button: [
             "default",
-            "light",
             "stable",
             "positive",
-            "calm",
             "balanced",
             "energized",
             "assertive",
-            "royal",
-            "dark"
+
+            "gray",
+            "green",
+            "blue",
+            "yellow",
+            "red"
+        ],
+        Slider: [
+            "default",
+            "stable",
+            "positive",
+            "balanced",
+            "energized",
+            "assertive",
+
+            "gray",
+            "green",
+            "blue",
+            "yellow",
+            "red"
         ]
+
     }
 
 };

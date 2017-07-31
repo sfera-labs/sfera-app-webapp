@@ -5,7 +5,7 @@ Sfera.Doc.add.component("Slider", {
     },
     attr:{
         cursorSize: {
-            descr: "Specifies the label's text"
+            descr: "Specifies the cursor's size in pixels"
         },
 
         changeDelay: {

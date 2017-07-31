@@ -36,7 +36,7 @@ Sfera.Client = function(config) {
         started: false,
         indexUpdated: false,
         firstEventReceived: false
-    }
+    };
 
     /**
      * @property {Sfera.ComponentManager} - Reference to the component manager.
@@ -65,8 +65,6 @@ Sfera.Client = function(config) {
     // requests waiting for a reply
     var commandReqs = {};
     var eventReqs = {};
-
-    var idleIntervalId = null;
 
     // html elements
     var elements = {};
@@ -125,6 +123,8 @@ Sfera.Client = function(config) {
         // configure Sfera.Net
         Sfera.Net.boot();
 
+		Sfera.Net.require(["dictionary", "index"]); // resources needed by the client
+
         Sfera.Net.onReply.add(onReply);
         Sfera.Net.onEvent.add(onEvent);
         Sfera.Net.onUpdateDictionary.add(onUpdateDictionary);
@@ -135,17 +135,17 @@ Sfera.Client = function(config) {
         Sfera.Net.connect();
 
         // window events
-        window.onresize = adjustLayout;
-        window.onkeydown = onKeyDown;
-        window.onkeyup = onKeyUp;
-        window.onkeypress = onKeyPress;
+        window.addEvent("resize", window, adjustLayout);
+        window.addEvent("keydown", window, onKeyDown);
+        window.addEvent("keyup", window, onKeyUp);
+        window.addEvent("keypress", window, onKeyPress);
 
         // loading events
         elements.loading.onmousedown =
         elements.loading.onmouseup =
-        elements.loading.onmousemove = function (e) { Sfera.Browser.preventDefault(e) };
+        elements.loading.onmousemove = function (e) { Sfera.Browser.preventDefault(e); };
 
-        delete config;
+        //delete config;
     };
 
     /**
@@ -178,7 +178,10 @@ Sfera.Client = function(config) {
 
     // Net callbacks
 
-    function onConnection() {
+    function onConnection(json) {
+        config.idleTimeout = json.idleTimeout;
+        Sfera.Login.resetIdleTimeout();
+
         self.state.firstEventReceived = false;
         if (self.isLogin) {
             Sfera.Login.gotoInterface();
@@ -192,6 +195,7 @@ Sfera.Client = function(config) {
             self.showLoading(true);
     }
 
+	// event or command replies
     function onReply(json) {
         if (json.result && json.result.uiSet) {
             for (var u in json.result.uiSet) {
@@ -226,7 +230,7 @@ Sfera.Client = function(config) {
 
     function onUpdateDictionary(xmlDoc) {
         var root = Sfera.Compiler.compileDictionary(xmlDoc);
-    };
+    }
 
     function onUpdateIndex(xmlDoc) {
         var root = Sfera.Compiler.compileXML(xmlDoc);
@@ -240,7 +244,7 @@ Sfera.Client = function(config) {
         if (!self.state.started && (self.state.firstEventReceived || self.isLogin)) {
             self.start();
         }
-    };
+    }
 
     this.start = function() {
         Sfera.Browser.start();
@@ -248,7 +252,6 @@ Sfera.Client = function(config) {
         this.cInterface.setAttribute("visible","true");
 
         adjustLayout();
-        resetIdleTimeout();
 
         this.state.started = true;
         this.showLoading(false);
@@ -315,6 +318,11 @@ Sfera.Client = function(config) {
     };
 
     this.sendEvent = function(id, value, callback) {
+        if (!id) {
+            Sfera.Debug.logError("sending event: id not valid");
+            return;
+        }
+
         var tag = (new Date()).getTime(); // request id
         var req = {
             id: "webapp.ui." + id,
@@ -386,8 +394,8 @@ Sfera.Client = function(config) {
         // not initialized yet
         if (!self.cInterface) return;
 
-        var width = parseInt(self.cInterface.getAttribute("width"));
-        var height = parseInt(self.cInterface.getAttribute("height"));
+        var width = self.cInterface.getAttribute("width");
+		var height = self.cInterface.getAttribute("height");
 
         // center container within window size
         var viewportWidth;
@@ -416,6 +424,57 @@ Sfera.Client = function(config) {
             self.cInterface.element.style.top = top + "px";
             self.cInterface.element.style.display = "block";
         } // viewportWidth>0
+
+        //
+        if (self.cInterface.getAttribute("fit")) {
+        	var wp = window.innerWidth / self.cInterface.getAttribute("width");
+        	var hp = window.innerHeight / self.cInterface.getAttribute("height");
+
+        	var v = Math.min(wp,hp);
+        	var s = "scale("+v+","+v+")";
+
+        	var e = self.cInterface.element;
+            e.style.transform = s;
+            e.style.OTransform = s;
+            e.style.MozTransform = s;
+
+            if (wp==v) { // there's no space on sides
+                e.style.left = "0px";
+                e.style.transformOrigin = "0";
+            }
+            if (hp==v){ // there's no space above/beneath
+                e.style.top = "0px";
+                e.style.transformOrigin = "top";
+            }
+            /*
+        	if (Sfera.Device.ie == "IE") {
+        		e.style.msTransform = s;
+        		e.style.msTransformOrigin = "0% 0%";
+        	} else {
+        		//e.style.zoom = (v*100)+"%";
+        		e.style.transform = s;
+        		e.style.OTransform = s;
+        		e.style.MozTransform = s;
+        		e.style.WebkitTransformOrigin = "0 0";
+        		e.style.transformOrigin = "0% 0%";
+        	}
+            */
+        }
+
+		// trigger event on component and all children
+		function trigger(co) {
+			if (co.onAdjust) {
+				co.onAdjust();
+			}
+
+			if (co.children) {
+				for (var c = 0; c < co.children.length; c++)
+					trigger(co.children[c]);
+			}
+		}
+		if (self.cPage)
+			trigger(self.cPage);
+
     } // adjustLayout()
 
     var attrObservers = {};
@@ -494,50 +553,6 @@ Sfera.Client = function(config) {
         Sfera.Browser.preventDefault(evt);
         return false;
     } // onKeyUp()
-
-
-    /////////////////////////// idle
-
-    function stopIdleTimeout() {
-        setIdleEvents(true);
-        clearInterval(idleIntervalId);
-    }
-
-    function resetIdleTimeout() {
-        stopIdleTimeout();
-        if (config.idleTimeout && parseInt(config.idleTimeout) && !self.isLogin) {
-            setIdleEvents();
-            idleIntervalId = setInterval(onIdleInterval, 1000);
-            localStorage.setItem("idleTimestamp",(new Date().getTime()));
-        }
-    }
-
-    // check every second (shared between all tabs)
-    function onIdleInterval() {
-        // check last timestamp
-        var ts = localStorage.getItem("idleTimestamp");
-        var nts = new Date().getTime();
-
-        if (nts-ts >= parseInt(config.idleTimeout)*1000) {
-            onIdleTimeout();
-        }
-    }
-
-    function onIdleTimeout() {
-        stopIdleTimeout();
-        Sfera.Login.logout();
-    }
-
-    function setIdleEvents(remove) {
-		var f = (remove?"remove":"add")+"Event";
-		var t = Sfera.Device.touch;
-		window[f](t?"touchstart":"mousedown", document.body, onIdleActivity);
-		window[f](t?"touchend":"mouseup", document.body, onIdleActivity);
-        window[f]("onkeydown", document.body, onIdleActivity);
-	}
-	function onIdleActivity(e) {
-		resetIdleTimeout();
-	}
 
     ////////////////////////// focus
     var focusedCo;
@@ -670,7 +685,7 @@ Sfera.Client = function(config) {
 				window.addEvent("updateready", window.applicationCache, checkCache, false);
 				window.addEvent("error", window.applicationCache, onCacheError, false);
 				window.addEvent("progress", applicationCache, cacheProgressEvent, false);
-				cacheLoadedFiles = 0
+				cacheLoadedFiles = 0;
 				window.applicationCache.update();
 			}
 		} else if (!this.cInterface.getAttribute("autoReload")) { // no autoreload, needs to be reloaded manually
@@ -692,7 +707,7 @@ Sfera.Client = function(config) {
 			var progress = Math.round(cacheLoadedFiles / totalFiles * 100);
 
 			self.showCachePercentage(progress);
-		} catch (e) {}
+		} catch (err) {}
 	} // cacheProgressEvent()
 
 	// check cache to see if we're ready to reload

@@ -5,15 +5,7 @@
   box-sizing: border-box;
   height: auto; }
   .component.comp_input.focused {
-    z-index: 1000; }
-    .component.comp_input.focused .container.style_default {
-      -webkit-box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.75);
-      -moz-box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.75);
-      box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.75); }
-    .component.comp_input.focused .container.style_clear {
-      -webkit-box-shadow: inset 0px 12px 7px -11px rgba(255,255,255,0.5), inset 0px -12px 7px -11px rgba(255,255,255,0.5);
-      -moz-box-shadow: inset 0px 12px 7px -11px rgba(255,255,255,0.5), inset 0px -12px 7px -11px rgba(255,255,255,0.5);
-      box-shadow: inset 0px 12px 7px -11px rgba(255,255,255,0.5), inset 0px -12px 7px -11px rgba(255,255,255,0.5); }
+    z-index: 10; }
   .component.comp_input .container {
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
@@ -23,48 +15,21 @@
     width: 100%; }
     .component.comp_input .container textarea {
       padding: 3px 4px 2px; }
-    .component.comp_input .container.style_default {
-      background: white;
-      -webkit-border-radius: 4px;
-      -moz-border-radius: 4px;
-      border-radius: 4px; }
-      .component.comp_input .container.style_default .icon {
-        padding-left: 4px; }
-      .component.comp_input .container.style_default .field {
-        color: black; }
-      .component.comp_input .container.style_default input {
-        padding: 0 4px; }
-      .component.comp_input .container.style_default .erase {
-        padding-right: 4px; }
-      .component.comp_input .container.style_default::after {
-        -webkit-box-shadow: inset 0px 0px 5px 1px red;
-        -moz-box-shadow: inset 0px 0px 5px 1px red;
-        box-shadow: inset 0px 0px 5px 1px red; }
-    .component.comp_input .container.style_clear {
-      background: transparent;
-      border-top: 1px solid black;
-      border-bottom: 1px solid black; }
-      .component.comp_input .container.style_clear .field {
-        color: white; }
-      .component.comp_input .container.style_clear svg,
-      .component.comp_input .container.style_clear svg path {
-        fill: white; }
-      .component.comp_input .container.style_clear::after {
-        -webkit-box-shadow: inset 0px 12px 7px -11px rgba(255,0,0,0.5), inset 0px -12px 7px -11px rgba(255,0,0,0.5);
-        -moz-box-shadow: inset 0px 12px 7px -11px rgba(255,0,0,0.5), inset 0px -12px 7px -11px rgba(255,0,0,0.5);
-        box-shadow: inset 0px 12px 7px -11px rgba(255,0,0,0.5), inset 0px -12px 7px -11px rgba(255,0,0,0.5); }
+    .component.comp_input .container.style_default .icon {
+      padding-left: 4px; }
+    .component.comp_input .container.style_default .field {
+      color: black; }
+    .component.comp_input .container.style_default input {
+      padding: 0 4px; }
+    .component.comp_input .container.style_default .erase {
+      padding-right: 4px; }
     .component.comp_input .container.style_strict .edit {
-      background: white;
       -webkit-border-radius: 4px;
       -moz-border-radius: 4px;
       border-radius: 4px;
       padding: 0 4px; }
     .component.comp_input .container.style_strict .field {
       color: black; }
-    .component.comp_input .container.style_strict::after {
-      -webkit-box-shadow: inset 0px 12px 7px -11px rgba(255,0,0,0.5), inset 0px -12px 7px -11px rgba(255,0,0,0.5);
-      -moz-box-shadow: inset 0px 12px 7px -11px rgba(255,0,0,0.5), inset 0px -12px 7px -11px rgba(255,0,0,0.5);
-      box-shadow: inset 0px 12px 7px -11px rgba(255,0,0,0.5), inset 0px -12px 7px -11px rgba(255,0,0,0.5); }
     .component.comp_input .container::after {
       content: '';
       position: absolute;
@@ -145,12 +110,6 @@
     -moz-box-sizing: border-box;
     -ms-box-sizing: border-box;
     box-sizing: border-box; }
-    .component.comp_input .erase.over svg,
-    .component.comp_input .erase.over svg path {
-      fill: #f01010; }
-    .component.comp_input .erase.down svg,
-    .component.comp_input .erase.down svg path {
-      fill: #551010; }
 
 input[type=password],
 input[type=text],

@@ -1,0 +1,90 @@
+/*----------------------------------------------------------------------------------------------*/
+/*- Log Viewer ---------------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------------------------*/
+
+#logViewer {
+	display:none;
+}
+
+#lv_toolbarHeader { margin-left:60px; }
+
+#lv_logPanel {
+	position: absolute;
+	background-color: #e8e8e8;
+	border-left: 1px solid #fefefe;
+	border-right: 1px solid #fefefe;
+	border-top: 1px solid #ffffff;
+	border-bottom: 1px solid #dedede;
+	overflow: hidden;
+
+	@include shadow("0px 1px 0px rgba(0,0,0,0.5)");
+
+	@include border-radius(4px);
+}
+
+#lv_topPanel {
+	padding: 5px;
+	background-color: #fefefe;
+	border-left: 1px solid #fefefe;
+	border-right: 1px solid #fefefe;
+	border-top: 1px solid #ffffff;
+	border-bottom: 1px solid #dedede;
+	overflow: hidden;
+
+	@include shadow("0px 1px 0px rgba(0,0,0,0.5)");
+
+	@include border-radius(4px);
+}
+#lv_container {
+	padding:0px;
+	margin:0px;
+	overflow:auto;
+	/* -webkit-overflow-scrolling: touch; */
+
+	/* make lv_log selectable when paused */
+	.paused::selection { background: #C2DEF6; }
+	.paused::-moz-selection { background: #C2DEF6; }
+	.paused span::selection { background: #C2DEF6; }
+	.paused span::-moz-selection { background: #C2DEF6; }
+	.paused, .paused span {
+		cursor:text;
+		-webkit-user-select: text;
+		-moz-user-select: text;
+		-ms-user-select: text;
+		user-select: text;
+	}
+}
+#lv_log {
+	color:black;
+	font-family:Monaco,Lucida Console;
+	font-size:12px;
+	word-wrap: break-word;
+}
+
+#lv_bottomPanel {
+	padding:5px;
+
+	.mToolSep {
+		margin-top:0px;
+	}
+
+	.label {
+		font-size:12px;
+		float:right;
+		margin:5px;
+		color:gray;
+	}
+}
+#lv_eventsModeBt,
+#lv_userModeBt,
+#lv_verboseModeBt,
+#lv_pauseBt,
+#lv_clearBt {
+	float:left;
+	height:22px;
+}
+#lv_filterModeBt {
+	height:22px;
+}
+#lv_filterModeBt span {
+}

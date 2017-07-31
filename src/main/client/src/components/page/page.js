@@ -27,5 +27,14 @@
      },
 
      init: function(){
-     }
+     },
+
+	onShow: function () {
+	},
+
+	// triggered only for currently visible page and children
+	onAdjust: function () {
+
+	}
+
  });

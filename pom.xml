@@ -4,15 +4,15 @@
 
 	<groupId>cc.sferalabs.sfera.apps</groupId>
 	<artifactId>webapp</artifactId>
-	<version>1.0.0</version>
+	<version>1.2.0</version>
 
 	<name>Sfera Web App</name>
 	<description>Sfera Web App</description>
 
 	<properties>
-		<latestDeployedVersion>1.0.0</latestDeployedVersion>
+		<latestDeployedVersion>1.2.0</latestDeployedVersion>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<sfera-version>1.0.0</sfera-version>
+		<sfera-version>1.2.1</sfera-version>
 	</properties>
 
 	<licenses>
@@ -49,6 +49,28 @@
 				<version>2.10.3</version>
 				<configuration>
 					<show>public</show>
+					<links>
+						<link>http://sfera.sferalabs.cc/docs/sfera/apidocs</link>
+					</links>
+					<taglets>
+						<taglet>
+							<tagletClass>cc.sferalabs.sfera.doc.taglets.ConfigParamTaglet</tagletClass>
+						</taglet>
+						<taglet>
+							<tagletClass>cc.sferalabs.sfera.doc.taglets.EventIdTaglet</tagletClass>
+						</taglet>
+						<taglet>
+							<tagletClass>cc.sferalabs.sfera.doc.taglets.EventValueTaglet</tagletClass>
+						</taglet>
+						<taglet>
+							<tagletClass>cc.sferalabs.sfera.doc.taglets.EventSimpleValueTaglet</tagletClass>
+						</taglet>
+					</taglets>
+					<tagletArtifact>
+						<groupId>cc.sferalabs.sfera</groupId>
+						<artifactId>sfera</artifactId>
+						<version>${sfera-version}</version>
+					</tagletArtifact>
 				</configuration>
 				<reportSets>
 					<reportSet>

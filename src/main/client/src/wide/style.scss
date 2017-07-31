@@ -1,0 +1,878 @@
+@import "../css/_common.scss";
+
+body {
+	margin:0;
+	padding:0;
+	tap-highlight-color:rgba(0,0,0,0);
+	font-family: Arial, Helvetica, sans-serif;
+}
+
+#bg {
+	background: #369;
+    overflow: hidden;
+}
+
+textarea {
+    resize: none;
+    outline: none;
+	//-webkit-appearance: caret;
+}
+
+input {
+	outline: none;
+	-webkit-user-select: text;
+	-moz-user-select: text;
+	-ms-user-select: text;
+	user-select: text;
+}
+input[type="text"], input[type="email"], input[type="search"], input[type="password"] {
+	//-webkit-appearance: caret;
+}
+
+::selection { background: rgba(0,0,0,0); }
+::-moz-selection { background: rgba(0,0,0,0); }
+input::selection { background: #BFDFFF; }
+input::-moz-selection { background: #BFDFFF; }
+textarea::selection { background: #BFDFFF; }
+textarea::-moz-selection { background: #BFDFFF; }
+
+form {
+	margin:0;
+	padding:0;
+}
+
+div, span {
+	cursor:default;
+}
+
+#wide {
+	background-color:#369;
+}
+
+/* common */
+
+#tempArea {
+	position:absolute;
+	display:none;
+}
+
+/* alter template's classes*/
+.pages {
+	visibility:visible;
+	z-index:auto;
+	left: 0px;
+	top: 0px;
+}
+.background {
+	position: absolute;
+	left:-1px;
+	top:-5px;
+}
+.kiosk .background {
+	position: absolute;
+	left:-1px;
+	top:-1px;
+}
+
+/*----------------------------------------------------------------------------------------------*/
+/*- Buttons ------------------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------------------------*/
+
+.mButton {
+	float: right;
+	margin: 2px 2px 2px 2px;
+	padding: 2px;
+	text-align: center;
+	color: #111;
+	font-size: 12px;
+	cursor: default;
+	border: 1px solid #CCC;
+	vertical-align: middle;
+	min-width: 50px;
+
+	@include border-radius(4px);
+	text-shadow: 0 1px #fff;
+
+	@include shadow("0px 1px 0px white");
+
+	@include gradient("#ffffff","#ffffff 0%,#f0f0f0 100%");
+
+	&.over {
+		@include gradient("#c7def7","#ffffff 0%,#bbdcf9 100%");
+	}
+
+	&.down {
+		@include gradient("#d3eaff","#d3eaff 0%,#bfdfff 100%");
+
+		@include shadow("inset 0px 1px 2px rgba(0,0,0,0.3)");
+	}
+
+	&.disabled {
+		-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+		filter: alpha(opacity=50);
+		opacity: 0.5;
+	}
+
+	&.mini { /* mini mode */
+		min-width: 0;
+		span { display: none; }
+	}
+
+	& > img {
+		float:left;
+		margin:1px 2px 0px 2px;
+	}
+
+	.clear {
+		clear:both;
+	}
+
+	& > span {
+		float:left;
+		margin:2px 4px 2px 4px;
+	}
+}
+
+.mToolButton {
+	float:right;
+	min-width:30px;
+	height:25px;
+	margin:1px 5px 2px 5px;
+
+	color:#444;
+	font-size:12px;
+	cursor:default;
+
+	@include border-radius(4px);
+
+	&.over {
+		padding: 0px;
+		margin: 0px 4px 1px 4px;
+		border: 1px solid #cccccc;
+		vertical-align: middle;
+
+		@include gradient("#ffffff","#ffffff 0%,#f0f0f0 100%");
+	}
+
+	&.down {
+		padding: 0px;
+		margin: 0px 4px 1px 4px;
+		border: 1px solid #8ac3ff;
+
+		@include gradient("#d3eaff","#d3eaff 0%,#bfdfff 100%");
+	}
+	&.mini { /* mini mode */
+		min-width: 0;
+	}
+	&.mini span {
+		display: none;
+	}
+
+	& > span {
+		float:left;
+		margin:5px 10px 0px 7px;
+	}
+
+	& .icon {
+		float:left;
+		padding-left:3px;
+	}
+
+	&.disabled {
+		color:#A9AdB4;
+	}
+	&.disabled .icon {
+		opacity:0.5;
+		filter:alpha(opacity=50);
+	}
+
+	&.selected {
+		background: white;
+	    height: 32px;
+	    z-index: 1;
+	    position: relative;
+		border: 1px solid #aaa;
+	    border-bottom: none;
+		margin: 0px 4px 1px 4px;
+		@include shadow("rgba(0,0,0, 0.1) 0px -2px 5px");
+	    @include sizing("border-box");
+		@include border-radius(4px 4px 0 0);
+
+		&.over {
+			color:#4a8ace;
+		}
+
+		&.down {
+			position:static;
+			height:25px;
+			@include gradient("#d3eaff","#d3eaff 0%,#bfdfff 100%");
+			padding: 0px;
+			margin: 0px 4px 1px 4px;
+			border: 1px solid #8ac3ff;
+
+			@include border-radius(4px);
+			@include shadow("none");
+		    @include sizing("border-box");
+		}
+	}
+}
+
+.mToolSep {
+	float:right;
+	margin:1px 5px 2px 5px;
+	cursor:default;
+	width: 4px;
+	height: 26px;
+	background: url(/wide/images/ticonsep.png) repeat-y left top;
+}
+
+.mItemButton {
+	padding:5px;
+	background-color:#F0F0F0;
+	border-top:1px solid white;
+	border-bottom:1px solid gray;
+	clear:both;
+	text-align:left;
+	color:black;
+	cursor:default;
+	font-size:15px;
+
+	@include border-radius(2px);
+
+	&.over {
+		background-color:#e2ebf2;
+	}
+
+	&.down {
+		background-color:#c2def6;
+	}
+}
+
+.mTextButton {
+	&.checked { color:#777777; } // off
+	&.selected { font-weight:bold; } // on
+	&.over { color:#63a7ed; }
+	&.down { color:#1d87f4; }
+}
+
+.mLineButton {
+	padding:2px;
+	clear:both;
+	text-align:left;
+	color:black;
+	cursor:default;
+
+	@include border-radius(3px);
+	&.over {
+		background-color:#e2ebf2;
+	}
+
+	&.down {
+		background-color:#c2def6;
+	}
+	&.disabled {
+		color:#bfbfbf;
+	}
+}
+
+.mAppButton {
+	float:left;
+	width:120px;
+	height:120px;
+	text-align:center;
+	color:black;
+	font-size:12px;
+	cursor:default;
+
+	.iconContainer {
+		position:relative;
+		width:80px;
+		height:80px;
+		margin:10px 20px 0px 20px
+	}
+	.icon { position:absolute; left:0px; top:0px; }
+	.iconDown { position:absolute; left:0px; top:0px; visibility:hidden; }
+	.iconOver { position:absolute; left:0px; top:0px; width:80px; height:80px; }
+	&.over {
+		text-shadow: 0 0 3px white, 0 0 5px #a3baff, 0 0 8px #a3baff;
+	}
+	&.down {
+		.icon { visibility:hidden; }
+		.iconDown { visibility:visible; }
+	}
+}
+
+.mIconButton {
+	float:left;
+	opacity:0.5;
+	cursor:default;
+
+	&.over {
+		opacity:0.7;
+	}
+	&.down {
+		opacity:1;
+	}
+	&.disabled {
+		opacity:0.2;
+	}
+}
+
+.mImageButton {
+	float:left;
+	cursor:default;
+
+	&.over {
+		opacity:0.7;
+	}
+	&.down {
+		opacity:0.5;
+	}
+	&.disabled {
+		opacity:0.2;
+	}
+}
+
+// tabs
+.tabs {
+	height:24px;
+	background-color: #797D84;
+	font-size:15px;
+
+	.bt {
+		float:left;
+		text-align:center;
+		color:white;
+		padding:2px;
+		height:20px;
+		cursor:default;
+
+		&.selected {
+			background-color: #a9adb4;
+
+			@include border-radius(6px 6px 0px 0px);
+
+			@include shadow("0 -1px 1px rgba(0, 0, 0, 0.5)");
+		}
+	}
+}
+
+
+/*----------------------------------------------------------------------------------------------*/
+/*- General ------------------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------------------------*/
+
+.m_barContainer {
+	height: 14px;
+	margin-top: 10px;
+	margin-bottom: 10px;
+	padding: 2px;
+	text-align: center;
+	color: #111;
+	font-size: 12px;
+	cursor: default;
+	border: 1px solid #CCC;
+	vertical-align: middle;
+
+	@include border-radius(4px);
+
+	@include shadow("inset 0px 1px 5px 0px rgba(0,0,0,0.2)");
+	background: #ffffff;
+
+	background-image: -webkit-linear-gradient(top, #ffffff 0%,#f0f0f0 100%);
+	background-image: -moz-linear-gradient(top, #ffffff 0%,#f0f0f0 100%);
+	background-image: -o-linear-gradient(top, #ffffff 0%,#f0f0f0 100%);
+	background-image: -ms-linear-gradient(top, #ffffff 0%,#f0f0f0 100%);
+	background-image: linear-gradient(top, #ffffff 0%,#f0f0f0 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#f0f0f0',GradientType=0 ); /* IE6-9 */
+}
+
+.m_bar {
+	height: 8px;
+	padding: 2px;
+	text-align: center;
+	color: #111;
+	font-size: 12px;
+	cursor: default;
+	border: 1px solid #CCC;
+	vertical-align: middle;
+
+	@include border-radius(4px);
+	background: #ffffff;
+
+	background-image: -webkit-linear-gradient(top, #ffffff 0%,#b0efb0 100%);
+	background-image: -moz-linear-gradient(top, #ffffff 0%,#b0efb0 100%);
+	background-image: -o-linear-gradient(top, #ffffff 0%,#b0efb0 100%);
+	background-image: -ms-linear-gradient(top, #ffffff 0%,#b0efb0 100%);
+	background-image: linear-gradient(top, #ffffff 0%,#b0efb0 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#b0efb0',GradientType=0 ); /* IE6-9 */
+}
+
+#l_loginLabel {
+	text-align:center;
+	font-size:15px;
+	margin-top:10px;
+	height:20px;
+	color:black;
+}
+#l_loginCode {
+	text-align:center;
+	font-size:16px;
+	margin:10px 0 10px 0;
+	height:25px;
+	color:black;
+}
+#l_loginCode .cell {
+	background: white;
+	border-top: 1px solid #aaa;
+	border-left: 1px solid #aaa;
+	border-bottom: 1px solid #ccc;
+	border-right: 1px solid #ccc;
+
+	@include shadow("inner 3px 0px 3px rgba(0,0,0,0.3)");
+	color: black;
+}
+#l_loginKeypad {
+	.mButton {
+		width:88px;
+		height:42px;
+		font-size:23px;
+		margin:5px;
+	}
+	.mButton div {
+		margin-top:8px;
+	}
+	.mButton img {
+		float:none;
+	}
+}
+
+.toolbar {
+	position: absolute;
+	left: 0px;
+	top: 0px;
+	background-color: #f4f4f4;
+	height: 30px;
+	border-bottom: 1px solid #dedede;
+	//overflow: hidden;
+	padding: 5px 0px 0px 0px;
+
+	@include shadow("10px 0px 15px rgba(0,0,0,0.3)");
+}
+
+.toolbarAppIcon {
+	position:absolute;
+	left:20px;
+	top:3px;
+}
+
+.toolbarHeader {
+	float:left;
+	margin:4px 10px 10px 60px;
+	cursor:default;
+	font-size:14px;
+	color:black;
+	overflow:hidden;
+	white-space:nowrap;
+}
+.toolbarHeader > img { margin-top:2px; }
+
+#toolbarArrow {
+	display:none;
+	position:absolute;
+	top:28px;
+	& > img {
+		position:absolute;
+	}
+}
+
+.toolbarPopup {
+	display: none;
+	position: absolute;
+	right: 16px;
+	top: 36px;
+	background-color: #fff;
+	height: 28px;
+	border: 1px solid gray;
+	border-top: 1px solid #b9b9b9;
+	overflow: hidden;
+
+	@include border-radius(4px);
+	@include shadow("rgba(0,0,0, 0.3) 0px 6px 6px");
+}
+
+#logoutPopup {
+	display: none;
+	position: absolute;
+	top: 36px;
+	background-color: #fff;
+	height: 28px;
+	border: 1px solid gray;
+	border-top: 1px solid #b9b9b9;
+	overflow: hidden;
+
+	@include border-radius(4px);
+
+	@include shadow("rgba(0,0,0, 0.3) 0px 6px 6px");
+}
+
+#noticePanel {
+	position: absolute;
+	z-index: 10;
+	right: 5px;
+	bottom: 5px;
+	display: none;
+	text-align: right;
+	color: black;
+	font-size: 13px;
+	height: 18px;
+	border: 1px solid gray;
+	background-color: #fff;
+	padding: 5px 0px 5px 5px;
+
+	@include border-radius(4px);
+
+	@include shadow("rgba(0,0,0, 0.3) 0px 0px 6px");
+
+	& > img {
+		float:left;
+	}
+	& > span {
+		float:left;
+		margin:2px 4px 0px 4px;
+	}
+}
+
+#quickAppsPanel {
+	position:absolute;
+	display: none;
+
+	background-color:white;
+	background-color:rgba(255,255,255,0.9);
+
+	@include border-radius(5px);
+	@include shadow("0px 0px 20px rgba(0,0,0,0.5)");
+}
+.quickAppsButton {
+	float:left;
+	width:120px;
+	padding-top:10px;
+	font-size:12px;
+	height:110px;
+	text-align:center;
+	color:black;
+
+	opacity:0.5;
+}
+
+.dash {
+	border-bottom:#ccc dashed 1px;
+}
+
+.listPanel {
+	.listPanelHeader {
+		height:20px;
+		font-size:12px;
+		padding-left:12px;
+		color:black;
+		.a {
+			float:left;
+			width:136px;
+		}
+		.b {
+			float:left;
+		}
+	}
+	.listPanelContent {
+		overflow-y:scroll;
+		height:260px;
+		background:white;
+	}
+	.item {
+		margin: 3px;
+		padding: 3px 0px 3px 2px;
+
+		@include border-radius(4px);
+
+		background: #f5f5f5;
+		.selectIcon {
+			float:left;
+		}
+		span {
+			float:left;
+		}
+		.input {
+			width:36%;
+		}
+		&.wide .input { // no assigner, just a list
+			width:89%;
+		}
+		.sep {
+			width:7px;
+			height:10px;
+			float:left;
+		}
+	}
+	.add {
+		border:1px solid #D0D0D0;
+
+		margin: 2px;
+		padding:7px 7px 7px 7px;
+
+		@include border-radius(4px);
+
+		background:white;
+
+		color:gray;
+		font-size:13px;
+
+		&.over {
+			@include gradient("#c7def7","#ffffff 0%,#bbdcf9 100%");
+		}
+
+		&.down {
+			@include gradient("#d3eaff","#d3eaff 0%,#bfdfff 100%");
+
+			@include shadow("inset 0px 1px 2px rgba(0,0,0,0.3)");
+		}
+	}
+	.item input {
+		width:100%;
+		padding:3px;
+	}
+}
+
+.selectIcon {
+	background: url('/wide/images/bticonlist.png') no-repeat;
+	height: 22px;
+	width: 20px;
+	margin-top:3px;
+}
+.selectIcon.disabled {
+	opacity:0.5;
+	filter:alpha(opacity=50);
+}
+.selectIcon > select {
+	position:static;
+
+	opacity: 0;
+	filter: alpha(opacity = 0);
+
+	width:33px;
+	margin:0px;
+	padding:2px;
+}
+.selectIcon.disabled {
+	opacity:0.3;
+	filter:alpha(opacity=30);
+}
+.selectIcon.disabled select {
+	display:none;
+}
+
+.appPanel {
+	position: absolute;
+
+	background-color: #fdfdfd;
+	border-left: 1px solid #fefefe;
+	border-right: 1px solid #fefefe;
+	border-top: 1px solid #ffffff;
+	border-bottom: 1px solid #dedede;
+	overflow: hidden;
+	padding: 5px;
+
+	@include shadow("0px 1px 0px rgba(0,0,0,0.5)");
+	@include border-radius(4px);
+
+	&.transparent {
+		background-color: rgba(255,255,255,0.6);
+		border-left: 1px solid #e0e0e0;
+		border-right: 1px solid #e0e0e0;
+		border-top: 1px solid #e0e0e0;
+		border-bottom: 1px solid #dedede;
+	}
+}
+
+#popupAreaContents {
+	position:absolute;
+	width:100%;
+	height:100%;
+	left:0px;
+	top:0px;
+}
+
+#popupBg {
+	position:absolute;
+	z-index:10;
+	background-color:rgba(0,0,0,0.6);
+	width:100%;
+	height:100%;
+	left:0px;
+	top:0px;
+}
+
+#popupFrame {
+	display:none;
+	position: absolute;
+	border: 1px solid gray;
+	border-top: 1px solid white;
+	z-index:11;
+
+	@include border-radius(5px);
+
+	@include shadow("0 0 200px 0px rgba(255, 255, 255, 0.3), 0 0 7px 7px rgba(0,0,0,0.6)");
+	@include gradient("#f7f7f7","#f7f7f7 0%,#e5e5e5 100%");
+}
+
+.popupContent {
+	position:absolute;
+	display:none;
+	margin:1px;
+	width:200px; /* standard width */
+	z-index:12;
+
+	.header {
+		border-bottom: 1px solid #fff;
+		cursor: default;
+		padding-top: 3px;
+
+		@include border-radius(5px 5px 0px 0px);
+		@include gradient("#f7f7f7","#f7f7f7 0%,#e5e5e5 100%");
+
+		span {
+			float:left;
+			color:black;
+			font-size:14px;
+			font-weight:bold;
+			padding:4px 0px 7px 6px;
+			height:16px;
+		}
+	}
+
+	.spacer {
+		clear:both;
+		height:5px;
+	}
+
+	.content {
+		margin:5px;
+	}
+
+	.field {
+		margin:5px;
+		clear:both;
+	}
+
+	.stdInput {
+		float:left;
+		width:203px;
+	}
+	.label {
+		float:left;
+		color:black;
+		font-size:83%;
+		margin:1px 4px 0px 2px;
+	}
+	.labelR {
+		float:right;
+		color:black;
+		font-size:85%;
+		margin:4px 6px 0px 4px;
+	}
+	.mButton {
+		margin:0;
+	}
+}
+
+
+.popupBt {
+	float:right;
+	cursor:default;
+	min-width:0px;
+	height:20px;
+
+	img {
+		padding:2px 2px 0px 2px;
+	}
+}
+
+#delmeArea {
+	display:none;
+	position:fixed;
+	left:700px;
+	top:0px;
+	width:400px;
+	height:80px;
+	margin: 0px;
+	padding:2px;
+	border: 1px solid gray;
+	overflow:auto;
+	background-color:white;
+	color:black;
+	font-size:11px;
+}
+
+.objectNode {
+	position:absolute;
+}
+
+label {
+	position:static;
+	font-size:100%;
+}
+
+span {
+	cursor:default;
+}
+
+.stdInput {
+	position: static;
+	font: 14px Helvetica;
+
+	//-webkit-appearance: none; // fix Safari preventing input styling
+
+	-webkit-user-select: text;
+	-moz-user-select: text;
+	-ms-user-select: text;
+	user-select: text;
+
+	width: 100%;
+	padding: 2px;
+	margin: 0;
+	border: 1px solid rgba(0,0,0,0.22); //solid 1px #E5E5E5;
+	outline: 0;
+	color:black;
+
+	background:white;
+
+	@include shadow("rgba(0,0,0, 0.2) 0px 0px 3px");
+	@include sizing("border-box");
+
+	.inner {
+		position:static;
+		float:left;
+		width:70%;
+		background:transparent;
+		border:none;
+		padding:5px;
+		margin:0;
+	}
+}
+
+.stdInputSmall {
+	position: static;
+	font: 14px Helvetica;
+	width:auto;
+	padding:2px;
+    outline: 0;
+
+	-webkit-user-select: text;
+	-moz-user-select: text;
+	-ms-user-select: text;
+	user-select: text;
+}
+
+@import "css/file_manager.scss";
+@import "css/text_editor.scss";
+@import "css/system_console.scss";
+@import "css/log_viewer.scss";

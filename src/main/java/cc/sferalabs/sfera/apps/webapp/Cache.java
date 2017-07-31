@@ -84,8 +84,8 @@ public abstract class Cache {
 			Console.addHandler(WebAppConsoleCommandHandler.INSTANCE);
 		} else {
 			try {
-				FilesWatcher.register(INTERFACES_PATH, "WebApp cache builder",
-						Cache::buildInterfacesCache, false, true);
+				FilesWatcher.register(INTERFACES_PATH, "WebApp cache builder", Cache::buildInterfacesCache, false,
+						true);
 			} catch (Exception e) {
 				logger.error("Error registering WebApp files watcher", e);
 			}
@@ -104,8 +104,7 @@ public abstract class Cache {
 
 		try {
 			WebServer.addServlet(WebIdeCacheServletHolder.INSTANCE, "/" + WEB_IDE_URL_NAME + "/*");
-			WebServer.addServlet(WebIdeLoginCacheServletHolder.INSTANCE,
-					"/" + WEB_IDE_URL_NAME + "/login/*");
+			WebServer.addServlet(WebIdeLoginCacheServletHolder.INSTANCE, "/" + WEB_IDE_URL_NAME + "/login/*");
 		} catch (WebServerException e) {
 			logger.error("Error registering servlet for Web IDE", e);
 		}
@@ -154,13 +153,10 @@ public abstract class Cache {
 			for (String interfaceName : interfaces) {
 				if (!oldInterfaces.contains(interfaceName)) {
 					try {
-						WebServer.addServlet(AuthInterfaceCacheServletHolder.INSTANCE,
-								"/" + interfaceName + "/*");
-						WebServer.addServlet(InterfaceCacheServletHolder.INSTANCE,
-								"/" + interfaceName + "/login/*");
+						WebServer.addServlet(AuthInterfaceCacheServletHolder.INSTANCE, "/" + interfaceName + "/*");
+						WebServer.addServlet(InterfaceCacheServletHolder.INSTANCE, "/" + interfaceName + "/login/*");
 					} catch (Exception e) {
-						logger.error("Error adding servlet for interface '" + interfaceName + "'",
-								e);
+						logger.error("Error adding servlet for interface '" + interfaceName + "'", e);
 					}
 				}
 			}
@@ -171,20 +167,27 @@ public abstract class Cache {
 						WebServer.removeServlet("/" + interfaceName + "/*");
 						WebServer.removeServlet("/" + interfaceName + "/login/*");
 					} catch (Exception e) {
-						logger.error(
-								"Error removing servlet for old interface '" + interfaceName + "'",
-								e);
+						logger.error("Error removing servlet for old interface '" + interfaceName + "'", e);
 					}
 				}
 			}
 
-			Path tmpCache = Files.createTempDirectory(Cache.class.getName());
+			Path tmpCache = FilesUtil.getTempDirectory().resolve(Cache.class.getName());
+			try {
+				FilesUtil.delete(tmpCache);
+			} catch (Exception e) {
+			}
+
+			if (interfaces.isEmpty()) {
+				logger.info("No interface found");
+				return;
+			}
+
 			long timestamp = System.currentTimeMillis();
 			for (String interfaceName : interfaces) {
 				try {
 					logger.debug("Building cache for interface '{}'...", interfaceName);
-					InterfaceCacheBuilder icb = new InterfaceCacheBuilder(interfaceName, timestamp,
-							tmpCache);
+					InterfaceCacheBuilder icb = new InterfaceCacheBuilder(interfaceName, timestamp, tmpCache);
 					icb.build();
 					logger.info("Interface '{}' built", interfaceName);
 				} catch (Exception e) {
@@ -211,81 +214,5 @@ public abstract class Cache {
 			logger.error("Error creating interfaces cache", e);
 		}
 	}
-
-	/**
-	 * 
-	 */
-	// private synchronized static void buildInterfacesCache() {
-	// try {
-	// Set<String> oldInterfaces = interfaces;
-	// interfaces = new HashSet<String>();
-	//
-	// Path tmpCache = Files.createTempDirectory(Cache.class.getName());
-	// long timestamp = System.currentTimeMillis();
-	// try {
-	// for (String interfaceName :
-	// ResourcesUtil.listDirectoriesNamesIn(INTERFACES_PATH,
-	// true)) {
-	// try {
-	// logger.debug("Building cache for interface '{}'...", interfaceName);
-	// InterfaceCacheBuilder icb = new InterfaceCacheBuilder(interfaceName,
-	// timestamp, tmpCache);
-	// icb.build();
-	// interfaces.add(interfaceName);
-	// logger.info("Interface '{}' built", interfaceName);
-	// } catch (Exception e) {
-	// logger.error("Error building cache for interface '" + interfaceName +
-	// "'",
-	// e);
-	// }
-	// }
-	// } catch (NoSuchFileException nsfe) {
-	// // No interface found
-	// }
-	//
-	// try {
-	// FilesUtil.delete(INTERFACES_CACHE_ROOT);
-	// } catch (NoSuchFileException e) {
-	// }
-	// Files.createDirectories(CACHE_ROOT);
-	// FilesUtil.move(tmpCache, INTERFACES_CACHE_ROOT);
-	// try {
-	// FilesUtil.delete(tmpCache);
-	// } catch (Exception e) {
-	// }
-	//
-	// for (String interfaceName : oldInterfaces) {
-	// if (!interfaces.contains(interfaceName)) {
-	// try {
-	// WebServer.removeServlet("/" + interfaceName + "/*");
-	// WebServer.removeServlet("/" + interfaceName + "/login/*");
-	// } catch (Exception e) {
-	// logger.error(
-	// "Error removing servlet for old interface '" + interfaceName + "'",
-	// e);
-	// }
-	// Bus.post(new InterfaceUpdateEvent(interfaceName, timestamp));
-	// }
-	// }
-	//
-	// for (String interfaceName : interfaces) {
-	// if (!oldInterfaces.contains(interfaceName)) {
-	// try {
-	// WebServer.addServlet(AuthInterfaceCacheServletHolder.INSTANCE,
-	// "/" + interfaceName + "/*");
-	// WebServer.addServlet(InterfaceCacheServletHolder.INSTANCE,
-	// "/" + interfaceName + "/login/*");
-	// } catch (Exception e) {
-	// logger.error("Error adding servlet for interface '" + interfaceName +
-	// "'",
-	// e);
-	// }
-	// }
-	// Bus.post(new InterfaceUpdateEvent(interfaceName, timestamp));
-	// }
-	// } catch (IOException e) {
-	// logger.error("Error creating interfaces cache", e);
-	// }
-	// }
 
 }

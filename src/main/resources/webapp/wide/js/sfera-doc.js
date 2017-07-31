@@ -107,6 +107,17 @@ Sfera.Doc.add.preset("Position", {
                 rotation:90
             },
         }
+    },
+    opacity: {
+        descr: "Specifies the element's opacity (0..1)",
+        example: {
+            descr:"Set the opacity of the component to 50%",
+            values:{
+                x:30,
+                y:10,
+                opacity:0.5
+            },
+        }
     }
 });
 
@@ -186,7 +197,7 @@ Sfera.Doc.add.component("Button", {
         },
 
         onDown: {
-            descr: "Script to be run on down/touch start event"
+            descr: "Script to be run on down/touch start event. The onClick event function as an onUp event."
         },
 
         onMove: {
@@ -372,8 +383,21 @@ Sfera.Doc.add.component("Interface", {
         },
 
         zoom: {
-            descr: "Specifies the interfaces zoom"
+            descr: "Specifies the interface's zoom. A value of 2 means the interface is scaled at 200%"
+        },
+
+        autoReload: {
+            descr: "If true, the interface reloads when the cache is updated (wherever the interface's sources change)"
+        },
+
+        bodyBackgroundColor: {
+            descr: "Specifies the background CSS color of the interface (the body of the page, visible around the interface's pages)"
+        },
+
+        frameBackgroundColor: {
+            descr: "Specifies the background CSS color for the interface's central frame that contains pages"
         }
+
     }
 });
 
@@ -535,7 +559,7 @@ Sfera.Doc.add.component("Slider", {
     },
     attr:{
         cursorSize: {
-            descr: "Specifies the label's text"
+            descr: "Specifies the cursor's size in pixels"
         },
 
         changeDelay: {

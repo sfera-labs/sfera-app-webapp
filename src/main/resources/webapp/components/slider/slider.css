@@ -17,16 +17,7 @@
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     -ms-box-sizing: border-box;
-    box-sizing: border-box;
-    -webkit-border-radius: 7px;
-    -moz-border-radius: 7px;
-    border-radius: 7px; }
-.component.comp_slider .bg .in {
-  -webkit-box-shadow: inset 2px 2px 2px 1px rgba(0, 0, 0, 0.3);
-  -moz-box-shadow: inset 2px 2px 2px 1px rgba(0, 0, 0, 0.3);
-  box-shadow: inset 2px 2px 2px 1px rgba(0, 0, 0, 0.3);
-  border-right: 1px solid rgba(255, 255, 255, 0.4);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.7); }
+    box-sizing: border-box; }
 .component.comp_slider .bar .in {
   overflow: hidden;
   padding: 1px; }
@@ -40,10 +31,7 @@
 .component.comp_slider .horizontal .bar {
   padding: 7px 0; }
 .component.comp_slider .ghost {
-  position: absolute;
-  -webkit-border-radius: 7px;
-  -moz-border-radius: 7px;
-  border-radius: 7px; }
+  position: absolute; }
 .component.comp_slider .over {
   position: absolute;
   width: 100%;

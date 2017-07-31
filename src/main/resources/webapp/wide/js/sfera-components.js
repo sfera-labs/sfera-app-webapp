@@ -85,8 +85,8 @@ Sfera.Components.create("Button", {
     updateClass: function() {
         var col = this.getAttribute("color") || "default";
         var sty = this.getAttribute("style") || "default";
-        var d = (this.getAttribute("enabled") ? "" : " disabled")
-        this.button.setClassName("container" + (sty?" style_"+sty:"") + (col?" color_"+col:"")) + d;
+        var d = (this.getAttribute("enabled") ? "" : " disabled");
+        this.button.setClassName("container" + (sty?" style_"+sty:"") + (col?" color_"+col:"") + d);
         this.button.enable(d?false:true);
     },
 
@@ -103,6 +103,11 @@ Sfera.Components.create("Button", {
     onUp: function() {
         var f = this.getAttribute("onClick");
         Sfera.Custom.exec(f, this.id);
+    },
+
+    onShow: function() {
+        var icon = this.subComponents.icon;
+        icon.onShow();
     }
 
 
@@ -169,7 +174,7 @@ Sfera.Components.create("Checkbox", {
 
         changeDelay: {
             type: "integer",
-            default: "200" // msec to wait before noticing a change
+            default: "0" // msec to wait before noticing a change
         },
 
         fontSize: {
@@ -340,7 +345,7 @@ Sfera.Components.create("Checkbox", {
         var self = this;
         if (changeDelay) { // if 0, run immediately
             this.changeTimeout = setTimeout(function() {
-                self.onChangedTimeout()
+                self.onChangedTimeout();
             }, changeDelay);
         } else {
             self.onChangedTimeout();
@@ -401,7 +406,8 @@ Sfera.Components.create("Container", {
                 this.component.element.style.overflow = (this.value == "auto") ? "" : "scroll";
             }
         }
-    }
+    },
+
 });
 
 
@@ -432,16 +438,16 @@ Sfera.Components.create("Image", {
                     req.init();
                     req.onLoaded = function() {
                         var xml = req.getResponseXML();
-                        var svg = xml.getElementsByTagName("svg")[0];
+                        c.svg = xml.getElementsByTagName("svg")[0];
                         e.innerHTML = "";
-                        if (svg) {
-                            e.appendChild(svg);
-                            svg.style.width = c.getAttribute("width");
-                            svg.style.height = c.getAttribute("height");
+                        if (c.svg) {
+                            e.appendChild(c.svg);
+                            c.svg.style.width = c.getAttribute("width");
+                            c.svg.style.height = c.getAttribute("height");
                         }
                         // done
-                        delete req;
-                    }
+                        req = null;
+                    };
                     req.open(this.value);
                 }
                 // normal img
@@ -452,7 +458,16 @@ Sfera.Components.create("Image", {
         }
     },
 
-    init: function() {}
+    init: function() {
+        this.svg = null;
+    },
+
+    onShow: function () {
+        if (this.svg) {
+            this.svg.style.width = this.getAttribute("width") + "px";
+            this.svg.style.height = this.getAttribute("height") + "px";
+        }
+	},
 
 });
 
@@ -711,7 +726,7 @@ Sfera.Components.create("Input", {
             var self = this;
             if (changeDelay) // if 0, disabled
                 this.changeTimeout = setTimeout(function() {
-                self.onChangedTimeout()
+                self.onChangedTimeout();
             }, changeDelay);
         }
     },
@@ -894,21 +909,21 @@ Sfera.Components.create("Input", {
 
      attributes: {
          title: {
-             type:"string",
+             type: "string",
              // @ifdef DOC
              doc:"Title visible in the browser's title bar"
              // @endif
          },
 
          skin: {
-            default:"default",
+            default: "default",
             update: function () {
                 Sfera.client.skin = new Sfera.Skins[Sfera.Utils.capitalize(this.value)]();
             }
          },
 
          zoom: {
-             type:"float",
+             type: "float",
              update: function () {
          		if (this.value != 1) {
          			var bodyE = document.getElementsByTagName("BODY")[0];
@@ -930,10 +945,30 @@ Sfera.Components.create("Input", {
              }
          },
 
+         fit: {
+            type: "boolean", 
+         },
+
          autoReload: {
              type: "boolean",
              default: "true"
+         },
+
+         bodyBackgroundColor: {
+             type: "color",
+             update: function () {
+                 var bodyE = document.getElementsByTagName("body")[0];
+                 bodyE.style.backgroundColor = this.value;
+             }
+         },
+
+         frameBackgroundColor: {
+             type: "color",
+             update: function () {
+                 this.component.element.style.backgroundColor = this.value;
+             }
          }
+
      }
  });
 
@@ -1335,7 +1370,16 @@ Sfera.Components.create("List", {
      },
 
      init: function(){
-     }
+     },
+
+	onShow: function () {
+	},
+
+	// triggered only for currently visible page and children
+	onAdjust: function () {
+
+	}
+
  });
 
 
@@ -1452,7 +1496,7 @@ Sfera.Components.create("Checkbox", {
 
         changeDelay: {
             type: "integer",
-            default: "200" // msec to wait before noticing a change
+            default: "0" // msec to wait before noticing a change
         },
 
         fontSize: {
@@ -1779,20 +1823,6 @@ Sfera.Components.create("Select", {
         this.elements = Sfera.Utils.getComponentElements(this.element, true, this.elements);
 
         this.redraw();
-
-        /*
-                this.eraseButton = new Sfera.UI.Button(this.elements.erase, {
-                    onclick: this.onErase.bind(this)
-                });
-        */
-        /*
-        switch (this.getAttribute("type")) {
-            case "date":
-                this.btObj = new Sfera.UI.Button(this.element, {
-                    onclick: this.onClick.bind(this)
-                });
-        }
-        */
     },
 
 
@@ -2229,7 +2259,7 @@ Sfera.Components.create("Slider", {
 
         color: {
             values: function() {
-                var c = Sfera.client.skin.colors.Button;
+                var c = Sfera.client.skin.colors.Slider;
                 return c ? c : ["default"];
             },
             post: function() {
@@ -2289,8 +2319,8 @@ Sfera.Components.create("Slider", {
             e.onover = this.onOver.bind(this);
             e.onout = this.onOut.bind(this);
         }
-        //e.onmove = this.onCursorMove.bind(this);
 
+//this.elements.over.style.background = "rgba(255,0,0,0.5)";
         this.button = new Sfera.UI.Button(this.elements.over, e);
 
         // rig cursor component's button object
@@ -2364,6 +2394,8 @@ Sfera.Components.create("Slider", {
             window.addEvent("mousemove", document.body, this._onMove);
         }
 
+//Sfera.client.sendEvent("TEST_LOG", "onDown touch? "+Sfera.Device.touch);
+
         // find absolute bar coords, so we don't have to get them again on mouse move
         this._bp = Sfera.Utils.getElementAbsolutePosition(this.elements.bar_in);
 
@@ -2374,6 +2406,8 @@ Sfera.Components.create("Slider", {
             return;
 
         this.isDown = false;
+
+//Sfera.client.sendEvent("TEST_LOG", "onUp touch? "+Sfera.Device.touch);
 
         // add up, move events
         if (Sfera.Device.touch) {
@@ -2389,20 +2423,34 @@ Sfera.Components.create("Slider", {
         if (!this.getAttribute("enabled"))
             return;
 
+//Sfera.client.sendEvent("TEST_LOG", "onMove: is down? "+this.isDown);
+
         var mp = Sfera.Utils.getMouseAbsolutePosition(event, this.elements.bar_in);
         if (this.isDown) {
+//Sfera.client.sendEvent("TEST_LOG", "onMove: pos "+mp.x+", "+mp.y+" ("+this._bp.x+","+this._bp.y+")");
+
             var w = this.getAttribute("width");
             var h = this.getAttribute("height");
             var v = h > w;
             var s = this.getAttribute("cursorSize");
 
-            var p = v ? ((mp.y - this._bp.y - s / 2) / (h - s)) : ((mp.x - this._bp.x - s / 2) / (w - s)); //
+            var x = mp.x - this._bp.x;
+            var y = mp.y - this._bp.y;
+
+            var r = this.getAttribute("rotation");
+            if (r) {
+                r = Sfera.Utils.rotatePoint(w/2, h/2, x, y, r);
+                x = r[0];
+                y = r[1];
+            }
+
+            var p = v ? ((y - s / 2) / (h - s)) : ((x - s / 2) / (w - s)); //
             if (v)
                 p = 1 - p;
 
             var min = this.getAttribute("min");
             var max = this.getAttribute("max");
-            var p = p * (max - min) + min; // min-max
+            p = p * (max - min) + min; // min-max
             p = (p < min ? min : (p > max ? max : p));
 
             // decimals
@@ -2463,7 +2511,7 @@ Sfera.Components.create("Slider", {
 
         // cursor
         this.subComponents.cursor.setAttribute(v ? "y" : "x", (v ? ip : p) * (v ? h - s : w - s));
-        this.subComponents.cursor.setAttribute(v ? "x" : "y", "0");
+        //this.subComponents.cursor.setAttribute(v ? "x" : "y", "0");
     },
 
     updateDirection: function() {
@@ -2476,20 +2524,31 @@ Sfera.Components.create("Slider", {
         var v = h > w;
 
         this.vertical = v;
+
         this.updateClass();
-
-        this.subComponents.cursor.setAttribute("width", v ? w : s);
-        this.subComponents.cursor.setAttribute("height", v ? s : h);
-
+        this.updateStyle();
         this.updateValue();
     },
 
     updateClass: function() {
         var f = (this.focused ? " focused" : "");
-        var d = (this.getAttribute("enabled") ? "" : " disabled")
+        var d = (this.getAttribute("enabled") ? "" : " disabled");
         this.element.className = "component comp_slider " + d + f;
         var sty = this.getAttribute("style");
         this.elements.container.className = "container " + (this.vertical ? "vertical" : "horizontal") + (sty ? " style_" + sty : "");
+    },
+
+    updateStyle: function () {
+        var w = this.getAttribute("width");
+        var h = this.getAttribute("height");
+        var s = this.getAttribute("cursorSize");
+
+        if (!w || !h || !s) return; // we need width, height and cursor size
+
+        var v = h > w;
+
+        this.subComponents.cursor.setAttribute("width", v ? w : s);
+        this.subComponents.cursor.setAttribute("height", v ? s : h);
     },
 
     //
@@ -2583,7 +2642,7 @@ Sfera.Components.create("Slider", {
             var self = this;
             if (changeDelay) { // if 0, run immediately
                 this.changeTimeout = setTimeout(function() {
-                    self.onChangedTimeout()
+                    self.onChangedTimeout();
                 }, changeDelay);
             } else {
                 self.onChangedTimeout();
@@ -2617,13 +2676,19 @@ Sfera.Components.create("Slider", {
     },
 
     onShow: function() {
+		this.onAdjust();
         if (this.getAttribute("focus"))
             this.focus();
     },
 
     onHide: function() {
 
-    }
+    },
+
+	// triggered only for currently visible page and children
+	onAdjust: function () {
+		this.updateDirection();
+	}
 
 });
 

@@ -3,11 +3,10 @@
     @include sizing(border-box);
     height: auto;
     &.focused {
-        z-index: 1000;
+        z-index: 10;
         .container {
             &.style_default {
                 .button {
-                    @include shadow(0px 0px 15px 0px rgba(0,0,0,0.75));
                 }
             }
         }
@@ -26,13 +25,12 @@
             vertical-align: middle;
             min-width: 2px;
             padding-left: 7px;
+            white-space: nowrap;
         }
         &.style_default {
             .button {
                 @include sizing(border-box);
                 padding: 5px;
-                background: white;
-                @include border-radius(700px);
             }
             .inner .comp_image {
                 display: none;
@@ -40,8 +38,6 @@
             .flag {
                 width:100%;
                 height:100%;
-                background: black;
-                @include border-radius(700px);
             }
 
             &.off .flag {

@@ -23,6 +23,7 @@ string|A textual string
 boolean|A boolean, can be either "true" or "false"
 integer|An integer number (e.g. 12)
 float|A floating point (decimal) number (e.g. 13.71)
+color|A CSS color (e.g. green or #00ff00)
 js|A JavasScript code snippet
 
 Regardless of its type, an attribute value is always set through a string value. This string is then automatically converted to a value of the correct type.

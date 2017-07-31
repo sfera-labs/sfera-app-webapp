@@ -18,6 +18,8 @@ Sfera.Login = new(function() {
 
     var action = "";
 
+    var idleIntervalId = null;
+
     var self = this;
 
     this.login = function (user, password) {
@@ -45,11 +47,11 @@ Sfera.Login = new(function() {
 
     this.gotoLogin = function() {
         Sfera.Browser.setLocation("/"+Sfera.Browser.getLocation().interface+"/login");
-    }
+    };
 
     this.gotoInterface = function() {
         Sfera.Browser.setLocation("/"+Sfera.Browser.getLocation().interface);
-    }
+    };
 
     function initReq() {
         req = new Sfera.Net.Request();
@@ -91,6 +93,48 @@ Sfera.Login = new(function() {
 
     window.onload = function() {
         resetCheck(); // start now
+    };
+
+    function stopIdleTimeout() {
+        setIdleEvents(true);
+        clearInterval(idleIntervalId);
     }
+
+    this.resetIdleTimeout = function () {
+        stopIdleTimeout();
+        if (config.idleTimeout && parseInt(config.idleTimeout) && !self.isLogin) {
+            setIdleEvents();
+            idleIntervalId = setInterval(onIdleInterval, 1000);
+            localStorage.setItem("idleTimestamp",(new Date().getTime()));
+        }
+    };
+
+    // check every second (shared between all tabs)
+    function onIdleInterval() {
+        // check last timestamp
+        var ts = localStorage.getItem("idleTimestamp");
+        var nts = new Date().getTime();
+
+        if (nts-ts >= parseInt(config.idleTimeout)*1000) {
+            onIdleTimeout();
+        }
+    }
+
+    function onIdleTimeout() {
+        stopIdleTimeout();
+        Sfera.Login.logout();
+    }
+
+    function setIdleEvents(remove) {
+		var f = (remove?"remove":"add")+"Event";
+		var t = Sfera.Device.touch;
+		window[f](t?"touchstart":"mousedown", window, onIdleActivity);
+		window[f](t?"touchend":"mouseup", window, onIdleActivity);
+        window[f]("keydown", window, onIdleActivity);
+	}
+	function onIdleActivity(e) {
+		self.resetIdleTimeout();
+	}
+
 
 })();

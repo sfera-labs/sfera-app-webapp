@@ -35,6 +35,8 @@ Sfera.Wide = function(config) {
     // temp area, we render stuff here to get the size (getDivSize)
     this.tempAreaE = document.getElementById("tempArea");
 
+    var idleIntervalId = null;
+
     var noticeTimeout = 0;
     var noticeStatus = 0;
 
@@ -83,8 +85,8 @@ Sfera.Wide = function(config) {
 
         window.onresize = this.onResize.bind(this);
         window.onbeforeunload = this.onBeforeUnload.bind(this);
-        document.onkeydown = this.onKeyDown.bind(this);
-		document.onkeyup = this.onKeyUp.bind(this);
+        window.addEvent("keydown", window, this.onKeyDown.bind(this));
+		window.addEvent("keyup", window, this.onKeyUp.bind(this));
 
         /*
         window.onload = onLoadInit;
@@ -98,7 +100,14 @@ Sfera.Wide = function(config) {
        Sfera.Net.boot();
        Sfera.Net.wsOpen();
        Sfera.Net.onMessage.add(onWSMessage);
+       Sfera.Net.onConnection.add(onConnection);
        Sfera.Net.onClose.add(onWSClose);
+    }
+
+    function onConnection(json) {
+        config.idleTimeout = parseInt(json.idleTimeout);
+        Sfera.Login.resetIdleTimeout();
+        resetIdleTimeout();
     }
 
     function onWSMessage(jsonStr) {
@@ -111,7 +120,6 @@ Sfera.Wide = function(config) {
                 systemConsole.output(json.output);
                 break;
             case "event":
-                // wide.showNotice("hsyco.jar updated");
                 if (json.files)
                     fileManager.onWSMessage(json);
                 break;
@@ -315,7 +323,7 @@ Sfera.Wide = function(config) {
 	} // formatFS()
 
     this.formatDate = function (date) {
-        return date.replace(/-/g,"/").replace("T"," ").replace("Z","").substr(0,16);
+        return date.replace(/-/g,"/").replace("T"," ").replace("Z","");
     }
 
 
@@ -863,6 +871,50 @@ Sfera.Wide = function(config) {
     this.onBeforeUnload = function (e) {
 
     };
+
+    /////////////////////////// idle
+
+    function stopIdleTimeout() {
+        setIdleEvents(true);
+        clearInterval(idleIntervalId);
+    }
+
+    function resetIdleTimeout() {
+        stopIdleTimeout();
+        if (config.idleTimeout && parseInt(config.idleTimeout) && !self.isLogin) {
+            setIdleEvents();
+            idleIntervalId = setInterval(onIdleInterval, 1000);
+            localStorage.setItem("idleTimestamp",(new Date().getTime()));
+        }
+    }
+
+    // check every second (shared between all tabs)
+    function onIdleInterval() {
+        // check last timestamp
+        var ts = localStorage.getItem("idleTimestamp");
+        var nts = new Date().getTime();
+
+        if (nts-ts >= parseInt(config.idleTimeout)*1000) {
+            onIdleTimeout();
+        }
+    }
+
+    function onIdleTimeout() {
+        stopIdleTimeout();
+        Sfera.Login.logout();
+    }
+
+    function setIdleEvents(remove) {
+		var f = (remove?"remove":"add")+"Event";
+		var t = Sfera.Device.touch;
+		window[f](t?"touchstart":"mousedown", document.body, onIdleActivity);
+		window[f](t?"touchend":"mouseup", document.body, onIdleActivity);
+        window[f]("onkeydown", document.body, onIdleActivity);
+	}
+	function onIdleActivity(e) {
+		resetIdleTimeout();
+	}
+
 
 };
 
@@ -2076,7 +2128,7 @@ Sfera.Wide.Apps.FileManager = function() {
 		// auto select after uploading?
 		if (selectOnRefresh) {
 			if (selectOnRefresh.path == o.currentPath &&
-                selectOnRefresh.path+"/"+selectOnRefresh.name != o.currentFile ) {
+                selectOnRefresh.path+"/"+selectOnRefresh.name != o.currentFile) {
 				for (var i=0; i<data.sub.length; i++) {
 					if (selectOnRefresh.name==data.sub[i].name) {
 						this.selectItem(i); // just uploaded, popup mode. select it

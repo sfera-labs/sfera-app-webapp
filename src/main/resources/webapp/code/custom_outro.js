@@ -2,7 +2,7 @@
     // bridge functions
     this.onReady = (typeof(onReady) === 'function') ? function () {onReady();} : null;
     this.onEvent = (typeof(onEvent) === 'function') ? function (id, value) {return onEvent(id, value);} : null;
-    this.onPage = (typeof(onPage) === 'function') ? function (name) {return onPage(id);} : null;
+    this.onPage = (typeof(onPage) === 'function') ? function (id) {return onPage(id);} : null;
 
     // context functions
     function page(id) {
@@ -30,14 +30,15 @@
     }
 
     function getAttribute(id, name) {
-        Sfera.client.getAttribute(id, name);
+        return Sfera.client.getAttribute(id, name);
     }
 
     // exec custom code. optional: id of the component calling, value to be sent
     this.exec = function (f, id, value) {
         // eval button js
+        var result;
         try {
-            var result = eval(f);
+            result = eval(f);
         } catch (e) {
             if (e instanceof SyntaxError) {
                 alert(e.message);

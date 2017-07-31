@@ -12,8 +12,9 @@ Label component, used to display a string.
 |**[x](#x)**|integer|Specifies the left position of the component in pixels, relative to its parent container (a page or a container component)|
 |**[y](#y)**|integer|Specifies the top position of the component in pixels, relative to its parent container (a page or a container component)|
 |**[rotation](#rotation)**|integer|Specifies the element's clockwise rotation in degrees|
-|**[width](#width)**|integer|Specifies the component's width in pixels|
-|**[height](#height)**|integer|Specifies the component's height in pixels|
+|**[opacity](#opacity)**|float|Specifies the element's opacity (0..1)|
+|**[width](#width)**|size|Specifies the component's width in pixels|
+|**[height](#height)**|size|Specifies the component's height in pixels|
 |**[label](#label)**|string|Specifies the label|
 |**[color](#color)**|string|Specifies the color|
 |**[fontSize](#fontSize)**|integer|Specifies the font size in pixels|
@@ -145,10 +146,36 @@ setAttribute("myLabel","rotation","90")
 
 ---
 
+### opacity
+
+Specifies the element's opacity (0..1).
+<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>float</td></tr></table>
+
+>**Example:**
+>
+>Set the opacity of the component to 50%.
+>
+
+>In index.xml:
+
+>``` xml
+<label id="myLabel" x="30" y="10" opacity="0.5" />
+```
+
+>Via scripting:
+
+>``` js
+setAttribute("myLabel","opacity","0.5")
+```
+
+
+
+---
+
 ### width
 
 Specifies the component's width in pixels.
-<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>integer</td></tr></table>
+<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>size</td></tr></table>
 
 >**Example:**
 >
@@ -174,7 +201,7 @@ setAttribute("myLabel","width","100")
 ### height
 
 Specifies the component's height in pixels.
-<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>integer</td></tr></table>
+<table class='attrTable table' style='width:auto'><tr><td><b>Type:</b></td><td>size</td></tr></table>
 
 >**Example:**
 >

@@ -27,6 +27,7 @@ package cc.sferalabs.sfera.apps.webapp.events;
 
 import javax.servlet.http.HttpServletRequest;
 
+import cc.sferalabs.sfera.access.User;
 import cc.sferalabs.sfera.ui.UIEvent;
 import cc.sferalabs.sfera.web.api.WebApiEvent;
 
@@ -63,6 +64,15 @@ public class WebAppUIEvent extends UIEvent {
 	 */
 	public HttpServletRequest getHttpRequest() {
 		return webApiEvent.getHttpRequest();
+	}
+	
+	/**
+	 * Returns the user associated with this event.
+	 * 
+	 * @return the user
+	 */
+	public User getUser() {
+		return webApiEvent.getUser();
 	}
 
 }

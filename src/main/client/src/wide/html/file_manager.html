@@ -1,0 +1,148 @@
+<!-- File Manager -->
+<div id="fileManager">
+
+    <div id="fm_toolbar" class="toolbar">
+        <div class="toolbarAppIcon">
+            <img src="/wide/images/appiconfms.png">
+        </div>
+        <div id="fm_toolbarHeader" class="toolbarHeader" onselectstart="return false;">File Manager</div>
+        <div id="fm_toolbarAppsBt" class="mToolButton" data-onclick="wide.showAppsPopup(true)">
+            <img class="icon" src="/wide/images/ticonapps.png">
+        </div>
+        <div class="mToolSep"></div>
+        <div id="fm_toolbarToolsBt" class="mToolButton" data-onclick="wide.showToolbarPopup('fm_edit')">
+            <img class="icon" src="/wide/images/ticontools.png">
+            <span>tools</span>
+        </div>
+    </div>
+
+    <div id="fm_dirsPanel" class="appPanel">
+        <div id="fm_dirsPath" class="fm_dirsPath"></div>
+        <div id="fm_dirsOptions" class="fm_dirsOptions">
+            <div id="fm_dirsParentBt" style="float:left; display:none;" class="mButton" data-onclick="fileManager.parentFolder()">
+                <img src="/wide/images/bticonparent.png">
+                <span>parent folder</span>
+            </div>
+            <div id="fm_dirsNewFolderBt" class="mButton" data-onclick="fileManager.openNewFolderPopup()">
+                <img src="/wide/images/bticonfolder.png">
+                <span>new folder</span>
+            </div>
+            <div id="fm_dirsNewFileBt" class="mButton" data-onclick="fileManager.openNewFilePopup()">
+                <img src="/wide/images/bticontextfile.png">
+                <span>new file</span>
+            </div>
+            <div id="fm_dirsUploadBt" class="mButton" data-onclick="fileManager.openUploadPopup()">
+                <img src="/wide/images/bticonupload.png">
+                <span>upload files</span>
+            </div>
+        </div>
+
+        <div id="fm_dirsHeader" class="fm_dirsHeader">
+            <div class="name">File Name</div>
+            <div class="modified">Modified</div>
+            <div class="size">Size</div>
+        </div>
+
+        <div class="dash"></div>
+        <div id="fm_dirsContent" class="fm_dirsContent" onmouseup="fileManager.onDirsClick(event,this)"></div>
+        <div class="dash"></div>
+
+        <div id="fm_dirsLoading" class="fm_dirsLoading">
+            <div id="fm_dirsLoadingLabel" class="fm_dirsLoadingLabel">
+                <img style="float:left; margin-right:4px;" src="/wide/images/loader.gif">&nbsp;Loading</div>
+        </div>
+    </div>
+
+    <div id="fm_detailsPanel"  class="appPanel transparent">
+        <div id="fm_detailsContent">
+            <div class="icon">
+                <img id="fm_detailsDirIcon" class="abso" src="/wide/images/fmicondir.png">
+                <img id="fm_detailsFileIcon" class="abso" src="/wide/images/fmiconfile.png">
+                <img id="fm_detailsFilesIcon" class="abso" src="/wide/images/fmiconfiles.png">
+                <div id="fm_detailsTextPreview" class="text"></div>
+                <img id="fm_detailsFileIconOver" class="abso" src="/wide/images/fmiconfileover.png">
+                <div class="img">
+                    <img id="fm_detailsImgPreview" src="/wide/images/empty.png" onload="this.style.visibility='visible'">
+                </div>
+            </div>
+            <div id="fm_detailsLabel">
+                <div class="line" id="fm_detailsSel">
+                    <span id="fm_detailsSelN">1</span> of
+                    <span id="fm_detailsTot">1</span> selected</div>
+                <div id="fm_detailsName" class="line">
+                    <div class="a">Name</div>
+                    <div id="fm_detailsNameV" class="b"></div>
+                    <br style="clear:both">
+                </div>
+                <div id="fm_detailsKind" class="line">
+                    <div class="a">Kind</div>
+                    <div id="fm_detailsKindV" class="b"></div>
+                    <br style="clear:both">
+                </div>
+                <div id="fm_detailsSize" class="line">
+                    <div class="a">Size</div>
+                    <div id="fm_detailsSizeV" class="b"></div>
+                    <br style="clear:both">
+                </div>
+            </div>
+            <div id="fm_detailsOptions">
+                <div class="title">Options</div>
+                <div id="fm_detailsBtRestart" class="mButton" data-onclick="wide.restartServer()">
+                    <img src="/wide/images/bticondel.png">
+                    <span>restart hsyco</span>
+                </div>
+                <div id="fm_detailsBtDelete" class="mButton" data-onclick="wide.openPopup('deletefile',true)">
+                    <img src="/wide/images/bticondel.png">
+                    <span>delete</span>
+                </div>
+                <div id="fm_detailsBtDownload" class="mButton" data-onclick="fileManager.downloadFiles()">
+                    <img src="/wide/images/bticondownload.png">
+                    <span>download</span>
+                </div>
+                <div id="fm_detailsBtRename" class="mButton" data-onclick="fileManager.openRenameFilePopup()">
+                    <img src="/wide/images/bticonrename.png">
+                    <span>rename</span>
+                </div>
+                <div id="fm_detailsBtEdit" class="mButton" data-onclick="fileManager.openEditor()">
+                    <img src="/wide/images/bticontextfile.png">
+                    <span>edit</span>
+                </div>
+                <div id="fm_detailsBtDuplicate" class="mButton" data-onclick="fileManager.duplicateFile()">
+                    <img src="/wide/images/bticoncp.png">
+                    <span>duplicate</span>
+                </div>
+                <div id="fm_detailsBtCopy" class="mButton" data-onclick="fileManager.copyItems()">
+                    <img src="/wide/images/bticoncp.png">
+                    <span>copy</span>
+                </div>
+                <div id="fm_detailsBtMove" class="mButton" data-onclick="fileManager.moveItems()">
+                    <img src="/wide/images/bticonmv.png">
+                    <span>move</span>
+                </div>
+                <div id="fm_detailsBtOpenFolder" class="mButton" data-onclick="fileManager.selectItem()">
+                    <img src="/wide/images/bticonfolder.png">
+                    <span>open</span>
+                </div>
+                <div id="fm_detailsBtOpenVE" class="mButton" data-onclick="fileManager.openInProjectEditor()">
+                    <img src="/wide/images/bticonfile.png">
+                    <span>open in project editor</span>
+                </div>
+                <br style="clear:both">
+            </div>
+        </div>
+    </div>
+
+    <div id="fm_uploadProgressPanel" class="appPanel">
+        <div id="fm_uploadContent">
+            <div id="fm_uploadFileName">Uploading: this is a text file.png</div>
+            <div id="fm_uploadBarContainer" class="m_barContainer">
+                <div id="fm_uploadBar" class="m_bar"></div>
+            </div>
+            <div>
+                <div id="fm_uploadProgress">50%</div>
+                <div id="fm_uploadBytes">0.4 KB/12 KB</div>
+            </div>
+        </div>
+    </div>
+
+</div>

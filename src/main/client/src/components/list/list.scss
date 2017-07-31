@@ -1,5 +1,4 @@
 @import "../../css/_common.scss";
-$buttonBorderRadius: 7px;
 .component.comp_list {
     overflow:auto;
     .content {
@@ -7,7 +6,6 @@ $buttonBorderRadius: 7px;
         display: table;
         width: 100%;
         height: 100%;
-        color: #fff;
         text-align: center;
         vertical-align: middle;
         @include transition(opacity 250ms linear);
@@ -23,7 +21,6 @@ $buttonBorderRadius: 7px;
                 display: table;
                 width: 100%;
                 height: 100%;
-                color: #fff;
                 text-align: center;
                 vertical-align: middle;
                 @include transition(opacity 250ms linear);
@@ -40,7 +37,6 @@ $buttonBorderRadius: 7px;
                         }
                         svg,
                         svg path {
-                            fill: white;
                         }
                     }
                 }
@@ -55,32 +51,22 @@ $buttonBorderRadius: 7px;
                 }
                 // styles
                 &.style_default {
-                    @include shadow("rgba(0,0,0,0.8) 0 1px 0, rgba(0,0,0,0.4) 0px 0px 1px 1px");
-                    @include border-radius($buttonBorderRadius);
-                    @include button-1(#2090ff,#00439e,#002c73);
-
-
                     &.color_stable {
-                        @include button-1(#c0c0d9,#73738d,#48486a);
                     }
 
                     .cIcon {
                         padding: 0 8px;
                     }
                     .cLabel {
-                        text-shadow: 0 1px rgba(0,0,0,0.6);
                     }
                     &.over {
 
                     }
                     &.switch.pressed {
-                        @include shadow("none");
                     }
                     &.down {
-                        @include shadow("rgba(0,0,0,0.8) 0 1px 0, rgba(0,0,0,0.4) 0px 0px 1px 1px, inset 0px 1px 4px rgba(0,0,0,0.7)");
                     }
                     &.error {
-                        color: #e03050;
                     }
                 }
             }
