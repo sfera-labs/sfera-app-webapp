@@ -103,7 +103,7 @@ Sfera.Components.create("Checkbox", {
         // fill elements with all nodes that have a name
         this.elements = Sfera.Utils.getComponentElements(this.element, true, this.elements);
 
-        this.btObj = new Sfera.UI.Button(this.element, {
+        this.btObj = new Sfera.UI.Button(this.elements.button, {
             onclick: this.onClick.bind(this)
         });
     },
