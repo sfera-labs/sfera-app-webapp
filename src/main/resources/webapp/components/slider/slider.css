@@ -1,40 +1,55 @@
-.component.comp_slider .container {
-  width: 100%;
-  height: 100%; }
-.component.comp_slider .bg,
-.component.comp_slider .bar {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  -ms-box-sizing: border-box;
-  box-sizing: border-box; }
-  .component.comp_slider .bg .in,
-  .component.comp_slider .bar .in {
+.component.comp_slider {
+  /*! nouislider - 10.0.0 - 2017-05-28 14:52:48 */
+  /* Functional styling;
+   * These styles are required for noUiSlider to function.
+   * You don't need to change these rules to apply your design.
+   */
+  /* Painting and performance;
+   * Browsers can paint handles in their own layer.
+   */ }
+  .component.comp_slider .noUi-target,
+  .component.comp_slider .noUi-target * {
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-user-select: none;
+    -ms-touch-action: none;
+    touch-action: none;
+    -ms-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box; }
+  .component.comp_slider .noUi-target {
+    position: relative;
+    direction: ltr; }
+  .component.comp_slider .noUi-base {
     width: 100%;
     height: 100%;
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    -ms-box-sizing: border-box;
-    box-sizing: border-box; }
-.component.comp_slider .bar .in {
-  overflow: hidden;
-  padding: 1px; }
-  .component.comp_slider .bar .in .fill {
-    height: 100%;
-    width: 100%; }
-.component.comp_slider .vertical .bg,
-.component.comp_slider .vertical .bar {
-  padding: 0 7px; }
-.component.comp_slider .horizontal .bg,
-.component.comp_slider .horizontal .bar {
-  padding: 7px 0; }
-.component.comp_slider .ghost {
-  position: absolute; }
-.component.comp_slider .over {
-  position: absolute;
-  width: 100%;
-  height: 100%; }
+    position: relative;
+    z-index: 1;
+    /* Fix 401 */ }
+  .component.comp_slider .noUi-connect {
+    position: absolute;
+    right: 0;
+    top: 0;
+    left: 0;
+    bottom: 0; }
+  .component.comp_slider .noUi-origin {
+    position: absolute;
+    height: 0;
+    width: 0; }
+  .component.comp_slider .noUi-handle {
+    position: relative;
+    z-index: 1; }
+  .component.comp_slider .noUi-state-tap .noUi-connect,
+  .component.comp_slider .noUi-state-tap .noUi-origin {
+    -webkit-transition: top 0.3s, right 0.3s, bottom 0.3s, left 0.3s;
+    transition: top 0.3s, right 0.3s, bottom 0.3s, left 0.3s; }
+  .component.comp_slider .noUi-state-drag * {
+    cursor: inherit !important; }
+  .component.comp_slider .noUi-base,
+  .component.comp_slider .noUi-handle {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0); }
 
 /*# sourceMappingURL=slider.css.map */

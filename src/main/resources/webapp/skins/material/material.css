@@ -294,57 +294,6 @@ img {
 .component.comp_select .erase {
   color: red; }
 
-.component.comp_slider .bg,
-.component.comp_slider .bar {
-  position: absolute;
-  left: 0px;
-  top: 0px;
-  padding: 0 !important;
-  margin: 0; }
-  .component.comp_slider .bg .in,
-  .component.comp_slider .bar .in {
-    position: relative;
-    padding: 0 !important;
-    margin: auto;
-    -webkit-border-radius: 2px;
-    -moz-border-radius: 2px;
-    border-radius: 2px;
-    background: none; }
-.component.comp_slider .bar .in {
-  background-color: rgba(0, 0, 0, 0.5); }
-.component.comp_slider .vertical .bg, .component.comp_slider .vertical .bar {
-  left: 50%;
-  width: auto; }
-  .component.comp_slider .vertical .bg .in, .component.comp_slider .vertical .bar .in {
-    left: -1px;
-    width: 2px; }
-.component.comp_slider .horizontal .bg, .component.comp_slider .horizontal .bar {
-  top: 50%;
-  height: auto; }
-  .component.comp_slider .horizontal .bg .in, .component.comp_slider .horizontal .bar .in {
-    top: -1px;
-    height: 2px; }
-.component.comp_slider .component.comp_button {
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  -ms-box-sizing: border-box;
-  box-sizing: border-box;
-  width: 10px;
-  height: 10px; }
-  .component.comp_slider .component.comp_button .container {
-    position: static !important;
-    -webkit-border-radius: 1000px;
-    -moz-border-radius: 1000px;
-    border-radius: 1000px; }
-    .component.comp_slider .component.comp_button .container::after {
-      -webkit-border-radius: 1000px;
-      -moz-border-radius: 1000px;
-      border-radius: 1000px; }
-.component.comp_slider .ghost {
-  -webkit-border-radius: 2px;
-  -moz-border-radius: 2px;
-  border-radius: 2px; }
-
 .component.comp_checkbox.focused .container.style_default .button, .component.comp_checkbox.focused .container.style_radio .button, .component.comp_checkbox.focused .container.style_switch .button {
   -webkit-box-shadow: 0px 0px 0px 5px rgba(255, 255, 255, 0.1);
   -moz-box-shadow: 0px 0px 0px 5px rgba(255, 255, 255, 0.1);
@@ -483,41 +432,41 @@ img {
       .component.comp_list .content .item .container.style_default.error {
         color: #e03050; }
 
-.component.comp_nouislider .noUi-horizontal {
+.component.comp_slider .noUi-horizontal {
   height: 2px; }
-.component.comp_nouislider .noUi-vertical {
+.component.comp_slider .noUi-vertical {
   width: 2px; }
-.component.comp_nouislider .noUi-horizontal .noUi-handle,
-.component.comp_nouislider .noUi-vertical .noUi-handle {
+.component.comp_slider .noUi-horizontal .noUi-handle,
+.component.comp_slider .noUi-vertical .noUi-handle {
   width: 20px;
   height: 20px;
   left: -9px;
   top: -9px; }
-.component.comp_nouislider .noUi-target {
+.component.comp_slider .noUi-target {
   background-color: rgba(0, 0, 0, 0.5);
   border-radius: 0;
   border: 0;
   box-shadow: none; }
-.component.comp_nouislider .noUi-handle {
+.component.comp_slider .noUi-handle {
   border: none;
   border-radius: 50%;
   background-color: #2090ff;
   cursor: default;
   box-shadow: none; }
-.component.comp_nouislider .noUi-handle:before {
+.component.comp_slider .noUi-handle:before {
   content: none; }
-.component.comp_nouislider .noUi-handle:after {
+.component.comp_slider .noUi-handle:after {
   content: none; }
-.component.comp_nouislider .noUi-vertical {
+.component.comp_slider .noUi-vertical {
   height: 100%; }
-.component.comp_nouislider [disabled].noUi-target,
-.component.comp_nouislider [disabled].noUi-handle,
-.component.comp_nouislider [disabled] .noUi-handle {
+.component.comp_slider [disabled].noUi-target,
+.component.comp_slider [disabled].noUi-handle,
+.component.comp_slider [disabled] .noUi-handle {
   cursor: default;
   -ms-filter: 'progid:DXImageTransform.Microsoft.Alpha(Opacity="50")';
   filter: alpha(opacity=50);
   opacity: 0.5; }
-.component.comp_nouislider .noUi-handle {
+.component.comp_slider .noUi-handle {
   outline: none; }
 
 /*# sourceMappingURL=material.css.map */

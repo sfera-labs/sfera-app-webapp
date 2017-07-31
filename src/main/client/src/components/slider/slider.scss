@@ -1,57 +1,66 @@
 @import "../../css/_common.scss";
 .component.comp_slider {
-    .container {
-        width: 100%;
-        height: 100%;
-    }
 
-    // active bar
-    // background
-    .bg,
-    .bar {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        @include sizing("border-box");
-        .in {
-            width: 100%;
-            height: 100%;
-            @include sizing("border-box");
-        }
+    /*! nouislider - 10.0.0 - 2017-05-28 14:52:48 */
+    /* Functional styling;
+     * These styles are required for noUiSlider to function.
+     * You don't need to change these rules to apply your design.
+     */
+    .noUi-target,
+    .noUi-target * {
+      -webkit-touch-callout: none;
+      -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+      -webkit-user-select: none;
+      -ms-touch-action: none;
+      touch-action: none;
+      -ms-user-select: none;
+      -moz-user-select: none;
+      user-select: none;
+      -moz-box-sizing: border-box;
+      box-sizing: border-box;
     }
-    .bg {
-        .in {
-        }
+    .noUi-target {
+      position: relative;
+      direction: ltr;
     }
-    .bar .in {
-        overflow: hidden;
-        padding:1px;
-        .fill {
-            height: 100%;
-            width: 100%;
-        }
+    .noUi-base {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      z-index: 1;
+      /* Fix 401 */
     }
-    .vertical {
-        .bg,
-        .bar {
-            padding: 0 7px;
-        }
+    .noUi-connect {
+      position: absolute;
+      right: 0;
+      top: 0;
+      left: 0;
+      bottom: 0;
     }
-    .horizontal {
-        .bg,
-        .bar {
-            padding: 7px 0;
-        }
+    .noUi-origin {
+      position: absolute;
+      height: 0;
+      width: 0;
     }
-
-    // ghost
-    .ghost {
-        position: absolute;
+    .noUi-handle {
+      position: relative;
+      z-index: 1;
     }
-    .over {
-        position: absolute;
-        width: 100%;
-        height: 100%;
+    .noUi-state-tap .noUi-connect,
+    .noUi-state-tap .noUi-origin {
+      -webkit-transition: top 0.3s, right 0.3s, bottom 0.3s, left 0.3s;
+      transition: top 0.3s, right 0.3s, bottom 0.3s, left 0.3s;
+    }
+    .noUi-state-drag * {
+      cursor: inherit !important;
+    }
+    /* Painting and performance;
+     * Browsers can paint handles in their own layer.
+     */
+    .noUi-base,
+    .noUi-handle {
+      -webkit-transform: translate3d(0, 0, 0);
+      transform: translate3d(0, 0, 0);
     }
 
 }

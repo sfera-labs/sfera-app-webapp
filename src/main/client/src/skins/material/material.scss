@@ -222,74 +222,6 @@ img {
     }
 }
 
-.component.comp_slider {
-    .container {
-    }
-
-    // active bar
-    // background
-    .bg,
-    .bar {
-        position:absolute;
-        left:0px;
-        top:0px;
-        padding: 0 !important;
-        margin:0;
-        .in {
-            position:relative;
-            padding:0 !important;
-            margin:auto;
-            @include border-radius($buttonBorderRadius);
-            background:none;
-        }
-    }
-
-    .bar .in {
-        background-color: rgba(0,0,0,0.5);
-    }
-
-    .vertical {
-        .bg, .bar {
-            left:50%;
-            width:auto;
-            .in {
-                left:-1px;
-                width:2px;
-            }
-        }
-    }
-    .horizontal {
-        .bg, .bar {
-            top:50%;
-            height:auto;
-            .in {
-                top:-1px;
-                height:2px;
-            }
-        }
-    }
-    .component.comp_button {
-        @include sizing(border-box);
-        width:10px;
-        height:10px;
-        .container {
-            position: static !important;
-            @include border-radius(1000px);
-            &::after {
-                @include border-radius(1000px);
-            }
-        }
-    }
-
-    // ghost
-    .ghost {
-        @include border-radius($buttonBorderRadius);
-    }
-    .over {
-    }
-
-}
-
 // Checkbox
 .component.comp_checkbox {
     &.focused {
@@ -476,7 +408,7 @@ img {
     }
 }
 
-.component.comp_nouislider {
+.component.comp_slider {
 	.noUi-horizontal {
       height: 2px;
     }

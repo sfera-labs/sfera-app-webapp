@@ -1,21 +1,9 @@
 Sfera.Doc.add.component("Slider", {
     doc: {
-        descr:"Slider component, allows the user to input a numeric [value](#value) between a [minimum](#min) and [maximum](#max) value.\nThe decimal digits in the value are based on the maximum amount of decimal digits in the min and max attributes.",
+        descr:"Slider component, based on [NoUiSlider](https://refreshless.com/nouislider/).",
         extra:"![slider](../images/components/slider.png)"
     },
     attr:{
-        cursorSize: {
-            descr: "Specifies the cursor's size in pixels"
-        },
-
-        changeDelay: {
-            descr: "Speficies the delay in milliseconds before a value's change is detected"
-        },
-
-        barColor: {
-            descr: "Specifies the color of the bar"
-        },
-
         min: {
             descr: "Specifies the minumum value"
         },
@@ -27,15 +15,15 @@ Sfera.Doc.add.component("Slider", {
         value: {
             descr: "Specifies the value of the slider"
         },
-
-        focus: {
-            descr: "If true, gives the component focus"
+        
+        decimals: {
+        	descr: "Number of decimals for the value"
         },
 
-        onKeyUp: {
-            descr: "Script to be run on key up event"
+        changeDelay: {
+            descr: "Speficies the delay in milliseconds before a value's change is detected"
         },
-
+        
         onChange: {
             descr: "Script to be run when a change in value is detected. Variables id and value can be used.",
             example: {
@@ -48,16 +36,8 @@ Sfera.Doc.add.component("Slider", {
             }
         },
 
-        onEnterKey: {
-            descr: "Script to be run when enter key is pressed"
-        },
-
-        onFocus: {
-            descr: "Script to be run when the component receives focus"
-        },
-
-        onBlur: {
-            descr: "Script to be run when the component loses focus"
+        orientation: {
+            descr: "Orientation of the slider"
         }
     }
 });
