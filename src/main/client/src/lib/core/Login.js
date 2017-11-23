@@ -22,6 +22,9 @@ Sfera.Login = new(function() {
 
     var self = this;
 
+    var _user;
+    var _password;
+
     this.login = function (user, password) {
         if (!req)
             initReq();
@@ -30,10 +33,10 @@ Sfera.Login = new(function() {
 
         resetCheck();
 
-        user = user || Sfera.client.getAttribute("username","value");
-        password = password || Sfera.client.getAttribute("password","value");
+        _user = user || Sfera.client.getAttribute("username","value");
+        _password = password || Sfera.client.getAttribute("password","value");
 
-        req.open("/api/login?user=" + user + "&password=" + password + "&", 100);
+        req.open("/api/login?user=" + _user + "&password=" + _password + "&", 100);
     };
 
     this.logout = function () {
@@ -60,6 +63,8 @@ Sfera.Login = new(function() {
             clearTimeout(checkTimeout);
 
             if (code != 200) {
+                if (window.WrapApp)
+                    window.WrapApp.onLoginError(_user,_password);
                 Sfera.client.setAttribute("username","error","true");
                 Sfera.client.setAttribute("password","error","true");
                 return;
@@ -67,19 +72,20 @@ Sfera.Login = new(function() {
 
             switch (action) {
             case "login":
+                if (window.WrapApp)
+                    window.WrapApp.onLogin(_user,_password);
             	self.gotoInterface();
             	break;
             case "logout":
                 self.gotoLogin();
                 break;
             }
-        }
+        };
         req.onError = function(errCode) {
             Sfera.client.setAttribute("username","error","true");
             Sfera.client.setAttribute("password","error","true");
             resetCheck();
-        }
-
+        };
     }
 
     function checkLogin() {
