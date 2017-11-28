@@ -1,6 +1,6 @@
 /**
  * @author       Gionatan Iasio <gionatan@sferalabs.cc>
- * @copyright    2016 SferaLabs
+ * @copyright    2017 SferaLabs
  * @license      {@link http://sfera.sferalabs.cc/docs/sfera/license.html|LGPL License}
  */
 
@@ -21,7 +21,7 @@ Sfera.Login = new(function() {
     var idleIntervalId = null;
 
     var self = this;
-
+    // store last input
     var _user;
     var _password;
 
@@ -63,8 +63,9 @@ Sfera.Login = new(function() {
             clearTimeout(checkTimeout);
 
             if (code != 200) {
-                if (window.WrapApp)
-                    window.WrapApp.onLoginError(_user,_password);
+                if (Sfera.Custom.onLoginError) {
+                    Sfera.Custom.onLoginError(_user, _password);
+                }
                 Sfera.client.setAttribute("username","error","true");
                 Sfera.client.setAttribute("password","error","true");
                 return;
@@ -72,9 +73,13 @@ Sfera.Login = new(function() {
 
             switch (action) {
             case "login":
-                if (window.WrapApp)
-                    window.WrapApp.onLogin(_user,_password);
-            	self.gotoInterface();
+                var r; // skip redirect if false
+                if (Sfera.Custom.onLoginSuccess) {
+                    r = Sfera.Custom.onLoginSuccess(_user, _password);
+                }
+                if (r !== false) {
+                    self.gotoInterface();
+                }
             	break;
             case "logout":
                 self.gotoLogin();
@@ -141,6 +146,5 @@ Sfera.Login = new(function() {
 	function onIdleActivity(e) {
 		self.resetIdleTimeout();
 	}
-
 
 })();

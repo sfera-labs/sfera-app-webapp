@@ -3,6 +3,8 @@
     this.onReady = (typeof(onReady) === 'function') ? function () {onReady();} : null;
     this.onEvent = (typeof(onEvent) === 'function') ? function (id, value) {return onEvent(id, value);} : null;
     this.onPage = (typeof(onPage) === 'function') ? function (id) {return onPage(id);} : null;
+    this.onLoginSuccess (typeof(onLoginSuccess) === 'function') ? function (user,password) {return onLoginSuccess(user,password);} : null;
+    this.onLoginError (typeof(onLoginError) === 'function') ? function (user,password) {return onLoginError(user,password);} : null;
 
     // context functions
     function page(id) {
