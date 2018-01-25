@@ -393,10 +393,10 @@ Sfera.Components.create("Input", {
         co.focused = true;
         co.updateClass();
 
-        var f = this.getAttribute("onFocus");
+        var f = co.getAttribute("onFocus");
         if (f) {
-            var value = this.getAttribute("value");
-            return Sfera.Custom.exec(f,this.id,value);
+            var value = co.getAttribute("value");
+            return Sfera.Custom.exec(f,co.id,value);
         } else {
             return true; // don't block it
         }
@@ -409,10 +409,10 @@ Sfera.Components.create("Input", {
         co.focused = false;
         co.updateClass();
 
-        var f = this.getAttribute("onBlur");
+        var f = co.getAttribute("onBlur");
         if (f) {
-            var value = this.getAttribute("value");
-            return Sfera.Custom.exec(f,this.id,value);
+            var value = co.getAttribute("value");
+            return Sfera.Custom.exec(f,co.id,value);
         } else {
             return true; // don't block it
         }

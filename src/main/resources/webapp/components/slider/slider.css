@@ -10,7 +10,7 @@
   .component.comp_slider .noUi-target,
   .component.comp_slider .noUi-target * {
     -webkit-touch-callout: none;
-    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    -webkit-tap-highlight-color: transparent;
     -webkit-user-select: none;
     -ms-touch-action: none;
     touch-action: none;
