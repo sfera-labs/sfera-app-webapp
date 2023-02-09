@@ -10,9 +10,9 @@
 	<description>Sfera Web App</description>
 
 	<properties>
-		<latestDeployedVersion>1.2.0</latestDeployedVersion>
+		<latestDeployedVersion>1.2.1</latestDeployedVersion>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<sfera-version>1.2.1</sfera-version>
+		<sfera-version>1.6.0</sfera-version>
 	</properties>
 
 	<licenses>
@@ -46,31 +46,34 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.10.3</version>
+				<version>3.4.1</version>
 				<configuration>
 					<show>public</show>
 					<links>
 						<link>http://sfera.sferalabs.cc/docs/sfera/apidocs</link>
 					</links>
-					<taglets>
-						<taglet>
-							<tagletClass>cc.sferalabs.sfera.doc.taglets.ConfigParamTaglet</tagletClass>
-						</taglet>
-						<taglet>
-							<tagletClass>cc.sferalabs.sfera.doc.taglets.EventIdTaglet</tagletClass>
-						</taglet>
-						<taglet>
-							<tagletClass>cc.sferalabs.sfera.doc.taglets.EventValueTaglet</tagletClass>
-						</taglet>
-						<taglet>
-							<tagletClass>cc.sferalabs.sfera.doc.taglets.EventSimpleValueTaglet</tagletClass>
-						</taglet>
-					</taglets>
-					<tagletArtifact>
-						<groupId>cc.sferalabs.sfera</groupId>
-						<artifactId>sfera</artifactId>
-						<version>${sfera-version}</version>
-					</tagletArtifact>
+					<tags>
+						<tag>
+							<name>sfera.config</name>
+							<placement>ot</placement>
+							<head>Configuration parameters:</head>
+						</tag>
+						<tag>
+							<name>sfera.event_id</name>
+							<placement>t</placement>
+							<head>Event ID:</head>
+						</tag>
+						<tag>
+							<name>sfera.event_val</name>
+							<placement>t</placement>
+							<head>Values:</head>
+						</tag>
+						<tag>
+							<name>sfera.event_val_simple</name>
+							<placement>t</placement>
+							<head>Simple Values:</head>
+						</tag>
+					</tags>
 				</configuration>
 				<reportSets>
 					<reportSet>
@@ -103,7 +106,7 @@
 			<extension>
 				<groupId>org.apache.maven.wagon</groupId>
 				<artifactId>wagon-ssh</artifactId>
-				<version>2.10</version>
+				<version>3.3.4</version>
 			</extension>
 		</extensions>
 
@@ -161,7 +164,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.10.3</version>
+				<version>3.4.1</version>
 				<executions>
 					<execution>
 						<id>attach-javadocs</id>
@@ -175,25 +178,28 @@
 					<links>
 						<link>http://sfera.sferalabs.cc/docs/sfera/apidocs</link>
 					</links>
-					<taglets>
-						<taglet>
-							<tagletClass>cc.sferalabs.sfera.doc.taglets.ConfigParamTaglet</tagletClass>
-						</taglet>
-						<taglet>
-							<tagletClass>cc.sferalabs.sfera.doc.taglets.EventIdTaglet</tagletClass>
-						</taglet>
-						<taglet>
-							<tagletClass>cc.sferalabs.sfera.doc.taglets.EventValueTaglet</tagletClass>
-						</taglet>
-						<taglet>
-							<tagletClass>cc.sferalabs.sfera.doc.taglets.EventSimpleValueTaglet</tagletClass>
-						</taglet>
-					</taglets>
-					<tagletArtifact>
-						<groupId>cc.sferalabs.sfera</groupId>
-						<artifactId>sfera</artifactId>
-						<version>${sfera-version}</version>
-					</tagletArtifact>
+					<tags>
+						<tag>
+							<name>sfera.config</name>
+							<placement>ot</placement>
+							<head>Configuration parameters:</head>
+						</tag>
+						<tag>
+							<name>sfera.event_id</name>
+							<placement>t</placement>
+							<head>Event ID:</head>
+						</tag>
+						<tag>
+							<name>sfera.event_val</name>
+							<placement>t</placement>
+							<head>Values:</head>
+						</tag>
+						<tag>
+							<name>sfera.event_val_simple</name>
+							<placement>t</placement>
+							<head>Simple Values:</head>
+						</tag>
+					</tags>
 				</configuration>
 			</plugin>
 			<plugin>
