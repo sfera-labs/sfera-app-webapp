@@ -8,7 +8,7 @@ If that’s still not enough for your project you can create custom components w
 
 Moreover, it provides a Web-based development environment, the Web IDE or wIDE, to browse and edit files on the server and to interact with Sfera’s console.
 
-* **Visit:** [Sfera Labs website](https://sferalabs.cc) and [Sfera website](https://sferalabs.cc/sfera)
+* **Visit:** [Sfera Labs website](https://sferalabs.cc)
 * **Learn:** [Documentation](https://sfera.sferalabs.cc/docs/sfera)
 
 ### Client sources
