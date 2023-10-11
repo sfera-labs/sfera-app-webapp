@@ -738,9 +738,11 @@ Sfera.Device._initialize = function () {
     /**
     * Checks/configures various input.
     */
-    function _checkInput () {
+    function _checkInput() {
+        // Get query parameter 'notouch'
+        var noTouch = window.location.search.includes('notouch');
 
-        if ('ontouchstart' in document.documentElement || (window.navigator.maxTouchPoints && window.navigator.maxTouchPoints >= 1))
+        if (!noTouch && ('ontouchstart' in document.documentElement || (window.navigator.maxTouchPoints && window.navigator.maxTouchPoints >= 1)))
         {
             device.touch = true;
         }
