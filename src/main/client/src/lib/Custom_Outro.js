@@ -5,6 +5,9 @@
     this.onPage = (typeof(onPage) === 'function') ? function (id) {return onPage(id);} : null;
     this.onLoginSuccess = (typeof(onLoginSuccess) === 'function') ? function (user,password) {return onLoginSuccess(user,password);} : null;
     this.onLoginError = (typeof(onLoginError) === 'function') ? function (user,password) {return onLoginError(user,password);} : null;
+    this.onLogout = (typeof(onLogout) === 'function') ? function () {return onLogout();} : null;
+    this.onWebSocketClose = (typeof(onWebSocketClose) === 'function') ? function () {return onWebSocketClose(code);} : null;
+    this.onWebSocketError = (typeof(onWebSocketError) === 'function') ? function () {return onWebSocketError(code);} : null;
 
     // context functions
     function page(id) {
