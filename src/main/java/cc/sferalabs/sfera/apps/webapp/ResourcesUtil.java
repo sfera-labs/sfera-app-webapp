@@ -82,7 +82,7 @@ public abstract class ResourcesUtil {
 			}
 			for (Plugin plugin : Plugins.getAll().values()) {
 				if (!plugin.getId().equals(webAppPluginId)) {
-					try (FileSystem pluginFs = FileSystems.newFileSystem(plugin.getPath(), null)) {
+					try (FileSystem pluginFs = FileSystems.newFileSystem(plugin.getPath(), null, null)) {
 						Path webappDir = pluginFs.getPath("webapp");
 						if (Files.exists(webappDir) && Files.isDirectory(webappDir)) {
 							pluginsOverwritingWebapp.add(plugin.getPath());
@@ -154,7 +154,7 @@ public abstract class ResourcesUtil {
 	 */
 	private static Path getPluginResource(Path plugin, Path path)
 			throws NoSuchFileException, IOException {
-		FileSystem fs = FileSystems.newFileSystem(plugin, null);
+		FileSystem fs = FileSystems.newFileSystem(plugin, null, null);
 		Path pPath = fs.getPath(path.toString());
 		if (pPath != null && Files.exists(pPath)) {
 			return pPath;
